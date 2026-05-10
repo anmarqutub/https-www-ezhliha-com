@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إزهليها — دليلك لأجمل المناسبات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #6B1F1F;
+  --brand-dark: #4A1414;
+  --brand-mid: #8B3030;
+  --brand-light: #C47A7A;
+  --brand-pale: #F5EEEE;
+  --brand-cream: #FAF6F2;
+  --brand-warm: #F0E8E0;
+  --text-dark: #1A1A1A;
+  --text-mid: #5A4A4A;
+  --text-light: #9A8A8A;
+  --white: #FFFFFF;
+  --border: #E8DADA;
+  --shadow-sm: 0 2px 12px rgba(107,31,31,0.08);
+  --shadow-md: 0 8px 32px rgba(107,31,31,0.12);
+  --shadow-lg: 0 20px 60px rgba(107,31,31,0.18);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'Tajawal',sans-serif; background:var(--brand-cream); color:var(--text-dark); direction:rtl; overflow-x:hidden; }
+
+/* ─── SCREENS ─── */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:block; }
+
+/* ─── NAV ─── */
+.nav {
+  position:sticky; top:0; z-index:200;
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow: var(--shadow-sm);
+}
+.nav-logo { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.nav-logo-text { font-size:22px; font-weight:900; color:var(--brand); letter-spacing:-0.5px; }
+.nav-logo-sub { font-size:9px; letter-spacing:5px; color:var(--brand-light); font-weight:400; }
+.nav-search {
+  flex:1; max-width:480px; margin:0 32px;
+  display:flex; align-items:center;
+  background:var(--brand-pale); border:1px solid var(--border);
+  border-radius:50px; padding:0 20px; gap:10px; height:42px;
+}
+.nav-search input { flex:1; border:none; background:none; font-family:'Tajawal',sans-serif; font-size:14px; color:var(--text-dark); outline:none; }
+.nav-search input::placeholder { color:var(--text-light); }
+.nav-actions { display:flex; align-items:center; gap:20px; }
+.nav-link { font-size:14px; color:var(--text-mid); cursor:pointer; transition:color .2s; text-decoration:none; }
+.nav-link:hover { color:var(--brand); }
+.nav-btn {
+  padding:9px 24px; background:var(--brand); color:var(--white);
+  border:none; border-radius:50px; font-family:'Tajawal',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer; transition:all .2s;
+}
+.nav-btn:hover { background:var(--brand-dark); transform:translateY(-1px); }
+.nav-user { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.nav-avatar { width:36px; height:36px; border-radius:50%; background:var(--brand-pale); border:2px solid var(--brand-light); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--brand); font-weight:700; }
+.nav-user-name { font-size:13px; color:var(--text-mid); }
+.nav-greeting { font-size:11px; color:var(--text-light); }
+
+/* ─── HERO ─── */
+.hero {
+  position:relative; height:580px; overflow:hidden;
+  display:flex; align-items:center;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(107,31,31,0.85) 0%, rgba(74,20,20,0.75) 50%, rgba(107,31,31,0.6) 100%);
+  z-index:1;
+}
+.hero-img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  filter:brightness(0.6);
+}
+.hero-content { position:relative; z-index:2; padding:0 80px; max-width:700px; }
+.hero-eyebrow { font-size:12px; letter-spacing:5px; color:rgba(255,255,255,0.7); font-weight:400; margin-bottom:16px; }
+.hero-title { font-size:52px; font-weight:900; color:var(--white); line-height:1.1; margin-bottom:16px; }
+.hero-title span { color:#F0C8A0; }
+.hero-desc { font-size:17px; font-weight:300; color:rgba(255,255,255,0.8); line-height:1.7; margin-bottom:36px; max-width:480px; }
+.hero-search-bar {
+  display:flex; gap:0; background:var(--white);
+  border-radius:12px; overflow:hidden; box-shadow:var(--shadow-lg); max-width:560px;
+}
+.hero-search-city {
+  padding:0 20px; border:none; border-left:1px solid var(--border);
+  background:none; font-family:'Tajawal',sans-serif; font-size:15px;
+  color:var(--text-dark); cursor:pointer; min-width:140px;
+}
+.hero-search-input { flex:1; padding:0 20px; border:none; font-family:'Tajawal',sans-serif; font-size:15px; color:var(--text-dark); outline:none; height:56px; }
+.hero-search-btn {
+  padding:0 32px; background:var(--brand); color:var(--white);
+  border:none; font-family:'Tajawal',sans-serif; font-size:16px; font-weight:700; cursor:pointer;
+  transition:background .2s; height:56px;
+}
+.hero-search-btn:hover { background:var(--brand-dark); }
+.hero-stats { display:flex; gap:40px; margin-top:36px; }
+.hero-stat-num { font-size:28px; font-weight:800; color:var(--white); display:block; }
+.hero-stat-label { font-size:13px; color:rgba(255,255,255,0.6); }
+
+/* ─── SECTION ─── */
+.section { padding:72px 40px; max-width:1300px; margin:0 auto; }
+.section-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; }
+.section-title { font-size:28px; font-weight:800; color:var(--text-dark); }
+.section-sub { font-size:15px; color:var(--text-light); margin-top:4px; }
+.section-link { font-size:14px; color:var(--brand); text-decoration:none; cursor:pointer; }
+.section-link:hover { text-decoration:underline; }
+
+/* ─── CATEGORIES ─── */
+.cats-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
+.cat-card {
+  background:var(--white); border-radius:var(--radius); overflow:hidden;
+  cursor:pointer; transition:all .3s; border:1px solid var(--border);
+  text-decoration:none; color:inherit;
+}
+.cat-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--brand-light); }
+.cat-img { width:100%; height:140px; object-fit:cover; display:block; }
+.cat-body { padding:14px 16px; }
+.cat-icon { font-size:20px; margin-bottom:6px; display:block; }
+.cat-name { font-size:15px; font-weight:700; color:var(--text-dark); }
+.cat-count { font-size:12px; color:var(--text-light); margin-top:2px; }
+
+/* ─── PROVIDER CARD ─── */
+.providers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.prov-card {
+  background:var(--white); border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--border); transition:all .3s; cursor:pointer;
+}
+.prov-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-md); }
+.prov-img-wrap { position:relative; height:220px; overflow:hidden; }
+.prov-img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
+.prov-card:hover .prov-img { transform:scale(1.06); }
+.prov-badge {
+  position:absolute; top:12px; right:12px;
+  background:var(--brand); color:var(--white);
+  font-size:11px; font-weight:700; padding:4px 10px; border-radius:50px;
+  letter-spacing:1px;
+}
+.prov-fav {
+  position:absolute; top:12px; left:12px;
+  width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.9);
+  border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition:all .2s;
+}
+.prov-fav:hover { background:var(--white); transform:scale(1.1); }
+.prov-body { padding:18px 20px; }
+.prov-cat { font-size:11px; letter-spacing:3px; color:var(--brand-mid); font-weight:600; margin-bottom:6px; }
+.prov-name { font-size:18px; font-weight:800; color:var(--text-dark); margin-bottom:4px; }
+.prov-loc { font-size:13px; color:var(--text-light); display:flex; align-items:center; gap:4px; margin-bottom:10px; }
+.prov-rating { display:flex; align-items:center; gap:6px; margin-bottom:12px; }
+.prov-stars { color:#D4A017; font-size:14px; letter-spacing:1px; }
+.prov-rating-num { font-size:14px; font-weight:700; color:var(--text-dark); }
+.prov-reviews { font-size:12px; color:var(--text-light); }
+.prov-footer { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); }
+.prov-price-label { font-size:11px; color:var(--text-light); }
+.prov-price { font-size:17px; font-weight:800; color:var(--brand); }
+.prov-price-unit { font-size:11px; color:var(--text-light); }
+.prov-btn {
+  padding:8px 20px; background:var(--brand-pale); color:var(--brand);
+  border:1px solid var(--brand-light); border-radius:50px; font-family:'Tajawal',sans-serif;
+  font-size:13px; font-weight:600; cursor:pointer; transition:all .2s;
+}
+.prov-btn:hover { background:var(--brand); color:var(--white); }
+
+/* ─── HOW IT WORKS ─── */
+.how-section { background:var(--white); padding:72px 40px; }
+.how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:48px; max-width:900px; margin:0 auto; }
+.how-step { text-align:center; }
+.how-num {
+  width:56px; height:56px; border-radius:50%;
+  background:var(--brand-pale); color:var(--brand);
+  font-size:22px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 16px;
+}
+.how-icon { font-size:28px; display:block; margin-bottom:12px; }
+.how-title { font-size:18px; font-weight:700; margin-bottom:8px; }
+.how-desc { font-size:14px; color:var(--text-light); line-height:1.7; }
+.how-arrow { display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--border); padding-top:28px; }
+
+/* ─── TRUST BAR ─── */
+.trust-bar {
+  background:var(--brand); padding:32px 40px;
+  display:flex; justify-content:center; gap:80px;
+}
+.trust-item { text-align:center; }
+.trust-icon { font-size:28px; margin-bottom:6px; }
+.trust-text { font-size:14px; color:rgba(255,255,255,0.9); font-weight:500; }
+.trust-sub { font-size:12px; color:rgba(255,255,255,0.5); }
+
+/* ─── LISTING PAGE ─── */
+.listing-layout { display:flex; gap:0; min-height:calc(100vh - 64px); }
+.sidebar {
+  width:280px; flex-shrink:0;
+  background:var(--white); border-left:1px solid var(--border);
+  padding:28px 24px; position:sticky; top:64px; height:calc(100vh - 64px); overflow-y:auto;
+}
+.sidebar-title { font-size:16px; font-weight:800; color:var(--text-dark); margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.filter-group { margin-bottom:24px; }
+.filter-label { font-size:12px; font-weight:700; color:var(--text-mid); letter-spacing:2px; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.filter-check { display:flex; flex-direction:column; gap:8px; }
+.filter-item { display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:var(--text-mid); }
+.filter-item input[type=checkbox] { accent-color:var(--brand); width:16px; height:16px; }
+.filter-item:hover { color:var(--text-dark); }
+.filter-range input[type=range] { width:100%; accent-color:var(--brand); margin-top:8px; }
+.range-labels { display:flex; justify-content:space-between; font-size:12px; color:var(--text-light); margin-top:4px; }
+.filter-stars { display:flex; gap:6px; flex-wrap:wrap; }
+.star-filter-btn {
+  padding:5px 10px; border:1px solid var(--border); background:none;
+  border-radius:50px; font-size:13px; cursor:pointer; transition:all .2s;
+}
+.star-filter-btn:hover, .star-filter-btn.active { background:var(--brand); color:var(--white); border-color:var(--brand); }
+.sidebar-footer { margin-top:24px; display:flex; flex-direction:column; gap:10px; }
+.btn-reset { padding:10px; border:1px solid var(--border); background:none; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px; cursor:pointer; color:var(--text-mid); }
+.btn-apply { padding:10px; background:var(--brand); color:var(--white); border:none; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:14px; font-weight:700; cursor:pointer; }
+
+.listing-main { flex:1; padding:32px 40px; }
+.listing-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:8px; }
+.listing-title { font-size:26px; font-weight:900; }
+.listing-desc { font-size:14px; color:var(--text-light); margin-bottom:24px; }
+.listing-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.sort-select {
+  padding:8px 16px; border:1px solid var(--border); border-radius:8px;
+  font-family:'Tajawal',sans-serif; font-size:14px; background:var(--white);
+  color:var(--text-dark); cursor:pointer; outline:none;
+}
+.view-toggle { display:flex; gap:4px; }
+.view-btn {
+  width:36px; height:36px; border:1px solid var(--border); background:var(--white);
+  border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition:all .2s;
+}
+.view-btn.active { background:var(--brand); color:var(--white); border-color:var(--brand); }
+
+.listing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+
+/* ─── DETAIL PAGE ─── */
+.detail-layout { display:flex; gap:0; }
+.detail-main { flex:1; padding:32px 40px; }
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-light); margin-bottom:20px; }
+.breadcrumb a { color:var(--brand); text-decoration:none; cursor:pointer; }
+.breadcrumb-sep { color:var(--border); }
+.detail-title { font-size:36px; font-weight:900; margin-bottom:6px; }
+.detail-loc { display:flex; align-items:center; gap:6px; font-size:15px; color:var(--text-mid); margin-bottom:10px; }
+.detail-rating-row { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.detail-stars { color:#D4A017; font-size:16px; }
+.detail-rating-num { font-size:16px; font-weight:700; }
+.detail-reviews { font-size:14px; color:var(--text-light); }
+.gallery-main { width:100%; height:420px; border-radius:var(--radius); overflow:hidden; margin-bottom:12px; position:relative; }
+.gallery-main img { width:100%; height:100%; object-fit:cover; }
+.gallery-counter { position:absolute; bottom:16px; right:16px; background:rgba(0,0,0,0.6); color:var(--white); padding:4px 12px; border-radius:50px; font-size:13px; }
+.gallery-thumbs { display:flex; gap:10px; }
+.gallery-thumb { width:100px; height:72px; border-radius:8px; overflow:hidden; cursor:pointer; border:2px solid transparent; flex-shrink:0; transition:border .2s; }
+.gallery-thumb.active { border-color:var(--brand); }
+.gallery-thumb img { width:100%; height:100%; object-fit:cover; }
+.detail-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin:32px 0 24px; }
+.detail-tab {
+  padding:12px 24px; border:none; background:none;
+  font-family:'Tajawal',sans-serif; font-size:15px; color:var(--text-light);
+  cursor:pointer; position:relative; transition:color .2s;
+}
+.detail-tab::after { content:''; position:absolute; bottom:-2px; right:0; width:0; height:2px; background:var(--brand); transition:width .3s; }
+.detail-tab.active { color:var(--brand); font-weight:700; }
+.detail-tab.active::after { width:100%; }
+.detail-about h3 { font-size:18px; font-weight:800; margin-bottom:12px; }
+.detail-about p { font-size:15px; color:var(--text-mid); line-height:1.8; margin-bottom:24px; }
+.features-title { font-size:16px; font-weight:800; margin-bottom:16px; }
+.features-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.feature-item { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text-mid); }
+.feature-icon { font-size:18px; }
+.amenities-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:16px; }
+.amenity { text-align:center; padding:16px 8px; background:var(--brand-pale); border-radius:var(--radius-sm); }
+.amenity-icon { font-size:24px; display:block; margin-bottom:6px; }
+.amenity-name { font-size:12px; color:var(--text-mid); }
+.tags-row { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; }
+.tag { padding:6px 14px; background:var(--brand-pale); color:var(--brand); border-radius:50px; font-size:13px; font-weight:600; }
+.suitable-section h3 { font-size:16px; font-weight:800; margin-bottom:12px; }
+
+/* sidebar CTA */
+.detail-sidebar { width:320px; flex-shrink:0; padding:32px 32px 32px 0; }
+.cta-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:28px; position:sticky; top:80px; }
+.cta-provider-contact h4 { font-size:16px; font-weight:800; margin-bottom:4px; }
+.cta-provider-contact p { font-size:13px; color:var(--text-light); margin-bottom:20px; }
+.cta-btn {
+  width:100%; padding:14px; border:none; border-radius:10px;
+  font-family:'Tajawal',sans-serif; font-size:15px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; transition:all .2s;
+}
+.cta-whatsapp { background:#25D366; color:var(--white); }
+.cta-whatsapp:hover { background:#1ebe5c; }
+.cta-call { background:var(--brand-pale); color:var(--brand); border:1px solid var(--brand-light); }
+.cta-call:hover { background:var(--brand); color:var(--white); }
+.cta-fav { background:none; color:var(--text-mid); border:1px solid var(--border); }
+.cta-fav:hover { border-color:var(--brand); color:var(--brand); }
+.quick-info { margin-top:20px; border-top:1px solid var(--border); padding-top:20px; }
+.quick-info-title { font-size:12px; font-weight:700; letter-spacing:2px; color:var(--text-light); margin-bottom:14px; }
+.quick-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+.quick-row:last-child { border-bottom:none; }
+.quick-icon { font-size:16px; color:var(--brand-mid); width:20px; }
+.quick-key { font-size:13px; color:var(--text-light); flex:1; }
+.quick-val { font-size:13px; font-weight:600; color:var(--text-dark); }
+.price-box { background:var(--brand-pale); border-radius:10px; padding:16px; margin-bottom:20px; text-align:center; }
+.price-from { font-size:12px; color:var(--brand-mid); margin-bottom:2px; }
+.price-num { font-size:30px; font-weight:900; color:var(--brand); line-height:1; }
+.price-currency { font-size:16px; }
+.price-note { font-size:11px; color:var(--text-light); margin-top:4px; }
+
+/* ─── REVIEWS ─── */
+.reviews-section { margin-top:32px; }
+.reviews-section h3 { font-size:18px; font-weight:800; margin-bottom:20px; }
+.reviews-summary { display:flex; gap:32px; align-items:center; margin-bottom:28px; padding:24px; background:var(--brand-pale); border-radius:var(--radius); }
+.rev-big-num { font-size:56px; font-weight:900; color:var(--brand); line-height:1; }
+.rev-big-stars { font-size:20px; color:#D4A017; margin:4px 0; }
+.rev-big-count { font-size:13px; color:var(--text-light); }
+.rev-bars { flex:1; }
+.rev-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.rev-bar-label { font-size:12px; color:var(--text-mid); width:30px; text-align:left; }
+.rev-bar-track { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.rev-bar-fill { height:100%; background:var(--brand); border-radius:3px; }
+.rev-bar-count { font-size:12px; color:var(--text-light); width:30px; }
+.review-card { padding:20px 0; border-bottom:1px solid var(--border); }
+.review-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.rev-avatar { width:42px; height:42px; border-radius:50%; background:var(--brand-pale); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--brand); }
+.rev-name { font-size:14px; font-weight:700; }
+.rev-date { font-size:12px; color:var(--text-light); }
+.rev-stars { color:#D4A017; font-size:13px; }
+.rev-text { font-size:14px; color:var(--text-mid); line-height:1.7; }
+
+/* ─── LOGIN PAGE ─── */
+.auth-page { min-height:100vh; display:flex; }
+.auth-left {
+  flex:1; background:var(--brand);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:60px; position:relative; overflow:hidden;
+}
+.auth-left::before {
+  content:''; position:absolute; width:500px; height:500px;
+  border:1px solid rgba(255,255,255,0.08); border-radius:50%;
+  top:-100px; right:-100px;
+}
+.auth-left::after {
+  content:''; position:absolute; width:350px; height:350px;
+  border:1px solid rgba(255,255,255,0.05); border-radius:50%;
+  bottom:-80px; left:-80px;
+}
+.auth-brand { position:relative; z-index:1; text-align:center; margin-bottom:48px; }
+.auth-brand-name { font-size:52px; font-weight:900; color:var(--white); letter-spacing:-1px; }
+.auth-brand-en { font-size:12px; letter-spacing:8px; color:rgba(255,255,255,0.4); margin-top:4px; }
+.auth-tagline { font-size:20px; color:rgba(255,255,255,0.8); font-weight:300; line-height:1.6; text-align:center; max-width:300px; position:relative; z-index:1; }
+.auth-features { margin-top:48px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:1; }
+.auth-feature { display:flex; align-items:center; gap:12px; color:rgba(255,255,255,0.7); font-size:14px; }
+.auth-feature-dot { width:6px; height:6px; background:rgba(255,255,255,0.4); border-radius:50%; flex-shrink:0; }
+.auth-right {
+  width:500px; flex-shrink:0;
+  background:var(--brand-cream); display:flex; align-items:center; justify-content:center;
+  padding:60px 48px;
+}
+.auth-form-wrap { width:100%; }
+.auth-form-title { font-size:28px; font-weight:900; margin-bottom:4px; }
+.auth-form-sub { font-size:15px; color:var(--text-light); margin-bottom:40px; }
+.form-group { margin-bottom:20px; }
+.form-label { font-size:13px; font-weight:600; color:var(--text-mid); display:block; margin-bottom:6px; letter-spacing:0.5px; }
+.form-input {
+  width:100%; padding:14px 16px; border:1.5px solid var(--border);
+  border-radius:10px; font-family:'Tajawal',sans-serif; font-size:15px;
+  color:var(--text-dark); background:var(--white); outline:none; transition:border .2s;
+}
+.form-input:focus { border-color:var(--brand); }
+.form-input::placeholder { color:var(--text-light); }
+.form-forgot { font-size:13px; color:var(--brand); text-align:left; cursor:pointer; margin-top:4px; display:block; }
+.form-forgot:hover { text-decoration:underline; }
+.btn-auth {
+  width:100%; padding:16px; background:var(--brand); color:var(--white);
+  border:none; border-radius:10px; font-family:'Tajawal',sans-serif;
+  font-size:17px; font-weight:700; cursor:pointer; transition:all .2s; margin-top:8px;
+}
+.btn-auth:hover { background:var(--brand-dark); }
+.auth-or { text-align:center; color:var(--text-light); font-size:14px; margin:20px 0; position:relative; }
+.auth-or::before, .auth-or::after { content:''; position:absolute; top:50%; width:38%; height:1px; background:var(--border); }
+.auth-or::before { right:0; }
+.auth-or::after { left:0; }
+.auth-switch { text-align:center; font-size:14px; color:var(--text-mid); margin-top:20px; }
+.auth-switch a { color:var(--brand); font-weight:700; cursor:pointer; text-decoration:none; }
+.auth-switch a:hover { text-decoration:underline; }
+.form-name-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* ─── MAP ─── */
+.map-placeholder {
+  width:100%; height:220px; background:var(--brand-warm);
+  border-radius:var(--radius); display:flex; align-items:center; justify-content:center;
+  color:var(--text-light); font-size:14px; border:1px solid var(--border); margin-top:16px;
+  flex-direction:column; gap:8px;
+}
+.map-placeholder span { font-size:32px; }
+
+/* ─── FOOTER ─── */
+.footer { background:var(--text-dark); padding:60px 40px 32px; }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; max-width:1300px; margin:0 auto 48px; }
+.footer-brand-name { font-size:28px; font-weight:900; color:var(--brand-light); margin-bottom:8px; }
+.footer-brand-en { font-size:9px; letter-spacing:5px; color:rgba(255,255,255,0.3); margin-bottom:16px; }
+.footer-desc { font-size:14px; color:rgba(255,255,255,0.4); line-height:1.7; }
+.footer-col-title { font-size:13px; font-weight:700; letter-spacing:2px; color:rgba(255,255,255,0.5); margin-bottom:16px; }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.footer-links a { font-size:14px; color:rgba(255,255,255,0.4); text-decoration:none; cursor:pointer; transition:color .2s; }
+.footer-links a:hover { color:var(--brand-light); }
+.footer-bottom { max-width:1300px; margin:0 auto; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; }
+.footer-copy { font-size:13px; color:rgba(255,255,255,0.25); }
+.footer-social { display:flex; gap:12px; }
+.social-btn { width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:14px; color:rgba(255,255,255,0.4); cursor:pointer; transition:all .2s; }
+.social-btn:hover { background:var(--brand); color:var(--white); }
+
+/* ─── TOAST ─── */
+.toast {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--text-dark); color:var(--white); padding:14px 28px; border-radius:50px;
+  font-size:15px; font-weight:600; z-index:999; transition:all .3s; opacity:0; pointer-events:none;
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ─── UTILS ─── */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ SCREENS ══════════════════════════════════════════ -->
+
+<!-- 1. HOME PAGE -->
+<div class="screen active" id="screen-home">
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo" onclick="goTo('home')">
+      <div>
+        <div class="nav-logo-text">إزهليها</div>
+        <div class="nav-logo-sub">AZHLEHA</div>
+      </div>
+    </div>
+    <div class="nav-search">
+      <span>🔍</span>
+      <input type="text" placeholder="ابحثي عن خدمة أو مزود...">
+    </div>
+    <div class="nav-actions">
+      <span class="nav-link">طريقة الاشتراك</span>
+      <span class="nav-link">المزايا</span>
+      <span class="nav-link">الأسئلة الشائعة</span>
+      <button class="nav-btn" onclick="goTo('login')">اشتركي الآن</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80" alt="">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">✦ دليلك الأول لأجمل المناسبات</p>
+      <h1 class="hero-title">دليلك الأول لتجهيز<br><span>الأفراح والمناسبات</span></h1>
+      <p class="hero-desc">جمعنا لك نخبة من أفضل مزودي الخدمات لتوفير وقتك والبحث عن الأنسب لمناسبتك.</p>
+      <div class="hero-search-bar">
+        <select class="hero-search-city">
+          <option>📍 الرياض</option>
+          <option>📍 جدة</option>
+        </select>
+        <input class="hero-search-input" type="text" placeholder="ابحثي عن خدمة، صالة، ميك آب...">
+        <button class="hero-search-btn" onclick="goTo('listing')">بحث</button>
+      </div>
+      <div class="hero-stats">
+        <div><span class="hero-stat-num">+300</span><span class="hero-stat-label">مزود خدمة</span></div>
+        <div><span class="hero-stat-num">4.8★</span><span class="hero-stat-label">متوسط التقييم</span></div>
+        <div><span class="hero-stat-num">+5000</span><span class="hero-stat-label">مناسبة ناجحة</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">التصنيفات الرئيسية</div>
+        <div class="section-sub">تصفحي خدماتنا حسب ما تحتاجينه</div>
+      </div>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">🎊</span>
+          <div class="cat-name">ترتيب المناسبات</div>
+          <div class="cat-count">+48 مزودة</div>
+        </div>
+      </div>
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">💄</span>
+          <div class="cat-name">ميك آب آرتست</div>
+          <div class="cat-count">+62 آرتست</div>
+        </div>
+      </div>
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">✂️</span>
+          <div class="cat-name">الصالونات النسائية</div>
+          <div class="cat-count">+37 صالون</div>
+        </div>
+      </div>
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">🌸</span>
+          <div class="cat-name">هوم سبا</div>
+          <div class="cat-count">+29 مزودة</div>
+        </div>
+      </div>
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">🍽️</span>
+          <div class="cat-name">البوفيهات والضيافة</div>
+          <div class="cat-count">+41 مزودة</div>
+        </div>
+      </div>
+      <div class="cat-card" onclick="goTo('listing')">
+        <img class="cat-img" src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=400&q=80" alt="">
+        <div class="cat-body">
+          <span class="cat-icon">📸</span>
+          <div class="cat-name">أفضل المصورات</div>
+          <div class="cat-count">+34 مصورة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURED PROVIDERS -->
+  <div class="section" style="padding-top:0">
+    <div class="section-head">
+      <div>
+        <div class="section-title">أبرز مقدمي الخدمات</div>
+        <div class="section-sub">مختارون بعناية بناءً على التقييمات والخبرة</div>
+      </div>
+      <a class="section-link" onclick="goTo('listing')">عرض الكل ←</a>
+    </div>
+    <div class="providers-grid">
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" alt="">
+          <div class="prov-badge">مميز ✦</div>
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">ترتيب مناسبات</div>
+          <div class="prov-name">وردة المناسبات</div>
+          <div class="prov-loc">📍 الرياض — شمال الرياض</div>
+          <div class="prov-rating">
+            <span class="prov-stars">★★★★★</span>
+            <span class="prov-rating-num">4.9</span>
+            <span class="prov-reviews">(312 تقييم)</span>
+          </div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">3,000 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=600&q=80" alt="">
+          <div class="prov-badge">الأفضل ⭐</div>
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">ميك آب آرتست</div>
+          <div class="prov-name">آرتست ريم</div>
+          <div class="prov-loc">📍 الرياض — جنوب الرياض</div>
+          <div class="prov-rating">
+            <span class="prov-stars">★★★★★</span>
+            <span class="prov-rating-num">5.0</span>
+            <span class="prov-reviews">(512 تقييم)</span>
+          </div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">800 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80" alt="">
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">صالون نسائي</div>
+          <div class="prov-name">بيوتي هاوس</div>
+          <div class="prov-loc">📍 الرياض — العليا</div>
+          <div class="prov-rating">
+            <span class="prov-stars">★★★★★</span>
+            <span class="prov-rating-num">4.9</span>
+            <span class="prov-reviews">(634 تقييم)</span>
+          </div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">200 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST PHOTOGRAPHERS -->
+  <div class="section" style="padding-top:0">
+    <div class="section-head">
+      <div>
+        <div class="section-title">أفضل المصورات</div>
+        <div class="section-sub">مصورات محترفات لتوثيق أجمل لحظاتك</div>
+      </div>
+      <a class="section-link" onclick="goTo('listing')">عرض الكل ←</a>
+    </div>
+    <div class="providers-grid">
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&q=80" alt="">
+          <div class="prov-badge">مميزة ✦</div>
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">مصورة مناسبات</div>
+          <div class="prov-name">عدسة لمى</div>
+          <div class="prov-loc">📍 الرياض — حي الياسمين</div>
+          <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.9</span><span class="prov-reviews">(284 تقييم)</span></div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">1,500 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80" alt="">
+          <div class="prov-badge">الأفضل ⭐</div>
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">مصورة أعراس</div>
+          <div class="prov-name">استوديو نور</div>
+          <div class="prov-loc">📍 جدة — حي الروضة</div>
+          <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">5.0</span><span class="prov-reviews">(421 تقييم)</span></div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">2,200 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+      <div class="prov-card" onclick="goTo('detail')">
+        <div class="prov-img-wrap">
+          <img class="prov-img" src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80" alt="">
+          <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+        </div>
+        <div class="prov-body">
+          <div class="prov-cat">مصورة بورتريه</div>
+          <div class="prov-name">لحظات رهف</div>
+          <div class="prov-loc">📍 الرياض — حي العليا</div>
+          <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.8</span><span class="prov-reviews">(196 تقييم)</span></div>
+          <div class="prov-footer">
+            <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">900 <span class="prov-price-unit">ر.س</span></div></div>
+            <button class="prov-btn">عرض التفاصيل</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-section">
+    <div style="max-width:1300px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <div class="section-title">كيف تستفيدين من إزهليها؟</div>
+        <div class="section-sub" style="margin-top:6px;">ثلاث خطوات بسيطة للوصول لأفضل مزودي الخدمات</div>
+      </div>
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <span class="how-icon">📱</span>
+          <div class="how-title">اشتركي في الموقع</div>
+          <div class="how-desc">سجلي حسابك بسهولة وأمان — ادخلي بسهولة وأمان للوصول لجميع مزودي الخدمات المتميزين</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <span class="how-icon">🔍</span>
+          <div class="how-title">ادخلي بحسابك</div>
+          <div class="how-desc">تصفحي التصنيفات، فلتري بحسب المدينة والتقييم والسعر — احصلي على وصول فوري لكل الخدمات</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <span class="how-icon">💖</span>
+          <div class="how-title">تصفحي واختاري</div>
+          <div class="how-desc">اختاري من أفضل مزودي الخدمات بحسب الذوق والخبرة — تواصلي مباشرة مع المزود الأنسب</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item">
+      <div class="trust-icon">🛡️</div>
+      <div class="trust-text">جودة مضمونة</div>
+      <div class="trust-sub">كل المزودين تم فحصهم</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">⭐</div>
+      <div class="trust-text">تجارب حقيقية</div>
+      <div class="trust-sub">تقييمات من عملاء حقيقيين</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🤝</div>
+      <div class="trust-text">دعم ومساعدة</div>
+      <div class="trust-sub">فريق جاهز لمساعدتك</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">📅</div>
+      <div class="trust-text">حجز سهل وآمن</div>
+      <div class="trust-sub">تواصل مباشر مع المزود</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">إزهليها</div>
+        <div class="footer-brand-en">AZHLEHA</div>
+        <div class="footer-desc">دليلك الأول لتجهيز الأفراح والمناسبات — جمعنا لك أفضل مزودي الخدمات في المملكة.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">الخدمات</div>
+        <ul class="footer-links">
+          <li><a>ترتيب المناسبات</a></li>
+          <li><a>ميك آب آرتست</a></li>
+          <li><a>الصالونات النسائية</a></li>
+          <li><a>هوم سبا</a></li>
+          <li><a>البوفيهات</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">الشركة</div>
+        <ul class="footer-links">
+          <li><a>من نحن</a></li>
+          <li><a>انضمي كمزود</a></li>
+          <li><a>طريقة الاشتراك</a></li>
+          <li><a>تواصلي معنا</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">المدن</div>
+        <ul class="footer-links">
+          <li><a>الرياض</a></li>
+          <li><a>جدة</a></li>
+          <li><a>الدمام</a></li>
+          <li><a>مكة المكرمة</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 إزهليها — جميع الحقوق محفوظة</div>
+      <div class="footer-social">
+        <div class="social-btn">📸</div>
+        <div class="social-btn">🐦</div>
+        <div class="social-btn">💬</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- 2. LOGIN PAGE -->
+<div class="screen" id="screen-login">
+  <div class="auth-page">
+    <div class="auth-right">
+      <div class="auth-form-wrap">
+        <div style="cursor:pointer;margin-bottom:32px;" onclick="goTo('home')">
+          <div style="font-size:26px;font-weight:900;color:var(--brand);">إزهليها</div>
+          <div style="font-size:9px;letter-spacing:5px;color:var(--text-light);">AZHLEHA</div>
+        </div>
+        <div id="login-form-wrap">
+          <h2 class="auth-form-title">تسجيل الدخول</h2>
+          <p class="auth-form-sub">أهلاً بك، سجلي دخولك للوصول لأفضل الخدمات</p>
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input class="form-input" type="email" placeholder="example@email.com" id="login-email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">كلمة المرور</label>
+            <input class="form-input" type="password" placeholder="••••••••" id="login-pass">
+            <a class="form-forgot">نسيت كلمة المرور؟</a>
+          </div>
+          <button class="btn-auth" onclick="doLogin()">تسجيل الدخول</button>
+          <div class="auth-switch">ليس لديك حساب؟ <a onclick="toggleAuth('register')">اشتركي الآن</a></div>
+        </div>
+        <div id="register-form-wrap" class="hidden">
+          <h2 class="auth-form-title">إنشاء حساب جديد</h2>
+          <p class="auth-form-sub">انضمي الآن واستمتعي بأفضل تجربة تسوق للمناسبات</p>
+          <div class="form-name-row">
+            <div class="form-group">
+              <label class="form-label">الاسم الأول</label>
+              <input class="form-input" type="text" placeholder="مثال">
+            </div>
+            <div class="form-group">
+              <label class="form-label">اسم العائلة</label>
+              <input class="form-input" type="text" placeholder="الأحمدي">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input class="form-input" type="email" placeholder="example@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">كلمة المرور</label>
+            <input class="form-input" type="password" placeholder="8 أحرف على الأقل">
+          </div>
+          <div class="form-group">
+            <label class="form-label">المدينة</label>
+            <select class="form-input">
+              <option>الرياض</option>
+              <option>جدة</option>
+              <option>الدمام</option>
+            </select>
+          </div>
+          <button class="btn-auth" onclick="doLogin()">إنشاء الحساب</button>
+          <div class="auth-switch">لديك حساب بالفعل؟ <a onclick="toggleAuth('login')">تسجيل الدخول</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-left">
+      <div class="auth-brand">
+        <div class="auth-brand-name">إزهليها</div>
+        <div class="auth-brand-en">AZHLEHA</div>
+      </div>
+      <p class="auth-tagline">دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات</p>
+      <div class="auth-features">
+        <div class="auth-feature"><div class="auth-feature-dot"></div>الوصول الكامل لكل الأقسام</div>
+        <div class="auth-feature"><div class="auth-feature-dot"></div>تحديثات مستمرة بأفضل العروض</div>
+        <div class="auth-feature"><div class="auth-feature-dot"></div>دعم خاص مع كل خطوة</div>
+        <div class="auth-feature"><div class="auth-feature-dot"></div>حفظ المفضلة والمقارنة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. LISTING PAGE -->
+<div class="screen" id="screen-listing">
+  <!-- NAV LOGGED IN -->
+  <nav class="nav">
+    <div class="nav-logo" onclick="goTo('home')">
+      <div>
+        <div class="nav-logo-text">إزهليها</div>
+        <div class="nav-logo-sub">AZHLEHA</div>
+      </div>
+    </div>
+    <div class="nav-search">
+      <span>🔍</span>
+      <input type="text" placeholder="ابحثي عن خدمة أو مزود...">
+    </div>
+    <div class="nav-actions">
+      <span class="nav-link">🔔 الإشعارات</span>
+      <span class="nav-link">🤍 المفضلة</span>
+      <div class="nav-user">
+        <div class="nav-avatar">م</div>
+        <div>
+          <div class="nav-user-name">مرحباً، منال</div>
+          <div class="nav-greeting">حسابي</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="listing-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">🎛️ تصفية النتائج</div>
+      <div class="filter-group">
+        <div class="filter-label">📍 الموقع</div>
+        <select id="city-select" class="form-input" style="font-size:14px;padding:10px;margin-bottom:8px;" onchange="onCityChange(this.value)">
+          <option value="riyadh">الرياض</option>
+          <option value="jeddah">جدة</option>
+        </select>
+        <select id="area-select" class="form-input" style="font-size:14px;padding:10px;">
+          <option>كل المناطق</option>
+          <option>شمال الرياض</option>
+          <option>جنوب الرياض</option>
+          <option>العليا</option>
+          <option>حي الياسمين</option>
+          <option>الروضة</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">📋 نوع الخدمة</div>
+        <div class="filter-check">
+          <label class="filter-item"><input type="checkbox" checked> ترتيب المناسبات</label>
+          <label class="filter-item"><input type="checkbox"> ميك آب آرتست</label>
+          <label class="filter-item"><input type="checkbox"> صالونات نسائية</label>
+          <label class="filter-item"><input type="checkbox"> هوم سبا</label>
+          <label class="filter-item"><input type="checkbox"> بوفيهات وضيافة</label>
+          <label class="filter-item"><input type="checkbox"> مطربات (طقاقات)</label>
+          <label class="filter-item"><input type="checkbox"> مصورات</label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">💰 السعر</div>
+        <div class="filter-range">
+          <input type="range" min="0" max="20000" value="15000">
+          <div class="range-labels"><span>0</span><span>20,000 ر.س</span></div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">⭐ التقييم</div>
+        <div class="filter-stars">
+          <button class="star-filter-btn active">كل التقييمات</button>
+          <button class="star-filter-btn">5 ★</button>
+          <button class="star-filter-btn">4+ ★</button>
+          <button class="star-filter-btn">3+ ★</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">✨ المميزات</div>
+        <div class="filter-check">
+          <label class="filter-item"><input type="checkbox"> حضور للموقع</label>
+          <label class="filter-item"><input type="checkbox"> استوديو خاص</label>
+          <label class="filter-item"><input type="checkbox"> فريق عمل</label>
+          <label class="filter-item"><input type="checkbox"> حجز مرن</label>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="btn-reset">إعادة تعيين</button>
+        <button class="btn-apply">عرض النتائج (28)</button>
+      </div>
+    </div>
+
+    <!-- LISTING MAIN -->
+    <div class="listing-main">
+      <div class="listing-header">
+        <div>
+          <h1 class="listing-title">ترتيب المناسبات</h1>
+        </div>
+      </div>
+      <p class="listing-desc" id="listing-desc">مجموعة مختارة من أفضل مزودي خدمات المناسبات في الرياض</p>
+      <div class="listing-toolbar">
+        <select class="sort-select">
+          <option>ترتيب حسب: الأحدث</option>
+          <option>الأعلى تقييماً</option>
+          <option>الأقل سعراً</option>
+          <option>الأعلى سعراً</option>
+        </select>
+        <div class="view-toggle">
+          <button class="view-btn active">⊞</button>
+          <button class="view-btn">☰</button>
+        </div>
+      </div>
+
+      <div class="listing-grid" id="grid-riyadh">
+        <!-- Riyadh Cards -->
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" alt="">
+            <div class="prov-badge">مميز ✦</div>
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">ترتيب مناسبات</div>
+            <div class="prov-name">وردة المناسبات</div>
+            <div class="prov-loc">📍 الرياض — شمال الرياض</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.9</span><span class="prov-reviews">(312)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">3,000 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">ترتيبات ضيافة</div>
+            <div class="prov-name">لمسة ذوق</div>
+            <div class="prov-loc">📍 الرياض — العليا</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.8</span><span class="prov-reviews">(198)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">2,000 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80" alt="">
+            <div class="prov-badge">الأفضل ⭐</div>
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">مطربة — طقاقة</div>
+            <div class="prov-name">نغمات الأفراح</div>
+            <div class="prov-loc">📍 الرياض — جنوب الرياض</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.9</span><span class="prov-reviews">(427)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">1,500 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">بوفيه وضيافة</div>
+            <div class="prov-name">سفرة الأصيل</div>
+            <div class="prov-loc">📍 الرياض — الروضة</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★☆</span><span class="prov-rating-num">4.7</span><span class="prov-reviews">(156)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">2,500 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1429514513361-8fa32282fd5f?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">مطربة — طقاقة</div>
+            <div class="prov-name">زهرة السامر</div>
+            <div class="prov-loc">📍 الرياض — النزهة</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.8</span><span class="prov-reviews">(234)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">2,000 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">ترتيبات ضيافة</div>
+            <div class="prov-name">مسرح الأحلام</div>
+            <div class="prov-loc">📍 الرياض — حي الملك فهد</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★☆</span><span class="prov-rating-num">4.6</span><span class="prov-reviews">(89)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">5,000 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="listing-grid hidden" id="grid-jeddah">
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80" alt="">
+            <div class="prov-badge">مميز ✦</div>
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">ترتيب مناسبات</div>
+            <div class="prov-name">قصر اللؤلؤة</div>
+            <div class="prov-loc">📍 جدة — حي الروضة</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.9</span><span class="prov-reviews">(287)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">3,500 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="">
+            <div class="prov-badge">الأفضل ⭐</div>
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">ميك آب آرتست</div>
+            <div class="prov-name">آرتست دانة</div>
+            <div class="prov-loc">📍 جدة — حي الشاطئ</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">5.0</span><span class="prov-reviews">(389)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">900 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&q=80" alt="">
+            <div class="prov-badge">مصورة ✦</div>
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">مصورة مناسبات</div>
+            <div class="prov-name">عدسة البحر</div>
+            <div class="prov-loc">📍 جدة — أبحر الشمالية</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.9</span><span class="prov-reviews">(312)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">1,800 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">صالون نسائي</div>
+            <div class="prov-name">صالون لمسة جدة</div>
+            <div class="prov-loc">📍 جدة — حي السلامة</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.8</span><span class="prov-reviews">(245)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">250 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">هوم سبا</div>
+            <div class="prov-name">سبا اللؤلؤ</div>
+            <div class="prov-loc">📍 جدة — حي الصفا</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★☆</span><span class="prov-rating-num">4.7</span><span class="prov-reviews">(132)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">350 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+        <div class="prov-card" onclick="goTo('detail')">
+          <div class="prov-img-wrap">
+            <img class="prov-img" src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80" alt="">
+            <button class="prov-fav" onclick="event.stopPropagation();favToggle(this)">🤍</button>
+          </div>
+          <div class="prov-body">
+            <div class="prov-cat">بوفيه وضيافة</div>
+            <div class="prov-name">سفرة الكورنيش</div>
+            <div class="prov-loc">📍 جدة — حي الشاطئ</div>
+            <div class="prov-rating"><span class="prov-stars">★★★★★</span><span class="prov-rating-num">4.8</span><span class="prov-reviews">(178)</span></div>
+            <div class="prov-footer">
+              <div><div class="prov-price-label">يبدأ من</div><div class="prov-price">2,800 <span class="prov-price-unit">ر.س</span></div></div>
+              <button class="prov-btn">التفاصيل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. DETAIL PAGE -->
+<div class="screen" id="screen-detail">
+  <nav class="nav">
+    <div class="nav-logo" onclick="goTo('home')">
+      <div>
+        <div class="nav-logo-text">إزهليها</div>
+        <div class="nav-logo-sub">AZHLEHA</div>
+      </div>
+    </div>
+    <div class="nav-search">
+      <span>🔍</span>
+      <input type="text" placeholder="ابحثي عن خدمة أو مزود...">
+    </div>
+    <div class="nav-actions">
+      <span class="nav-link">🔔</span>
+      <span class="nav-link">🤍 المفضلة</span>
+      <div class="nav-user">
+        <div class="nav-avatar">م</div>
+        <div>
+          <div class="nav-user-name">منال</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="breadcrumb">
+        <a onclick="goTo('home')">الرئيسية</a>
+        <span class="breadcrumb-sep">•</span>
+        <a onclick="goTo('listing')">ترتيب المناسبات</a>
+        <span class="breadcrumb-sep">•</span>
+        <span>وردة المناسبات</span>
+      </div>
+
+      <h1 class="detail-title">وردة المناسبات</h1>
+      <div class="detail-loc">📍 الرياض — شمال الرياض</div>
+      <div class="detail-rating-row">
+        <span class="detail-stars">★★★★★</span>
+        <span class="detail-rating-num">4.9</span>
+        <span class="detail-reviews">(312 تقييم)</span>
+      </div>
+
+      <!-- GALLERY -->
+      <div class="gallery-main">
+        <img id="main-gallery-img" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1000&q=80" alt="">
+        <div class="gallery-counter">1 / 5</div>
+      </div>
+      <div class="gallery-thumbs">
+        <div class="gallery-thumb active" onclick="changeImg(this,'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80')"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=200&q=60" alt=""></div>
+        <div class="gallery-thumb" onclick="changeImg(this,'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80')"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=200&q=60" alt=""></div>
+        <div class="gallery-thumb" onclick="changeImg(this,'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80')"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200&q=60" alt=""></div>
+        <div class="gallery-thumb" onclick="changeImg(this,'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80')"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=200&q=60" alt=""></div>
+        <div class="gallery-thumb" onclick="changeImg(this,'https://images.unsplash.com/photo-1429514513361-8fa32282fd5f?w=600&q=80')"><img src="https://images.unsplash.com/photo-1429514513361-8fa32282fd5f?w=200&q=60" alt=""></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="detail-tabs">
+        <button class="detail-tab active" onclick="showTab(this,'tab-overview')">نظرة عامة</button>
+        <button class="detail-tab" onclick="showTab(this,'tab-services')">المرافق والخدمات</button>
+        <button class="detail-tab" onclick="showTab(this,'tab-prices')">الأسعار والباقات</button>
+        <button class="detail-tab" onclick="showTab(this,'tab-location')">الموقع</button>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="detail-about">
+        <h3>نبذة عن وردة المناسبات</h3>
+        <p>وردة المناسبات تجمع بين الفخامة والراحة في مكان واحد. بتصميم عصري ومساحات مفتوحة وخدمات متكاملة تضمن لك تجربة مميزة ومناسبة لا تُنسى. متخصصون في إعداد بوفيهات الأعراس والمناسبات الكبرى بأذواق متعددة وتقديم احترافي يرضي أرقى الأذواق.</p>
+        <div class="features-title">ما يميزنا</div>
+        <div class="features-grid">
+          <div class="feature-item"><span class="feature-icon">✅</span> تصميم راقٍ وخصوصية عالية</div>
+          <div class="feature-item"><span class="feature-icon">✅</span> مساحات خضراء واسعة</div>
+          <div class="feature-item"><span class="feature-icon">✅</span> خدمة تنظيف قبل وبعد المناسبة</div>
+          <div class="feature-item"><span class="feature-icon">✅</span> فريق عمل متعاون</div>
+          <div class="feature-item"><span class="feature-icon">✅</span> سهولة الوصول والموقع مميز</div>
+          <div class="feature-item"><span class="feature-icon">✅</span> أسعار تنافسية مع باقات مرنة</div>
+        </div>
+        <div class="suitable-section" style="margin-top:24px;">
+          <h3>مناسب لـ</h3>
+          <div class="tags-row">
+            <span class="tag">حفلات نسائية</span>
+            <span class="tag">خطوبة</span>
+            <span class="tag">تخرج</span>
+            <span class="tag">أعياد ميلاد</span>
+            <span class="tag">تجمعات عائلية</span>
+          </div>
+        </div>
+
+        <div class="amenities-grid">
+          <div class="amenity"><span class="amenity-icon">🎊</span><div class="amenity-name">ترتيب ديكور</div></div>
+          <div class="amenity"><span class="amenity-icon">🍽️</span><div class="amenity-name">بوفيه كامل</div></div>
+          <div class="amenity"><span class="amenity-icon">☕</span><div class="amenity-name">ضيافة قهوة</div></div>
+          <div class="amenity"><span class="amenity-icon">🎵</span><div class="amenity-name">صوتيات</div></div>
+          <div class="amenity"><span class="amenity-icon">💡</span><div class="amenity-name">إضاءة احترافية</div></div>
+          <div class="amenity"><span class="amenity-icon">📸</span><div class="amenity-name">تصوير</div></div>
+          <div class="amenity"><span class="amenity-icon">🌸</span><div class="amenity-name">زهور وتنسيق</div></div>
+          <div class="amenity"><span class="amenity-icon">🚗</span><div class="amenity-name">مواقف سيارات</div></div>
+        </div>
+      </div>
+
+      <div id="tab-services" class="detail-about hidden">
+        <h3>المرافق والخدمات المتوفرة</h3>
+        <p>نقدم باقة متكاملة من الخدمات لضمان نجاح مناسبتك من أول لحظة حتى آخرها.</p>
+        <div class="amenities-grid">
+          <div class="amenity"><span class="amenity-icon">🎊</span><div class="amenity-name">ترتيب ديكور</div></div>
+          <div class="amenity"><span class="amenity-icon">🍽️</span><div class="amenity-name">بوفيه فاخر</div></div>
+          <div class="amenity"><span class="amenity-icon">🎵</span><div class="amenity-name">صوتيات</div></div>
+          <div class="amenity"><span class="amenity-icon">💡</span><div class="amenity-name">إضاءة</div></div>
+          <div class="amenity"><span class="amenity-icon">🌸</span><div class="amenity-name">زهور</div></div>
+          <div class="amenity"><span class="amenity-icon">🚗</span><div class="amenity-name">مواقف</div></div>
+          <div class="amenity"><span class="amenity-icon">🧹</span><div class="amenity-name">تنظيف</div></div>
+          <div class="amenity"><span class="amenity-icon">👗</span><div class="amenity-name">غرفة تبديل</div></div>
+        </div>
+      </div>
+
+      <div id="tab-prices" class="detail-about hidden">
+        <h3>الأسعار والباقات</h3>
+        <p>نقدم باقات متنوعة تناسب جميع الميزانيات مع الحفاظ على أعلى مستويات الجودة.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px;">
+          <div style="padding:20px;border:1px solid var(--border);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;">
+            <div><div style="font-size:17px;font-weight:700;">الباقة الأساسية</div><div style="color:var(--text-light);font-size:14px;margin-top:4px;">بوفيه + ترتيب بسيط</div></div>
+            <div style="font-size:22px;font-weight:800;color:var(--brand);">3,000 ر.س</div>
+          </div>
+          <div style="padding:20px;border:2px solid var(--brand);border-radius:var(--radius);background:var(--brand-pale);display:flex;justify-content:space-between;align-items:center;">
+            <div><div style="font-size:17px;font-weight:700;">الباقة الذهبية ✦</div><div style="color:var(--text-light);font-size:14px;margin-top:4px;">بوفيه + ديكور + صوتيات + طقاقة</div></div>
+            <div style="font-size:22px;font-weight:800;color:var(--brand);">6,500 ر.س</div>
+          </div>
+          <div style="padding:20px;border:1px solid var(--border);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;">
+            <div><div style="font-size:17px;font-weight:700;">الباقة البلاتينية</div><div style="color:var(--text-light);font-size:14px;margin-top:4px;">باقة متكاملة شاملة</div></div>
+            <div style="font-size:22px;font-weight:800;color:var(--brand);">12,000 ر.س</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-location" class="detail-about hidden">
+        <h3>الموقع</h3>
+        <p>📍 الرياض — شمال الرياض، طريق الملك سلمان</p>
+        <div class="map-placeholder">
+          <span>🗺️</span>
+          <div>عرض الموقع على الخريطة</div>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="reviews-section">
+        <h3>تقييمات العملاء</h3>
+        <div class="reviews-summary">
+          <div style="text-align:center;">
+            <div class="rev-big-num">4.9</div>
+            <div class="rev-big-stars">★★★★★</div>
+            <div class="rev-big-count">312 تقييم</div>
+          </div>
+          <div class="rev-bars">
+            <div class="rev-bar-row"><span class="rev-bar-label">5★</span><div class="rev-bar-track"><div class="rev-bar-fill" style="width:90%"></div></div><span class="rev-bar-count">280</span></div>
+            <div class="rev-bar-row"><span class="rev-bar-label">4★</span><div class="rev-bar-track"><div class="rev-bar-fill" style="width:7%"></div></div><span class="rev-bar-count">22</span></div>
+            <div class="rev-bar-row"><span class="rev-bar-label">3★</span><div class="rev-bar-track"><div class="rev-bar-fill" style="width:2%"></div></div><span class="rev-bar-count">6</span></div>
+            <div class="rev-bar-row"><span class="rev-bar-label">2★</span><div class="rev-bar-track"><div class="rev-bar-fill" style="width:1%"></div></div><span class="rev-bar-count">3</span></div>
+            <div class="rev-bar-row"><span class="rev-bar-label">1★</span><div class="rev-bar-track"><div class="rev-bar-fill" style="width:0.3%"></div></div><span class="rev-bar-count">1</span></div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="rev-avatar">ه</div>
+            <div>
+              <div class="rev-name">هند الشمري</div>
+              <div class="rev-stars">★★★★★</div>
+            </div>
+            <div class="rev-date" style="margin-right:auto;font-size:12px;color:var(--text-light);">منذ 3 أيام</div>
+          </div>
+          <div class="rev-text">تجربة رائعة جداً، الخدمة احترافية والبوفيه كان لذيذاً وعرضه كان متميزاً. أنصح الكل يتعاملون معهم!</div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="rev-avatar">س</div>
+            <div>
+              <div class="rev-name">سارة القحطاني</div>
+              <div class="rev-stars">★★★★★</div>
+            </div>
+            <div class="rev-date" style="margin-right:auto;font-size:12px;color:var(--text-light);">منذ أسبوع</div>
+          </div>
+          <div class="rev-text">استخدمت خدماتهم في حفل خطوبتي، كان كل شيء مثالياً من البداية للنهاية. شكراً جزيلاً!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL SIDEBAR -->
+    <div class="detail-sidebar">
+      <div class="cta-card">
+        <div class="price-box">
+          <div class="price-from">السعر يبدأ من</div>
+          <div class="price-num">3,000 <span class="price-currency">ر.س</span></div>
+          <div class="price-note">* السعر يختلف حسب الباقة والتاريخ</div>
+        </div>
+        <div class="cta-provider-contact">
+          <h4>تواصلي مع المزود</h4>
+          <p>رد سريع خلال دقائق</p>
+        </div>
+        <button class="cta-btn cta-whatsapp">📱 تواصل عبر واتساب</button>
+        <button class="cta-btn cta-call">📞 اتصال مباشر</button>
+        <button class="cta-btn cta-fav" onclick="showToast('تمت الإضافة للمفضلة 🤍')">🤍 احفظي للمفضلة</button>
+        <div class="quick-info">
+          <div class="quick-info-title">معلومات سريعة</div>
+          <div class="quick-row"><span class="quick-icon">🏢</span><span class="quick-key">نوع الخدمة</span><span class="quick-val">ترتيب مناسبات</span></div>
+          <div class="quick-row"><span class="quick-icon">📍</span><span class="quick-key">المدينة</span><span class="quick-val">الرياض</span></div>
+          <div class="quick-row"><span class="quick-icon">📍</span><span class="quick-key">المنطقة</span><span class="quick-val">شمال الرياض</span></div>
+          <div class="quick-row"><span class="quick-icon">⭐</span><span class="quick-key">التقييم</span><span class="quick-val">4.9 / 5</span></div>
+          <div class="quick-row"><span class="quick-icon">💬</span><span class="quick-key">التقييمات</span><span class="quick-val">312 تقييم</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">تمت الإضافة للمفضلة 🤍</div>
+
+<script>
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleAuth(mode) {
+  if (mode === 'register') {
+    document.getElementById('login-form-wrap').classList.add('hidden');
+    document.getElementById('register-form-wrap').classList.remove('hidden');
+  } else {
+    document.getElementById('register-form-wrap').classList.add('hidden');
+    document.getElementById('login-form-wrap').classList.remove('hidden');
+  }
+}
+
+function doLogin() {
+  showToast('مرحباً بك في إزهليها ✨');
+  setTimeout(() => goTo('listing'), 600);
+}
+
+function changeImg(el, src) {
+  document.getElementById('main-gallery-img').src = src;
+  document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showTab(btn, tabId) {
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['tab-overview','tab-services','tab-prices','tab-location'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById(tabId).classList.remove('hidden');
+}
+
+function favToggle(btn) {
+  if (btn.textContent === '🤍') {
+    btn.textContent = '❤️';
+    showToast('أُضيف للمفضلة ❤️');
+  } else {
+    btn.textContent = '🤍';
+    showToast('حُذف من المفضلة');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.querySelectorAll('.star-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.star-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+const AREAS = {
+  riyadh: ['كل المناطق','شمال الرياض','جنوب الرياض','العليا','حي الياسمين','الروضة','حي الملك فهد','النزهة'],
+  jeddah: ['كل المناطق','حي الروضة','حي الصفا','حي الشاطئ','أبحر الشمالية','حي السلامة','حي البساتين','حي النعيم']
+};
+function onCityChange(city) {
+  const areaSel = document.getElementById('area-select');
+  areaSel.innerHTML = '';
+  AREAS[city].forEach(a => {
+    const o = document.createElement('option');
+    o.textContent = a;
+    areaSel.appendChild(o);
+  });
+  const riy = document.getElementById('grid-riyadh');
+  const jed = document.getElementById('grid-jeddah');
+  const desc = document.getElementById('listing-desc');
+  if (city === 'jeddah') {
+    riy.classList.add('hidden');
+    jed.classList.remove('hidden');
+    if (desc) desc.textContent = 'مجموعة مختارة من أفضل مزودي خدمات المناسبات في جدة';
+  } else {
+    jed.classList.add('hidden');
+    riy.classList.remove('hidden');
+    if (desc) desc.textContent = 'مجموعة مختارة من أفضل مزودي خدمات المناسبات في الرياض';
+  }
+}
+</script>
+</body>
+</html>
