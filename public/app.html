@@ -451,7 +451,7 @@ body { font-family:'Tajawal',sans-serif; background:var(--brand-cream); color:va
       <span class="nav-link">طريقة الاشتراك</span>
       <span class="nav-link">المزايا</span>
       <span class="nav-link">الأسئلة الشائعة</span>
-      <button class="nav-btn" onclick="goTo('login')">اشتركي الآن</button>
+      <button class="nav-btn" onclick="window.top.location.href='/login'">اشتركي الآن</button>
     </div>
   </nav>
 
@@ -800,8 +800,8 @@ body { font-family:'Tajawal',sans-serif; background:var(--brand-cream); color:va
             <input class="form-input" type="password" placeholder="••••••••" id="login-pass">
             <a class="form-forgot">نسيت كلمة المرور؟</a>
           </div>
-          <button class="btn-auth" onclick="doLogin()">تسجيل الدخول</button>
-          <div class="auth-switch">ليس لديك حساب؟ <a onclick="toggleAuth('register')">اشتركي الآن</a></div>
+          <button class="btn-auth" onclick="window.top.location.href='/login'">تسجيل الدخول</button>
+          <div class="auth-switch">ليس لديك حساب؟ <a onclick="window.top.location.href='/signup'">اشتركي الآن</a></div>
         </div>
         <div id="register-form-wrap" class="hidden">
           <h2 class="auth-form-title">إنشاء حساب جديد</h2>
@@ -832,8 +832,8 @@ body { font-family:'Tajawal',sans-serif; background:var(--brand-cream); color:va
               <option>الدمام</option>
             </select>
           </div>
-          <button class="btn-auth" onclick="doLogin()">إنشاء الحساب</button>
-          <div class="auth-switch">لديك حساب بالفعل؟ <a onclick="toggleAuth('login')">تسجيل الدخول</a></div>
+          <button class="btn-auth" onclick="window.top.location.href='/login'">إنشاء الحساب</button>
+          <div class="auth-switch">لديك حساب بالفعل؟ <a onclick="window.top.location.href='/login'">تسجيل الدخول</a></div>
         </div>
       </div>
     </div>
