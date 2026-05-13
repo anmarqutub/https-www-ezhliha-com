@@ -7,7 +7,6 @@ export const getAdminUsers = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Verify caller is admin via RLS-respecting client
     const { data: roleRow } = await supabase
       .from("user_roles")
       .select("role")
@@ -19,7 +18,6 @@ export const getAdminUsers = createServerFn({ method: "GET" })
       throw new Response("Forbidden", { status: 403 });
     }
 
-    // Use admin client to enumerate all auth users (for last_sign_in_at)
     const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.listUsers({
       page: 1,
       perPage: 1000,
@@ -61,4 +59,25 @@ export const getAdminUsers = createServerFn({ method: "GET" })
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       ),
     };
+  });
+
+// Promotes the current user to admin if NO admin exists yet.
+// Safe one-time bootstrap for the project owner.
+export const claimFirstAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { count, error: cErr } = await supabaseAdmin
+      .from("user_roles")
+      .select("*", { count: "exact", head: true })
+      .eq("role", "admin");
+    if (cErr) throw new Response(cErr.message, { status: 500 });
+    if ((count ?? 0) > 0) {
+      throw new Response("Admin already exists", { status: 409 });
+    }
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: userId, role: "admin" });
+    if (error) throw new Response(error.message, { status: 500 });
+    return { success: true };
   });
