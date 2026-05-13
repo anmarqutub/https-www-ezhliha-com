@@ -83,7 +83,7 @@ export function AuthShell({ title, sub, children }: { title: string; sub: string
       <div className="auth-card">
         <Link to="/" className="auth-brand">
           <div className="auth-brand-name">إزهليها</div>
-          <div className="auth-brand-en">AZHLEHA</div>
+          <div className="auth-brand-en">EZHLIHA</div>
         </Link>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-sub">{sub}</p>
