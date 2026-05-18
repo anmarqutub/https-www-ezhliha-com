@@ -101,8 +101,7 @@ function AdminPage() {
           <SideBtn label="المستخدمات" active={tab === "users"} onClick={() => setTab("users")} />
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
-          <SideBtn label="التصنيفات الرئيسية" active={tab === "categories"} onClick={() => setTab("categories")} />
-          <SideBtn label="التصنيفات الفرعية" active={tab === "subcategories"} onClick={() => setTab("subcategories")} />
+          <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
         </aside>
         <main className="adm-content">
@@ -110,7 +109,6 @@ function AdminPage() {
           {tab === "users" && <StatsAndUsers showUsers={true} />}
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
-          {tab === "subcategories" && <SubcategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
         </main>
       </div>
