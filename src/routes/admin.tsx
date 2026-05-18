@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
 });
 
-type Tab = "stats" | "users" | "cities" | "categories" | "subcategories" | "providers";
+type Tab = "stats" | "users" | "cities" | "categories" | "providers";
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
@@ -101,8 +101,7 @@ function AdminPage() {
           <SideBtn label="المستخدمات" active={tab === "users"} onClick={() => setTab("users")} />
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
-          <SideBtn label="التصنيفات الرئيسية" active={tab === "categories"} onClick={() => setTab("categories")} />
-          <SideBtn label="التصنيفات الفرعية" active={tab === "subcategories"} onClick={() => setTab("subcategories")} />
+          <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
         </aside>
         <main className="adm-content">
@@ -110,7 +109,6 @@ function AdminPage() {
           {tab === "users" && <StatsAndUsers showUsers={true} />}
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
-          {tab === "subcategories" && <SubcategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
         </main>
       </div>
@@ -278,150 +276,185 @@ function CitiesTab() {
   );
 }
 
-// ============ CATEGORIES ============
+// ============ CATEGORIES (unified: main + sub) ============
 type CatRow = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; sort_order: number; active: boolean };
-
-function CategoriesTab() {
-  const [rows, setRows] = useState<CatRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Partial<CatRow> | null>(null);
-
-  const reload = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase.from("categories").select("*").order("sort_order");
-    setRows((data ?? []) as CatRow[]);
-    setLoading(false);
-  }, []);
-  useEffect(() => { reload(); }, [reload]);
-
-  const save = async () => {
-    if (!editing?.name_ar || !editing?.name_en || !editing?.slug) { alert("املئي الحقول"); return; }
-    const payload = {
-      name_ar: editing.name_ar, name_en: editing.name_en, slug: editing.slug,
-      icon: editing.icon ?? null, sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
-    };
-    if (editing.id) await supabase.from("categories").update(payload).eq("id", editing.id);
-    else await supabase.from("categories").insert(payload);
-    setEditing(null); reload();
-  };
-  const del = async (id: string) => {
-    if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
-    await supabase.from("categories").delete().eq("id", id); reload();
-  };
-
-  return (
-    <>
-      <SectionHeader title="التصنيفات الرئيسية" onAdd={() => setEditing({ active: true, sort_order: 0 })} />
-      <div className="adm-card">
-        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead><tr><th>الأيقونة</th><th>الاسم</th><th>English</th><th>Slug</th><th>الترتيب</th><th>الحالة</th><th></th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td style={{ fontSize: 22 }}>{r.icon}</td>
-                    <td>{r.name_ar}</td><td>{r.name_en}</td><td>{r.slug}</td><td>{r.sort_order}</td>
-                    <td><span className={`adm-badge ${r.active ? "adm-badge-on" : ""}`}>{r.active ? "مفعّلة" : "متوقفة"}</span></td>
-                    <td>
-                      <button className="adm-btn-sm" onClick={() => setEditing(r)}>تعديل</button>
-                      <button className="adm-btn-sm adm-btn-danger" onClick={() => del(r.id)}>حذف</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      {editing && (
-        <Modal title={editing.id ? "تعديل تصنيف" : "إضافة تصنيف"} onClose={() => setEditing(null)} onSave={save}>
-          <Field label="الاسم بالعربي"><input value={editing.name_ar ?? ""} onChange={(e) => setEditing({ ...editing, name_ar: e.target.value })} /></Field>
-          <Field label="الاسم بالإنجليزي"><input value={editing.name_en ?? ""} onChange={(e) => setEditing({ ...editing, name_en: e.target.value })} /></Field>
-          <Field label="Slug"><input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} /></Field>
-          <Field label="أيقونة (Emoji)"><input value={editing.icon ?? ""} onChange={(e) => setEditing({ ...editing, icon: e.target.value })} placeholder="💇‍♀️" /></Field>
-          <Field label="الترتيب"><input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} /></Field>
-          <Field label="مفعّلة"><input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} /></Field>
-        </Modal>
-      )}
-    </>
-  );
-}
-
-// ============ SUBCATEGORIES ============
 type SubRow = { id: string; category_id: string; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
 
-function SubcategoriesTab() {
-  const [rows, setRows] = useState<SubRow[]>([]);
+type EditingCat = {
+  id?: string;
+  name_ar?: string;
+  icon?: string | null;
+  sort_order?: number;
+  active?: boolean;
+  parent_id: string; // "" means it's a main category
+  originalKind?: "main" | "sub"; // tracks original type when editing
+};
+
+function makeSlug(name: string) {
+  const base = (name || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+  const rand = Math.random().toString(36).slice(2, 7);
+  return base ? `${base}-${rand}` : `cat-${rand}`;
+}
+
+function CategoriesTab() {
   const [cats, setCats] = useState<CatRow[]>([]);
+  const [subs, setSubs] = useState<SubRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Partial<SubRow> | null>(null);
+  const [editing, setEditing] = useState<EditingCat | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
-    const [s, c] = await Promise.all([
-      supabase.from("subcategories").select("*").order("sort_order"),
+    const [c, s] = await Promise.all([
       supabase.from("categories").select("*").order("sort_order"),
+      supabase.from("subcategories").select("*").order("sort_order"),
     ]);
-    setRows((s.data ?? []) as SubRow[]);
     setCats((c.data ?? []) as CatRow[]);
+    setSubs((s.data ?? []) as SubRow[]);
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
 
   const save = async () => {
-    if (!editing?.category_id || !editing?.name_ar || !editing?.name_en || !editing?.slug) { alert("املئي الحقول"); return; }
-    const payload = {
-      category_id: editing.category_id, name_ar: editing.name_ar, name_en: editing.name_en,
-      slug: editing.slug, sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
-    };
-    if (editing.id) await supabase.from("subcategories").update(payload).eq("id", editing.id);
-    else await supabase.from("subcategories").insert(payload);
-    setEditing(null); reload();
+    if (!editing) return;
+    const name = (editing.name_ar ?? "").trim();
+    if (!name) { alert("الرجاء إدخال اسم التصنيف"); return; }
+
+    const isSub = !!editing.parent_id;
+    const sort_order = editing.sort_order ?? 0;
+    const active = editing.active ?? true;
+
+    if (editing.id && editing.originalKind) {
+      // Editing existing — type cannot change (select is disabled)
+      if (editing.originalKind === "sub") {
+        await supabase.from("subcategories")
+          .update({ category_id: editing.parent_id, name_ar: name, name_en: name, sort_order, active })
+          .eq("id", editing.id);
+      } else {
+        await supabase.from("categories")
+          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, sort_order, active })
+          .eq("id", editing.id);
+      }
+    } else if (isSub) {
+      await supabase.from("subcategories").insert({
+        category_id: editing.parent_id,
+        name_ar: name, name_en: name, slug: makeSlug(name),
+        sort_order, active,
+      });
+    } else {
+      await supabase.from("categories").insert({
+        name_ar: name, name_en: name, slug: makeSlug(name),
+        icon: editing.icon ?? null, sort_order, active,
+      });
+    }
+    setEditing(null);
+    reload();
   };
-  const del = async (id: string) => {
+
+  const delMain = async (id: string) => {
+    if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
+    await supabase.from("categories").delete().eq("id", id);
+    reload();
+  };
+  const delSub = async (id: string) => {
     if (!confirm("الحذف سيحذف مقدمي الخدمة المرتبطين. متأكدة؟")) return;
-    await supabase.from("subcategories").delete().eq("id", id); reload();
+    await supabase.from("subcategories").delete().eq("id", id);
+    reload();
   };
 
   return (
     <>
-      <SectionHeader title="التصنيفات الفرعية" onAdd={() => setEditing({ active: true, sort_order: 0 })} />
+      <SectionHeader title="التصنيفات" onAdd={() => setEditing({ active: true, sort_order: 0, parent_id: "" })} />
       <div className="adm-card">
-        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead><tr><th>التصنيف الرئيسي</th><th>الاسم</th><th>English</th><th>Slug</th><th>الترتيب</th><th>الحالة</th><th></th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td>{cats.find((c) => c.id === r.category_id)?.name_ar ?? "—"}</td>
-                    <td>{r.name_ar}</td><td>{r.name_en}</td><td>{r.slug}</td><td>{r.sort_order}</td>
-                    <td><span className={`adm-badge ${r.active ? "adm-badge-on" : ""}`}>{r.active ? "مفعّلة" : "متوقفة"}</span></td>
-                    <td>
-                      <button className="adm-btn-sm" onClick={() => setEditing(r)}>تعديل</button>
-                      <button className="adm-btn-sm adm-btn-danger" onClick={() => del(r.id)}>حذف</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : cats.length === 0 ? (
+          <p className="adm-empty">لا توجد تصنيفات بعد. ابدئي بإضافة تصنيف رئيسي.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {cats.map((c) => {
+              const children = subs.filter((s) => s.category_id === c.id);
+              return (
+                <div key={c.id} style={{ border: "1px solid #E8DADA", borderRadius: 12, padding: 14, background: "#fff" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 22 }}>{c.icon ?? "📁"}</span>
+                      <strong style={{ fontSize: 16 }}>{c.name_ar}</strong>
+                      <span className={`adm-badge ${c.active ? "adm-badge-on" : ""}`}>{c.active ? "مفعّل" : "متوقف"}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <button className="adm-btn-sm" onClick={() => setEditing({ active: true, sort_order: 0, parent_id: c.id })}>+ تصنيف فرعي</button>
+                      <button className="adm-btn-sm" onClick={() => setEditing({ id: c.id, name_ar: c.name_ar, icon: c.icon, sort_order: c.sort_order, active: c.active, parent_id: "", originalKind: "main" })}>تعديل</button>
+                      <button className="adm-btn-sm adm-btn-danger" onClick={() => delMain(c.id)}>حذف</button>
+                    </div>
+                  </div>
+                  {children.length > 0 && (
+                    <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6, paddingRight: 16, borderRight: "2px solid #F0E5E5" }}>
+                      {children.map((s) => (
+                        <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#FAF6F2", borderRadius: 8 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ color: "#9A8A8A" }}>↳</span>
+                            <span>{s.name_ar}</span>
+                            <span className={`adm-badge ${s.active ? "adm-badge-on" : ""}`} style={{ fontSize: 10 }}>{s.active ? "مفعّل" : "متوقف"}</span>
+                          </div>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            <button className="adm-btn-sm" onClick={() => setEditing({ id: s.id, name_ar: s.name_ar, sort_order: s.sort_order, active: s.active, parent_id: s.category_id, originalKind: "sub" })}>تعديل</button>
+                            <button className="adm-btn-sm adm-btn-danger" onClick={() => delSub(s.id)}>حذف</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
+
       {editing && (
-        <Modal title={editing.id ? "تعديل تصنيف فرعي" : "إضافة تصنيف فرعي"} onClose={() => setEditing(null)} onSave={save}>
-          <Field label="التصنيف الرئيسي">
-            <select value={editing.category_id ?? ""} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })}>
-              <option value="">اختاري...</option>
-              {cats.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+        <Modal
+          title={editing.id ? "تعديل تصنيف" : "إضافة تصنيف"}
+          onClose={() => setEditing(null)}
+          onSave={save}
+        >
+          <Field label="اسم التصنيف *">
+            <input
+              autoFocus
+              value={editing.name_ar ?? ""}
+              onChange={(e) => setEditing({ ...editing, name_ar: e.target.value })}
+              placeholder="مثال: صالونات تجميل"
+            />
+          </Field>
+          <Field label="التصنيف الأساسي (اتركيه فارغًا إذا كان تصنيفًا رئيسيًا)">
+            <select
+              value={editing.parent_id}
+              disabled={!!editing.id}
+              onChange={(e) => setEditing({ ...editing, parent_id: e.target.value })}
+            >
+              <option value="">— تصنيف رئيسي —</option>
+              {cats.filter((c) => c.id !== editing.id).map((c) => (
+                <option key={c.id} value={c.id}>{c.name_ar}</option>
+              ))}
             </select>
           </Field>
-          <Field label="الاسم بالعربي"><input value={editing.name_ar ?? ""} onChange={(e) => setEditing({ ...editing, name_ar: e.target.value })} /></Field>
-          <Field label="الاسم بالإنجليزي"><input value={editing.name_en ?? ""} onChange={(e) => setEditing({ ...editing, name_en: e.target.value })} /></Field>
-          <Field label="Slug"><input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} /></Field>
-          <Field label="الترتيب"><input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} /></Field>
-          <Field label="مفعّلة"><input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} /></Field>
+          {!editing.parent_id && (
+            <Field label="أيقونة (Emoji — اختياري)">
+              <input
+                value={editing.icon ?? ""}
+                onChange={(e) => setEditing({ ...editing, icon: e.target.value })}
+                placeholder="💇‍♀️"
+              />
+            </Field>
+          )}
+          <Field label="الترتيب">
+            <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} />
+          </Field>
+          <Field label="مفعّل">
+            <input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} />
+          </Field>
         </Modal>
       )}
     </>
