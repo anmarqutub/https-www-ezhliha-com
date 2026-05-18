@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
 });
 
-type Tab = "stats" | "users" | "cities" | "categories" | "subcategories" | "providers";
+type Tab = "stats" | "users" | "cities" | "categories" | "providers";
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
