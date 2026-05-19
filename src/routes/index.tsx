@@ -421,8 +421,8 @@ const css = `
     .ez-hero { padding:36px 16px 28px; }
     .ez-step, .ez-main { padding-left:16px; padding-right:16px; }
     .ez-cat-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
-    .ez-cat-card { padding:18px 14px; min-height:140px; }
-    .ez-cat-card .ez-cat-name { font-size:15px; top:16px; right:14px; }
-    .ez-cat-icon { font-size:28px; margin-top:24px; }
+    .ez-cat-card { padding:14px; min-height:120px; }
+    .ez-cat-card .ez-cat-name { font-size:14px; }
+    .ez-cat-icon { font-size:24px; }
   }
 `;
