@@ -47,8 +47,8 @@ function Home() {
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedCity, setSelectedCity] = useState<string | "all">("all");
-  const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSub, setSelectedSub] = useState<string | "all">("all");
   const [search, setSearch] = useState("");
 
@@ -66,7 +66,9 @@ function Home() {
           .order("sort_order"),
         supabase.from("provider_images").select("*").order("sort_order"),
       ]);
-      setCities((cRes.data ?? []) as City[]);
+      const citiesData = (cRes.data ?? []) as City[];
+      setCities(citiesData);
+      if (citiesData.length > 0) setSelectedCity(citiesData[0].id);
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
       setProviders((pRes.data ?? []) as Provider[]);
@@ -74,16 +76,6 @@ function Home() {
       setLoading(false);
     })();
   }, []);
-
-  const subsByCat = useMemo(() => {
-    const m = new Map<string, Subcategory[]>();
-    subcategories.forEach((s) => {
-      const arr = m.get(s.category_id) ?? [];
-      arr.push(s);
-      m.set(s.category_id, arr);
-    });
-    return m;
-  }, [subcategories]);
 
   const imgsByProvider = useMemo(() => {
     const m = new Map<string, ProviderImage[]>();
@@ -95,18 +87,31 @@ function Home() {
     return m;
   }, [images]);
 
-  const visibleSubs =
-    selectedCategory === "all"
-      ? subcategories
-      : subcategories.filter((s) => s.category_id === selectedCategory);
+  // Subs for selected category
+  const visibleSubs = selectedCategory
+    ? subcategories.filter((s) => s.category_id === selectedCategory)
+    : [];
 
-  const filtered = providers.filter((p) => {
-    if (selectedCity !== "all" && p.city_id !== selectedCity) return false;
+  // Providers count per category (for the selected city)
+  const providersCountByCat = useMemo(() => {
+    const m = new Map<string, number>();
+    const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
+    providers.forEach((p) => {
+      if (selectedCity && p.city_id !== selectedCity) return;
+      const cat = subToCat.get(p.subcategory_id);
+      if (!cat) return;
+      m.set(cat, (m.get(cat) ?? 0) + 1);
+    });
+    return m;
+  }, [providers, subcategories, selectedCity]);
+
+  // Providers for current category view
+  const categoryProviders = providers.filter((p) => {
+    if (selectedCity && p.city_id !== selectedCity) return false;
+    const sub = subcategories.find((s) => s.id === p.subcategory_id);
+    if (!sub) return false;
+    if (selectedCategory && sub.category_id !== selectedCategory) return false;
     if (selectedSub !== "all" && p.subcategory_id !== selectedSub) return false;
-    if (selectedCategory !== "all") {
-      const sub = subcategories.find((s) => s.id === p.subcategory_id);
-      if (!sub || sub.category_id !== selectedCategory) return false;
-    }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       if (!p.name.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q))
@@ -115,10 +120,12 @@ function Home() {
     return true;
   });
 
-  const featured = filtered.filter(
+  const featured = categoryProviders.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
   );
-  const regular = filtered.filter((p) => !featured.includes(p));
+  const regular = categoryProviders.filter((p) => !featured.includes(p));
+
+  const activeCategory = categories.find((c) => c.id === selectedCategory);
 
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#FAF6F2", fontFamily: "Tajawal, system-ui, sans-serif", color: "#1A1A1A" }}>
@@ -151,86 +158,106 @@ function Home() {
         <div className="ez-hero-inner">
           <h1>إزهليها</h1>
           <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
-          <div className="ez-search">
-            <input
-              type="text"
-              placeholder="ابحثي عن مصورة، صالون، قاعة..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
         </div>
       </section>
 
-      <section className="ez-filters">
-        <div className="ez-filter-row">
-          <label>المدينة</label>
-          <div className="ez-chips">
-            <button className={selectedCity === "all" ? "active" : ""} onClick={() => setSelectedCity("all")}>الكل</button>
-            {cities.map((c) => (
-              <button
-                key={c.id}
-                className={selectedCity === c.id ? "active" : ""}
-                onClick={() => setSelectedCity(c.id)}
-              >
-                {c.name_ar}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="ez-filter-row">
-          <label>التصنيف</label>
-          <div className="ez-chips">
-            <button
-              className={selectedCategory === "all" ? "active" : ""}
-              onClick={() => {
-                setSelectedCategory("all");
-                setSelectedSub("all");
-              }}
-            >
-              الكل
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                className={selectedCategory === c.id ? "active" : ""}
-                onClick={() => {
-                  setSelectedCategory(c.id);
-                  setSelectedSub("all");
-                }}
-              >
-                {c.icon} {c.name_ar}
-              </button>
-            ))}
-          </div>
-        </div>
-        {visibleSubs.length > 0 && selectedCategory !== "all" && (
-          <div className="ez-filter-row">
-            <label>التصنيف الفرعي</label>
-            <div className="ez-chips">
-              <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
-              {visibleSubs.map((s) => (
-                <button
-                  key={s.id}
-                  className={selectedSub === s.id ? "active" : ""}
-                  onClick={() => setSelectedSub(s.id)}
-                >
-                  {s.name_ar}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+      {/* Step 1: City dropdown */}
+      <section className="ez-step">
+        <label className="ez-step-label">📍 اختاري مدينتك</label>
+        <select
+          className="ez-select"
+          value={selectedCity}
+          onChange={(e) => {
+            setSelectedCity(e.target.value);
+            setSelectedCategory(null);
+            setSelectedSub("all");
+          }}
+        >
+          {cities.length === 0 && <option value="">لا توجد مدن بعد</option>}
+          {cities.map((c) => (
+            <option key={c.id} value={c.id}>{c.name_ar}</option>
+          ))}
+        </select>
       </section>
 
       <main className="ez-main">
         {loading ? (
           <p className="ez-empty">جارٍ التحميل...</p>
-        ) : (
+        ) : !selectedCategory ? (
+          // Step 2: Main categories as cards
           <>
+            <div className="ez-section-head">
+              <h2 className="ez-section-title">✿ تصفحي حسب التصنيف</h2>
+            </div>
+            {categories.length === 0 ? (
+              <p className="ez-empty">
+                لا توجد تصنيفات بعد. {isAdmin && <Link to="/admin">اذهبي للوحة الأدمن لإضافة تصنيفات.</Link>}
+              </p>
+            ) : (
+              <div className="ez-cat-grid">
+                {categories.map((c) => {
+                  const count = providersCountByCat.get(c.id) ?? 0;
+                  return (
+                    <button
+                      key={c.id}
+                      className="ez-cat-card"
+                      onClick={() => {
+                        setSelectedCategory(c.id);
+                        setSelectedSub("all");
+                        setSearch("");
+                      }}
+                    >
+                      <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                      <div className="ez-cat-name">{c.name_ar}</div>
+                      <div className="ez-cat-meta">
+                        {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
+                        <span className="ez-cat-arrow">‹</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        ) : (
+          // Step 3: Subcategories + providers for selected category
+          <>
+            <div className="ez-section-head">
+              <button className="ez-back" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); setSearch(""); }}>
+                ‹ رجوع للتصنيفات
+              </button>
+              <h2 className="ez-section-title">
+                {activeCategory?.icon} {activeCategory?.name_ar}
+              </h2>
+            </div>
+
+            <div className="ez-search">
+              <input
+                type="text"
+                placeholder="ابحثي داخل هذا التصنيف..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            {visibleSubs.length > 0 && (
+              <div className="ez-chips" style={{ marginBottom: 18 }}>
+                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
+                {visibleSubs.map((s) => (
+                  <button
+                    key={s.id}
+                    className={selectedSub === s.id ? "active" : ""}
+                    onClick={() => setSelectedSub(s.id)}
+                  >
+                    {s.name_ar}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {featured.length > 0 && (
               <>
-                <h2 className="ez-section-title">⭐ مقدمو خدمة مميزون</h2>
+                <h3 className="ez-sub-title">⭐ مقدمو خدمة مميزون</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
@@ -247,7 +274,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h2 className="ez-section-title">جميع مقدمي الخدمة</h2>
+                <h3 className="ez-sub-title">جميع مقدمي الخدمة</h3>
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
@@ -261,9 +288,9 @@ function Home() {
                 </div>
               </>
             )}
-            {filtered.length === 0 && (
+            {categoryProviders.length === 0 && (
               <p className="ez-empty">
-                لا يوجد مقدمو خدمة بعد. {isAdmin && <Link to="/admin">اذهبي للوحة الأدمن لإضافة مقدمي خدمة.</Link>}
+                لا يوجد مقدمو خدمة في هذا التصنيف بعد.
               </p>
             )}
           </>
@@ -339,22 +366,36 @@ const css = `
   .ez-nav-btn { background:#6B1F1F; color:#fff; padding:8px 18px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:600; }
   .ez-nav-btn:hover { background:#4A1414; }
   .ez-nav-btn-out { background:transparent; color:#6B1F1F; border:1px solid #6B1F1F; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
-  .ez-hero { background:linear-gradient(135deg,#6B1F1F,#4A1414); color:#fff; padding:60px 24px 50px; text-align:center; }
-  .ez-hero h1 { font-size:42px; font-weight:900; margin-bottom:8px; }
-  .ez-hero p { font-size:16px; opacity:.9; margin-bottom:28px; max-width:600px; margin-inline:auto; }
-  .ez-search { max-width:520px; margin:0 auto; background:#fff; border-radius:50px; padding:6px; }
-  .ez-search input { width:100%; border:none; outline:none; padding:12px 22px; font-size:15px; font-family:inherit; border-radius:50px; background:transparent; color:#1A1A1A; }
-  .ez-filters { max-width:1200px; margin:24px auto 8px; padding:0 24px; }
-  .ez-filter-row { margin-bottom:14px; }
-  .ez-filter-row label { display:block; font-size:13px; color:#5A4A4A; margin-bottom:6px; font-weight:600; }
+  .ez-hero { background:linear-gradient(135deg,#6B1F1F,#4A1414); color:#fff; padding:50px 24px 40px; text-align:center; }
+  .ez-hero h1 { font-size:38px; font-weight:900; margin-bottom:8px; }
+  .ez-hero p { font-size:15px; opacity:.9; max-width:600px; margin-inline:auto; }
+  .ez-step { max-width:1200px; margin:20px auto 0; padding:0 24px; }
+  .ez-step-label { display:block; font-size:14px; color:#5A4A4A; margin-bottom:8px; font-weight:700; }
+  .ez-select { width:100%; max-width:420px; background:#fff; border:1px solid #E8DADA; border-radius:14px; padding:12px 18px; font-size:15px; font-family:inherit; color:#1A1A1A; cursor:pointer; outline:none; }
+  .ez-select:focus { border-color:#6B1F1F; }
+  .ez-main { max-width:1200px; margin:0 auto; padding:24px; }
+  .ez-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0 18px; flex-wrap:wrap; }
+  .ez-section-title { font-size:20px; font-weight:800; color:#1A1A1A; }
+  .ez-sub-title { font-size:16px; font-weight:800; color:#1A1A1A; margin:18px 0 12px; }
+  .ez-back { background:transparent; border:none; color:#6B1F1F; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:4px 0; }
+  .ez-empty { text-align:center; color:#5A4A4A; padding:40px; font-size:15px; }
+  .ez-empty a { color:#6B1F1F; font-weight:700; }
+  .ez-search { background:#fff; border:1px solid #E8DADA; border-radius:50px; padding:6px; margin-bottom:18px; max-width:520px; }
+  .ez-search input { width:100%; border:none; outline:none; padding:10px 18px; font-size:14px; font-family:inherit; border-radius:50px; background:transparent; color:#1A1A1A; }
   .ez-chips { display:flex; flex-wrap:wrap; gap:8px; }
   .ez-chips button { background:#fff; border:1px solid #E8DADA; padding:7px 14px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:#5A4A4A; transition:all .2s; }
   .ez-chips button:hover { border-color:#6B1F1F; color:#6B1F1F; }
   .ez-chips button.active { background:#6B1F1F; color:#fff; border-color:#6B1F1F; }
-  .ez-main { max-width:1200px; margin:0 auto; padding:24px; }
-  .ez-section-title { font-size:20px; font-weight:800; color:#1A1A1A; margin:24px 0 14px; }
-  .ez-empty { text-align:center; color:#5A4A4A; padding:40px; font-size:15px; }
-  .ez-empty a { color:#6B1F1F; font-weight:700; }
+
+  /* Main category cards */
+  .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
+  .ez-cat-card { position:relative; background:#fff; border:1px solid #EADADA; border-radius:18px; padding:22px 20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:120px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 2px 8px rgba(107,31,31,0.04); }
+  .ez-cat-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(107,31,31,0.12); border-color:#6B1F1F; background:linear-gradient(135deg, #FDF5F5, #fff); }
+  .ez-cat-icon { font-size:34px; color:#6B1F1F; line-height:1; margin-bottom:4px; align-self:flex-start; }
+  .ez-cat-card .ez-cat-name { font-size:18px; font-weight:800; color:#1A1A1A; position:absolute; top:22px; right:20px; }
+  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:14px; }
+  .ez-cat-arrow { font-size:18px; color:#6B1F1F; font-weight:700; }
+
   .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
   .ez-card { background:#fff; border:1px solid #E8DADA; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(107,31,31,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(107,31,31,0.12); }
@@ -373,8 +414,12 @@ const css = `
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
   .ez-footer { text-align:center; padding:30px; color:#5A4A4A; font-size:13px; border-top:1px solid #E8DADA; margin-top:40px; }
   @media (max-width: 640px) {
-    .ez-hero h1 { font-size:32px; }
-    .ez-hero { padding:40px 16px 30px; }
-    .ez-filters, .ez-main { padding-left:16px; padding-right:16px; }
+    .ez-hero h1 { font-size:30px; }
+    .ez-hero { padding:36px 16px 28px; }
+    .ez-step, .ez-main { padding-left:16px; padding-right:16px; }
+    .ez-cat-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .ez-cat-card { padding:18px 14px; min-height:140px; }
+    .ez-cat-card .ez-cat-name { font-size:15px; top:16px; right:14px; }
+    .ez-cat-icon { font-size:28px; margin-top:24px; }
   }
 `;
