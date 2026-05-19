@@ -207,8 +207,10 @@ function Home() {
                         setSearch("");
                       }}
                     >
-                      <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
-                      <div className="ez-cat-name">{c.name_ar}</div>
+                      <div className="ez-cat-card-head">
+                        <div className="ez-cat-name">{c.name_ar}</div>
+                        <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                      </div>
                       <div className="ez-cat-meta">
                         {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
                         <span className="ez-cat-arrow">‹</span>
@@ -389,11 +391,12 @@ const css = `
 
   /* Main category cards */
   .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-  .ez-cat-card { position:relative; background:#fff; border:1px solid #EADADA; border-radius:18px; padding:22px 20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:120px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 2px 8px rgba(107,31,31,0.04); }
+  .ez-cat-card { background:#fff; border:1px solid #EADADA; border-radius:18px; padding:20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:140px; display:flex; flex-direction:column; gap:12px; box-shadow:0 2px 8px rgba(107,31,31,0.04); }
   .ez-cat-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(107,31,31,0.12); border-color:#6B1F1F; background:linear-gradient(135deg, #FDF5F5, #fff); }
-  .ez-cat-icon { font-size:34px; color:#6B1F1F; line-height:1; margin-bottom:4px; align-self:flex-start; }
-  .ez-cat-card .ez-cat-name { font-size:18px; font-weight:800; color:#1A1A1A; position:absolute; top:22px; right:20px; }
-  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:14px; }
+  .ez-cat-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .ez-cat-icon { font-size:30px; color:#6B1F1F; line-height:1; }
+  .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#1A1A1A; }
+  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:8px; border-top:1px dashed #F0E0E0; }
   .ez-cat-arrow { font-size:18px; color:#6B1F1F; font-weight:700; }
 
   .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
@@ -418,8 +421,8 @@ const css = `
     .ez-hero { padding:36px 16px 28px; }
     .ez-step, .ez-main { padding-left:16px; padding-right:16px; }
     .ez-cat-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
-    .ez-cat-card { padding:18px 14px; min-height:140px; }
-    .ez-cat-card .ez-cat-name { font-size:15px; top:16px; right:14px; }
-    .ez-cat-icon { font-size:28px; margin-top:24px; }
+    .ez-cat-card { padding:14px; min-height:120px; }
+    .ez-cat-card .ez-cat-name { font-size:14px; }
+    .ez-cat-icon { font-size:24px; }
   }
 `;
