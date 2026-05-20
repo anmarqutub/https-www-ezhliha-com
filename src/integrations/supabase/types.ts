@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
+          image_url: string | null
           name_ar: string
           name_en: string
           slug: string
@@ -31,6 +32,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          image_url?: string | null
           name_ar: string
           name_en: string
           slug: string
@@ -42,6 +44,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          image_url?: string | null
           name_ar?: string
           name_en?: string
           slug?: string
@@ -160,8 +163,11 @@ export type Database = {
           price_from: number | null
           price_to: number | null
           rating: number | null
+          snapchat: string | null
           sort_order: number
           subcategory_id: string
+          tiktok: string | null
+          twitter: string | null
           updated_at: string
           whatsapp: string | null
         }
@@ -179,8 +185,11 @@ export type Database = {
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
+          snapchat?: string | null
           sort_order?: number
           subcategory_id: string
+          tiktok?: string | null
+          twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -198,8 +207,11 @@ export type Database = {
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
+          snapchat?: string | null
           sort_order?: number
           subcategory_id?: string
+          tiktok?: string | null
+          twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -228,6 +240,7 @@ export type Database = {
           id: string
           name_ar: string
           name_en: string
+          parent_id: string | null
           slug: string
           sort_order: number
           updated_at: string
@@ -239,6 +252,7 @@ export type Database = {
           id?: string
           name_ar: string
           name_en: string
+          parent_id?: string | null
           slug: string
           sort_order?: number
           updated_at?: string
@@ -250,6 +264,7 @@ export type Database = {
           id?: string
           name_ar?: string
           name_en?: string
+          parent_id?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string
@@ -260,6 +275,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subcategories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
             referencedColumns: ["id"]
           },
         ]
