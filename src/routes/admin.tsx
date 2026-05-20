@@ -586,6 +586,7 @@ function ProvidersTab() {
       price_from: editing.price_from ? +editing.price_from : null,
       price_to: editing.price_to ? +editing.price_to : null,
       whatsapp: editing.whatsapp ?? null, instagram: editing.instagram ?? null,
+      tiktok: editing.tiktok ?? null, twitter: editing.twitter ?? null, snapchat: editing.snapchat ?? null,
       address: editing.address ?? null, rating: editing.rating ?? null,
       is_featured: editing.is_featured ?? false,
       featured_until: editing.featured_until || null,
