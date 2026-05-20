@@ -540,7 +540,9 @@ function CategoriesTab() {
 type ProvRow = {
   id: string; subcategory_id: string; city_id: string; name: string;
   description: string | null; price_from: number | null; price_to: number | null;
-  whatsapp: string | null; instagram: string | null; address: string | null;
+  whatsapp: string | null; instagram: string | null;
+  tiktok: string | null; twitter: string | null; snapchat: string | null;
+  address: string | null;
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
 };
