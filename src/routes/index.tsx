@@ -468,6 +468,16 @@ const css = `
   .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#1A1A1A; }
   .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:8px; border-top:1px dashed #F0E0E0; }
   .ez-cat-arrow { font-size:18px; color:#6B1F1F; font-weight:700; }
+  .ez-cat-img { width:50px; height:50px; border-radius:10px; object-fit:cover; flex-shrink:0; }
+  .ez-chips-tertiary { background:#FDF5F5; padding:8px 12px; border-radius:12px; align-items:center; }
+  .ez-tertiary-label { font-size:12px; color:#8B6F6F; font-weight:700; margin-left:6px; }
+  .ez-socials { display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
+  .ez-soc { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; color:#fff; text-decoration:none; transition:transform .15s; }
+  .ez-soc:hover { transform:scale(1.1); }
+  .ez-soc-ig { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+  .ez-soc-tk { background:#000; }
+  .ez-soc-tw { background:#000; }
+  .ez-soc-sc { background:#FFFC00; color:#000; }
 
   .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
   .ez-card { background:#fff; border:1px solid #E8DADA; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(107,31,31,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }
