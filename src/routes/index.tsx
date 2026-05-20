@@ -18,8 +18,8 @@ export const Route = createFileRoute("/")({
 });
 
 type City = { id: string; name_ar: string; name_en: string; slug: string };
-type Category = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null };
-type Subcategory = { id: string; category_id: string; name_ar: string; name_en: string; slug: string };
+type Category = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; image_url: string | null };
+type Subcategory = { id: string; category_id: string; parent_id: string | null; name_ar: string; name_en: string; slug: string };
 type Provider = {
   id: string;
   subcategory_id: string;
@@ -30,6 +30,9 @@ type Provider = {
   price_to: number | null;
   whatsapp: string | null;
   instagram: string | null;
+  tiktok: string | null;
+  twitter: string | null;
+  snapchat: string | null;
   address: string | null;
   rating: number | null;
   is_featured: boolean;
