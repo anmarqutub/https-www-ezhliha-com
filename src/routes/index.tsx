@@ -18,8 +18,8 @@ export const Route = createFileRoute("/")({
 });
 
 type City = { id: string; name_ar: string; name_en: string; slug: string };
-type Category = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null };
-type Subcategory = { id: string; category_id: string; name_ar: string; name_en: string; slug: string };
+type Category = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; image_url: string | null };
+type Subcategory = { id: string; category_id: string; parent_id: string | null; name_ar: string; name_en: string; slug: string };
 type Provider = {
   id: string;
   subcategory_id: string;
@@ -30,6 +30,9 @@ type Provider = {
   price_to: number | null;
   whatsapp: string | null;
   instagram: string | null;
+  tiktok: string | null;
+  twitter: string | null;
+  snapchat: string | null;
   address: string | null;
   rating: number | null;
   is_featured: boolean;
@@ -87,10 +90,16 @@ function Home() {
     return m;
   }, [images]);
 
-  // Subs for selected category
+  // Top-level subs for selected category
   const visibleSubs = selectedCategory
-    ? subcategories.filter((s) => s.category_id === selectedCategory)
+    ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
+
+  // Tertiaries under currently-selected sub (if any)
+  const visibleTertiaries =
+    selectedSub !== "all"
+      ? subcategories.filter((s) => s.parent_id === selectedSub)
+      : [];
 
   // Providers count per category (for the selected city)
   const providersCountByCat = useMemo(() => {
@@ -105,13 +114,24 @@ function Home() {
     return m;
   }, [providers, subcategories, selectedCity]);
 
+  // Provider matches selected sub if its subcategory equals OR is a descendant
+  const subMatches = (providerSubId: string, selSub: string) => {
+    if (providerSubId === selSub) return true;
+    const ps = subcategories.find((s) => s.id === providerSubId);
+    return !!ps && ps.parent_id === selSub;
+  };
+
   // Providers for current category view
   const categoryProviders = providers.filter((p) => {
     if (selectedCity && p.city_id !== selectedCity) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
-    if (selectedCategory && sub.category_id !== selectedCategory) return false;
-    if (selectedSub !== "all" && p.subcategory_id !== selectedSub) return false;
+    // sub belongs to selected category either directly or via parent
+    if (selectedCategory) {
+      const directCat = sub.category_id === selectedCategory;
+      if (!directCat) return false;
+    }
+    if (selectedSub !== "all" && !subMatches(p.subcategory_id, selectedSub)) return false;
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       if (!p.name.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q))
@@ -209,7 +229,11 @@ function Home() {
                     >
                       <div className="ez-cat-card-head">
                         <div className="ez-cat-name">{c.name_ar}</div>
-                        <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                        {c.image_url ? (
+                          <img src={c.image_url} alt="" className="ez-cat-img" />
+                        ) : (
+                          <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                        )}
                       </div>
                       <div className="ez-cat-meta">
                         {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
@@ -243,7 +267,7 @@ function Home() {
             </div>
 
             {visibleSubs.length > 0 && (
-              <div className="ez-chips" style={{ marginBottom: 18 }}>
+              <div className="ez-chips" style={{ marginBottom: 12 }}>
                 <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
                 {visibleSubs.map((s) => (
                   <button
@@ -252,6 +276,21 @@ function Home() {
                     onClick={() => setSelectedSub(s.id)}
                   >
                     {s.name_ar}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {visibleTertiaries.length > 0 && (
+              <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
+                <span className="ez-tertiary-label">تصنيفات ثانوية:</span>
+                {visibleTertiaries.map((t) => (
+                  <button
+                    key={t.id}
+                    className={selectedSub === t.id ? "active" : ""}
+                    onClick={() => setSelectedSub(t.id)}
+                  >
+                    {t.name_ar}
                   </button>
                 ))}
               </div>
@@ -322,6 +361,11 @@ function ProviderCard({
   const cover = images[0]?.image_url ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600";
   const wa = (provider.whatsapp ?? "").replace(/\D/g, "");
   const waUrl = wa ? `https://wa.me/${wa.startsWith("0") ? "966" + wa.slice(1) : wa}` : null;
+  const clean = (v: string | null) => (v ?? "").trim().replace(/^@/, "").replace(/^https?:\/\/[^/]+\//, "").replace(/\/$/, "");
+  const ig = clean(provider.instagram);
+  const tk = clean(provider.tiktok);
+  const tw = clean(provider.twitter);
+  const sc = clean(provider.snapchat);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
@@ -344,6 +388,32 @@ function ProviderCard({
             {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
           </div>
         )}
+
+        {(ig || tk || tw || sc) && (
+          <div className="ez-socials">
+            {ig && (
+              <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="ez-soc ez-soc-ig">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2 .4-.5.2-.9.4-1.2.7-.3.3-.6.7-.7 1.2-.1.3-.3.9-.4 2-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1.1.2 1.7.4 2 .2.5.4.9.7 1.2.3.3.7.6 1.2.7.3.1.9.3 2 .4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2-.4.5-.2.9-.4 1.2-.7.3-.3.6-.7.7-1.2.1-.3.3-.9.4-2 .1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2-.2-.5-.4-.9-.7-1.2-.3-.3-.7-.6-1.2-.7-.3-.1-.9-.3-2-.4-1.2-.1-1.6-.1-4.7-.1zm0 3c2.7 0 5 2.2 5 5s-2.2 5-5 5-5-2.2-5-5 2.2-5 5-5zm0 8.2c1.8 0 3.2-1.4 3.2-3.2S13.8 8.8 12 8.8 8.8 10.2 8.8 12s1.4 3.2 3.2 3.2zm6.4-8.4c0 .7-.5 1.2-1.2 1.2s-1.2-.5-1.2-1.2.5-1.2 1.2-1.2 1.2.5 1.2 1.2z"/></svg>
+              </a>
+            )}
+            {tk && (
+              <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="ez-soc ez-soc-tk">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.6 6.3c-1.5-.3-2.8-1.4-3.3-2.9-.1-.4-.2-.9-.2-1.4h-3.5v13.1c0 1.4-1.2 2.6-2.6 2.6s-2.6-1.2-2.6-2.6 1.2-2.6 2.6-2.6c.3 0 .5 0 .8.1V9c-.3 0-.5-.1-.8-.1-3.4 0-6.1 2.7-6.1 6.1S6.6 21.1 10 21.1s6.1-2.7 6.1-6.1V8.9c1.3.9 2.9 1.5 4.6 1.5V6.9c-.4 0-.8-.2-1.1-.6z"/></svg>
+              </a>
+            )}
+            {tw && (
+              <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" aria-label="X" className="ez-soc ez-soc-tw">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.5 3h3l-6.7 7.6L21.7 21h-6.2l-4.8-6.3L5.2 21H2.2l7.2-8.2L2 3h6.3l4.4 5.8L17.5 3zm-1.1 16h1.7L7.7 4.9H5.9L16.4 19z"/></svg>
+              </a>
+            )}
+            {sc && (
+              <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" aria-label="Snapchat" className="ez-soc ez-soc-sc">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2c3.1 0 5.5 2 6.3 5 .2.6.2 1.4.2 2.4 0 .6-.1 1.7-.1 2 .2.1.5.2.7.2.4 0 .8-.2 1.1-.3.2-.1.4-.1.6-.1.3 0 .8.1 1 .5.2.5-.2 1-1.2 1.4-.1 0-.3.1-.5.2-.5.2-1.3.4-1.5.9-.1.2-.1.6.2 1.2 0 0 1.3 2.9 4.2 3.4.2 0 .4.2.4.5 0 .1 0 .2-.1.3-.3.7-1.7 1.2-4.1 1.6-.1.1-.2.4-.2.6-.1.2-.1.5-.2.7-.1.3-.3.5-.7.5h-.1c-.2 0-.4 0-.6-.1-.4-.1-.9-.2-1.5-.2-.4 0-.7.1-1.1.1-.7.2-1.3.7-2 1.2-1 .7-2 1.4-3.4 1.4h-.2c-1.5 0-2.5-.7-3.4-1.4-.7-.5-1.3-.9-2-1.2-.4-.1-.7-.1-1.1-.1-.6 0-1.1.1-1.5.2-.3.1-.5.1-.7.1-.5 0-.7-.3-.8-.6-.1-.2-.1-.5-.2-.7 0-.2-.1-.5-.2-.6-2.4-.4-3.8-.9-4.1-1.6 0-.1-.1-.2-.1-.3 0-.3.2-.5.4-.5 2.9-.5 4.2-3.4 4.2-3.4.3-.6.4-1 .2-1.2-.2-.5-1-.7-1.5-.9-.2-.1-.4-.1-.5-.2-1.3-.5-1.4-1.1-1.3-1.4.2-.4.6-.6 1-.6.2 0 .3 0 .5.1.4.2.7.3 1.1.3.3 0 .5-.1.7-.2 0-.3-.1-1.4-.1-2 0-1 0-1.8.2-2.4C6.5 4 8.9 2 12 2z"/></svg>
+              </a>
+            )}
+          </div>
+        )}
+
         {waUrl ? (
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
             📱 تواصل واتساب
@@ -398,6 +468,16 @@ const css = `
   .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#1A1A1A; }
   .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:8px; border-top:1px dashed #F0E0E0; }
   .ez-cat-arrow { font-size:18px; color:#6B1F1F; font-weight:700; }
+  .ez-cat-img { width:50px; height:50px; border-radius:10px; object-fit:cover; flex-shrink:0; }
+  .ez-chips-tertiary { background:#FDF5F5; padding:8px 12px; border-radius:12px; align-items:center; }
+  .ez-tertiary-label { font-size:12px; color:#8B6F6F; font-weight:700; margin-left:6px; }
+  .ez-socials { display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
+  .ez-soc { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; color:#fff; text-decoration:none; transition:transform .15s; }
+  .ez-soc:hover { transform:scale(1.1); }
+  .ez-soc-ig { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+  .ez-soc-tk { background:#000; }
+  .ez-soc-tw { background:#000; }
+  .ez-soc-sc { background:#FFFC00; color:#000; }
 
   .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
   .ez-card { background:#fff; border:1px solid #E8DADA; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(107,31,31,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }

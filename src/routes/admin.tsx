@@ -277,16 +277,18 @@ function CitiesTab() {
 }
 
 // ============ CATEGORIES (unified: main + sub) ============
-type CatRow = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; sort_order: number; active: boolean };
-type SubRow = { id: string; category_id: string; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
+type CatRow = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; image_url: string | null; sort_order: number; active: boolean };
+type SubRow = { id: string; category_id: string; parent_id: string | null; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
 
 type EditingCat = {
   id?: string;
   name_ar?: string;
   icon?: string | null;
+  image_url?: string | null;
   sort_order?: number;
   active?: boolean;
-  parent_id: string; // "" means it's a main category
+  parent_id: string; // "" means it's a main category, else holds main category id
+  sub_parent_id?: string | null; // optional tertiary parent (another subcategory id)
   originalKind?: "main" | "sub"; // tracks original type when editing
 };
 
@@ -329,31 +331,46 @@ function CategoriesTab() {
     const active = editing.active ?? true;
 
     if (editing.id && editing.originalKind) {
-      // Editing existing — type cannot change (select is disabled)
       if (editing.originalKind === "sub") {
         await supabase.from("subcategories")
-          .update({ category_id: editing.parent_id, name_ar: name, name_en: name, sort_order, active })
+          .update({
+            category_id: editing.parent_id,
+            parent_id: editing.sub_parent_id || null,
+            name_ar: name, name_en: name, sort_order, active,
+          })
           .eq("id", editing.id);
       } else {
         await supabase.from("categories")
-          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, sort_order, active })
+          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
           .eq("id", editing.id);
       }
     } else if (isSub) {
       await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
+        parent_id: editing.sub_parent_id || null,
         name_ar: name, name_en: name, slug: makeSlug(name),
         sort_order, active,
       });
     } else {
       await supabase.from("categories").insert({
         name_ar: name, name_en: name, slug: makeSlug(name),
-        icon: editing.icon ?? null, sort_order, active,
+        icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active,
       });
     }
     setEditing(null);
     reload();
   };
+
+  const uploadCatImage = async (file: File) => {
+    if (!editing) return;
+    const ext = file.name.split(".").pop();
+    const path = `categories/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    setEditing({ ...editing, image_url: pub.publicUrl });
+  };
+
 
   const delMain = async (id: string) => {
     if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
@@ -375,36 +392,66 @@ function CategoriesTab() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {cats.map((c) => {
-              const children = subs.filter((s) => s.category_id === c.id);
+              const topSubs = subs.filter((s) => s.category_id === c.id && !s.parent_id);
+              const tertiariesOf = (parentId: string) => subs.filter((s) => s.parent_id === parentId);
               return (
                 <div key={c.id} style={{ border: "1px solid #E8DADA", borderRadius: 12, padding: 14, background: "#fff" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 22 }}>{c.icon ?? "📁"}</span>
+                      {c.image_url ? (
+                        <img src={c.image_url} alt="" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover" }} />
+                      ) : (
+                        <span style={{ fontSize: 22 }}>{c.icon ?? "📁"}</span>
+                      )}
                       <strong style={{ fontSize: 16 }}>{c.name_ar}</strong>
+                      <span style={{ fontSize: 11, color: "#9A8A8A" }}>(ترتيب: {c.sort_order})</span>
                       <span className={`adm-badge ${c.active ? "adm-badge-on" : ""}`}>{c.active ? "مفعّل" : "متوقف"}</span>
                     </div>
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      <button className="adm-btn-sm" onClick={() => setEditing({ active: true, sort_order: 0, parent_id: c.id })}>+ تصنيف فرعي</button>
-                      <button className="adm-btn-sm" onClick={() => setEditing({ id: c.id, name_ar: c.name_ar, icon: c.icon, sort_order: c.sort_order, active: c.active, parent_id: "", originalKind: "main" })}>تعديل</button>
+                      <button className="adm-btn-sm" onClick={() => setEditing({ active: true, sort_order: 0, parent_id: c.id, sub_parent_id: null })}>+ تصنيف فرعي</button>
+                      <button className="adm-btn-sm" onClick={() => setEditing({ id: c.id, name_ar: c.name_ar, icon: c.icon, image_url: c.image_url, sort_order: c.sort_order, active: c.active, parent_id: "", originalKind: "main" })}>تعديل</button>
                       <button className="adm-btn-sm adm-btn-danger" onClick={() => delMain(c.id)}>حذف</button>
                     </div>
                   </div>
-                  {children.length > 0 && (
+                  {topSubs.length > 0 && (
                     <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6, paddingRight: 16, borderRight: "2px solid #F0E5E5" }}>
-                      {children.map((s) => (
-                        <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#FAF6F2", borderRadius: 8 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ color: "#9A8A8A" }}>↳</span>
-                            <span>{s.name_ar}</span>
-                            <span className={`adm-badge ${s.active ? "adm-badge-on" : ""}`} style={{ fontSize: 10 }}>{s.active ? "مفعّل" : "متوقف"}</span>
+                      {topSubs.map((s) => {
+                        const ters = tertiariesOf(s.id);
+                        return (
+                          <div key={s.id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#FAF6F2", borderRadius: 8 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ color: "#9A8A8A" }}>↳</span>
+                                <span>{s.name_ar}</span>
+                                <span style={{ fontSize: 10, color: "#9A8A8A" }}>({s.sort_order})</span>
+                                <span className={`adm-badge ${s.active ? "adm-badge-on" : ""}`} style={{ fontSize: 10 }}>{s.active ? "مفعّل" : "متوقف"}</span>
+                              </div>
+                              <div style={{ display: "flex", gap: 6 }}>
+                                <button className="adm-btn-sm" onClick={() => setEditing({ active: true, sort_order: 0, parent_id: c.id, sub_parent_id: s.id })}>+ ثانوي</button>
+                                <button className="adm-btn-sm" onClick={() => setEditing({ id: s.id, name_ar: s.name_ar, sort_order: s.sort_order, active: s.active, parent_id: s.category_id, sub_parent_id: s.parent_id, originalKind: "sub" })}>تعديل</button>
+                                <button className="adm-btn-sm adm-btn-danger" onClick={() => delSub(s.id)}>حذف</button>
+                              </div>
+                            </div>
+                            {ters.length > 0 && (
+                              <div style={{ display: "flex", flexDirection: "column", gap: 4, paddingRight: 20, borderRight: "2px dashed #E8DADA", marginRight: 8 }}>
+                                {ters.map((t) => (
+                                  <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", background: "#fff", border: "1px solid #F0E5E5", borderRadius: 6, fontSize: 13 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                      <span style={{ color: "#C47A7A" }}>⤷</span>
+                                      <span>{t.name_ar}</span>
+                                      <span style={{ fontSize: 10, color: "#9A8A8A" }}>({t.sort_order})</span>
+                                    </div>
+                                    <div style={{ display: "flex", gap: 6 }}>
+                                      <button className="adm-btn-sm" onClick={() => setEditing({ id: t.id, name_ar: t.name_ar, sort_order: t.sort_order, active: t.active, parent_id: t.category_id, sub_parent_id: t.parent_id, originalKind: "sub" })}>تعديل</button>
+                                      <button className="adm-btn-sm adm-btn-danger" onClick={() => delSub(t.id)}>حذف</button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                          <div style={{ display: "flex", gap: 6 }}>
-                            <button className="adm-btn-sm" onClick={() => setEditing({ id: s.id, name_ar: s.name_ar, sort_order: s.sort_order, active: s.active, parent_id: s.category_id, originalKind: "sub" })}>تعديل</button>
-                            <button className="adm-btn-sm adm-btn-danger" onClick={() => delSub(s.id)}>حذف</button>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -428,28 +475,56 @@ function CategoriesTab() {
               placeholder="مثال: صالونات تجميل"
             />
           </Field>
-          <Field label="التصنيف الأساسي (اتركيه فارغًا إذا كان تصنيفًا رئيسيًا)">
+          <Field label="القسم الرئيسي (اتركيه فارغًا إذا كان قسمًا رئيسيًا)">
             <select
               value={editing.parent_id}
               disabled={!!editing.id}
-              onChange={(e) => setEditing({ ...editing, parent_id: e.target.value })}
+              onChange={(e) => setEditing({ ...editing, parent_id: e.target.value, sub_parent_id: null })}
             >
-              <option value="">— تصنيف رئيسي —</option>
+              <option value="">— قسم رئيسي —</option>
               {cats.filter((c) => c.id !== editing.id).map((c) => (
                 <option key={c.id} value={c.id}>{c.name_ar}</option>
               ))}
             </select>
           </Field>
-          {!editing.parent_id && (
-            <Field label="أيقونة (Emoji — اختياري)">
-              <input
-                value={editing.icon ?? ""}
-                onChange={(e) => setEditing({ ...editing, icon: e.target.value })}
-                placeholder="💇‍♀️"
-              />
+          {editing.parent_id && (
+            <Field label="تصنيف ثانوي تحت (اختياري — لجعله تصنيف ثانوي)">
+              <select
+                value={editing.sub_parent_id ?? ""}
+                onChange={(e) => setEditing({ ...editing, sub_parent_id: e.target.value || null })}
+              >
+                <option value="">— لا (تصنيف فرعي مباشر) —</option>
+                {subs
+                  .filter((s) => s.category_id === editing.parent_id && !s.parent_id && s.id !== editing.id)
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>{s.name_ar}</option>
+                  ))}
+              </select>
             </Field>
           )}
-          <Field label="الترتيب">
+          {!editing.parent_id && (
+            <>
+              <Field label="أيقونة (Emoji — اختياري)">
+                <input
+                  value={editing.icon ?? ""}
+                  onChange={(e) => setEditing({ ...editing, icon: e.target.value })}
+                  placeholder="💇‍♀️"
+                />
+              </Field>
+              <Field label="صورة القسم (اختياري — تظهر بدل الأيقونة)">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editing.image_url && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <img src={editing.image_url} alt="" style={{ width: 60, height: 60, borderRadius: 8, objectFit: "cover" }} />
+                      <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditing({ ...editing, image_url: null })}>حذف الصورة</button>
+                    </div>
+                  )}
+                  <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadCatImage(e.target.files[0])} />
+                </div>
+              </Field>
+            </>
+          )}
+          <Field label="الترتيب (الأصغر يظهر أولاً)">
             <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} />
           </Field>
           <Field label="مفعّل">
@@ -465,7 +540,9 @@ function CategoriesTab() {
 type ProvRow = {
   id: string; subcategory_id: string; city_id: string; name: string;
   description: string | null; price_from: number | null; price_to: number | null;
-  whatsapp: string | null; instagram: string | null; address: string | null;
+  whatsapp: string | null; instagram: string | null;
+  tiktok: string | null; twitter: string | null; snapchat: string | null;
+  address: string | null;
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
 };
@@ -509,6 +586,7 @@ function ProvidersTab() {
       price_from: editing.price_from ? +editing.price_from : null,
       price_to: editing.price_to ? +editing.price_to : null,
       whatsapp: editing.whatsapp ?? null, instagram: editing.instagram ?? null,
+      tiktok: editing.tiktok ?? null, twitter: editing.twitter ?? null, snapchat: editing.snapchat ?? null,
       address: editing.address ?? null, rating: editing.rating ?? null,
       is_featured: editing.is_featured ?? false,
       featured_until: editing.featured_until || null,
@@ -631,7 +709,11 @@ function ProvidersTab() {
                 <option value="">اختاري...</option>
                 {editSubs.map((s) => {
                   const cat = cats.find((c) => c.id === s.category_id);
-                  return <option key={s.id} value={s.id}>{cat?.name_ar} → {s.name_ar}</option>;
+                  const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;
+                  const label = parentSub
+                    ? `${cat?.name_ar} → ${parentSub.name_ar} → ${s.name_ar}`
+                    : `${cat?.name_ar} → ${s.name_ar}`;
+                  return <option key={s.id} value={s.id}>{label}</option>;
                 })}
               </select>
             </Field>
@@ -640,7 +722,10 @@ function ProvidersTab() {
             </Field>
             <Field label="السعر من (ر.س)"><input type="number" value={editing.price_from ?? ""} onChange={(e) => setEditing({ ...editing, price_from: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="السعر إلى (ر.س)"><input type="number" value={editing.price_to ?? ""} onChange={(e) => setEditing({ ...editing, price_to: e.target.value ? +e.target.value : null })} /></Field>
-            <Field label="إنستغرام"><input value={editing.instagram ?? ""} onChange={(e) => setEditing({ ...editing, instagram: e.target.value })} dir="ltr" /></Field>
+            <Field label="إنستغرام (اسم المستخدم)"><input value={editing.instagram ?? ""} onChange={(e) => setEditing({ ...editing, instagram: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="تيك توك (اسم المستخدم)"><input value={editing.tiktok ?? ""} onChange={(e) => setEditing({ ...editing, tiktok: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="اكس / تويتر (اسم المستخدم)"><input value={editing.twitter ?? ""} onChange={(e) => setEditing({ ...editing, twitter: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="سناب شات (اسم المستخدم)"><input value={editing.snapchat ?? ""} onChange={(e) => setEditing({ ...editing, snapchat: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="العنوان"><input value={editing.address ?? ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} /></Field>
             <Field label="التقييم (0-5)"><input type="number" step="0.1" min="0" max="5" value={editing.rating ?? ""} onChange={(e) => setEditing({ ...editing, rating: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="الترتيب اليدوي"><input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} /></Field>
