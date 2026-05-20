@@ -277,16 +277,18 @@ function CitiesTab() {
 }
 
 // ============ CATEGORIES (unified: main + sub) ============
-type CatRow = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; sort_order: number; active: boolean };
-type SubRow = { id: string; category_id: string; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
+type CatRow = { id: string; name_ar: string; name_en: string; slug: string; icon: string | null; image_url: string | null; sort_order: number; active: boolean };
+type SubRow = { id: string; category_id: string; parent_id: string | null; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
 
 type EditingCat = {
   id?: string;
   name_ar?: string;
   icon?: string | null;
+  image_url?: string | null;
   sort_order?: number;
   active?: boolean;
-  parent_id: string; // "" means it's a main category
+  parent_id: string; // "" means it's a main category, else holds main category id
+  sub_parent_id?: string | null; // optional tertiary parent (another subcategory id)
   originalKind?: "main" | "sub"; // tracks original type when editing
 };
 
