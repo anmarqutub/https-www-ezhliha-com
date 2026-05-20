@@ -718,7 +718,10 @@ function ProvidersTab() {
             </Field>
             <Field label="السعر من (ر.س)"><input type="number" value={editing.price_from ?? ""} onChange={(e) => setEditing({ ...editing, price_from: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="السعر إلى (ر.س)"><input type="number" value={editing.price_to ?? ""} onChange={(e) => setEditing({ ...editing, price_to: e.target.value ? +e.target.value : null })} /></Field>
-            <Field label="إنستغرام"><input value={editing.instagram ?? ""} onChange={(e) => setEditing({ ...editing, instagram: e.target.value })} dir="ltr" /></Field>
+            <Field label="إنستغرام (اسم المستخدم)"><input value={editing.instagram ?? ""} onChange={(e) => setEditing({ ...editing, instagram: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="تيك توك (اسم المستخدم)"><input value={editing.tiktok ?? ""} onChange={(e) => setEditing({ ...editing, tiktok: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="اكس / تويتر (اسم المستخدم)"><input value={editing.twitter ?? ""} onChange={(e) => setEditing({ ...editing, twitter: e.target.value })} dir="ltr" placeholder="username" /></Field>
+            <Field label="سناب شات (اسم المستخدم)"><input value={editing.snapchat ?? ""} onChange={(e) => setEditing({ ...editing, snapchat: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="العنوان"><input value={editing.address ?? ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} /></Field>
             <Field label="التقييم (0-5)"><input type="number" step="0.1" min="0" max="5" value={editing.rating ?? ""} onChange={(e) => setEditing({ ...editing, rating: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="الترتيب اليدوي"><input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} /></Field>
