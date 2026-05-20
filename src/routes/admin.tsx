@@ -709,7 +709,11 @@ function ProvidersTab() {
                 <option value="">اختاري...</option>
                 {editSubs.map((s) => {
                   const cat = cats.find((c) => c.id === s.category_id);
-                  return <option key={s.id} value={s.id}>{cat?.name_ar} → {s.name_ar}</option>;
+                  const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;
+                  const label = parentSub
+                    ? `${cat?.name_ar} → ${parentSub.name_ar} → ${s.name_ar}`
+                    : `${cat?.name_ar} → ${s.name_ar}`;
+                  return <option key={s.id} value={s.id}>{label}</option>;
                 })}
               </select>
             </Field>
