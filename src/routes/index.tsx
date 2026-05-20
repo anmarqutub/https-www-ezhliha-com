@@ -267,7 +267,7 @@ function Home() {
             </div>
 
             {visibleSubs.length > 0 && (
-              <div className="ez-chips" style={{ marginBottom: 18 }}>
+              <div className="ez-chips" style={{ marginBottom: 12 }}>
                 <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
                 {visibleSubs.map((s) => (
                   <button
@@ -276,6 +276,21 @@ function Home() {
                     onClick={() => setSelectedSub(s.id)}
                   >
                     {s.name_ar}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {visibleTertiaries.length > 0 && (
+              <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
+                <span className="ez-tertiary-label">تصنيفات ثانوية:</span>
+                {visibleTertiaries.map((t) => (
+                  <button
+                    key={t.id}
+                    className={selectedSub === t.id ? "active" : ""}
+                    onClick={() => setSelectedSub(t.id)}
+                  >
+                    {t.name_ar}
                   </button>
                 ))}
               </div>
