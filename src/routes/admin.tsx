@@ -331,31 +331,46 @@ function CategoriesTab() {
     const active = editing.active ?? true;
 
     if (editing.id && editing.originalKind) {
-      // Editing existing — type cannot change (select is disabled)
       if (editing.originalKind === "sub") {
         await supabase.from("subcategories")
-          .update({ category_id: editing.parent_id, name_ar: name, name_en: name, sort_order, active })
+          .update({
+            category_id: editing.parent_id,
+            parent_id: editing.sub_parent_id || null,
+            name_ar: name, name_en: name, sort_order, active,
+          })
           .eq("id", editing.id);
       } else {
         await supabase.from("categories")
-          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, sort_order, active })
+          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
           .eq("id", editing.id);
       }
     } else if (isSub) {
       await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
+        parent_id: editing.sub_parent_id || null,
         name_ar: name, name_en: name, slug: makeSlug(name),
         sort_order, active,
       });
     } else {
       await supabase.from("categories").insert({
         name_ar: name, name_en: name, slug: makeSlug(name),
-        icon: editing.icon ?? null, sort_order, active,
+        icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active,
       });
     }
     setEditing(null);
     reload();
   };
+
+  const uploadCatImage = async (file: File) => {
+    if (!editing) return;
+    const ext = file.name.split(".").pop();
+    const path = `categories/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    setEditing({ ...editing, image_url: pub.publicUrl });
+  };
+
 
   const delMain = async (id: string) => {
     if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
