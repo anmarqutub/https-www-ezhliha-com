@@ -229,7 +229,11 @@ function Home() {
                     >
                       <div className="ez-cat-card-head">
                         <div className="ez-cat-name">{c.name_ar}</div>
-                        <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                        {c.image_url ? (
+                          <img src={c.image_url} alt="" className="ez-cat-img" />
+                        ) : (
+                          <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
+                        )}
                       </div>
                       <div className="ez-cat-meta">
                         {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
