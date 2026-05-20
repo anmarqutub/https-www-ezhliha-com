@@ -90,10 +90,16 @@ function Home() {
     return m;
   }, [images]);
 
-  // Subs for selected category
+  // Top-level subs for selected category
   const visibleSubs = selectedCategory
-    ? subcategories.filter((s) => s.category_id === selectedCategory)
+    ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
+
+  // Tertiaries under currently-selected sub (if any)
+  const visibleTertiaries =
+    selectedSub !== "all"
+      ? subcategories.filter((s) => s.parent_id === selectedSub)
+      : [];
 
   // Providers count per category (for the selected city)
   const providersCountByCat = useMemo(() => {
@@ -108,13 +114,24 @@ function Home() {
     return m;
   }, [providers, subcategories, selectedCity]);
 
+  // Provider matches selected sub if its subcategory equals OR is a descendant
+  const subMatches = (providerSubId: string, selSub: string) => {
+    if (providerSubId === selSub) return true;
+    const ps = subcategories.find((s) => s.id === providerSubId);
+    return !!ps && ps.parent_id === selSub;
+  };
+
   // Providers for current category view
   const categoryProviders = providers.filter((p) => {
     if (selectedCity && p.city_id !== selectedCity) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
-    if (selectedCategory && sub.category_id !== selectedCategory) return false;
-    if (selectedSub !== "all" && p.subcategory_id !== selectedSub) return false;
+    // sub belongs to selected category either directly or via parent
+    if (selectedCategory) {
+      const directCat = sub.category_id === selectedCategory;
+      if (!directCat) return false;
+    }
+    if (selectedSub !== "all" && !subMatches(p.subcategory_id, selectedSub)) return false;
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       if (!p.name.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q))
