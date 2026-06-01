@@ -1529,6 +1529,7 @@ const adminCss = `
   .adm-btn-primary:hover { background:#4A1414; }
   .adm-btn-primary:disabled { background:#999; cursor:not-allowed; }
   .adm-btn-secondary { background:#fff; color:#5A4A4A; border:1px solid #E8DADA; padding:10px 22px; border-radius:8px; font-family:inherit; font-size:14px; cursor:pointer; }
+  .adm-section-h { font-size:13px; font-weight:700; color:#9A8A8A; letter-spacing:2px; margin:8px 0 12px; }
   .adm-btn-sm { background:#fff; color:#6B1F1F; border:1px solid #E8DADA; padding:5px 11px; border-radius:6px; font-family:inherit; font-size:12px; cursor:pointer; margin:0 2px; }
   .adm-btn-sm:hover { background:#FAF6F2; }
   .adm-btn-danger { color:#a01919; border-color:#f5d5d5; }
