@@ -506,7 +506,7 @@ function StatCard({ label, value, hint, color, progress }: { label: string; valu
 }
 
 function RankCard({ title, rows, empty }: { title: string; rows: { label: string; value: string }[]; empty: string }) {
-  const max = rows.length;
+  
   return (
     <div className="adm-card">
       <h3 style={{ marginBottom: 14, fontWeight: 700, fontSize: 15 }}>{title}</h3>
