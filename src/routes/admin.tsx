@@ -971,8 +971,10 @@ function ProvidersTab() {
       video_url: editing.video_url ?? null,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("providers").update(payload).eq("id", editing.id);
-      logActivity("update", "provider", editing.id, { name: payload.name });
+      logActivity("update", "provider", editing.id, { name: payload.name, changes: diffFields(before as never, payload as never) });
+
     } else {
       const { data } = await supabase.from("providers").insert(payload).select().single();
       if (data) editing.id = data.id;
