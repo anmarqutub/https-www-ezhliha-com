@@ -636,6 +636,21 @@ function ProvidersTab() {
     reload();
   };
 
+  const handleVideoUpload = async (file: File | undefined) => {
+    if (!file || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الفيديو"); return; }
+    if (file.size > 50 * 1024 * 1024) { alert("حجم الفيديو يجب أن يكون أقل من 50 ميغابايت"); return; }
+    setUploadingVideo(true);
+    const ext = file.name.split(".").pop();
+    const path = `${editing.id}/video-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("provider-images").upload(path, file);
+    if (upErr) { alert("خطأ رفع: " + upErr.message); setUploadingVideo(false); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    await supabase.from("providers").update({ video_url: pub.publicUrl }).eq("id", editing.id);
+    setEditing({ ...editing, video_url: pub.publicUrl });
+    setUploadingVideo(false);
+    reload();
+  };
+
   const filtered = rows.filter((r) => {
     if (filterCity !== "all" && r.city_id !== filterCity) return false;
     if (filterCat !== "all") {
