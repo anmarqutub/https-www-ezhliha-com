@@ -896,15 +896,19 @@ function BannersTab() {
     };
     if (editing.id) {
       await supabase.from("banners").update(payload).eq("id", editing.id);
+      logActivity("update", "banner", editing.id, { title: payload.title });
     } else {
-      await supabase.from("banners").insert(payload);
+      const { data } = await supabase.from("banners").insert(payload).select().single();
+      logActivity("create", "banner", data?.id ?? null, { title: payload.title });
     }
     setEditing(null); reload();
   };
 
   const del = async (id: string) => {
     if (!confirm("حذف البنر؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("banners").delete().eq("id", id);
+    logActivity("delete", "banner", id, { title: row?.title });
     reload();
   };
 
