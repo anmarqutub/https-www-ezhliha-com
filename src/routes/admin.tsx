@@ -1271,6 +1271,7 @@ function CodesTab() {
     try {
       const res = await gen({ data: { count, email, note } });
       setMsg(`تم توليد ${res.codes.length} كود`);
+      logActivity("generate", "purchase_codes", null, { count: res.codes.length, email: email || null, note: note || null });
       setEmail(""); setNote("");
       await reload();
     } catch (e) {
