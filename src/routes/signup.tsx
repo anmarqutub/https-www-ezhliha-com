@@ -50,7 +50,11 @@ function SignupPage() {
   return (
     <AuthShell title="إنشاء حساب جديد" sub="التسجيل متاح فقط لمن قام بشراء الاشتراك من سلة">
       <form onSubmit={onSubmit} className="auth-form">
-        <Field label="كود الاشتراك (وصلك بالإيميل من سلة)">
+        <div style={{ background: "#fff8e6", border: "1px solid #f0d27a", borderRadius: 10, padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, color: "#5a4400" }}>
+          📌 بعد إتمام عملية الشراء من <strong>سلة</strong>، سيتم إرسال <strong>كود الاشتراك</strong> إليكِ يدوياً عبر <strong>واتساب</strong> أو <strong>الإيميل</strong> خلال 24 ساعة.<br />
+          لم يصلكِ الكود؟ تواصلي معنا عبر واتساب.
+        </div>
+        <Field label="كود الاشتراك (الذي وصلكِ عبر واتساب أو الإيميل)">
           <input
             required
             value={code}
