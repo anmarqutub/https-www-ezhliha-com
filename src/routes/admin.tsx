@@ -10,7 +10,7 @@ import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
-  head: () => ({ meta: [{ title: "لوحة الأدمن — أزّليها" }] }),
+  head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
 });
 
 type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews";
@@ -37,7 +37,7 @@ function AdminPage() {
       <div dir="rtl" style={pageStyle}>
         <style>{adminCss}</style>
         <header className="adm-nav">
-          <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 80 }} /></Link>
+          <Link to="/" className="adm-brand"><img src={logoUrl} alt="إزهليها" style={{ height: 80 }} /></Link>
           <div className="adm-nav-right">
             <span className="adm-user">{user?.email}</span>
             <button className="adm-logout" onClick={() => signOut().then(() => navigate({ to: "/login" }))}>
@@ -81,7 +81,7 @@ function AdminPage() {
     <div dir="rtl" style={pageStyle}>
       <style>{adminCss}</style>
       <header className="adm-nav">
-        <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 80 }} /></Link>
+        <Link to="/" className="adm-brand"><img src={logoUrl} alt="إزهليها" style={{ height: 80 }} /></Link>
         <div className="adm-nav-right">
           <Link to="/" className="adm-link">عرض الموقع</Link>
           <span className="adm-user">{user?.email}</span>

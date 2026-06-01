@@ -8,11 +8,11 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "أزّليها — دليلك لأجمل المناسبات" },
+      { title: "إزهليها — دليلك لأجمل المناسبات" },
       {
         name: "description",
         content:
-          "أزّليها — دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة.",
+          "إزهليها — دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة.",
       },
     ],
   }),
@@ -43,7 +43,7 @@ type Provider = {
 type ProviderImage = { id: string; provider_id: string; image_url: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
 
-export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع أزّليها";
+export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
 
 function Home() {
   const { user, isAdmin, signOut } = useAuth();
@@ -163,7 +163,7 @@ function Home() {
 
       <header className="ez-nav">
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
-          <img src={logoUrl} alt="أزّليها" className="ez-brand-logo" />
+          <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
         <div className="ez-nav-actions">
           {user ? (
@@ -198,7 +198,7 @@ function Home() {
           )
         ) : (
           <div className="ez-hero-inner">
-            <h1>أزّليها</h1>
+            <h1>إزهليها</h1>
             <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
           </div>
         )}
@@ -370,7 +370,7 @@ function Home() {
       </main>
 
       <footer className="ez-footer">
-        <p>© {new Date().getFullYear()} أزّليها — AZHLEHA</p>
+        <p>© {new Date().getFullYear()} إزهليها — AZHLEHA</p>
       </footer>
     </div>
   );

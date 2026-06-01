@@ -7,7 +7,7 @@ import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
-  head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — أزّليها" }] }),
+  head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — إزهليها" }] }),
 });
 
 type Provider = {
@@ -126,7 +126,7 @@ function ProviderPage() {
     <div dir="rtl" className="pv-root">
       <style>{css}</style>
       <header className="pv-nav">
-        <Link to="/" className="pv-brand"><img src={logoUrl} alt="أزّليها" /></Link>
+        <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <div className="pv-nav-actions">
           {user ? (
             <>

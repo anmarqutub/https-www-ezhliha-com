@@ -95,7 +95,7 @@ export function AuthShell({ title, sub, children }: { title: string; sub: string
       <style>{authCss}</style>
       <div className="auth-card">
         <Link to="/" className="auth-brand">
-          <img src={logoUrl} alt="أزّليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
+          <img src={logoUrl} alt="إزهليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
         </Link>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-sub">{sub}</p>
