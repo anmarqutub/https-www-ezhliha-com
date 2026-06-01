@@ -23,7 +23,7 @@ async function logActivity(action: string, entity: string, entityId?: string | n
       action,
       entity,
       entity_id: entityId ?? null,
-      details: details ?? null,
+      details: (details ?? null) as never,
     });
   } catch {
     /* silent */
