@@ -95,6 +95,7 @@ function AdminPage() {
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
           <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
+          <SideBtn label="أكواد الاشتراك" active={tab === "codes"} onClick={() => setTab("codes")} />
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
           <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
