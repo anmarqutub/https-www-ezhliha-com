@@ -30,6 +30,25 @@ async function logActivity(action: string, entity: string, entityId?: string | n
   }
 }
 
+// Computes a field-level diff (only changed keys, with before/after values).
+function diffFields<T extends Record<string, unknown>>(
+  before: T | null | undefined,
+  after: T,
+): Record<string, { from: unknown; to: unknown }> {
+  const out: Record<string, { from: unknown; to: unknown }> = {};
+  if (!before) return out;
+  for (const k of Object.keys(after)) {
+    const a = before[k as keyof T];
+    const b = after[k as keyof T];
+    const norm = (v: unknown) => (v === undefined ? null : v);
+    if (JSON.stringify(norm(a)) !== JSON.stringify(norm(b))) {
+      out[k] = { from: norm(a), to: norm(b) };
+    }
+  }
+  return out;
+}
+
+
 type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
