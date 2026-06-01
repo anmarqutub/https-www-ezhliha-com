@@ -630,25 +630,33 @@ function ProvidersTab() {
       sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
       video_url: editing.video_url ?? null,
     };
-    if (editing.id) await supabase.from("providers").update(payload).eq("id", editing.id);
-    else {
+    if (editing.id) {
+      await supabase.from("providers").update(payload).eq("id", editing.id);
+      logActivity("update", "provider", editing.id, { name: payload.name });
+    } else {
       const { data } = await supabase.from("providers").insert(payload).select().single();
       if (data) editing.id = data.id;
+      logActivity("create", "provider", data?.id ?? null, { name: payload.name });
     }
     setEditing(null); reload();
   };
   const del = async (id: string) => {
     if (!confirm("حذف مقدم الخدمة وكل صوره؟")) return;
-    await supabase.from("providers").delete().eq("id", id); reload();
+    const row = rows.find((r) => r.id === id);
+    await supabase.from("providers").delete().eq("id", id);
+    logActivity("delete", "provider", id, { name: row?.name });
+    reload();
   };
   const toggleFeatured = async (r: ProvRow) => {
     await supabase.from("providers").update({ is_featured: !r.is_featured }).eq("id", r.id);
+    logActivity(r.is_featured ? "unfeature" : "feature", "provider", r.id, { name: r.name });
     reload();
   };
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الصور"); return; }
     setUploading(true);
+    let uploaded = 0;
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
       const ext = f.name.split(".").pop();
@@ -659,13 +667,16 @@ function ProvidersTab() {
       await supabase.from("provider_images").insert({
         provider_id: editing.id, image_url: pub.publicUrl, sort_order: i,
       });
+      uploaded++;
     }
+    if (uploaded > 0) logActivity("upload_images", "provider", editing.id, { count: uploaded, name: editing.name });
     setUploading(false);
     reload();
   };
 
   const delImg = async (img: ImgRow) => {
     await supabase.from("provider_images").delete().eq("id", img.id);
+    logActivity("delete_image", "provider", img.provider_id, { image_id: img.id });
     reload();
   };
 
