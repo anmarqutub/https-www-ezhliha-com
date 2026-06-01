@@ -1808,12 +1808,55 @@ function ActivityLogTab() {
   const entities = Array.from(new Set(rows.map((r) => r.entity)));
 
   const describe = (r: LogRow) => {
-    const d = r.details ?? {};
+    const d = (r.details ?? {}) as Record<string, unknown>;
     const name = (d.name_ar || d.name || d.title || d.code) as string | undefined;
-    if (name) return `"${name}"`;
-    if (typeof d.count === "number") return `(${d.count})`;
-    return r.entity_id ? r.entity_id.slice(0, 8) : "";
+    const label = name ? `"${name}"` : (r.entity_id ? `#${r.entity_id.slice(0, 6)}` : "");
+
+    if (r.action === "create") {
+      return <span><b style={{ color: "#1a7f37" }}>أُضيف</b> {ENTITY_LABEL[r.entity] ?? r.entity} {label}</span>;
+    }
+    if (r.action === "delete") {
+      return <span><b style={{ color: "#c0392b" }}>حُذف</b> {ENTITY_LABEL[r.entity] ?? r.entity} {label}</span>;
+    }
+    if (r.action === "feature" || r.action === "unfeature") {
+      return <span>{r.action === "feature" ? "تم تمييز" : "أُلغي تمييز"} {label}</span>;
+    }
+    if (r.action === "upload_images") {
+      return <span>رُفعت <b>{(d.count as number) ?? 0}</b> صور لـ {label}</span>;
+    }
+    if (r.action === "upload_image") return <span>رُفعت صورة لـ {label || ENTITY_LABEL[r.entity]}</span>;
+    if (r.action === "delete_image") return <span>حُذفت صورة من {label || ENTITY_LABEL[r.entity]}</span>;
+    if (r.action === "upload_video") return <span>رُفع فيديو لـ {label}</span>;
+    if (r.action === "delete_video") return <span>حُذف فيديو من {label}</span>;
+    if (r.action === "generate") {
+      return <span>تم توليد <b>{(d.count as number) ?? 0}</b> كود اشتراك{d.email ? ` لـ ${d.email as string}` : ""}</span>;
+    }
+    if (r.action === "update") {
+      const changes = (d.changes ?? {}) as Record<string, { from: unknown; to: unknown }>;
+      const keys = Object.keys(changes);
+      if (keys.length === 0) {
+        return <span>تم تعديل {label} <span style={{ color: "#888" }}>(لا تغييرات مرصودة)</span></span>;
+      }
+      return (
+        <div>
+          <div style={{ marginBottom: 4 }}>تم تعديل {label}:</div>
+          <ul style={{ margin: 0, paddingInlineStart: 18, fontSize: 12, color: "#444" }}>
+            {keys.slice(0, 6).map((k) => (
+              <li key={k}>
+                <b>{FIELD_LABEL[k] ?? k}:</b>{" "}
+                <span style={{ color: "#c0392b", textDecoration: "line-through" }}>{fmtVal(changes[k].from)}</span>
+                {" ← "}
+                <span style={{ color: "#1a7f37" }}>{fmtVal(changes[k].to)}</span>
+              </li>
+            ))}
+            {keys.length > 6 && <li style={{ color: "#888" }}>+ {keys.length - 6} حقول أخرى</li>}
+          </ul>
+        </div>
+      );
+    }
+    return label || "—";
   };
+
 
   return (
     <>
