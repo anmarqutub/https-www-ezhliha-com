@@ -228,6 +228,7 @@ function Home() {
           }}
         >
           {cities.length === 0 && <option value="">لا توجد مدن بعد</option>}
+          {cities.length > 0 && <option value="">🌍 جميع المدن</option>}
           {cities.map((c) => (
             <option key={c.id} value={c.id}>{c.name_ar}</option>
           ))}
@@ -441,9 +442,9 @@ function ProviderCard({
 
 const css = `
   .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
-  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
+  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; min-height:104px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
-  .ez-brand-logo { height:54px; width:auto; object-fit:contain; }
+  .ez-brand-logo { height:88px; width:auto; object-fit:contain; }
   .ez-nav-actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .ez-nav-link { color:#000; text-decoration:none; font-size:14px; font-weight:600; }
   .ez-nav-link:hover { color:#660000; }
@@ -516,7 +517,7 @@ const css = `
   .ez-footer { text-align:center; padding:30px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
 
   @media (max-width: 640px) {
-    .ez-brand-logo { height:42px; }
+    .ez-brand-logo { height:64px; }
     .ez-hero-inner h1 { font-size:30px; }
     .ez-hero-inner { padding:36px 16px 28px; }
     .ez-step, .ez-main, .ez-hero { padding-left:16px; padding-right:16px; }

@@ -36,7 +36,7 @@ function AdminPage() {
       <div dir="rtl" style={pageStyle}>
         <style>{adminCss}</style>
         <header className="adm-nav">
-          <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 50 }} /></Link>
+          <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 80 }} /></Link>
           <div className="adm-nav-right">
             <span className="adm-user">{user?.email}</span>
             <button className="adm-logout" onClick={() => signOut().then(() => navigate({ to: "/login" }))}>
@@ -80,7 +80,7 @@ function AdminPage() {
     <div dir="rtl" style={pageStyle}>
       <style>{adminCss}</style>
       <header className="adm-nav">
-        <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 50 }} /></Link>
+        <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 80 }} /></Link>
         <div className="adm-nav-right">
           <Link to="/" className="adm-link">عرض الموقع</Link>
           <span className="adm-user">{user?.email}</span>
@@ -646,7 +646,7 @@ function ProvidersTab() {
     <>
       <SectionHeader title="مقدمو الخدمة" onAdd={() => setEditing({ active: true, sort_order: 0, is_featured: false })} />
       <div className="adm-card">
-        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
           <select value={filterCity} onChange={(e) => setFilterCity(e.target.value)} className="adm-select">
             <option value="all">كل المدن</option>
             {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
@@ -655,6 +655,14 @@ function ProvidersTab() {
             <option value="all">كل التصنيفات</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
           </select>
+          <button
+            className="adm-btn-primary"
+            style={{ marginRight: "auto" }}
+            onClick={() => exportProvidersCsv(filtered, cities, subs, cats, images)}
+            disabled={filtered.length === 0}
+          >
+            📊 تصدير Excel ({filtered.length})
+          </button>
         </div>
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div className="adm-table-wrap">
@@ -967,6 +975,59 @@ function SectionHeader({ title, onAdd }: { title: string; onAdd: () => void }) {
       <button className="adm-btn-primary" onClick={onAdd}>+ إضافة جديد</button>
     </div>
   );
+}
+
+function exportProvidersCsv(
+  rows: ProvRow[], cities: CityRow[], subs: SubRow[], cats: CatRow[], images: ImgRow[]
+) {
+  const cityMap = new Map(cities.map((c) => [c.id, c.name_ar]));
+  const subMap = new Map(subs.map((s) => [s.id, s]));
+  const catMap = new Map(cats.map((c) => [c.id, c.name_ar]));
+  const imgsBy = new Map<string, string[]>();
+  images.forEach((i) => {
+    const arr = imgsBy.get(i.provider_id) ?? [];
+    arr.push(i.image_url);
+    imgsBy.set(i.provider_id, arr);
+  });
+
+  const headers = [
+    "الاسم", "التصنيف الرئيسي", "التصنيف الفرعي", "المدينة",
+    "الوصف", "العنوان", "السعر من", "السعر إلى",
+    "واتساب", "انستغرام", "تيك توك", "اكس", "سناب شات",
+    "رابط الخريطة", "التقييم", "مميز", "مفعّل", "ترتيب", "عدد الصور", "روابط الصور",
+  ];
+
+  const escape = (v: unknown) => {
+    const s = v == null ? "" : String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const lines = [headers.join(",")];
+  rows.forEach((r) => {
+    const sub = subMap.get(r.subcategory_id);
+    const catName = sub ? (catMap.get(sub.category_id) ?? "") : "";
+    const subName = sub?.name_ar ?? "";
+    const imgs = imgsBy.get(r.id) ?? [];
+    lines.push([
+      r.name, catName, subName, cityMap.get(r.city_id) ?? "",
+      r.description ?? "", r.address ?? "", r.price_from ?? "", r.price_to ?? "",
+      r.whatsapp ?? "", r.instagram ?? "", r.tiktok ?? "", r.twitter ?? "", r.snapchat ?? "",
+      "", r.rating ?? "", r.is_featured ? "نعم" : "لا", r.active ? "نعم" : "لا",
+      r.sort_order, imgs.length, imgs.join(" | "),
+    ].map(escape).join(","));
+  });
+
+  // UTF-8 BOM so Excel renders Arabic correctly
+  const csv = "\uFEFF" + lines.join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `providers-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
