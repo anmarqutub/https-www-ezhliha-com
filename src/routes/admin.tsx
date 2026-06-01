@@ -1237,8 +1237,10 @@ function BannersTab() {
       active: editing.active ?? true,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("banners").update(payload).eq("id", editing.id);
-      logActivity("update", "banner", editing.id, { title: payload.title });
+      logActivity("update", "banner", editing.id, { title: payload.title, changes: diffFields(before as never, payload as never) });
+
     } else {
       const { data } = await supabase.from("banners").insert(payload).select().single();
       logActivity("create", "banner", data?.id ?? null, { title: payload.title });
