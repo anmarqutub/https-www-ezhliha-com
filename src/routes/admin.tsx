@@ -584,12 +584,14 @@ function CitiesTab() {
       active: editing.active ?? true,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("cities").update(payload).eq("id", editing.id);
-      logActivity("update", "city", editing.id, { name_ar: payload.name_ar });
+      logActivity("update", "city", editing.id, { name_ar: payload.name_ar, changes: diffFields(before as never, payload as never) });
     } else {
       const { data } = await supabase.from("cities").insert(payload).select().single();
-      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar });
+      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar, values: payload });
     }
+
     setEditing(null);
     reload();
   };
