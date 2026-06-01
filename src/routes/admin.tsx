@@ -547,6 +547,7 @@ type ProvRow = {
   address: string | null;
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
+  video_url: string | null;
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 
