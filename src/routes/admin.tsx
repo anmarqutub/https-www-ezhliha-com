@@ -1756,6 +1756,30 @@ const ENTITY_LABEL: Record<string, string> = {
   purchase_codes: "أكواد اشتراك",
 };
 
+const FIELD_LABEL: Record<string, string> = {
+  name: "الاسم", name_ar: "الاسم", name_en: "الاسم (EN)", title: "العنوان",
+  description: "الوصف", slug: "المعرّف", address: "العنوان",
+  whatsapp: "واتساب", instagram: "إنستغرام", tiktok: "تيكتوك",
+  twitter: "تويتر", snapchat: "سناب شات", image_url: "الصورة", icon: "الأيقونة",
+  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى",
+  rating: "التقييم", sort_order: "الترتيب", active: "مفعّل",
+  is_featured: "مميّز", featured_until: "تمييز حتى",
+  city_id: "المدينة", subcategory_id: "التصنيف الفرعي",
+  category_id: "التصنيف", parent_id: "التصنيف الأب",
+  sub_parent_id: "التصنيف الأب الفرعي", video_url: "الفيديو",
+};
+
+const fmtVal = (v: unknown): string => {
+  if (v === null || v === undefined || v === "") return "—";
+  if (typeof v === "boolean") return v ? "نعم" : "لا";
+  if (typeof v === "string") {
+    if (v.startsWith("http") && v.length > 40) return "🔗 رابط";
+    return v.length > 30 ? v.slice(0, 30) + "…" : v;
+  }
+  return String(v);
+};
+
+
 function ActivityLogTab() {
   const [rows, setRows] = useState<LogRow[]>([]);
   const [loading, setLoading] = useState(true);
