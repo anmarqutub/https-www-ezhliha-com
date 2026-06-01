@@ -248,8 +248,10 @@ function CitiesTab() {
     };
     if (editing.id) {
       await supabase.from("cities").update(payload).eq("id", editing.id);
+      logActivity("update", "city", editing.id, { name_ar: payload.name_ar });
     } else {
-      await supabase.from("cities").insert(payload);
+      const { data } = await supabase.from("cities").insert(payload).select().single();
+      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar });
     }
     setEditing(null);
     reload();
@@ -257,7 +259,9 @@ function CitiesTab() {
 
   const del = async (id: string) => {
     if (!confirm("هل تريدين حذف هذه المدينة؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("cities").delete().eq("id", id);
+    logActivity("delete", "city", id, { name_ar: row?.name_ar });
     reload();
   };
 
