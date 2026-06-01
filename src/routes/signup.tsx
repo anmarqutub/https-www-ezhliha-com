@@ -1,19 +1,21 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { redeemCode } from "@/lib/codes.functions";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
-  head: () => ({
-    meta: [{ title: "إنشاء حساب — إزهليها" }],
-  }),
+  head: () => ({ meta: [{ title: "إنشاء حساب — إزهليها" }] }),
 });
 
 function SignupPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
+  const redeem = useServerFn(redeemCode);
+  const [code, setCode] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,51 +32,61 @@ function SignupPage() {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: { full_name: fullName, phone, city },
-      },
-    });
-    setSubmitting(false);
-    if (error) {
-      setError(error.message);
-      return;
+    try {
+      await redeem({
+        data: { code, email, password, full_name: fullName, phone, city },
+      });
+      const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
+      if (sErr) throw new Error(sErr.message);
+      navigate({ to: "/" });
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : (e as Error).message;
+      setError(msg || "حدث خطأ");
+    } finally {
+      setSubmitting(false);
     }
-    navigate({ to: "/" });
   }
 
-  return <AuthShell title="إنشاء حساب جديد" sub="انضم الآن لاكتشاف أفضل مزودي الخدمات">
-    <form onSubmit={onSubmit} className="auth-form">
-      <Field label="الاسم الكامل">
-        <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
-      </Field>
-      <Field label="البريد الإلكتروني">
-        <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
-      </Field>
-      <Field label="كلمة المرور">
-        <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="٦ أحرف على الأقل" />
-      </Field>
-      <Field label="رقم الجوال (اختياري)">
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
-      </Field>
-      <Field label="المدينة">
-        <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option>الرياض</option>
-          <option>جدة</option>
-          <option>الدمام</option>
-          <option>مكة المكرمة</option>
-        </select>
-      </Field>
-      {error && <div className="auth-error">{error}</div>}
-      <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "إنشاء الحساب"}</button>
-      <div className="auth-switch">
-        لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
-      </div>
-    </form>
-  </AuthShell>;
+  return (
+    <AuthShell title="إنشاء حساب جديد" sub="التسجيل متاح فقط لمن قام بشراء الاشتراك من سلة">
+      <form onSubmit={onSubmit} className="auth-form">
+        <Field label="كود الاشتراك (وصلك بالإيميل من سلة)">
+          <input
+            required
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="XXXXXXXXXX"
+            style={{ letterSpacing: 2, fontFamily: "monospace" }}
+          />
+        </Field>
+        <Field label="الاسم الكامل">
+          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
+        </Field>
+        <Field label="البريد الإلكتروني">
+          <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
+        </Field>
+        <Field label="كلمة المرور">
+          <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="٦ أحرف على الأقل" />
+        </Field>
+        <Field label="رقم الجوال (اختياري)">
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
+        </Field>
+        <Field label="المدينة">
+          <select value={city} onChange={(e) => setCity(e.target.value)}>
+            <option>الرياض</option>
+            <option>جدة</option>
+            <option>الدمام</option>
+            <option>مكة المكرمة</option>
+          </select>
+        </Field>
+        {error && <div className="auth-error">{error}</div>}
+        <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "تفعيل الحساب"}</button>
+        <div className="auth-switch">
+          لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
+        </div>
+      </form>
+    </AuthShell>
+  );
 }
 
 export function AuthShell({ title, sub, children }: { title: string; sub: string; children: React.ReactNode }) {
