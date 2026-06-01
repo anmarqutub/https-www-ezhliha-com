@@ -17,6 +17,7 @@ type Provider = {
   tiktok: string | null; twitter: string | null; snapchat: string | null;
   address: string | null; map_url: string | null;
   rating: number | null; city_id: string; subcategory_id: string;
+  video_url: string | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; user_id: string; rating: number; comment: string | null; created_at: string };
