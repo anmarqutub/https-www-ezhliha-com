@@ -690,6 +690,7 @@ function ProvidersTab() {
     if (upErr) { alert("خطأ رفع: " + upErr.message); setUploadingVideo(false); return; }
     const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
     await supabase.from("providers").update({ video_url: pub.publicUrl }).eq("id", editing.id);
+    logActivity("upload_video", "provider", editing.id, { name: editing.name });
     setEditing({ ...editing, video_url: pub.publicUrl });
     setUploadingVideo(false);
     reload();
