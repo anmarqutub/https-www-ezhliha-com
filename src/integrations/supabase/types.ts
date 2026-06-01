@@ -289,6 +289,36 @@ export type Database = {
           },
         ]
       }
+      purchase_codes: {
+        Row: {
+          code: string
+          created_at: string
+          email: string | null
+          id: string
+          note: string | null
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          note?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          note?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           comment: string | null

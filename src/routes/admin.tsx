@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin } from "@/lib/admin.functions";
+import { generateCodes, listCodes, deleteCode } from "@/lib/codes.functions";
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة الأدمن — أزّليها" }] }),
 });
 
-type Tab = "stats" | "users" | "cities" | "categories" | "providers" | "banners" | "reviews";
+type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews";
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
@@ -94,6 +95,7 @@ function AdminPage() {
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
           <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
+          <SideBtn label="أكواد الاشتراك" active={tab === "codes"} onClick={() => setTab("codes")} />
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
           <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
@@ -104,6 +106,7 @@ function AdminPage() {
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
           {tab === "users" && <StatsAndUsers showUsers={true} />}
+          {tab === "codes" && <CodesTab />}
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
@@ -1151,3 +1154,131 @@ const adminCss = `
     .adm-grid2 { grid-template-columns:1fr; }
   }
 `;
+
+// ============ CODES ============
+function CodesTab() {
+  const gen = useServerFn(generateCodes);
+  const list = useServerFn(listCodes);
+  const del = useServerFn(deleteCode);
+  const [count, setCount] = useState(1);
+  const [email, setEmail] = useState("");
+  const [note, setNote] = useState("");
+  const [rows, setRows] = useState<Array<{ id: string; code: string; email: string | null; note: string | null; used_at: string | null; used_by: string | null; created_at: string }>>([]);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const reload = useCallback(async () => {
+    const res = await list();
+    setRows(res.codes as typeof rows);
+  }, [list]);
+
+  useEffect(() => { reload(); }, [reload]);
+
+  async function onGenerate(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true); setMsg(null);
+    try {
+      const res = await gen({ data: { count, email, note } });
+      setMsg(`تم توليد ${res.codes.length} كود`);
+      setEmail(""); setNote("");
+      await reload();
+    } catch (e) {
+      setMsg("خطأ: " + (e as Error).message);
+    } finally { setBusy(false); }
+  }
+
+  async function copy(code: string) {
+    try { await navigator.clipboard.writeText(code); setMsg("تم نسخ الكود: " + code); } catch {}
+  }
+
+  function exportCsv() {
+    const header = ["code", "email", "note", "used_at", "created_at"];
+    const lines = [header.join(",")].concat(
+      rows.map((r) => [r.code, r.email ?? "", (r.note ?? "").replaceAll(",", " "), r.used_at ?? "", r.created_at].join(","))
+    );
+    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `purchase-codes-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const unused = rows.filter((r) => !r.used_at).length;
+
+  return (
+    <>
+      <h1 className="adm-title">أكواد الاشتراك</h1>
+      <p style={{ color: "#555", marginBottom: 16, fontSize: 14 }}>
+        التسجيل في الموقع مغلق. يستطيع المشتري من سلة التسجيل فقط عبر كود يصله بالإيميل. ولّد الأكواد هنا ثم أرسلها للعملاء.
+      </p>
+
+      <div className="adm-card" style={{ marginBottom: 20 }}>
+        <h3 style={{ marginBottom: 12 }}>توليد أكواد جديدة</h3>
+        <form onSubmit={onGenerate} style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr auto", gap: 10, alignItems: "end" }}>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            العدد
+            <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Number(e.target.value))} style={inp} />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            ربط بإيميل محدد (اختياري)
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="customer@email.com" style={inp} />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            ملاحظة (اختياري)
+            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثلا: طلب سلة #1234" style={inp} />
+          </label>
+          <button className="adm-btn-primary" disabled={busy}>{busy ? "..." : "توليد"}</button>
+        </form>
+        {msg && <p style={{ marginTop: 10, fontSize: 13, color: "#6B1F1F" }}>{msg}</p>}
+      </div>
+
+      <div className="adm-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 14 }}>
+            الإجمالي: <b>{rows.length}</b> &nbsp;|&nbsp; غير مستخدمة: <b>{unused}</b>
+          </div>
+          <button className="adm-btn-secondary" onClick={exportCsv} disabled={rows.length === 0}>تصدير CSV</button>
+        </div>
+        {rows.length === 0 ? (
+          <p className="adm-empty">لا توجد أكواد بعد.</p>
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>الكود</th><th>الإيميل</th><th>ملاحظة</th><th>الحالة</th><th>تاريخ الإنشاء</th><th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td>
+                      <button onClick={() => copy(r.code)} title="نسخ" style={{ background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 6, padding: "4px 10px", fontFamily: "monospace", cursor: "pointer", fontWeight: 700 }}>
+                        {r.code}
+                      </button>
+                    </td>
+                    <td>{r.email ?? "—"}</td>
+                    <td>{r.note ?? "—"}</td>
+                    <td>
+                      {r.used_at
+                        ? <span className="adm-badge adm-badge-admin">مستخدم</span>
+                        : <span className="adm-badge">متاح</span>}
+                    </td>
+                    <td>{fmt(r.created_at)}</td>
+                    <td>
+                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); reload(); } }}
+                        style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
+
