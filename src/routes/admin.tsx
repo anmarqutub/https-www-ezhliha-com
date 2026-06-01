@@ -560,6 +560,7 @@ function ProvidersTab() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<ProvRow> | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
 
