@@ -7,7 +7,7 @@ import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/favorites")({
   component: FavoritesPage,
-  head: () => ({ meta: [{ title: "المفضلة — أزّليها" }] }),
+  head: () => ({ meta: [{ title: "المفضلة — إزهليها" }] }),
 });
 
 type Provider = {
@@ -61,7 +61,7 @@ function FavoritesPage() {
     <div dir="rtl" className="fav-root">
       <style>{css}</style>
       <header className="fav-nav">
-        <Link to="/" className="fav-brand"><img src={logoUrl} alt="أزّليها" /></Link>
+        <Link to="/" className="fav-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <div className="fav-nav-actions">
           {isAdmin && <Link to="/admin" className="fav-link">الأدمن</Link>}
           <span className="fav-user">{user?.email}</span>
