@@ -991,7 +991,9 @@ function ReviewsTab() {
 
   const del = async (id: string) => {
     if (!confirm("حذف هذا التقييم؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("reviews").delete().eq("id", id);
+    logActivity("delete", "review", id, { provider_id: row?.provider_id, rating: row?.rating });
     reload();
   };
 
