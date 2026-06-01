@@ -518,7 +518,7 @@ function CategoriesTab() {
                       <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditing({ ...editing, image_url: null })}>حذف الصورة</button>
                     </div>
                   )}
-                  <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadCatImage(e.target.files[0])} />
+                  <FileInput accept="image/*" onChange={(e) => e.target.files?.[0] && uploadCatImage(e.target.files[0])} />
                 </div>
               </Field>
             </>
@@ -741,7 +741,7 @@ function ProvidersTab() {
           {editing.id && (
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
               <h4 style={{ marginBottom: 12, fontWeight: 700 }}>الصور</h4>
-              <input type="file" accept="image/*" multiple disabled={uploading} onChange={(e) => handleUpload(e.target.files)} />
+              <FileInput accept="image/*" multiple disabled={uploading} onChange={(e) => handleUpload(e.target.files)} label="اضغط لرفع صور (يمكن اختيار أكثر من صورة)" />
               {uploading && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(120px,1fr))", gap: 10, marginTop: 12 }}>
                 {editingImages.map((img) => (
@@ -760,7 +760,206 @@ function ProvidersTab() {
   );
 }
 
+// ============ BANNERS ============
+type BannerRow = {
+  id: string; title: string | null; image_url: string; link_url: string | null;
+  sort_order: number; active: boolean;
+};
+
+function BannersTab() {
+  const [rows, setRows] = useState<BannerRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Partial<BannerRow> | null>(null);
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase.from("banners").select("*").order("sort_order");
+    setRows((data ?? []) as BannerRow[]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const uploadImage = async (file: File) => {
+    if (!editing) return;
+    const ext = file.name.split(".").pop();
+    const path = `banners/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    setEditing({ ...editing, image_url: pub.publicUrl });
+  };
+
+  const save = async () => {
+    if (!editing?.image_url) { alert("ارفع صورة البنر أولاً"); return; }
+    const payload = {
+      title: editing.title ?? null,
+      image_url: editing.image_url,
+      link_url: editing.link_url ?? null,
+      sort_order: editing.sort_order ?? 0,
+      active: editing.active ?? true,
+    };
+    if (editing.id) {
+      await supabase.from("banners").update(payload).eq("id", editing.id);
+    } else {
+      await supabase.from("banners").insert(payload);
+    }
+    setEditing(null); reload();
+  };
+
+  const del = async (id: string) => {
+    if (!confirm("حذف البنر؟")) return;
+    await supabase.from("banners").delete().eq("id", id);
+    reload();
+  };
+
+  return (
+    <>
+      <SectionHeader title="البنرات الإعلانية" onAdd={() => setEditing({ active: true, sort_order: 0 })} />
+      <div className="adm-card">
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : rows.length === 0 ? (
+          <p className="adm-empty">لا توجد بنرات بعد. اضغط "إضافة جديد" لإضافة بنر.</p>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 14 }}>
+            {rows.map((b) => (
+              <div key={b.id} style={{ border: "1px solid #E8DADA", borderRadius: 12, overflow: "hidden", background: "#fff" }}>
+                <img src={b.image_url} alt="" style={{ width: "100%", height: 140, objectFit: "cover" }} />
+                <div style={{ padding: 12 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{b.title || "بدون عنوان"}</div>
+                  <div style={{ fontSize: 12, color: "#5A4A4A", marginBottom: 8 }}>
+                    {b.active ? <span className="adm-badge adm-badge-on">مفعّل</span> : <span className="adm-badge">معطّل</span>}
+                    <span style={{ marginRight: 8 }}>ترتيب: {b.sort_order}</span>
+                  </div>
+                  <button className="adm-btn-sm" onClick={() => setEditing(b)}>تعديل</button>
+                  <button className="adm-btn-sm adm-btn-danger" onClick={() => del(b.id)}>حذف</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {editing && (
+        <Modal title={editing.id ? "تعديل بنر" : "إضافة بنر"} onClose={() => setEditing(null)} onSave={save}>
+          <Field label="العنوان (اختياري)">
+            <input type="text" value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
+          </Field>
+          <Field label="رابط الإعلان (اختياري)">
+            <input type="text" placeholder="https://..." value={editing.link_url ?? ""} onChange={(e) => setEditing({ ...editing, link_url: e.target.value })} />
+          </Field>
+          <Field label="صورة البنر">
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {editing.image_url && (
+                <img src={editing.image_url} alt="" style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: 8 }} />
+              )}
+              <FileInput accept="image/*" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])} />
+            </div>
+          </Field>
+          <Field label="الترتيب">
+            <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} />
+          </Field>
+          <Field label="مفعّل">
+            <input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} />
+          </Field>
+        </Modal>
+      )}
+    </>
+  );
+}
+
+// ============ REVIEWS ============
+type ReviewRow = {
+  id: string; provider_id: string; user_id: string;
+  rating: number; comment: string | null; created_at: string;
+};
+
+function ReviewsTab() {
+  const [rows, setRows] = useState<ReviewRow[]>([]);
+  const [providers, setProviders] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase.from("reviews").select("*").order("created_at", { ascending: false });
+    setRows((data ?? []) as ReviewRow[]);
+    const { data: provs } = await supabase.from("providers").select("id,name");
+    const map: Record<string, string> = {};
+    (provs ?? []).forEach((p: { id: string; name: string }) => { map[p.id] = p.name; });
+    setProviders(map);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const del = async (id: string) => {
+    if (!confirm("حذف هذا التقييم؟")) return;
+    await supabase.from("reviews").delete().eq("id", id);
+    reload();
+  };
+
+  return (
+    <>
+      <h1 className="adm-title">التقييمات</h1>
+      <div className="adm-card">
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : rows.length === 0 ? (
+          <p className="adm-empty">لا توجد تقييمات بعد.</p>
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>مقدم الخدمة</th>
+                  <th>التقييم</th>
+                  <th>التعليق</th>
+                  <th>التاريخ</th>
+                  <th>إجراء</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td>{providers[r.provider_id] || r.provider_id.slice(0, 8)}</td>
+                    <td>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</td>
+                    <td style={{ maxWidth: 360 }}>{r.comment || "-"}</td>
+                    <td style={{ fontSize: 12, color: "#5A4A4A" }}>{fmt(r.created_at)}</td>
+                    <td>
+                      <button className="adm-btn-sm adm-btn-danger" onClick={() => del(r.id)}>حذف</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ============ HELPERS ============
+
+function FileInput({ accept, multiple, disabled, onChange, label }: {
+  accept?: string; multiple?: boolean; disabled?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label?: string;
+}) {
+  return (
+    <label style={{
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      gap: 6, padding: "18px 12px", border: "2px dashed #C47A7A", borderRadius: 10,
+      background: "#FAF6F2", cursor: disabled ? "not-allowed" : "pointer",
+      color: "#6B1F1F", fontSize: 13, fontWeight: 600, textAlign: "center",
+      opacity: disabled ? 0.6 : 1,
+    }}>
+      <span style={{ fontSize: 26 }}>📎</span>
+      <span>{label || "اضغط لرفع صورة من جهازك"}</span>
+      <input
+        type="file" accept={accept} multiple={multiple} disabled={disabled}
+        onChange={onChange}
+        style={{ display: "none" }}
+      />
+    </label>
+  );
+}
+
 function SectionHeader({ title, onAdd }: { title: string; onAdd: () => void }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
