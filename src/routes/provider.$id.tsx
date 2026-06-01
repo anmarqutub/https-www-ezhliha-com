@@ -230,6 +230,15 @@ function ProviderPage() {
           </section>
         </div>
 
+        {provider.video_url && (
+          <section className="pv-video-section">
+            <h2>فيديو تعريفي</h2>
+            <VideoEmbed url={provider.video_url} />
+          </section>
+        )}
+
+
+
         <section className="pv-reviews">
           <h2>التقييمات والتعليقات</h2>
 
