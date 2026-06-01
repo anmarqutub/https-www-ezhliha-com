@@ -1899,7 +1899,7 @@ function ActivityLogTab() {
                     <td style={{ fontSize: 12 }}>{r.admin_email ?? r.admin_id.slice(0, 8)}</td>
                     <td><span className="adm-badge adm-badge-on">{ACTION_LABEL[r.action] ?? r.action}</span></td>
                     <td>{ENTITY_LABEL[r.entity] ?? r.entity}</td>
-                    <td style={{ fontSize: 13, maxWidth: 360 }}>{describe(r)}</td>
+                    <td style={{ fontSize: 13, maxWidth: 480, lineHeight: 1.6 }}>{describe(r)}</td>
                   </tr>
                 ))}
               </tbody>
