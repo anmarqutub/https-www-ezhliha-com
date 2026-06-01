@@ -17,6 +17,7 @@ type Provider = {
   tiktok: string | null; twitter: string | null; snapchat: string | null;
   address: string | null; map_url: string | null;
   rating: number | null; city_id: string; subcategory_id: string;
+  video_url: string | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; user_id: string; rating: number; comment: string | null; created_at: string };
@@ -229,6 +230,15 @@ function ProviderPage() {
           </section>
         </div>
 
+        {provider.video_url && (
+          <section className="pv-video-section">
+            <h2>فيديو تعريفي</h2>
+            <VideoEmbed url={provider.video_url} />
+          </section>
+        )}
+
+
+
         <section className="pv-reviews">
           <h2>التقييمات والتعليقات</h2>
 
@@ -279,6 +289,30 @@ function ProviderPage() {
   );
 }
 
+function VideoEmbed({ url }: { url: string }) {
+  // YouTube
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (yt) {
+    return (
+      <div className="pv-video-wrap">
+        <iframe src={`https://www.youtube.com/embed/${yt[1]}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+      </div>
+    );
+  }
+  // Direct video file
+  if (/\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url)) {
+    return (
+      <div className="pv-video-wrap">
+        <video src={url} controls playsInline preload="metadata" />
+      </div>
+    );
+  }
+  // Fallback: open in new tab
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">▶ مشاهدة الفيديو</a>
+  );
+}
+
 const css = `
   .pv-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
   .pv-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:50; }
@@ -325,6 +359,11 @@ const css = `
   .pv-soc-tw { background:#000; }
   .pv-soc-sc { background:#FFFC00; color:#000; }
 
+  .pv-video-section { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
+  .pv-video-section h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
+  .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; }
+  .pv-video-wrap iframe, .pv-video-wrap video { position:absolute; inset:0; width:100%; height:100%; border:none; }
+  .pv-video-link { display:inline-block; background:#660000; color:#fff; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; }
   .pv-reviews { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-reviews h2 { font-size:20px; font-weight:800; margin-bottom:16px; }
   .pv-review-form { background:#e6e4d7; padding:14px; border-radius:12px; margin-bottom:18px; display:flex; flex-direction:column; gap:10px; }

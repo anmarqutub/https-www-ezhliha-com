@@ -547,6 +547,7 @@ type ProvRow = {
   address: string | null;
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
+  video_url: string | null;
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 
@@ -559,6 +560,7 @@ function ProvidersTab() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<ProvRow> | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
 
@@ -593,6 +595,7 @@ function ProvidersTab() {
       is_featured: editing.is_featured ?? false,
       featured_until: editing.featured_until || null,
       sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
+      video_url: editing.video_url ?? null,
     };
     if (editing.id) await supabase.from("providers").update(payload).eq("id", editing.id);
     else {
@@ -630,6 +633,21 @@ function ProvidersTab() {
 
   const delImg = async (img: ImgRow) => {
     await supabase.from("provider_images").delete().eq("id", img.id);
+    reload();
+  };
+
+  const handleVideoUpload = async (file: File | undefined) => {
+    if (!file || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الفيديو"); return; }
+    if (file.size > 50 * 1024 * 1024) { alert("حجم الفيديو يجب أن يكون أقل من 50 ميغابايت"); return; }
+    setUploadingVideo(true);
+    const ext = file.name.split(".").pop();
+    const path = `${editing.id}/video-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("provider-images").upload(path, file);
+    if (upErr) { alert("خطأ رفع: " + upErr.message); setUploadingVideo(false); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    await supabase.from("providers").update({ video_url: pub.publicUrl }).eq("id", editing.id);
+    setEditing({ ...editing, video_url: pub.publicUrl });
+    setUploadingVideo(false);
     reload();
   };
 
@@ -762,6 +780,28 @@ function ProvidersTab() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 12, fontWeight: 700 }}>الفيديو (اختياري)</h4>
+              <Field label="رابط فيديو (يوتيوب / تيك توك / إنستغرام / رابط مباشر)">
+                <input
+                  value={editing.video_url ?? ""}
+                  onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
+                  dir="ltr"
+                  placeholder="https://..."
+                />
+              </Field>
+              <p style={{ fontSize: 12, color: "#5A4A4A", margin: "4px 0 10px" }}>أو ارفعي ملف فيديو مباشرة (حد أقصى 50 ميغابايت):</p>
+              <FileInput accept="video/*" disabled={uploadingVideo} onChange={(e) => handleVideoUpload(e.target.files?.[0])} label="اضغط لرفع فيديو" />
+              {uploadingVideo && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
+              {editing.video_url && (
+                <div style={{ marginTop: 12, display: "flex", gap: 10, alignItems: "center" }}>
+                  <a href={editing.video_url} target="_blank" rel="noopener noreferrer" style={{ color: "#660000", fontSize: 13, fontWeight: 600, textDecoration: "underline", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", direction: "ltr" }}>{editing.video_url}</a>
+                  <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
+                </div>
+              )}
             </div>
           )}
           {!editing.id && <p style={{ marginTop: 12, fontSize: 13, color: "#5A4A4A" }}>احفظي أولاً ثم سترين خيار رفع الصور.</p>}

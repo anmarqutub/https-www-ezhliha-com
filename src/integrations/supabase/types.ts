@@ -224,6 +224,7 @@ export type Database = {
           tiktok: string | null
           twitter: string | null
           updated_at: string
+          video_url: string | null
           whatsapp: string | null
         }
         Insert: {
@@ -247,6 +248,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           updated_at?: string
+          video_url?: string | null
           whatsapp?: string | null
         }
         Update: {
@@ -270,6 +272,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           updated_at?: string
+          video_url?: string | null
           whatsapp?: string | null
         }
         Relationships: [
