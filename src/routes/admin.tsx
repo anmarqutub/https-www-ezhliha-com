@@ -120,6 +120,7 @@ function AdminPage() {
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
           <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
           <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
+          <SideBtn label="سجل التعديلات" active={tab === "activity"} onClick={() => setTab("activity")} />
         </aside>
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
@@ -130,6 +131,7 @@ function AdminPage() {
           {tab === "providers" && <ProvidersTab />}
           {tab === "banners" && <BannersTab />}
           {tab === "reviews" && <ReviewsTab />}
+          {tab === "activity" && <ActivityLogTab />}
         </main>
       </div>
     </div>
