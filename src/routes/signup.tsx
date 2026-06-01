@@ -45,10 +45,10 @@ function SignupPage() {
     navigate({ to: "/" });
   }
 
-  return <AuthShell title="إنشاء حساب جديد" sub="انضمي الآن لاكتشاف أفضل مزودي الخدمات">
+  return <AuthShell title="إنشاء حساب جديد" sub="انضم الآن لاكتشاف أفضل مزودي الخدمات">
     <form onSubmit={onSubmit} className="auth-form">
       <Field label="الاسم الكامل">
-        <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="مثال: منال الأحمدي" />
+        <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
       </Field>
       <Field label="البريد الإلكتروني">
         <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
@@ -82,8 +82,7 @@ export function AuthShell({ title, sub, children }: { title: string; sub: string
       <style>{authCss}</style>
       <div className="auth-card">
         <Link to="/" className="auth-brand">
-          <div className="auth-brand-name">إزهليها</div>
-          <div className="auth-brand-en">EZHLIHA</div>
+          <img src={logoUrl} alt="أزّليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
         </Link>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-sub">{sub}</p>
