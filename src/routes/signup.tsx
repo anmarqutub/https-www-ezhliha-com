@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -112,12 +113,10 @@ const shellStyle: React.CSSProperties = {
 };
 
 export const authCss = `
-  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(107,31,31,0.15); }
+  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(102,0,0,0.15); }
   .auth-brand { display:block; text-align:center; text-decoration:none; margin-bottom:24px; }
-  .auth-brand-name { font-size:28px; font-weight:900; color:#6B1F1F; }
-  .auth-brand-en { font-size:10px; letter-spacing:5px; color:#C47A7A; }
-  .auth-title { font-size:24px; font-weight:800; color:#1A1A1A; text-align:center; margin-bottom:6px; }
-  .auth-sub { font-size:14px; color:#5A4A4A; text-align:center; margin-bottom:24px; }
+  .auth-title { font-size:24px; font-weight:800; color:#000; text-align:center; margin-bottom:6px; }
+  .auth-sub { font-size:14px; color:#555; text-align:center; margin-bottom:24px; }
   .auth-form { display:flex; flex-direction:column; gap:14px; }
   .auth-field { display:flex; flex-direction:column; gap:6px; font-size:13px; color:#5A4A4A; font-weight:600; }
   .auth-field input, .auth-field select {
