@@ -365,23 +365,27 @@ function CategoriesTab() {
             name_ar: name, name_en: name, sort_order, active,
           })
           .eq("id", editing.id);
+        logActivity("update", "subcategory", editing.id, { name_ar: name });
       } else {
         await supabase.from("categories")
           .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
           .eq("id", editing.id);
+        logActivity("update", "category", editing.id, { name_ar: name });
       }
     } else if (isSub) {
-      await supabase.from("subcategories").insert({
+      const { data } = await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
         parent_id: editing.sub_parent_id || null,
         name_ar: name, name_en: name, slug: makeSlug(name),
         sort_order, active,
-      });
+      }).select().single();
+      logActivity("create", "subcategory", data?.id ?? null, { name_ar: name });
     } else {
-      await supabase.from("categories").insert({
+      const { data } = await supabase.from("categories").insert({
         name_ar: name, name_en: name, slug: makeSlug(name),
         icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active,
-      });
+      }).select().single();
+      logActivity("create", "category", data?.id ?? null, { name_ar: name });
     }
     setEditing(null);
     reload();
@@ -395,17 +399,22 @@ function CategoriesTab() {
     if (error) { alert("خطأ رفع: " + error.message); return; }
     const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
     setEditing({ ...editing, image_url: pub.publicUrl });
+    logActivity("upload_image", "category", editing.id ?? null, { path });
   };
 
 
   const delMain = async (id: string) => {
     if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
+    const row = cats.find((c) => c.id === id);
     await supabase.from("categories").delete().eq("id", id);
+    logActivity("delete", "category", id, { name_ar: row?.name_ar });
     reload();
   };
   const delSub = async (id: string) => {
     if (!confirm("الحذف سيحذف مقدمي الخدمة المرتبطين. متأكدة؟")) return;
+    const row = subs.find((s) => s.id === id);
     await supabase.from("subcategories").delete().eq("id", id);
+    logActivity("delete", "subcategory", id, { name_ar: row?.name_ar });
     reload();
   };
 
