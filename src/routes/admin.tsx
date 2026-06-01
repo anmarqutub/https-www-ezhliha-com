@@ -13,7 +13,25 @@ export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
 });
 
-type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews";
+async function logActivity(action: string, entity: string, entityId?: string | null, details?: Record<string, unknown> | null) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from("admin_activity_log").insert({
+      admin_id: user.id,
+      admin_email: user.email ?? null,
+      action,
+      entity,
+      entity_id: entityId ?? null,
+      details: (details ?? null) as never,
+    });
+  } catch {
+    /* silent */
+  }
+}
+
+type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
@@ -102,6 +120,7 @@ function AdminPage() {
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
           <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
           <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
+          <SideBtn label="سجل التعديلات" active={tab === "activity"} onClick={() => setTab("activity")} />
         </aside>
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
@@ -112,6 +131,7 @@ function AdminPage() {
           {tab === "providers" && <ProvidersTab />}
           {tab === "banners" && <BannersTab />}
           {tab === "reviews" && <ReviewsTab />}
+          {tab === "activity" && <ActivityLogTab />}
         </main>
       </div>
     </div>
@@ -228,8 +248,10 @@ function CitiesTab() {
     };
     if (editing.id) {
       await supabase.from("cities").update(payload).eq("id", editing.id);
+      logActivity("update", "city", editing.id, { name_ar: payload.name_ar });
     } else {
-      await supabase.from("cities").insert(payload);
+      const { data } = await supabase.from("cities").insert(payload).select().single();
+      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar });
     }
     setEditing(null);
     reload();
@@ -237,7 +259,9 @@ function CitiesTab() {
 
   const del = async (id: string) => {
     if (!confirm("هل تريدين حذف هذه المدينة؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("cities").delete().eq("id", id);
+    logActivity("delete", "city", id, { name_ar: row?.name_ar });
     reload();
   };
 
@@ -341,23 +365,27 @@ function CategoriesTab() {
             name_ar: name, name_en: name, sort_order, active,
           })
           .eq("id", editing.id);
+        logActivity("update", "subcategory", editing.id, { name_ar: name });
       } else {
         await supabase.from("categories")
           .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
           .eq("id", editing.id);
+        logActivity("update", "category", editing.id, { name_ar: name });
       }
     } else if (isSub) {
-      await supabase.from("subcategories").insert({
+      const { data } = await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
         parent_id: editing.sub_parent_id || null,
         name_ar: name, name_en: name, slug: makeSlug(name),
         sort_order, active,
-      });
+      }).select().single();
+      logActivity("create", "subcategory", data?.id ?? null, { name_ar: name });
     } else {
-      await supabase.from("categories").insert({
+      const { data } = await supabase.from("categories").insert({
         name_ar: name, name_en: name, slug: makeSlug(name),
         icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active,
-      });
+      }).select().single();
+      logActivity("create", "category", data?.id ?? null, { name_ar: name });
     }
     setEditing(null);
     reload();
@@ -371,17 +399,22 @@ function CategoriesTab() {
     if (error) { alert("خطأ رفع: " + error.message); return; }
     const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
     setEditing({ ...editing, image_url: pub.publicUrl });
+    logActivity("upload_image", "category", editing.id ?? null, { path });
   };
 
 
   const delMain = async (id: string) => {
     if (!confirm("الحذف سيحذف التصنيفات الفرعية ومقدمي الخدمة المرتبطين. متأكدة؟")) return;
+    const row = cats.find((c) => c.id === id);
     await supabase.from("categories").delete().eq("id", id);
+    logActivity("delete", "category", id, { name_ar: row?.name_ar });
     reload();
   };
   const delSub = async (id: string) => {
     if (!confirm("الحذف سيحذف مقدمي الخدمة المرتبطين. متأكدة؟")) return;
+    const row = subs.find((s) => s.id === id);
     await supabase.from("subcategories").delete().eq("id", id);
+    logActivity("delete", "subcategory", id, { name_ar: row?.name_ar });
     reload();
   };
 
@@ -597,25 +630,33 @@ function ProvidersTab() {
       sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
       video_url: editing.video_url ?? null,
     };
-    if (editing.id) await supabase.from("providers").update(payload).eq("id", editing.id);
-    else {
+    if (editing.id) {
+      await supabase.from("providers").update(payload).eq("id", editing.id);
+      logActivity("update", "provider", editing.id, { name: payload.name });
+    } else {
       const { data } = await supabase.from("providers").insert(payload).select().single();
       if (data) editing.id = data.id;
+      logActivity("create", "provider", data?.id ?? null, { name: payload.name });
     }
     setEditing(null); reload();
   };
   const del = async (id: string) => {
     if (!confirm("حذف مقدم الخدمة وكل صوره؟")) return;
-    await supabase.from("providers").delete().eq("id", id); reload();
+    const row = rows.find((r) => r.id === id);
+    await supabase.from("providers").delete().eq("id", id);
+    logActivity("delete", "provider", id, { name: row?.name });
+    reload();
   };
   const toggleFeatured = async (r: ProvRow) => {
     await supabase.from("providers").update({ is_featured: !r.is_featured }).eq("id", r.id);
+    logActivity(r.is_featured ? "unfeature" : "feature", "provider", r.id, { name: r.name });
     reload();
   };
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الصور"); return; }
     setUploading(true);
+    let uploaded = 0;
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
       const ext = f.name.split(".").pop();
@@ -626,13 +667,16 @@ function ProvidersTab() {
       await supabase.from("provider_images").insert({
         provider_id: editing.id, image_url: pub.publicUrl, sort_order: i,
       });
+      uploaded++;
     }
+    if (uploaded > 0) logActivity("upload_images", "provider", editing.id, { count: uploaded, name: editing.name });
     setUploading(false);
     reload();
   };
 
   const delImg = async (img: ImgRow) => {
     await supabase.from("provider_images").delete().eq("id", img.id);
+    logActivity("delete_image", "provider", img.provider_id, { image_id: img.id });
     reload();
   };
 
@@ -646,6 +690,7 @@ function ProvidersTab() {
     if (upErr) { alert("خطأ رفع: " + upErr.message); setUploadingVideo(false); return; }
     const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
     await supabase.from("providers").update({ video_url: pub.publicUrl }).eq("id", editing.id);
+    logActivity("upload_video", "provider", editing.id, { name: editing.name });
     setEditing({ ...editing, video_url: pub.publicUrl });
     setUploadingVideo(false);
     reload();
@@ -799,7 +844,7 @@ function ProvidersTab() {
               {editing.video_url && (
                 <div style={{ marginTop: 12, display: "flex", gap: 10, alignItems: "center" }}>
                   <a href={editing.video_url} target="_blank" rel="noopener noreferrer" style={{ color: "#660000", fontSize: 13, fontWeight: 600, textDecoration: "underline", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", direction: "ltr" }}>{editing.video_url}</a>
-                  <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
+                  <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); logActivity("delete_video", "provider", editing.id!, { name: editing.name }); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
                 </div>
               )}
             </div>
@@ -851,15 +896,19 @@ function BannersTab() {
     };
     if (editing.id) {
       await supabase.from("banners").update(payload).eq("id", editing.id);
+      logActivity("update", "banner", editing.id, { title: payload.title });
     } else {
-      await supabase.from("banners").insert(payload);
+      const { data } = await supabase.from("banners").insert(payload).select().single();
+      logActivity("create", "banner", data?.id ?? null, { title: payload.title });
     }
     setEditing(null); reload();
   };
 
   const del = async (id: string) => {
     if (!confirm("حذف البنر؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("banners").delete().eq("id", id);
+    logActivity("delete", "banner", id, { title: row?.title });
     reload();
   };
 
@@ -942,7 +991,9 @@ function ReviewsTab() {
 
   const del = async (id: string) => {
     if (!confirm("حذف هذا التقييم؟")) return;
+    const row = rows.find((r) => r.id === id);
     await supabase.from("reviews").delete().eq("id", id);
+    logActivity("delete", "review", id, { provider_id: row?.provider_id, rating: row?.rating });
     reload();
   };
 
@@ -1220,6 +1271,7 @@ function CodesTab() {
     try {
       const res = await gen({ data: { count, email, note } });
       setMsg(`تم توليد ${res.codes.length} كود`);
+      logActivity("generate", "purchase_codes", null, { count: res.codes.length, email: email || null, note: note || null });
       setEmail(""); setNote("");
       await reload();
     } catch (e) {
@@ -1306,7 +1358,7 @@ function CodesTab() {
                     </td>
                     <td>{fmt(r.created_at)}</td>
                     <td>
-                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); reload(); } }}
+                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); logActivity("delete", "purchase_code", r.id, { code: r.code }); reload(); } }}
                         style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
                     </td>
                   </tr>
@@ -1321,4 +1373,130 @@ function CodesTab() {
 }
 
 const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
+
+// ============ ACTIVITY LOG ============
+type LogRow = {
+  id: string;
+  admin_id: string;
+  admin_email: string | null;
+  action: string;
+  entity: string;
+  entity_id: string | null;
+  details: Record<string, unknown> | null;
+  created_at: string;
+};
+
+const ACTION_LABEL: Record<string, string> = {
+  create: "إضافة",
+  update: "تعديل",
+  delete: "حذف",
+  feature: "ترقية لمميز",
+  unfeature: "إلغاء التمييز",
+  upload_image: "رفع صورة",
+  upload_images: "رفع صور",
+  delete_image: "حذف صورة",
+  upload_video: "رفع فيديو",
+  delete_video: "حذف فيديو",
+  generate: "توليد",
+};
+
+const ENTITY_LABEL: Record<string, string> = {
+  city: "مدينة",
+  category: "تصنيف رئيسي",
+  subcategory: "تصنيف فرعي",
+  provider: "مقدم خدمة",
+  banner: "بنر",
+  review: "تقييم",
+  purchase_code: "كود اشتراك",
+  purchase_codes: "أكواد اشتراك",
+};
+
+function ActivityLogTab() {
+  const [rows, setRows] = useState<LogRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filterAction, setFilterAction] = useState("all");
+  const [filterEntity, setFilterEntity] = useState("all");
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("admin_activity_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    setRows((data ?? []) as LogRow[]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const filtered = rows.filter((r) => {
+    if (filterAction !== "all" && r.action !== filterAction) return false;
+    if (filterEntity !== "all" && r.entity !== filterEntity) return false;
+    return true;
+  });
+
+  const actions = Array.from(new Set(rows.map((r) => r.action)));
+  const entities = Array.from(new Set(rows.map((r) => r.entity)));
+
+  const describe = (r: LogRow) => {
+    const d = r.details ?? {};
+    const name = (d.name_ar || d.name || d.title || d.code) as string | undefined;
+    if (name) return `"${name}"`;
+    if (typeof d.count === "number") return `(${d.count})`;
+    return r.entity_id ? r.entity_id.slice(0, 8) : "";
+  };
+
+  return (
+    <>
+      <h1 className="adm-title">سجل تعديلات الأدمن</h1>
+      <p style={{ color: "#5A4A4A", marginBottom: 16, fontSize: 13 }}>
+        آخر 500 إجراء قام بها الأدمنون (إضافة، تعديل، حذف، رفع صور، إلخ).
+      </p>
+      <div className="adm-card">
+        <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+          <select className="adm-select" value={filterAction} onChange={(e) => setFilterAction(e.target.value)}>
+            <option value="all">كل الإجراءات</option>
+            {actions.map((a) => <option key={a} value={a}>{ACTION_LABEL[a] ?? a}</option>)}
+          </select>
+          <select className="adm-select" value={filterEntity} onChange={(e) => setFilterEntity(e.target.value)}>
+            <option value="all">كل الأنواع</option>
+            {entities.map((e) => <option key={e} value={e}>{ENTITY_LABEL[e] ?? e}</option>)}
+          </select>
+          <button className="adm-btn-secondary" onClick={reload} style={{ marginRight: "auto" }}>تحديث</button>
+        </div>
+        {loading ? (
+          <p className="adm-empty">جارٍ التحميل...</p>
+        ) : filtered.length === 0 ? (
+          <p className="adm-empty">لا توجد إجراءات بعد.</p>
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>الأدمن</th>
+                  <th>الإجراء</th>
+                  <th>النوع</th>
+                  <th>التفاصيل</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.id}>
+                    <td style={{ fontSize: 12, color: "#5A4A4A", whiteSpace: "nowrap" }}>{fmt(r.created_at)}</td>
+                    <td style={{ fontSize: 12 }}>{r.admin_email ?? r.admin_id.slice(0, 8)}</td>
+                    <td><span className="adm-badge adm-badge-on">{ACTION_LABEL[r.action] ?? r.action}</span></td>
+                    <td>{ENTITY_LABEL[r.entity] ?? r.entity}</td>
+                    <td style={{ fontSize: 13, maxWidth: 360 }}>{describe(r)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 
