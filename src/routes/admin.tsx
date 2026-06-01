@@ -697,20 +697,21 @@ function CategoriesTab() {
 
     if (editing.id && editing.originalKind) {
       if (editing.originalKind === "sub") {
-        await supabase.from("subcategories")
-          .update({
-            category_id: editing.parent_id,
-            parent_id: editing.sub_parent_id || null,
-            name_ar: name, name_en: name, sort_order, active,
-          })
-          .eq("id", editing.id);
-        logActivity("update", "subcategory", editing.id, { name_ar: name });
+        const before = subs.find((s) => s.id === editing.id);
+        const newVals = {
+          category_id: editing.parent_id,
+          parent_id: editing.sub_parent_id || null,
+          name_ar: name, name_en: name, sort_order, active,
+        };
+        await supabase.from("subcategories").update(newVals).eq("id", editing.id);
+        logActivity("update", "subcategory", editing.id, { name_ar: name, changes: diffFields(before as never, newVals as never) });
       } else {
-        await supabase.from("categories")
-          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
-          .eq("id", editing.id);
-        logActivity("update", "category", editing.id, { name_ar: name });
+        const before = cats.find((c) => c.id === editing.id);
+        const newVals = { name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active };
+        await supabase.from("categories").update(newVals).eq("id", editing.id);
+        logActivity("update", "category", editing.id, { name_ar: name, changes: diffFields(before as never, newVals as never) });
       }
+
     } else if (isSub) {
       const { data } = await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
