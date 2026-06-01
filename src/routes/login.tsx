@@ -34,7 +34,7 @@ function LoginPage() {
   }
 
   return (
-    <AuthShell title="تسجيل الدخول" sub="أهلاً بكِ مرة أخرى في إزهليها">
+    <AuthShell title="تسجيل الدخول" sub="مرحبًا بعودتك إلى أزّليها">
       <form onSubmit={onSubmit} className="auth-form">
         <label className="auth-field">
           <span>البريد الإلكتروني</span>
@@ -47,7 +47,7 @@ function LoginPage() {
         {error && <div className="auth-error">{error}</div>}
         <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "تسجيل الدخول"}</button>
         <div className="auth-switch">
-          ليس لديك حساب؟ <Link to="/signup">اشتركي الآن</Link>
+          ليس لديك حساب؟ <Link to="/signup">سجّل الآن</Link>
         </div>
       </form>
     </AuthShell>

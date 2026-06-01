@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      banners: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          image_url: string
+          link_url: string | null
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url: string
+          link_url?: string | null
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string
+          link_url?: string | null
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           active: boolean
@@ -83,6 +116,27 @@ export type Database = {
           slug?: string
           sort_order?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          provider_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          provider_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          provider_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -159,6 +213,7 @@ export type Database = {
           id: string
           instagram: string | null
           is_featured: boolean
+          map_url: string | null
           name: string
           price_from: number | null
           price_to: number | null
@@ -181,6 +236,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_featured?: boolean
+          map_url?: string | null
           name: string
           price_from?: number | null
           price_to?: number | null
@@ -203,6 +259,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_featured?: boolean
+          map_url?: string | null
           name?: string
           price_from?: number | null
           price_to?: number | null
@@ -231,6 +288,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          provider_id: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          provider_id: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          provider_id?: string
+          rating?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       subcategories: {
         Row: {

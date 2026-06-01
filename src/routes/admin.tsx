@@ -5,13 +5,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
+import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
-  head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
+  head: () => ({ meta: [{ title: "لوحة الأدمن — أزّليها" }] }),
 });
 
-type Tab = "stats" | "users" | "cities" | "categories" | "providers";
+type Tab = "stats" | "users" | "cities" | "categories" | "providers" | "banners" | "reviews";
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
@@ -35,10 +36,7 @@ function AdminPage() {
       <div dir="rtl" style={pageStyle}>
         <style>{adminCss}</style>
         <header className="adm-nav">
-          <Link to="/" className="adm-brand">
-            <div className="adm-brand-name">إزهليها — أدمن</div>
-            <div className="adm-brand-en">EZHLIHA ADMIN</div>
-          </Link>
+          <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 50 }} /></Link>
           <div className="adm-nav-right">
             <span className="adm-user">{user?.email}</span>
             <button className="adm-logout" onClick={() => signOut().then(() => navigate({ to: "/login" }))}>
@@ -49,8 +47,8 @@ function AdminPage() {
         <main className="adm-main">
           <div className="adm-card" style={{ textAlign: "center" }}>
             <h2>هذا الحساب ليس أدمن</h2>
-            <p style={{ margin: "12px 0", color: "#5A4A4A" }}>
-              إذا كنتِ مالكة المشروع، اضغطي الزر أدناه لترقية حسابك إلى أدمن (يعمل مرة واحدة فقط، ولا أحد قام بذلك بعد).
+            <p style={{ margin: "12px 0", color: "#555" }}>
+              إذا كنت مالك المشروع، اضغط الزر أدناه لترقية حسابك إلى أدمن (يعمل مرة واحدة فقط، ولا أحد قام بذلك بعد).
             </p>
             <button
               className="adm-btn-primary"
@@ -60,7 +58,7 @@ function AdminPage() {
                 setClaimMsg(null);
                 try {
                   await claim();
-                  setClaimMsg("تمت الترقية! أعيدي تحميل الصفحة.");
+                  setClaimMsg("تمت الترقية! أعد تحميل الصفحة.");
                   setTimeout(() => window.location.reload(), 1200);
                 } catch (e) {
                   setClaimMsg("فشل: " + (e as Error).message);
@@ -82,10 +80,7 @@ function AdminPage() {
     <div dir="rtl" style={pageStyle}>
       <style>{adminCss}</style>
       <header className="adm-nav">
-        <Link to="/" className="adm-brand">
-          <div className="adm-brand-name">إزهليها — أدمن</div>
-          <div className="adm-brand-en">EZHLIHA ADMIN</div>
-        </Link>
+        <Link to="/" className="adm-brand"><img src={logoUrl} alt="أزّليها" style={{ height: 50 }} /></Link>
         <div className="adm-nav-right">
           <Link to="/" className="adm-link">عرض الموقع</Link>
           <span className="adm-user">{user?.email}</span>
@@ -98,11 +93,13 @@ function AdminPage() {
       <div className="adm-layout">
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
-          <SideBtn label="المستخدمات" active={tab === "users"} onClick={() => setTab("users")} />
+          <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
           <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
+          <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
+          <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
         </aside>
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
@@ -110,6 +107,8 @@ function AdminPage() {
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
+          {tab === "banners" && <BannersTab />}
+          {tab === "reviews" && <ReviewsTab />}
         </main>
       </div>
     </div>

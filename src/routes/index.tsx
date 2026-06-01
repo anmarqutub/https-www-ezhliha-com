@@ -2,16 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "إزهليها — دليلك لأجمل المناسبات" },
+      { title: "أزّليها — دليلك لأجمل المناسبات" },
       {
         name: "description",
         content:
-          "إزهليها — دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة.",
+          "أزّليها — دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة.",
       },
     ],
   }),
@@ -40,6 +41,9 @@ type Provider = {
   sort_order: number;
 };
 type ProviderImage = { id: string; provider_id: string; image_url: string };
+type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
+
+export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع أزّليها";
 
 function Home() {
   const { user, isAdmin, signOut } = useAuth();
@@ -48,6 +52,8 @@ function Home() {
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [images, setImages] = useState<ProviderImage[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [bannerIdx, setBannerIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [selectedCity, setSelectedCity] = useState<string>("");
@@ -57,7 +63,7 @@ function Home() {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -68,6 +74,7 @@ function Home() {
           .order("is_featured", { ascending: false })
           .order("sort_order"),
         supabase.from("provider_images").select("*").order("sort_order"),
+        supabase.from("banners").select("*").eq("active", true).order("sort_order"),
       ]);
       const citiesData = (cRes.data ?? []) as City[];
       setCities(citiesData);
@@ -76,9 +83,17 @@ function Home() {
       setSubcategories((subRes.data ?? []) as Subcategory[]);
       setProviders((pRes.data ?? []) as Provider[]);
       setImages((imgRes.data ?? []) as ProviderImage[]);
+      setBanners((bRes.data ?? []) as Banner[]);
       setLoading(false);
     })();
   }, []);
+
+  // Banner rotator
+  useEffect(() => {
+    if (banners.length < 2) return;
+    const t = setInterval(() => setBannerIdx((i) => (i + 1) % banners.length), 5000);
+    return () => clearInterval(t);
+  }, [banners.length]);
 
   const imgsByProvider = useMemo(() => {
     const m = new Map<string, ProviderImage[]>();
@@ -90,18 +105,15 @@ function Home() {
     return m;
   }, [images]);
 
-  // Top-level subs for selected category
   const visibleSubs = selectedCategory
     ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
 
-  // Tertiaries under currently-selected sub (if any)
   const visibleTertiaries =
     selectedSub !== "all"
       ? subcategories.filter((s) => s.parent_id === selectedSub)
       : [];
 
-  // Providers count per category (for the selected city)
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
@@ -114,19 +126,16 @@ function Home() {
     return m;
   }, [providers, subcategories, selectedCity]);
 
-  // Provider matches selected sub if its subcategory equals OR is a descendant
   const subMatches = (providerSubId: string, selSub: string) => {
     if (providerSubId === selSub) return true;
     const ps = subcategories.find((s) => s.id === providerSubId);
     return !!ps && ps.parent_id === selSub;
   };
 
-  // Providers for current category view
   const categoryProviders = providers.filter((p) => {
     if (selectedCity && p.city_id !== selectedCity) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
-    // sub belongs to selected category either directly or via parent
     if (selectedCategory) {
       const directCat = sub.category_id === selectedCategory;
       if (!directCat) return false;
@@ -146,22 +155,21 @@ function Home() {
   const regular = categoryProviders.filter((p) => !featured.includes(p));
 
   const activeCategory = categories.find((c) => c.id === selectedCategory);
+  const currentBanner = banners[bannerIdx];
 
   return (
-    <div dir="rtl" style={{ minHeight: "100vh", background: "#FAF6F2", fontFamily: "Tajawal, system-ui, sans-serif", color: "#1A1A1A" }}>
+    <div dir="rtl" className="ez-root">
       <style>{css}</style>
 
       <header className="ez-nav">
-        <Link to="/" className="ez-brand">
-          <div className="ez-brand-name">إزهليها</div>
-          <div className="ez-brand-en">EZHLIHA</div>
+        <Link to="/" className="ez-brand" aria-label="الرئيسية">
+          <img src={logoUrl} alt="أزّليها" className="ez-brand-logo" />
         </Link>
         <div className="ez-nav-actions">
           {user ? (
             <>
-              {isAdmin && (
-                <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>
-              )}
+              <Link to="/favorites" className="ez-nav-link">♥ المفضلة</Link>
+              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
               <span className="ez-nav-user">{user.email}</span>
               <button className="ez-nav-btn-out" onClick={() => signOut()}>خروج</button>
             </>
@@ -174,16 +182,42 @@ function Home() {
         </div>
       </header>
 
+      {/* Hero banner — supports admin-managed ad banners */}
       <section className="ez-hero">
-        <div className="ez-hero-inner">
-          <h1>إزهليها</h1>
-          <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
-        </div>
+        {currentBanner ? (
+          currentBanner.link_url ? (
+            <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
+              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+            </a>
+          ) : (
+            <div className="ez-hero-banner">
+              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+            </div>
+          )
+        ) : (
+          <div className="ez-hero-inner">
+            <h1>أزّليها</h1>
+            <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
+          </div>
+        )}
+        {banners.length > 1 && (
+          <div className="ez-hero-dots">
+            {banners.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setBannerIdx(i)}
+                className={i === bannerIdx ? "active" : ""}
+                aria-label={`بنر ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Step 1: City dropdown */}
       <section className="ez-step">
-        <label className="ez-step-label">📍 اختاري مدينتك</label>
+        <label className="ez-step-label">📍 اختر مدينتك</label>
         <select
           className="ez-select"
           value={selectedCity}
@@ -204,14 +238,13 @@ function Home() {
         {loading ? (
           <p className="ez-empty">جارٍ التحميل...</p>
         ) : !selectedCategory ? (
-          // Step 2: Main categories as cards
           <>
             <div className="ez-section-head">
-              <h2 className="ez-section-title">✿ تصفحي حسب التصنيف</h2>
+              <h2 className="ez-section-title">✿ تصفّح حسب التصنيف</h2>
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
-                لا توجد تصنيفات بعد. {isAdmin && <Link to="/admin">اذهبي للوحة الأدمن لإضافة تصنيفات.</Link>}
+                لا توجد تصنيفات بعد. {isAdmin && <Link to="/admin">اذهب للوحة الأدمن لإضافة تصنيفات.</Link>}
               </p>
             ) : (
               <div className="ez-cat-grid">
@@ -246,7 +279,6 @@ function Home() {
             )}
           </>
         ) : (
-          // Step 3: Subcategories + providers for selected category
           <>
             <div className="ez-section-head">
               <button className="ez-back" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); setSearch(""); }}>
@@ -260,7 +292,7 @@ function Home() {
             <div className="ez-search">
               <input
                 type="text"
-                placeholder="ابحثي داخل هذا التصنيف..."
+                placeholder="ابحث داخل هذا التصنيف..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -330,19 +362,28 @@ function Home() {
               </>
             )}
             {categoryProviders.length === 0 && (
-              <p className="ez-empty">
-                لا يوجد مقدمو خدمة في هذا التصنيف بعد.
-              </p>
+              <p className="ez-empty">لا يوجد مقدمو خدمة في هذا التصنيف بعد.</p>
             )}
           </>
         )}
       </main>
 
       <footer className="ez-footer">
-        <p>© {new Date().getFullYear()} إزهليها — EZHLIHA</p>
+        <p>© {new Date().getFullYear()} أزّليها — AZHLEHA</p>
       </footer>
     </div>
   );
+}
+
+export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE) {
+  const wa = (whatsapp ?? "").replace(/\D/g, "");
+  if (!wa) return null;
+  const num = wa.startsWith("0") ? "966" + wa.slice(1) : wa;
+  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+}
+
+export function cleanHandle(v: string | null) {
+  return (v ?? "").trim().replace(/^@/, "").replace(/^https?:\/\/[^/]+\//, "").replace(/\/$/, "");
 }
 
 function ProviderCard({
@@ -359,61 +400,33 @@ function ProviderCard({
   featured?: boolean;
 }) {
   const cover = images[0]?.image_url ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600";
-  const wa = (provider.whatsapp ?? "").replace(/\D/g, "");
-  const waUrl = wa ? `https://wa.me/${wa.startsWith("0") ? "966" + wa.slice(1) : wa}` : null;
-  const clean = (v: string | null) => (v ?? "").trim().replace(/^@/, "").replace(/^https?:\/\/[^/]+\//, "").replace(/\/$/, "");
-  const ig = clean(provider.instagram);
-  const tk = clean(provider.tiktok);
-  const tw = clean(provider.twitter);
-  const sc = clean(provider.snapchat);
+  const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
-      <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-        {featured && <span className="ez-badge">مميز</span>}
-      </div>
-      <div className="ez-card-body">
-        <div className="ez-card-head">
-          <h3>{provider.name}</h3>
-          {provider.rating ? <span className="ez-rating">⭐ {provider.rating}</span> : null}
+      <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
+        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+          {featured && <span className="ez-badge">مميز</span>}
         </div>
-        <div className="ez-card-meta">
-          {city && <span>📍 {city.name_ar}</span>}
-          {sub && <span>• {sub.name_ar}</span>}
+        <div className="ez-card-body">
+          <div className="ez-card-head">
+            <h3>{provider.name}</h3>
+            {provider.rating ? <span className="ez-rating">⭐ {provider.rating}</span> : null}
+          </div>
+          <div className="ez-card-meta">
+            {city && <span>📍 {city.name_ar}</span>}
+            {sub && <span>• {sub.name_ar}</span>}
+          </div>
+          {provider.description && <p className="ez-card-desc">{provider.description}</p>}
+          {(provider.price_from || provider.price_to) && (
+            <div className="ez-price">
+              {provider.price_from && <span>من {provider.price_from} ر.س</span>}
+              {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
+            </div>
+          )}
         </div>
-        {provider.description && <p className="ez-card-desc">{provider.description}</p>}
-        {(provider.price_from || provider.price_to) && (
-          <div className="ez-price">
-            {provider.price_from && <span>من {provider.price_from} ر.س</span>}
-            {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
-          </div>
-        )}
-
-        {(ig || tk || tw || sc) && (
-          <div className="ez-socials">
-            {ig && (
-              <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="ez-soc ez-soc-ig">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2 .4-.5.2-.9.4-1.2.7-.3.3-.6.7-.7 1.2-.1.3-.3.9-.4 2-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1.1.2 1.7.4 2 .2.5.4.9.7 1.2.3.3.7.6 1.2.7.3.1.9.3 2 .4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2-.4.5-.2.9-.4 1.2-.7.3-.3.6-.7.7-1.2.1-.3.3-.9.4-2 .1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2-.2-.5-.4-.9-.7-1.2-.3-.3-.7-.6-1.2-.7-.3-.1-.9-.3-2-.4-1.2-.1-1.6-.1-4.7-.1zm0 3c2.7 0 5 2.2 5 5s-2.2 5-5 5-5-2.2-5-5 2.2-5 5-5zm0 8.2c1.8 0 3.2-1.4 3.2-3.2S13.8 8.8 12 8.8 8.8 10.2 8.8 12s1.4 3.2 3.2 3.2zm6.4-8.4c0 .7-.5 1.2-1.2 1.2s-1.2-.5-1.2-1.2.5-1.2 1.2-1.2 1.2.5 1.2 1.2z"/></svg>
-              </a>
-            )}
-            {tk && (
-              <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="ez-soc ez-soc-tk">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.6 6.3c-1.5-.3-2.8-1.4-3.3-2.9-.1-.4-.2-.9-.2-1.4h-3.5v13.1c0 1.4-1.2 2.6-2.6 2.6s-2.6-1.2-2.6-2.6 1.2-2.6 2.6-2.6c.3 0 .5 0 .8.1V9c-.3 0-.5-.1-.8-.1-3.4 0-6.1 2.7-6.1 6.1S6.6 21.1 10 21.1s6.1-2.7 6.1-6.1V8.9c1.3.9 2.9 1.5 4.6 1.5V6.9c-.4 0-.8-.2-1.1-.6z"/></svg>
-              </a>
-            )}
-            {tw && (
-              <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" aria-label="X" className="ez-soc ez-soc-tw">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.5 3h3l-6.7 7.6L21.7 21h-6.2l-4.8-6.3L5.2 21H2.2l7.2-8.2L2 3h6.3l4.4 5.8L17.5 3zm-1.1 16h1.7L7.7 4.9H5.9L16.4 19z"/></svg>
-              </a>
-            )}
-            {sc && (
-              <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" aria-label="Snapchat" className="ez-soc ez-soc-sc">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2c3.1 0 5.5 2 6.3 5 .2.6.2 1.4.2 2.4 0 .6-.1 1.7-.1 2 .2.1.5.2.7.2.4 0 .8-.2 1.1-.3.2-.1.4-.1.6-.1.3 0 .8.1 1 .5.2.5-.2 1-1.2 1.4-.1 0-.3.1-.5.2-.5.2-1.3.4-1.5.9-.1.2-.1.6.2 1.2 0 0 1.3 2.9 4.2 3.4.2 0 .4.2.4.5 0 .1 0 .2-.1.3-.3.7-1.7 1.2-4.1 1.6-.1.1-.2.4-.2.6-.1.2-.1.5-.2.7-.1.3-.3.5-.7.5h-.1c-.2 0-.4 0-.6-.1-.4-.1-.9-.2-1.5-.2-.4 0-.7.1-1.1.1-.7.2-1.3.7-2 1.2-1 .7-2 1.4-3.4 1.4h-.2c-1.5 0-2.5-.7-3.4-1.4-.7-.5-1.3-.9-2-1.2-.4-.1-.7-.1-1.1-.1-.6 0-1.1.1-1.5.2-.3.1-.5.1-.7.1-.5 0-.7-.3-.8-.6-.1-.2-.1-.5-.2-.7 0-.2-.1-.5-.2-.6-2.4-.4-3.8-.9-4.1-1.6 0-.1-.1-.2-.1-.3 0-.3.2-.5.4-.5 2.9-.5 4.2-3.4 4.2-3.4.3-.6.4-1 .2-1.2-.2-.5-1-.7-1.5-.9-.2-.1-.4-.1-.5-.2-1.3-.5-1.4-1.1-1.3-1.4.2-.4.6-.6 1-.6.2 0 .3 0 .5.1.4.2.7.3 1.1.3.3 0 .5-.1.7-.2 0-.3-.1-1.4-.1-2 0-1 0-1.8.2-2.4C6.5 4 8.9 2 12 2z"/></svg>
-              </a>
-            )}
-          </div>
-        )}
-
+      </Link>
+      <div className="ez-card-foot">
         {waUrl ? (
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
             📱 تواصل واتساب
@@ -427,79 +440,86 @@ function ProviderCard({
 }
 
 const css = `
-  .ez-nav { background:#fff; border-bottom:1px solid #E8DADA; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(107,31,31,0.06); position:sticky; top:0; z-index:100; }
-  .ez-brand { text-decoration:none; }
-  .ez-brand-name { font-size:22px; font-weight:900; color:#6B1F1F; }
-  .ez-brand-en { font-size:9px; letter-spacing:5px; color:#C47A7A; }
+  .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
+  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
+  .ez-brand { text-decoration:none; display:flex; align-items:center; }
+  .ez-brand-logo { height:54px; width:auto; object-fit:contain; }
   .ez-nav-actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .ez-nav-link { color:#5A4A4A; text-decoration:none; font-size:14px; font-weight:500; }
-  .ez-nav-link:hover { color:#6B1F1F; }
-  .ez-nav-user { font-size:12px; color:#5A4A4A; }
-  .ez-nav-btn { background:#6B1F1F; color:#fff; padding:8px 18px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:600; }
-  .ez-nav-btn:hover { background:#4A1414; }
-  .ez-nav-btn-out { background:transparent; color:#6B1F1F; border:1px solid #6B1F1F; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
-  .ez-hero { background:linear-gradient(135deg,#6B1F1F,#4A1414); color:#fff; padding:50px 24px 40px; text-align:center; }
-  .ez-hero h1 { font-size:38px; font-weight:900; margin-bottom:8px; }
-  .ez-hero p { font-size:15px; opacity:.9; max-width:600px; margin-inline:auto; }
+  .ez-nav-link { color:#000; text-decoration:none; font-size:14px; font-weight:600; }
+  .ez-nav-link:hover { color:#660000; }
+  .ez-nav-user { font-size:12px; color:#555; }
+  .ez-nav-btn { background:#660000; color:#fff; padding:9px 20px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:700; }
+  .ez-nav-btn:hover { background:#4a0000; }
+  .ez-nav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .ez-nav-btn-out:hover { background:#660000; color:#fff; }
+
+  .ez-hero { max-width:1200px; margin:18px auto 0; padding:0 24px; }
+  .ez-hero-inner { background:linear-gradient(135deg, #660000 0%, #4a0000 100%); color:#e6e4d7; padding:50px 30px; text-align:center; border-radius:20px; }
+  .ez-hero-inner h1 { font-size:40px; font-weight:900; margin-bottom:10px; letter-spacing:1px; }
+  .ez-hero-inner p { font-size:15px; opacity:.92; max-width:600px; margin-inline:auto; }
+  .ez-hero-banner { display:block; position:relative; border-radius:20px; overflow:hidden; box-shadow:0 8px 30px rgba(102,0,0,0.15); }
+  .ez-hero-banner img { display:block; width:100%; height:auto; max-height:380px; object-fit:cover; }
+  .ez-hero-banner-cap { position:absolute; inset:auto 0 0 0; padding:16px 24px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff; font-size:18px; font-weight:800; }
+  .ez-hero-dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
+  .ez-hero-dots button { width:10px; height:10px; border-radius:50%; border:none; background:#d8d4c0; cursor:pointer; padding:0; }
+  .ez-hero-dots button.active { background:#660000; transform:scale(1.2); }
+
   .ez-step { max-width:1200px; margin:20px auto 0; padding:0 24px; }
-  .ez-step-label { display:block; font-size:14px; color:#5A4A4A; margin-bottom:8px; font-weight:700; }
-  .ez-select { width:100%; max-width:420px; background:#fff; border:1px solid #E8DADA; border-radius:14px; padding:12px 18px; font-size:15px; font-family:inherit; color:#1A1A1A; cursor:pointer; outline:none; }
-  .ez-select:focus { border-color:#6B1F1F; }
+  .ez-step-label { display:block; font-size:14px; color:#000; margin-bottom:8px; font-weight:700; }
+  .ez-select { width:100%; max-width:420px; background:#fff; border:1px solid #d8d4c0; border-radius:14px; padding:12px 18px; font-size:15px; font-family:inherit; color:#000; cursor:pointer; outline:none; }
+  .ez-select:focus { border-color:#660000; }
+
   .ez-main { max-width:1200px; margin:0 auto; padding:24px; }
   .ez-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0 18px; flex-wrap:wrap; }
-  .ez-section-title { font-size:20px; font-weight:800; color:#1A1A1A; }
-  .ez-sub-title { font-size:16px; font-weight:800; color:#1A1A1A; margin:18px 0 12px; }
-  .ez-back { background:transparent; border:none; color:#6B1F1F; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:4px 0; }
-  .ez-empty { text-align:center; color:#5A4A4A; padding:40px; font-size:15px; }
-  .ez-empty a { color:#6B1F1F; font-weight:700; }
-  .ez-search { background:#fff; border:1px solid #E8DADA; border-radius:50px; padding:6px; margin-bottom:18px; max-width:520px; }
-  .ez-search input { width:100%; border:none; outline:none; padding:10px 18px; font-size:14px; font-family:inherit; border-radius:50px; background:transparent; color:#1A1A1A; }
+  .ez-section-title { font-size:22px; font-weight:800; color:#000; }
+  .ez-sub-title { font-size:16px; font-weight:800; color:#000; margin:18px 0 12px; }
+  .ez-back { background:transparent; border:none; color:#660000; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:4px 0; }
+  .ez-empty { text-align:center; color:#555; padding:40px; font-size:15px; }
+  .ez-empty a { color:#660000; font-weight:700; }
+  .ez-search { background:#fff; border:1px solid #d8d4c0; border-radius:50px; padding:6px; margin-bottom:18px; max-width:520px; }
+  .ez-search input { width:100%; border:none; outline:none; padding:10px 18px; font-size:14px; font-family:inherit; border-radius:50px; background:transparent; color:#000; }
   .ez-chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .ez-chips button { background:#fff; border:1px solid #E8DADA; padding:7px 14px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:#5A4A4A; transition:all .2s; }
-  .ez-chips button:hover { border-color:#6B1F1F; color:#6B1F1F; }
-  .ez-chips button.active { background:#6B1F1F; color:#fff; border-color:#6B1F1F; }
+  .ez-chips button { background:#fff; border:1px solid #d8d4c0; padding:7px 14px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:#000; transition:all .2s; }
+  .ez-chips button:hover { border-color:#660000; color:#660000; }
+  .ez-chips button.active { background:#660000; color:#fff; border-color:#660000; }
 
-  /* Main category cards */
   .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-  .ez-cat-card { background:#fff; border:1px solid #EADADA; border-radius:18px; padding:20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:140px; display:flex; flex-direction:column; gap:12px; box-shadow:0 2px 8px rgba(107,31,31,0.04); }
-  .ez-cat-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(107,31,31,0.12); border-color:#6B1F1F; background:linear-gradient(135deg, #FDF5F5, #fff); }
+  .ez-cat-card { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:140px; display:flex; flex-direction:column; gap:12px; box-shadow:0 2px 8px rgba(102,0,0,0.04); }
+  .ez-cat-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(102,0,0,0.18); border-color:#660000; }
   .ez-cat-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .ez-cat-icon { font-size:30px; color:#6B1F1F; line-height:1; }
-  .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#1A1A1A; }
-  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#8B6F6F; margin-top:auto; padding-top:8px; border-top:1px dashed #F0E0E0; }
-  .ez-cat-arrow { font-size:18px; color:#6B1F1F; font-weight:700; }
+  .ez-cat-icon { font-size:30px; color:#660000; line-height:1; }
+  .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#000; }
+  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#555; margin-top:auto; padding-top:8px; border-top:1px dashed #d8d4c0; }
+  .ez-cat-arrow { font-size:18px; color:#660000; font-weight:700; }
   .ez-cat-img { width:50px; height:50px; border-radius:10px; object-fit:cover; flex-shrink:0; }
-  .ez-chips-tertiary { background:#FDF5F5; padding:8px 12px; border-radius:12px; align-items:center; }
-  .ez-tertiary-label { font-size:12px; color:#8B6F6F; font-weight:700; margin-left:6px; }
-  .ez-socials { display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
-  .ez-soc { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; color:#fff; text-decoration:none; transition:transform .15s; }
-  .ez-soc:hover { transform:scale(1.1); }
-  .ez-soc-ig { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
-  .ez-soc-tk { background:#000; }
-  .ez-soc-tw { background:#000; }
-  .ez-soc-sc { background:#FFFC00; color:#000; }
+  .ez-chips-tertiary { background:#fff; padding:8px 12px; border-radius:12px; align-items:center; border:1px solid #d8d4c0; }
+  .ez-tertiary-label { font-size:12px; color:#555; font-weight:700; margin-left:6px; }
 
   .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
-  .ez-card { background:#fff; border:1px solid #E8DADA; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(107,31,31,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }
-  .ez-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(107,31,31,0.12); }
-  .ez-card-featured { border:2px solid #D4AF37; }
-  .ez-card-img { height:180px; background-size:cover; background-position:center; background-color:#F0E8E0; position:relative; }
-  .ez-badge { position:absolute; top:12px; right:12px; background:#D4AF37; color:#fff; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:700; }
+  .ez-card { background:#fff; border:1px solid #d8d4c0; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(102,0,0,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }
+  .ez-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(102,0,0,0.15); }
+  .ez-card-featured { border:2px solid #660000; }
+  .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
+  .ez-card-img { height:180px; background-size:cover; background-position:center; background-color:#e6e4d7; position:relative; }
+  .ez-badge { position:absolute; top:12px; right:12px; background:#660000; color:#fff; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:700; }
   .ez-card-body { padding:16px; flex:1; display:flex; flex-direction:column; }
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; }
-  .ez-card-head h3 { font-size:16px; font-weight:800; color:#1A1A1A; }
-  .ez-rating { font-size:12px; color:#5A4A4A; white-space:nowrap; }
-  .ez-card-meta { display:flex; gap:6px; font-size:12px; color:#5A4A4A; margin-bottom:8px; flex-wrap:wrap; }
-  .ez-card-desc { font-size:13px; color:#5A4A4A; line-height:1.6; margin-bottom:10px; flex:1; }
-  .ez-price { font-size:13px; color:#6B1F1F; font-weight:700; margin-bottom:12px; }
+  .ez-card-head h3 { font-size:16px; font-weight:800; color:#000; }
+  .ez-rating { font-size:12px; color:#555; white-space:nowrap; }
+  .ez-card-meta { display:flex; gap:6px; font-size:12px; color:#555; margin-bottom:8px; flex-wrap:wrap; }
+  .ez-card-desc { font-size:13px; color:#555; line-height:1.6; margin-bottom:10px; flex:1; }
+  .ez-price { font-size:13px; color:#660000; font-weight:700; margin-bottom:12px; }
+  .ez-card-foot { padding:0 16px 16px; }
   .ez-wa-btn { display:block; width:100%; text-align:center; background:#25D366; color:#fff; padding:10px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; border:none; cursor:pointer; font-family:inherit; }
   .ez-wa-btn:hover { background:#1da851; }
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
-  .ez-footer { text-align:center; padding:30px; color:#5A4A4A; font-size:13px; border-top:1px solid #E8DADA; margin-top:40px; }
+  .ez-footer { text-align:center; padding:30px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
+
   @media (max-width: 640px) {
-    .ez-hero h1 { font-size:30px; }
-    .ez-hero { padding:36px 16px 28px; }
-    .ez-step, .ez-main { padding-left:16px; padding-right:16px; }
+    .ez-brand-logo { height:42px; }
+    .ez-hero-inner h1 { font-size:30px; }
+    .ez-hero-inner { padding:36px 16px 28px; }
+    .ez-step, .ez-main, .ez-hero { padding-left:16px; padding-right:16px; }
     .ez-cat-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
     .ez-cat-card { padding:14px; min-height:120px; }
     .ez-cat-card .ez-cat-name { font-size:14px; }

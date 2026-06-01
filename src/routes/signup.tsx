@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -45,10 +46,10 @@ function SignupPage() {
     navigate({ to: "/" });
   }
 
-  return <AuthShell title="إنشاء حساب جديد" sub="انضمي الآن لاكتشاف أفضل مزودي الخدمات">
+  return <AuthShell title="إنشاء حساب جديد" sub="انضم الآن لاكتشاف أفضل مزودي الخدمات">
     <form onSubmit={onSubmit} className="auth-form">
       <Field label="الاسم الكامل">
-        <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="مثال: منال الأحمدي" />
+        <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
       </Field>
       <Field label="البريد الإلكتروني">
         <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
@@ -82,8 +83,7 @@ export function AuthShell({ title, sub, children }: { title: string; sub: string
       <style>{authCss}</style>
       <div className="auth-card">
         <Link to="/" className="auth-brand">
-          <div className="auth-brand-name">إزهليها</div>
-          <div className="auth-brand-en">EZHLIHA</div>
+          <img src={logoUrl} alt="أزّليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
         </Link>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-sub">{sub}</p>
@@ -113,12 +113,10 @@ const shellStyle: React.CSSProperties = {
 };
 
 export const authCss = `
-  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(107,31,31,0.15); }
+  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(102,0,0,0.15); }
   .auth-brand { display:block; text-align:center; text-decoration:none; margin-bottom:24px; }
-  .auth-brand-name { font-size:28px; font-weight:900; color:#6B1F1F; }
-  .auth-brand-en { font-size:10px; letter-spacing:5px; color:#C47A7A; }
-  .auth-title { font-size:24px; font-weight:800; color:#1A1A1A; text-align:center; margin-bottom:6px; }
-  .auth-sub { font-size:14px; color:#5A4A4A; text-align:center; margin-bottom:24px; }
+  .auth-title { font-size:24px; font-weight:800; color:#000; text-align:center; margin-bottom:6px; }
+  .auth-sub { font-size:14px; color:#555; text-align:center; margin-bottom:24px; }
   .auth-form { display:flex; flex-direction:column; gap:14px; }
   .auth-field { display:flex; flex-direction:column; gap:6px; font-size:13px; color:#5A4A4A; font-weight:600; }
   .auth-field input, .auth-field select {
