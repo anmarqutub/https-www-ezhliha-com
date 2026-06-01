@@ -30,6 +30,25 @@ async function logActivity(action: string, entity: string, entityId?: string | n
   }
 }
 
+// Computes a field-level diff (only changed keys, with before/after values).
+function diffFields<T extends Record<string, unknown>>(
+  before: T | null | undefined,
+  after: T,
+): Record<string, { from: unknown; to: unknown }> {
+  const out: Record<string, { from: unknown; to: unknown }> = {};
+  if (!before) return out;
+  for (const k of Object.keys(after)) {
+    const a = before[k as keyof T];
+    const b = after[k as keyof T];
+    const norm = (v: unknown) => (v === undefined ? null : v);
+    if (JSON.stringify(norm(a)) !== JSON.stringify(norm(b))) {
+      out[k] = { from: norm(a), to: norm(b) };
+    }
+  }
+  return out;
+}
+
+
 type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
@@ -565,12 +584,14 @@ function CitiesTab() {
       active: editing.active ?? true,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("cities").update(payload).eq("id", editing.id);
-      logActivity("update", "city", editing.id, { name_ar: payload.name_ar });
+      logActivity("update", "city", editing.id, { name_ar: payload.name_ar, changes: diffFields(before as never, payload as never) });
     } else {
       const { data } = await supabase.from("cities").insert(payload).select().single();
-      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar });
+      logActivity("create", "city", data?.id ?? null, { name_ar: payload.name_ar, values: payload });
     }
+
     setEditing(null);
     reload();
   };
@@ -676,20 +697,21 @@ function CategoriesTab() {
 
     if (editing.id && editing.originalKind) {
       if (editing.originalKind === "sub") {
-        await supabase.from("subcategories")
-          .update({
-            category_id: editing.parent_id,
-            parent_id: editing.sub_parent_id || null,
-            name_ar: name, name_en: name, sort_order, active,
-          })
-          .eq("id", editing.id);
-        logActivity("update", "subcategory", editing.id, { name_ar: name });
+        const before = subs.find((s) => s.id === editing.id);
+        const newVals = {
+          category_id: editing.parent_id,
+          parent_id: editing.sub_parent_id || null,
+          name_ar: name, name_en: name, sort_order, active,
+        };
+        await supabase.from("subcategories").update(newVals).eq("id", editing.id);
+        logActivity("update", "subcategory", editing.id, { name_ar: name, changes: diffFields(before as never, newVals as never) });
       } else {
-        await supabase.from("categories")
-          .update({ name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active })
-          .eq("id", editing.id);
-        logActivity("update", "category", editing.id, { name_ar: name });
+        const before = cats.find((c) => c.id === editing.id);
+        const newVals = { name_ar: name, name_en: name, icon: editing.icon ?? null, image_url: editing.image_url ?? null, sort_order, active };
+        await supabase.from("categories").update(newVals).eq("id", editing.id);
+        logActivity("update", "category", editing.id, { name_ar: name, changes: diffFields(before as never, newVals as never) });
       }
+
     } else if (isSub) {
       const { data } = await supabase.from("subcategories").insert({
         category_id: editing.parent_id,
@@ -949,8 +971,10 @@ function ProvidersTab() {
       video_url: editing.video_url ?? null,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("providers").update(payload).eq("id", editing.id);
-      logActivity("update", "provider", editing.id, { name: payload.name });
+      logActivity("update", "provider", editing.id, { name: payload.name, changes: diffFields(before as never, payload as never) });
+
     } else {
       const { data } = await supabase.from("providers").insert(payload).select().single();
       if (data) editing.id = data.id;
@@ -1213,8 +1237,10 @@ function BannersTab() {
       active: editing.active ?? true,
     };
     if (editing.id) {
+      const before = rows.find((r) => r.id === editing.id);
       await supabase.from("banners").update(payload).eq("id", editing.id);
-      logActivity("update", "banner", editing.id, { title: payload.title });
+      logActivity("update", "banner", editing.id, { title: payload.title, changes: diffFields(before as never, payload as never) });
+
     } else {
       const { data } = await supabase.from("banners").insert(payload).select().single();
       logActivity("create", "banner", data?.id ?? null, { title: payload.title });
@@ -1730,6 +1756,30 @@ const ENTITY_LABEL: Record<string, string> = {
   purchase_codes: "أكواد اشتراك",
 };
 
+const FIELD_LABEL: Record<string, string> = {
+  name: "الاسم", name_ar: "الاسم", name_en: "الاسم (EN)", title: "العنوان",
+  description: "الوصف", slug: "المعرّف", address: "العنوان",
+  whatsapp: "واتساب", instagram: "إنستغرام", tiktok: "تيكتوك",
+  twitter: "تويتر", snapchat: "سناب شات", image_url: "الصورة", icon: "الأيقونة",
+  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى",
+  rating: "التقييم", sort_order: "الترتيب", active: "مفعّل",
+  is_featured: "مميّز", featured_until: "تمييز حتى",
+  city_id: "المدينة", subcategory_id: "التصنيف الفرعي",
+  category_id: "التصنيف", parent_id: "التصنيف الأب",
+  sub_parent_id: "التصنيف الأب الفرعي", video_url: "الفيديو",
+};
+
+const fmtVal = (v: unknown): string => {
+  if (v === null || v === undefined || v === "") return "—";
+  if (typeof v === "boolean") return v ? "نعم" : "لا";
+  if (typeof v === "string") {
+    if (v.startsWith("http") && v.length > 40) return "🔗 رابط";
+    return v.length > 30 ? v.slice(0, 30) + "…" : v;
+  }
+  return String(v);
+};
+
+
 function ActivityLogTab() {
   const [rows, setRows] = useState<LogRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1758,12 +1808,55 @@ function ActivityLogTab() {
   const entities = Array.from(new Set(rows.map((r) => r.entity)));
 
   const describe = (r: LogRow) => {
-    const d = r.details ?? {};
+    const d = (r.details ?? {}) as Record<string, unknown>;
     const name = (d.name_ar || d.name || d.title || d.code) as string | undefined;
-    if (name) return `"${name}"`;
-    if (typeof d.count === "number") return `(${d.count})`;
-    return r.entity_id ? r.entity_id.slice(0, 8) : "";
+    const label = name ? `"${name}"` : (r.entity_id ? `#${r.entity_id.slice(0, 6)}` : "");
+
+    if (r.action === "create") {
+      return <span><b style={{ color: "#1a7f37" }}>أُضيف</b> {ENTITY_LABEL[r.entity] ?? r.entity} {label}</span>;
+    }
+    if (r.action === "delete") {
+      return <span><b style={{ color: "#c0392b" }}>حُذف</b> {ENTITY_LABEL[r.entity] ?? r.entity} {label}</span>;
+    }
+    if (r.action === "feature" || r.action === "unfeature") {
+      return <span>{r.action === "feature" ? "تم تمييز" : "أُلغي تمييز"} {label}</span>;
+    }
+    if (r.action === "upload_images") {
+      return <span>رُفعت <b>{(d.count as number) ?? 0}</b> صور لـ {label}</span>;
+    }
+    if (r.action === "upload_image") return <span>رُفعت صورة لـ {label || ENTITY_LABEL[r.entity]}</span>;
+    if (r.action === "delete_image") return <span>حُذفت صورة من {label || ENTITY_LABEL[r.entity]}</span>;
+    if (r.action === "upload_video") return <span>رُفع فيديو لـ {label}</span>;
+    if (r.action === "delete_video") return <span>حُذف فيديو من {label}</span>;
+    if (r.action === "generate") {
+      return <span>تم توليد <b>{(d.count as number) ?? 0}</b> كود اشتراك{d.email ? ` لـ ${d.email as string}` : ""}</span>;
+    }
+    if (r.action === "update") {
+      const changes = (d.changes ?? {}) as Record<string, { from: unknown; to: unknown }>;
+      const keys = Object.keys(changes);
+      if (keys.length === 0) {
+        return <span>تم تعديل {label} <span style={{ color: "#888" }}>(لا تغييرات مرصودة)</span></span>;
+      }
+      return (
+        <div>
+          <div style={{ marginBottom: 4 }}>تم تعديل {label}:</div>
+          <ul style={{ margin: 0, paddingInlineStart: 18, fontSize: 12, color: "#444" }}>
+            {keys.slice(0, 6).map((k) => (
+              <li key={k}>
+                <b>{FIELD_LABEL[k] ?? k}:</b>{" "}
+                <span style={{ color: "#c0392b", textDecoration: "line-through" }}>{fmtVal(changes[k].from)}</span>
+                {" ← "}
+                <span style={{ color: "#1a7f37" }}>{fmtVal(changes[k].to)}</span>
+              </li>
+            ))}
+            {keys.length > 6 && <li style={{ color: "#888" }}>+ {keys.length - 6} حقول أخرى</li>}
+          </ul>
+        </div>
+      );
+    }
+    return label || "—";
   };
+
 
   return (
     <>
@@ -1806,7 +1899,7 @@ function ActivityLogTab() {
                     <td style={{ fontSize: 12 }}>{r.admin_email ?? r.admin_id.slice(0, 8)}</td>
                     <td><span className="adm-badge adm-badge-on">{ACTION_LABEL[r.action] ?? r.action}</span></td>
                     <td>{ENTITY_LABEL[r.entity] ?? r.entity}</td>
-                    <td style={{ fontSize: 13, maxWidth: 360 }}>{describe(r)}</td>
+                    <td style={{ fontSize: 13, maxWidth: 480, lineHeight: 1.6 }}>{describe(r)}</td>
                   </tr>
                 ))}
               </tbody>
