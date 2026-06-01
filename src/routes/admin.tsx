@@ -525,7 +525,7 @@ function RankCard({ title, rows, empty }: { title: string; rows: { label: string
                 <span style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</span>
               </div>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#6B1F1F", whiteSpace: "nowrap" }}>{r.value}</span>
-              {void max}
+              
             </div>
           ))}
         </div>
