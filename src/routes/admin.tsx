@@ -1358,7 +1358,7 @@ function CodesTab() {
                     </td>
                     <td>{fmt(r.created_at)}</td>
                     <td>
-                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); reload(); } }}
+                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); logActivity("delete", "purchase_code", r.id, { code: r.code }); reload(); } }}
                         style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
                     </td>
                   </tr>
