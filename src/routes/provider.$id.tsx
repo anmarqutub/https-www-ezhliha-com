@@ -148,7 +148,26 @@ function ProviderPage() {
 
         <div className="pv-grid">
           <section className="pv-gallery">
-            <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+            <div className="pv-cover-wrap">
+              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="pv-arrow pv-arrow-prev"
+                    onClick={() => setActiveImg((i) => (i - 1 + images.length) % images.length)}
+                    aria-label="السابق"
+                  >‹</button>
+                  <button
+                    type="button"
+                    className="pv-arrow pv-arrow-next"
+                    onClick={() => setActiveImg((i) => (i + 1) % images.length)}
+                    aria-label="التالي"
+                  >›</button>
+                  <div className="pv-counter">{activeImg + 1} / {images.length}</div>
+                </>
+              )}
+            </div>
             {images.length > 1 && (
               <div className="pv-thumbs">
                 {images.map((im, i) => (
