@@ -147,6 +147,11 @@ function SideBtn({ label, active, onClick }: { label: string; active: boolean; o
 }
 
 function StatsAndUsers({ showUsers }: { showUsers: boolean }) {
+  if (!showUsers) return <DashboardTab />;
+  return <UsersTab />;
+}
+
+function UsersTab() {
   const fetchUsers = useServerFn(getAdminUsers);
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
@@ -155,67 +160,380 @@ function StatsAndUsers({ showUsers }: { showUsers: boolean }) {
 
   return (
     <>
-      <h1 className="adm-title">{showUsers ? "المستخدمات" : "لوحة التحكم"}</h1>
-      {!showUsers && (
-        <div className="adm-stats">
-          <Stat label="إجمالي المستخدمات" value={data?.total ?? "—"} />
-          <Stat label="عدد الأدمن" value={data?.admins ?? "—"} />
-          <Stat
-            label="مفعّلات الإيميل"
-            value={data ? data.users.filter((u) => u.email_confirmed).length : "—"}
-          />
-        </div>
-      )}
-      {showUsers && (
-        <div className="adm-card">
-          {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
-          {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
-          {data && data.users.length === 0 && <p className="adm-empty">لا توجد مستخدمات بعد.</p>}
-          {data && data.users.length > 0 && (
-            <div className="adm-table-wrap">
-              <table className="adm-table">
-                <thead>
-                  <tr>
-                    <th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
-                    <th>الدور</th><th>التسجيل</th><th>آخر دخول</th>
+      <h1 className="adm-title">المستخدمات</h1>
+      <div className="adm-card">
+        {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
+        {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
+        {data && data.users.length === 0 && <p className="adm-empty">لا توجد مستخدمات بعد.</p>}
+        {data && data.users.length > 0 && (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
+                  <th>الدور</th><th>التسجيل</th><th>آخر دخول</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.users.map((u) => (
+                  <tr key={u.id}>
+                    <td>{u.profile?.full_name ?? "—"}</td>
+                    <td>{u.email ?? "—"}</td>
+                    <td>{u.profile?.phone ?? "—"}</td>
+                    <td>{u.profile?.city ?? "—"}</td>
+                    <td>
+                      {u.roles.map((r) => (
+                        <span key={r} className={`adm-badge ${r === "admin" ? "adm-badge-admin" : ""}`}>
+                          {r === "admin" ? "أدمن" : "مستخدمة"}
+                        </span>
+                      ))}
+                    </td>
+                    <td>{fmt(u.created_at)}</td>
+                    <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {data.users.map((u) => (
-                    <tr key={u.id}>
-                      <td>{u.profile?.full_name ?? "—"}</td>
-                      <td>{u.email ?? "—"}</td>
-                      <td>{u.profile?.phone ?? "—"}</td>
-                      <td>{u.profile?.city ?? "—"}</td>
-                      <td>
-                        {u.roles.map((r) => (
-                          <span key={r} className={`adm-badge ${r === "admin" ? "adm-badge-admin" : ""}`}>
-                            {r === "admin" ? "أدمن" : "مستخدمة"}
-                          </span>
-                        ))}
-                      </td>
-                      <td>{fmt(u.created_at)}</td>
-                      <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </>
   );
 }
 
-function Stat({ label, value }: { label: string; value: number | string }) {
+type DashboardData = {
+  totalUsers: number;
+  adminsCount: number;
+  emailConfirmed: number;
+  newUsers7d: number;
+  newUsers30d: number;
+  signupSeries: { day: string; count: number }[];
+  providersTotal: number;
+  providersActive: number;
+  providersFeatured: number;
+  providersNew7d: number;
+  citiesActive: number;
+  citiesTotal: number;
+  categoriesTotal: number;
+  subcategoriesTotal: number;
+  bannersActive: number;
+  bannersTotal: number;
+  reviewsTotal: number;
+  reviewsAvg: number;
+  reviews7d: number;
+  favoritesTotal: number;
+  codesTotal: number;
+  codesUsed: number;
+  codesAvailable: number;
+  topProvidersByReviews: { id: string; name: string; count: number; avg: number }[];
+  topCities: { id: string; name: string; count: number }[];
+  topCategories: { id: string; name: string; count: number }[];
+  recentUsers: { id: string; name: string; email: string | null; created_at: string }[];
+  recentActivity: { id: string; admin_email: string | null; action: string; entity: string; created_at: string; details: Record<string, unknown> | null }[];
+};
+
+function DashboardTab() {
+  const fetchUsers = useServerFn(getAdminUsers);
+  const { data: usersData } = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchUsers() });
+
+  const [d, setD] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const now = Date.now();
+    const d7 = new Date(now - 7 * 86400000).toISOString();
+    const d30 = new Date(now - 30 * 86400000).toISOString();
+    const d14 = new Date(now - 13 * 86400000); d14.setHours(0, 0, 0, 0);
+
+    const [
+      provsRes, citiesRes, catsRes, subsRes, bannersRes,
+      reviewsRes, favRes, codesRes, logsRes,
+    ] = await Promise.all([
+      supabase.from("providers").select("id,name,city_id,subcategory_id,active,is_featured,created_at"),
+      supabase.from("cities").select("id,name_ar,active"),
+      supabase.from("categories").select("id,name_ar,active"),
+      supabase.from("subcategories").select("id,category_id"),
+      supabase.from("banners").select("id,active"),
+      supabase.from("reviews").select("id,provider_id,rating,created_at"),
+      supabase.from("favorites").select("id", { count: "exact", head: true }),
+      supabase.from("purchase_codes").select("id,used_at"),
+      supabase.from("admin_activity_log").select("id,admin_email,action,entity,created_at,details").order("created_at", { ascending: false }).limit(10),
+    ]);
+
+    const providers = provsRes.data ?? [];
+    const cities = citiesRes.data ?? [];
+    const cats = catsRes.data ?? [];
+    const subs = subsRes.data ?? [];
+    const banners = bannersRes.data ?? [];
+    const reviews = reviewsRes.data ?? [];
+    const codes = codesRes.data ?? [];
+    const logs = logsRes.data ?? [];
+
+    // Reviews aggregations
+    const reviewsByProv = new Map<string, { count: number; sum: number }>();
+    reviews.forEach((r) => {
+      const x = reviewsByProv.get(r.provider_id) ?? { count: 0, sum: 0 };
+      x.count++; x.sum += r.rating;
+      reviewsByProv.set(r.provider_id, x);
+    });
+    const reviewsAvg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
+    const reviews7d = reviews.filter((r) => r.created_at >= d7).length;
+
+    // Providers per city / per cat
+    const provByCity = new Map<string, number>();
+    const provByCat = new Map<string, number>();
+    const subToCat = new Map<string, string>();
+    subs.forEach((s) => subToCat.set(s.id, s.category_id));
+    providers.forEach((p) => {
+      provByCity.set(p.city_id, (provByCity.get(p.city_id) ?? 0) + 1);
+      const catId = subToCat.get(p.subcategory_id);
+      if (catId) provByCat.set(catId, (provByCat.get(catId) ?? 0) + 1);
+    });
+
+    const cityName = new Map(cities.map((c) => [c.id, c.name_ar]));
+    const catName = new Map(cats.map((c) => [c.id, c.name_ar]));
+    const provName = new Map(providers.map((p) => [p.id, p.name]));
+
+    const topCities = Array.from(provByCity.entries())
+      .map(([id, count]) => ({ id, name: cityName.get(id) ?? id.slice(0, 6), count }))
+      .sort((a, b) => b.count - a.count).slice(0, 5);
+
+    const topCategories = Array.from(provByCat.entries())
+      .map(([id, count]) => ({ id, name: catName.get(id) ?? id.slice(0, 6), count }))
+      .sort((a, b) => b.count - a.count).slice(0, 5);
+
+    const topProvidersByReviews = Array.from(reviewsByProv.entries())
+      .map(([id, v]) => ({ id, name: provName.get(id) ?? id.slice(0, 6), count: v.count, avg: v.sum / v.count }))
+      .sort((a, b) => b.count - a.count).slice(0, 5);
+
+    // Signup series (14d) from users data
+    const users = usersData?.users ?? [];
+    const days: { day: string; count: number }[] = [];
+    for (let i = 0; i < 14; i++) {
+      const dt = new Date(d14.getTime() + i * 86400000);
+      const key = dt.toISOString().slice(0, 10);
+      days.push({ day: key, count: 0 });
+    }
+    users.forEach((u) => {
+      const k = u.created_at.slice(0, 10);
+      const slot = days.find((x) => x.day === k);
+      if (slot) slot.count++;
+    });
+
+    const recentUsers = [...users]
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+      .slice(0, 5)
+      .map((u) => ({ id: u.id, name: u.profile?.full_name ?? "—", email: u.email, created_at: u.created_at }));
+
+    setD({
+      totalUsers: usersData?.total ?? users.length,
+      adminsCount: usersData?.admins ?? 0,
+      emailConfirmed: users.filter((u) => u.email_confirmed).length,
+      newUsers7d: users.filter((u) => u.created_at >= d7).length,
+      newUsers30d: users.filter((u) => u.created_at >= d30).length,
+      signupSeries: days,
+      providersTotal: providers.length,
+      providersActive: providers.filter((p) => p.active).length,
+      providersFeatured: providers.filter((p) => p.is_featured).length,
+      providersNew7d: providers.filter((p) => p.created_at >= d7).length,
+      citiesActive: cities.filter((c) => c.active).length,
+      citiesTotal: cities.length,
+      categoriesTotal: cats.length,
+      subcategoriesTotal: subs.length,
+      bannersActive: banners.filter((b) => b.active).length,
+      bannersTotal: banners.length,
+      reviewsTotal: reviews.length,
+      reviewsAvg,
+      reviews7d,
+      favoritesTotal: favRes.count ?? 0,
+      codesTotal: codes.length,
+      codesUsed: codes.filter((c) => c.used_at).length,
+      codesAvailable: codes.filter((c) => !c.used_at).length,
+      topProvidersByReviews,
+      topCities,
+      topCategories,
+      recentUsers,
+      recentActivity: logs as DashboardData["recentActivity"],
+    });
+    setLoading(false);
+  }, [usersData]);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading || !d) {
+    return (
+      <>
+        <h1 className="adm-title">لوحة التحكم</h1>
+        <p className="adm-empty">جارٍ تحميل الإحصائيات...</p>
+      </>
+    );
+  }
+
+  const codeUsage = d.codesTotal ? Math.round((d.codesUsed / d.codesTotal) * 100) : 0;
+  const maxSignup = Math.max(1, ...d.signupSeries.map((x) => x.count));
+
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
+        <h1 className="adm-title" style={{ marginBottom: 0 }}>لوحة التحكم</h1>
+        <button className="adm-btn-secondary" onClick={load}>🔄 تحديث</button>
+      </div>
+
+      {/* KPI Section: Users */}
+      <h3 className="adm-section-h">المستخدمات</h3>
+      <div className="adm-stats">
+        <StatCard label="إجمالي المستخدمات" value={d.totalUsers} hint={`${d.emailConfirmed} مفعّلات`} color="#6B1F1F" />
+        <StatCard label="جديدات (آخر 7 أيام)" value={d.newUsers7d} hint={`${d.newUsers30d} في 30 يوم`} color="#2E7D32" />
+        <StatCard label="عدد الأدمن" value={d.adminsCount} color="#5A4A4A" />
+        <StatCard label="إجمالي المفضلات" value={d.favoritesTotal} hint="عدد الإضافات للمفضلة" color="#C47A7A" />
+      </div>
+
+      {/* KPI Section: Catalog */}
+      <h3 className="adm-section-h">الكتالوج</h3>
+      <div className="adm-stats">
+        <StatCard label="مقدمو الخدمة" value={d.providersTotal} hint={`${d.providersActive} نشط · ${d.providersFeatured} مميز`} color="#6B1F1F" />
+        <StatCard label="مقدمو خدمة جدد (7 أيام)" value={d.providersNew7d} color="#2E7D32" />
+        <StatCard label="المدن" value={d.citiesTotal} hint={`${d.citiesActive} نشطة`} color="#5A4A4A" />
+        <StatCard label="التصنيفات" value={d.categoriesTotal} hint={`${d.subcategoriesTotal} تصنيف فرعي`} color="#5A4A4A" />
+        <StatCard label="البنرات النشطة" value={d.bannersActive} hint={`من أصل ${d.bannersTotal}`} color="#C47A7A" />
+      </div>
+
+      {/* KPI Section: Engagement */}
+      <h3 className="adm-section-h">التفاعل والمبيعات</h3>
+      <div className="adm-stats">
+        <StatCard label="إجمالي التقييمات" value={d.reviewsTotal} hint={`${d.reviews7d} في آخر 7 أيام`} color="#6B1F1F" />
+        <StatCard label="متوسط التقييم" value={d.reviewsTotal ? `${d.reviewsAvg.toFixed(1)} ★` : "—"} color="#E8A317" />
+        <StatCard label="أكواد الاشتراك" value={d.codesTotal} hint={`${d.codesUsed} مستخدمة · ${d.codesAvailable} متاحة`} color="#5A4A4A" />
+        <StatCard label="معدل استخدام الأكواد" value={`${codeUsage}%`} color={codeUsage >= 70 ? "#2E7D32" : "#C47A7A"} progress={codeUsage} />
+      </div>
+
+      {/* Signup chart */}
+      <div className="adm-card" style={{ marginBottom: 24 }}>
+        <h3 style={{ marginBottom: 14, fontWeight: 700, fontSize: 15 }}>تسجيلات آخر 14 يومًا</h3>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 120 }}>
+          {d.signupSeries.map((s) => (
+            <div key={s.day} title={`${s.day}: ${s.count}`} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <div style={{ fontSize: 10, color: "#5A4A4A" }}>{s.count || ""}</div>
+              <div style={{
+                width: "100%",
+                height: `${(s.count / maxSignup) * 90}px`,
+                background: s.count ? "linear-gradient(180deg,#C47A7A,#6B1F1F)" : "#F0E5E5",
+                borderRadius: "6px 6px 0 0",
+                minHeight: 4,
+              }} />
+              <div style={{ fontSize: 9, color: "#9A8A8A" }}>{s.day.slice(5)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Top lists grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <RankCard
+          title="أكثر مقدمي الخدمة تقييمًا"
+          rows={d.topProvidersByReviews.map((r) => ({ label: r.name, value: `${r.count} · ${r.avg.toFixed(1)}★` }))}
+          empty="لا توجد تقييمات بعد"
+        />
+        <RankCard
+          title="أكثر المدن نشاطًا"
+          rows={d.topCities.map((r) => ({ label: r.name, value: `${r.count} مزود` }))}
+          empty="لا توجد بيانات"
+        />
+        <RankCard
+          title="أكثر التصنيفات طلبًا"
+          rows={d.topCategories.map((r) => ({ label: r.name, value: `${r.count} مزود` }))}
+          empty="لا توجد بيانات"
+        />
+      </div>
+
+      {/* Recent activity + users */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
+        <div className="adm-card">
+          <h3 style={{ marginBottom: 14, fontWeight: 700, fontSize: 15 }}>أحدث المستخدمات</h3>
+          {d.recentUsers.length === 0 ? <p className="adm-empty">لا يوجد</p> : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {d.recentUsers.map((u) => (
+                <div key={u.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 8, borderBottom: "1px solid #F0E8E0" }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>{u.name}</div>
+                    <div style={{ fontSize: 11, color: "#5A4A4A" }}>{u.email}</div>
+                  </div>
+                  <div style={{ fontSize: 11, color: "#9A8A8A" }}>{fmt(u.created_at)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="adm-card">
+          <h3 style={{ marginBottom: 14, fontWeight: 700, fontSize: 15 }}>آخر إجراءات الأدمن</h3>
+          {d.recentActivity.length === 0 ? <p className="adm-empty">لا يوجد</p> : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {d.recentActivity.map((a) => (
+                <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 8, borderBottom: "1px solid #F0E8E0", gap: 8 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13 }}>
+                      <span className="adm-badge adm-badge-on" style={{ marginLeft: 6 }}>{ACTION_LABEL[a.action] ?? a.action}</span>
+                      {ENTITY_LABEL[a.entity] ?? a.entity}
+                    </div>
+                    <div style={{ fontSize: 11, color: "#5A4A4A" }}>{a.admin_email ?? "—"}</div>
+                  </div>
+                  <div style={{ fontSize: 11, color: "#9A8A8A", whiteSpace: "nowrap" }}>{fmt(a.created_at)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function StatCard({ label, value, hint, color, progress }: { label: string; value: number | string; hint?: string; color?: string; progress?: number }) {
   return (
     <div className="adm-stat">
-      <div className="adm-stat-num">{value}</div>
+      <div className="adm-stat-num" style={{ color: color ?? "#6B1F1F" }}>{value}</div>
       <div className="adm-stat-label">{label}</div>
+      {hint && <div style={{ fontSize: 11, color: "#9A8A8A", marginTop: 6 }}>{hint}</div>}
+      {typeof progress === "number" && (
+        <div style={{ marginTop: 10, height: 6, background: "#F0E5E5", borderRadius: 4, overflow: "hidden" }}>
+          <div style={{ width: `${Math.min(100, progress)}%`, height: "100%", background: color ?? "#6B1F1F" }} />
+        </div>
+      )}
     </div>
   );
 }
+
+function RankCard({ title, rows, empty }: { title: string; rows: { label: string; value: string }[]; empty: string }) {
+  const max = rows.length;
+  return (
+    <div className="adm-card">
+      <h3 style={{ marginBottom: 14, fontWeight: 700, fontSize: 15 }}>{title}</h3>
+      {rows.length === 0 ? <p className="adm-empty">{empty}</p> : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {rows.map((r, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
+                <span style={{
+                  width: 22, height: 22, borderRadius: "50%",
+                  background: i === 0 ? "#E8A317" : i === 1 ? "#C0C0C0" : i === 2 ? "#CD7F32" : "#F0E5E5",
+                  color: i < 3 ? "#fff" : "#5A4A4A",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 12, fontWeight: 700, flexShrink: 0,
+                }}>{i + 1}</span>
+                <span style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</span>
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#6B1F1F", whiteSpace: "nowrap" }}>{r.value}</span>
+              {void max}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 // ============ CITIES ============
 type CityRow = { id: string; name_ar: string; name_en: string; slug: string; sort_order: number; active: boolean };
