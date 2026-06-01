@@ -289,6 +289,30 @@ function ProviderPage() {
   );
 }
 
+function VideoEmbed({ url }: { url: string }) {
+  // YouTube
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (yt) {
+    return (
+      <div className="pv-video-wrap">
+        <iframe src={`https://www.youtube.com/embed/${yt[1]}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+      </div>
+    );
+  }
+  // Direct video file
+  if (/\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url)) {
+    return (
+      <div className="pv-video-wrap">
+        <video src={url} controls playsInline preload="metadata" />
+      </div>
+    );
+  }
+  // Fallback: open in new tab
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">▶ مشاهدة الفيديو</a>
+  );
+}
+
 const css = `
   .pv-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
   .pv-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:50; }
