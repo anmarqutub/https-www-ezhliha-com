@@ -782,6 +782,28 @@ function ProvidersTab() {
               </div>
             </div>
           )}
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 12, fontWeight: 700 }}>الفيديو (اختياري)</h4>
+              <Field label="رابط فيديو (يوتيوب / تيك توك / إنستغرام / رابط مباشر)">
+                <input
+                  value={editing.video_url ?? ""}
+                  onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
+                  dir="ltr"
+                  placeholder="https://..."
+                />
+              </Field>
+              <p style={{ fontSize: 12, color: "#5A4A4A", margin: "4px 0 10px" }}>أو ارفعي ملف فيديو مباشرة (حد أقصى 50 ميغابايت):</p>
+              <FileInput accept="video/*" disabled={uploadingVideo} onChange={(e) => handleVideoUpload(e.target.files?.[0])} label="اضغط لرفع فيديو" />
+              {uploadingVideo && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
+              {editing.video_url && (
+                <div style={{ marginTop: 12, display: "flex", gap: 10, alignItems: "center" }}>
+                  <a href={editing.video_url} target="_blank" rel="noopener noreferrer" style={{ color: "#660000", fontSize: 13, fontWeight: 600, textDecoration: "underline", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", direction: "ltr" }}>{editing.video_url}</a>
+                  <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
+                </div>
+              )}
+            </div>
+          )}
           {!editing.id && <p style={{ marginTop: 12, fontSize: 13, color: "#5A4A4A" }}>احفظي أولاً ثم سترين خيار رفع الصور.</p>}
         </Modal>
       )}
