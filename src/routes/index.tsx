@@ -442,7 +442,7 @@ function ProviderCard({
 
 const css = `
   .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
-  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
+  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; min-height:104px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
   .ez-brand-logo { height:88px; width:auto; object-fit:contain; }
   .ez-nav-actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }

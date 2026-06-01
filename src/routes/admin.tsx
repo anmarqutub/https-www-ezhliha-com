@@ -646,7 +646,7 @@ function ProvidersTab() {
     <>
       <SectionHeader title="مقدمو الخدمة" onAdd={() => setEditing({ active: true, sort_order: 0, is_featured: false })} />
       <div className="adm-card">
-        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
           <select value={filterCity} onChange={(e) => setFilterCity(e.target.value)} className="adm-select">
             <option value="all">كل المدن</option>
             {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
@@ -655,6 +655,14 @@ function ProvidersTab() {
             <option value="all">كل التصنيفات</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
           </select>
+          <button
+            className="adm-btn-primary"
+            style={{ marginRight: "auto" }}
+            onClick={() => exportProvidersCsv(filtered, cities, subs, cats, images)}
+            disabled={filtered.length === 0}
+          >
+            📊 تصدير Excel ({filtered.length})
+          </button>
         </div>
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div className="adm-table-wrap">
