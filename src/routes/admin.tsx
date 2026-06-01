@@ -1374,3 +1374,129 @@ function CodesTab() {
 
 const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
 
+// ============ ACTIVITY LOG ============
+type LogRow = {
+  id: string;
+  admin_id: string;
+  admin_email: string | null;
+  action: string;
+  entity: string;
+  entity_id: string | null;
+  details: Record<string, unknown> | null;
+  created_at: string;
+};
+
+const ACTION_LABEL: Record<string, string> = {
+  create: "إضافة",
+  update: "تعديل",
+  delete: "حذف",
+  feature: "ترقية لمميز",
+  unfeature: "إلغاء التمييز",
+  upload_image: "رفع صورة",
+  upload_images: "رفع صور",
+  delete_image: "حذف صورة",
+  upload_video: "رفع فيديو",
+  delete_video: "حذف فيديو",
+  generate: "توليد",
+};
+
+const ENTITY_LABEL: Record<string, string> = {
+  city: "مدينة",
+  category: "تصنيف رئيسي",
+  subcategory: "تصنيف فرعي",
+  provider: "مقدم خدمة",
+  banner: "بنر",
+  review: "تقييم",
+  purchase_code: "كود اشتراك",
+  purchase_codes: "أكواد اشتراك",
+};
+
+function ActivityLogTab() {
+  const [rows, setRows] = useState<LogRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filterAction, setFilterAction] = useState("all");
+  const [filterEntity, setFilterEntity] = useState("all");
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("admin_activity_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    setRows((data ?? []) as LogRow[]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const filtered = rows.filter((r) => {
+    if (filterAction !== "all" && r.action !== filterAction) return false;
+    if (filterEntity !== "all" && r.entity !== filterEntity) return false;
+    return true;
+  });
+
+  const actions = Array.from(new Set(rows.map((r) => r.action)));
+  const entities = Array.from(new Set(rows.map((r) => r.entity)));
+
+  const describe = (r: LogRow) => {
+    const d = r.details ?? {};
+    const name = (d.name_ar || d.name || d.title || d.code) as string | undefined;
+    if (name) return `"${name}"`;
+    if (typeof d.count === "number") return `(${d.count})`;
+    return r.entity_id ? r.entity_id.slice(0, 8) : "";
+  };
+
+  return (
+    <>
+      <h1 className="adm-title">سجل تعديلات الأدمن</h1>
+      <p style={{ color: "#5A4A4A", marginBottom: 16, fontSize: 13 }}>
+        آخر 500 إجراء قام بها الأدمنون (إضافة، تعديل، حذف، رفع صور، إلخ).
+      </p>
+      <div className="adm-card">
+        <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+          <select className="adm-select" value={filterAction} onChange={(e) => setFilterAction(e.target.value)}>
+            <option value="all">كل الإجراءات</option>
+            {actions.map((a) => <option key={a} value={a}>{ACTION_LABEL[a] ?? a}</option>)}
+          </select>
+          <select className="adm-select" value={filterEntity} onChange={(e) => setFilterEntity(e.target.value)}>
+            <option value="all">كل الأنواع</option>
+            {entities.map((e) => <option key={e} value={e}>{ENTITY_LABEL[e] ?? e}</option>)}
+          </select>
+          <button className="adm-btn-secondary" onClick={reload} style={{ marginRight: "auto" }}>تحديث</button>
+        </div>
+        {loading ? (
+          <p className="adm-empty">جارٍ التحميل...</p>
+        ) : filtered.length === 0 ? (
+          <p className="adm-empty">لا توجد إجراءات بعد.</p>
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>الأدمن</th>
+                  <th>الإجراء</th>
+                  <th>النوع</th>
+                  <th>التفاصيل</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.id}>
+                    <td style={{ fontSize: 12, color: "#5A4A4A", whiteSpace: "nowrap" }}>{fmt(r.created_at)}</td>
+                    <td style={{ fontSize: 12 }}>{r.admin_email ?? r.admin_id.slice(0, 8)}</td>
+                    <td><span className="adm-badge adm-badge-on">{ACTION_LABEL[r.action] ?? r.action}</span></td>
+                    <td>{ENTITY_LABEL[r.entity] ?? r.entity}</td>
+                    <td style={{ fontSize: 13, maxWidth: 360 }}>{describe(r)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+
