@@ -594,6 +594,7 @@ function ProvidersTab() {
       is_featured: editing.is_featured ?? false,
       featured_until: editing.featured_until || null,
       sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
+      video_url: editing.video_url ?? null,
     };
     if (editing.id) await supabase.from("providers").update(payload).eq("id", editing.id);
     else {
