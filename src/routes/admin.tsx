@@ -13,7 +13,25 @@ export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة الأدمن — إزهليها" }] }),
 });
 
-type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews";
+async function logActivity(action: string, entity: string, entityId?: string | null, details?: Record<string, unknown> | null) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from("admin_activity_log").insert({
+      admin_id: user.id,
+      admin_email: user.email ?? null,
+      action,
+      entity,
+      entity_id: entityId ?? null,
+      details: details ?? null,
+    });
+  } catch {
+    /* silent */
+  }
+}
+
+type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+
 
 function AdminPage() {
   const { session, isAdmin, loading, signOut, user } = useAuth();
