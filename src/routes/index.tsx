@@ -44,6 +44,8 @@ type ProviderImage = { id: string; provider_id: string; image_url: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
 
 export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
+export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
+export const CONTACT_WA_MESSAGE = "السلام عليكم .. عندي استفسار عن موقع إزهليها";
 
 function Home() {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
@@ -176,6 +178,7 @@ function Home() {
         <div className="ez-nav-actions">
           {user ? (
             <>
+              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
               <Link to="/favorites" className="ez-nav-link">♥ المفضلة</Link>
               {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
               <span className="ez-nav-user">{user.email}</span>
@@ -183,6 +186,7 @@ function Home() {
             </>
           ) : (
             <>
+              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
               <Link to="/login" className="ez-nav-link">دخول</Link>
               <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
             </>
@@ -485,6 +489,9 @@ const css = `
   .ez-nav-btn:hover { background:#4a0000; }
   .ez-nav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
   .ez-nav-btn-out:hover { background:#660000; color:#fff; }
+  .ez-nav-contact { background:#25D366; color:#fff !important; padding:8px 16px; border-radius:50px; font-weight:700; }
+  .ez-nav-contact:hover { background:#1da851; color:#fff !important; }
+  .ez-nav-contact-disabled { background:#ccc; color:#fff; cursor:not-allowed; }
 
   .ez-hero { max-width:1200px; margin:18px auto 0; padding:0 24px; }
   .ez-hero-inner { background:linear-gradient(135deg, #660000 0%, #4a0000 100%); color:#e6e4d7; padding:50px 30px; text-align:center; border-radius:20px; }
