@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { redeemCode } from "@/lib/codes.functions";
+import { createUser } from "@/lib/signup.functions";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/signup")({
@@ -14,8 +14,7 @@ export const Route = createFileRoute("/signup")({
 function SignupPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
-  const redeem = useServerFn(redeemCode);
-  const [code, setCode] = useState("");
+  const register = useServerFn(createUser);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,8 +32,8 @@ function SignupPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await redeem({
-        data: { code, email, password, full_name: fullName, phone, city },
+      await register({
+        data: { email, password, full_name: fullName, phone, city },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
       if (sErr) throw new Error(sErr.message);
@@ -48,21 +47,8 @@ function SignupPage() {
   }
 
   return (
-    <AuthShell title="إنشاء حساب جديد" sub="التسجيل متاح فقط لمن قام بشراء الاشتراك من سلة">
+    <AuthShell title="إنشاء حساب جديد" sub="أهلاً بكِ في إزهليها — سجلي بياناتك">
       <form onSubmit={onSubmit} className="auth-form">
-        <div style={{ background: "#fff8e6", border: "1px solid #f0d27a", borderRadius: 10, padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, color: "#5a4400" }}>
-          📌 بعد إتمام عملية الشراء من <strong>سلة</strong>، سيتم إرسال <strong>كود الاشتراك</strong> إليكِ يدوياً عبر <strong>واتساب</strong> أو <strong>الإيميل</strong> خلال 24 ساعة.<br />
-          لم يصلكِ الكود؟ تواصلي معنا عبر واتساب.
-        </div>
-        <Field label="كود الاشتراك (الذي وصلكِ عبر واتساب أو الإيميل)">
-          <input
-            required
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="XXXXXXXXXX"
-            style={{ letterSpacing: 2, fontFamily: "monospace" }}
-          />
-        </Field>
         <Field label="الاسم الكامل">
           <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
         </Field>
@@ -84,7 +70,7 @@ function SignupPage() {
           </select>
         </Field>
         {error && <div className="auth-error">{error}</div>}
-        <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "تفعيل الحساب"}</button>
+        <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "إنشاء الحساب"}</button>
         <div className="auth-switch">
           لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
         </div>
