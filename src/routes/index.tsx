@@ -56,9 +56,8 @@ function Home() {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  if (!authLoading && !user) {
-    return <AuthGate />;
-  }
+
+
 
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
