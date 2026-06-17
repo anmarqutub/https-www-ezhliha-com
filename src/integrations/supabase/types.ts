@@ -484,6 +484,42 @@ export type Database = {
           },
         ]
       }
+      user_devices: {
+        Row: {
+          approved: boolean
+          approved_at: string | null
+          created_at: string
+          device_sid: string
+          id: string
+          ip: string | null
+          last_seen_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          approved?: boolean
+          approved_at?: string | null
+          created_at?: string
+          device_sid: string
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          approved?: boolean
+          approved_at?: string | null
+          created_at?: string
+          device_sid?: string
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
