@@ -1,6 +1,9 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { claimSession, verifySession } from "@/lib/session.functions";
+import { toast } from "sonner";
 
 type Role = "admin" | "user";
 
@@ -15,19 +18,53 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const SID_KEY = "lov_device_sid";
+
+function getOrCreateDeviceSid(): string {
+  try {
+    let sid = localStorage.getItem(SID_KEY);
+    if (!sid) {
+      sid = (crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now());
+      localStorage.setItem(SID_KEY, sid);
+    }
+    return sid;
+  } catch {
+    return Math.random().toString(36).slice(2) + Date.now();
+  }
+}
+
+function rotateDeviceSid(): string {
+  const sid = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now();
+  try {
+    localStorage.setItem(SID_KEY, sid);
+  } catch {
+    /* ignore */
+  }
+  return sid;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
+  const claim = useServerFn(claimSession);
+  const verify = useServerFn(verifySession);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const kickedRef = useRef(false);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
       if (s?.user) {
-        // Defer DB call to avoid recursive lock
         setTimeout(() => fetchRoles(s.user.id), 0);
+        if (event === "SIGNED_IN") {
+          // New login: rotate sid and claim — invalidates other devices.
+          const sid = rotateDeviceSid();
+          claim({ data: { sessionId: sid } }).catch(() => {});
+        }
       } else {
         setRoles([]);
+        stopPolling();
       }
     });
     supabase.auth.getSession().then(({ data }) => {
@@ -38,7 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      stopPolling();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchRoles(userId: string) {
@@ -46,7 +87,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .from("user_roles")
       .select("role")
       .eq("user_id", userId);
-    setRoles((data ?? []).map((r) => r.role as Role));
+    const rs = (data ?? []).map((r) => r.role as Role);
+    setRoles(rs);
+    // Start single-session enforcement only for non-admin users
+    if (!rs.includes("admin")) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+  }
+
+  function startPolling() {
+    if (pollRef.current) return;
+    const tick = async () => {
+      if (kickedRef.current) return;
+      try {
+        const sid = getOrCreateDeviceSid();
+        const res = await verify({ data: { sessionId: sid } });
+        if (!res.valid && !res.admin) {
+          kickedRef.current = true;
+          stopPolling();
+          toast.error("تم تسجيل الدخول من جهاز آخر. سيتم تسجيل خروجك.");
+          await supabase.auth.signOut();
+        }
+      } catch {
+        /* network blip — ignore */
+      }
+    };
+    // immediate check, then every 20s
+    tick();
+    pollRef.current = setInterval(tick, 20000);
+  }
+
+  function stopPolling() {
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
   }
 
   const value: AuthContextValue = {
@@ -56,6 +133,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin: roles.includes("admin"),
     loading,
     signOut: async () => {
+      try {
+        localStorage.removeItem(SID_KEY);
+      } catch {
+        /* ignore */
+      }
       await supabase.auth.signOut();
     },
   };
