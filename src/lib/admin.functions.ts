@@ -27,7 +27,7 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const ids = authData.users.map((u) => u.id);
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, full_name, phone, city, email, created_at")
+      .select("id, full_name, phone, city, email, created_at, last_seen_at")
       .in("id", ids);
     const { data: roles } = await supabaseAdmin
       .from("user_roles")

@@ -191,13 +191,29 @@ function UsersTab() {
             <table className="adm-table">
               <thead>
                 <tr>
-                  <th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
-                  <th>الدور</th><th>التسجيل</th><th>آخر دخول</th>
+                  <th>الحالة</th><th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
+                  <th>الدور</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th>
                 </tr>
               </thead>
               <tbody>
-                {data.users.map((u) => (
+                {data.users.map((u) => {
+                  const lastSeen = (u.profile as { last_seen_at?: string | null } | null)?.last_seen_at ?? null;
+                  const online = lastSeen ? (Date.now() - new Date(lastSeen).getTime()) < 2 * 60 * 1000 : false;
+                  return (
                   <tr key={u.id}>
+                    <td>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <span style={{
+                          width: 10, height: 10, borderRadius: "50%",
+                          background: online ? "#16a34a" : "#9ca3af",
+                          display: "inline-block",
+                          boxShadow: online ? "0 0 0 3px rgba(22,163,74,0.18)" : "none",
+                        }} />
+                        <span style={{ fontSize: 12, color: online ? "#16a34a" : "#777" }}>
+                          {online ? "متصل" : "غير متصل"}
+                        </span>
+                      </span>
+                    </td>
                     <td>{u.profile?.full_name ?? "—"}</td>
                     <td>{u.email ?? "—"}</td>
                     <td>{u.profile?.phone ?? "—"}</td>
@@ -211,8 +227,10 @@ function UsersTab() {
                     </td>
                     <td>{fmt(u.created_at)}</td>
                     <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
+                    <td>{lastSeen ? fmt(lastSeen) : "—"}</td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

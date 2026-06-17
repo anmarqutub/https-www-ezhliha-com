@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import type { Session, User } from "@supabase/supabase-js";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { claimSession, verifySession } from "@/lib/session.functions";
+import { claimSession, verifySession, heartbeat } from "@/lib/session.functions";
 import { toast } from "sonner";
 
 type Role = "admin" | "user";
@@ -49,7 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const claim = useServerFn(claimSession);
   const verify = useServerFn(verifySession);
+  const beat = useServerFn(heartbeat);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const beatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickedRef = useRef(false);
 
   useEffect(() => {
@@ -57,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       if (s?.user) {
         setTimeout(() => fetchRoles(s.user.id), 0);
+        startHeartbeat();
         if (event === "SIGNED_IN") {
           // New login: rotate sid and claim — invalidates other devices.
           const sid = rotateDeviceSid();
@@ -65,11 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setRoles([]);
         stopPolling();
+        stopHeartbeat();
       }
     });
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (data.session?.user) {
+        startHeartbeat();
         fetchRoles(data.session.user.id).finally(() => setLoading(false));
       } else {
         setLoading(false);
@@ -78,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       sub.subscription.unsubscribe();
       stopPolling();
+      stopHeartbeat();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,6 +131,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       pollRef.current = null;
     }
   }
+
+  function startHeartbeat() {
+    if (beatRef.current) return;
+    const tick = () => { beat().catch(() => {}); };
+    tick();
+    beatRef.current = setInterval(tick, 60000);
+  }
+
+  function stopHeartbeat() {
+    if (beatRef.current) {
+      clearInterval(beatRef.current);
+      beatRef.current = null;
+    }
+  }
+
 
   const value: AuthContextValue = {
     session,

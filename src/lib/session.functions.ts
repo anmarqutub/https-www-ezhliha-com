@@ -45,3 +45,17 @@ export const verifySession = createServerFn({ method: "POST" })
       .maybeSingle();
     return { valid: prof?.active_session_id === data.sessionId, admin: false };
   });
+
+// Heartbeat — updates last_seen_at for the current user. Called periodically
+// from the client to power the admin "online users" indicator.
+export const heartbeat = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("profiles")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("id", userId);
+    return { ok: true };
+  });
