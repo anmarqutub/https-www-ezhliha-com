@@ -46,7 +46,7 @@ type Banner = { id: string; title: string | null; image_url: string; link_url: s
 export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
 
 function Home() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -55,6 +55,10 @@ function Home() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  if (!authLoading && !user) {
+    return <AuthGate />;
+  }
 
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
