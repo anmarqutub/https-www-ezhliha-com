@@ -1880,87 +1880,9 @@ const adminCss = `
   }
 `;
 
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            رقم طلب سلة
-            <input value={orderId} onChange={(e) => setOrderId(e.target.value)} maxLength={60} style={inp} placeholder="#12345" />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            الإيميل (اختياري)
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inp} placeholder="customer@email.com" />
-          </label>
-          <button className="adm-btn-primary" disabled={busy}>{busy ? "..." : "توليد كود"}</button>
-        </form>
-        {msg && <p style={{ marginTop: 10, fontSize: 13, color: "#6B1F1F" }}>{msg}</p>}
-        {lastCode && (
-          <div style={{ marginTop: 12, padding: 12, background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 8, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <span>الكود الجاهز:</span>
-            <code style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace" }}>{lastCode.code}</code>
-            <button type="button" onClick={() => copy(lastCode.code)} className="adm-btn-secondary">نسخ</button>
-            <a href={whatsappLink(lastCode)} target="_blank" rel="noreferrer" className="adm-btn-primary" style={{ textDecoration: "none", background: "#25D366" }}>
-              📱 إرسال عبر واتساب
-            </a>
-          </div>
-        )}
-      </div>
+const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
 
-      <div className="adm-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 10, flexWrap: "wrap" }}>
-          <div style={{ fontSize: 14 }}>
-            الإجمالي: <b>{rows.length}</b> &nbsp;|&nbsp; مستخدم: <b>{used}</b> &nbsp;|&nbsp; غير مستخدم: <b>{rows.length - used}</b>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="بحث (اسم، جوال، رقم طلب، كود)" style={{ ...inp, minWidth: 260 }} />
-            <button className="adm-btn-secondary" onClick={exportCsv} disabled={rows.length === 0}>تصدير CSV</button>
-          </div>
-        </div>
-        {filtered.length === 0 ? (
-          <p className="adm-empty">لا توجد طلبات بعد.</p>
-        ) : (
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th>العميلة</th><th>الجوال</th><th>رقم طلب سلة</th><th>الكود</th><th>الحالة</th><th>تاريخ الإضافة</th><th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.customer_name ?? "—"}</td>
-                    <td style={{ direction: "ltr", textAlign: "right" }}>{r.customer_phone ?? "—"}</td>
-                    <td>{r.salla_order_id ?? "—"}</td>
-                    <td>
-                      <button onClick={() => copy(r.code)} title="نسخ" style={{ background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 6, padding: "4px 10px", fontFamily: "monospace", cursor: "pointer", fontWeight: 700 }}>
-                        {r.code}
-                      </button>
-                    </td>
-                    <td>
-                      {r.used_at
-                        ? <span className="adm-badge adm-badge-admin">مستخدم</span>
-                        : <span className="adm-badge">متاح</span>}
-                    </td>
-                    <td>{fmt(r.created_at)}</td>
-                    <td style={{ display: "flex", gap: 6 }}>
-                      {!r.used_at && r.customer_phone && (
-                        <a href={whatsappLink(r)} target="_blank" rel="noreferrer" title="إرسال واتساب"
-                          style={{ background: "#25D366", color: "#fff", borderRadius: 6, padding: "4px 10px", textDecoration: "none", fontSize: 13 }}>
-                          📱
-                        </a>
-                      )}
-                      <button onClick={async () => { if (confirm("حذف هذا الطلب؟")) { await del({ data: { id: r.id } }); logActivity("delete", "salla_order", r.id, { code: r.code }); reload(); } }}
-                        style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
+// ============ ACTIVITY LOG ============
 
 
 
