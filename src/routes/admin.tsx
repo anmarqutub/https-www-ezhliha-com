@@ -1721,6 +1721,198 @@ function CodesTab() {
   );
 }
 
+type SallaRow = {
+  id: string; code: string; email: string | null; note: string | null;
+  customer_name: string | null; customer_phone: string | null; salla_order_id: string | null;
+  used_at: string | null; used_by: string | null; created_at: string;
+};
+
+function SallaOrdersTab() {
+  const gen = useServerFn(generateCodes);
+  const list = useServerFn(listCodes);
+  const del = useServerFn(deleteCode);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [email, setEmail] = useState("");
+  const [rows, setRows] = useState<SallaRow[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [lastCode, setLastCode] = useState<SallaRow | null>(null);
+  const [search, setSearch] = useState("");
+
+  const reload = useCallback(async () => {
+    const res = await list();
+    const all = (res.codes as SallaRow[]).filter((r) => r.customer_name || r.customer_phone || r.salla_order_id);
+    setRows(all);
+  }, [list]);
+
+  useEffect(() => { reload(); }, [reload]);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim()) { setMsg("الاسم والجوال مطلوبان"); return; }
+    setBusy(true); setMsg(null); setLastCode(null);
+    try {
+      const res = await gen({ data: {
+        count: 1, email,
+        note: orderId ? `طلب سلة #${orderId}` : "",
+        customer_name: name.trim(),
+        customer_phone: phone.trim(),
+        salla_order_id: orderId.trim(),
+      }});
+      const created = res.codes[0] as SallaRow;
+      setLastCode(created);
+      setMsg(`✅ تم توليد الكود: ${created.code}`);
+      logActivity("salla_order", "purchase_codes", created.id, { customer_name: name, salla_order_id: orderId });
+      setName(""); setPhone(""); setOrderId(""); setEmail("");
+      await reload();
+    } catch (e) {
+      setMsg("خطأ: " + (e as Error).message);
+    } finally { setBusy(false); }
+  }
+
+  function whatsappLink(r: SallaRow) {
+    const phone = (r.customer_phone ?? "").replace(/\D/g, "").replace(/^0/, "966");
+    const text = `مرحباً ${r.customer_name ?? ""}،%0Aشكراً لطلبك من إزهليها 🌸%0Aكود التسجيل الخاص بك: *${r.code}*%0Aفعّليه من هنا: ${window.location.origin}/signup`;
+    return `https://wa.me/${phone}?text=${text}`;
+  }
+
+  async function copy(code: string) {
+    try { await navigator.clipboard.writeText(code); setMsg("تم نسخ: " + code); } catch {}
+  }
+
+  function exportCsv() {
+    const header = ["customer_name", "customer_phone", "salla_order_id", "code", "status", "used_at", "created_at"];
+    const lines = [header.join(",")].concat(
+      rows.map((r) => [
+        (r.customer_name ?? "").replaceAll(",", " "),
+        r.customer_phone ?? "",
+        r.salla_order_id ?? "",
+        r.code,
+        r.used_at ? "مستخدم" : "متاح",
+        r.used_at ?? "",
+        r.created_at,
+      ].join(","))
+    );
+    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `salla-orders-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const filtered = rows.filter((r) => {
+    if (!search.trim()) return true;
+    const q = search.trim().toLowerCase();
+    return (r.customer_name ?? "").toLowerCase().includes(q)
+      || (r.customer_phone ?? "").includes(q)
+      || (r.salla_order_id ?? "").toLowerCase().includes(q)
+      || r.code.toLowerCase().includes(q);
+  });
+  const used = rows.filter((r) => r.used_at).length;
+
+  return (
+    <>
+      <h1 className="adm-title">طلبات سلة</h1>
+      <p style={{ color: "#555", marginBottom: 16, fontSize: 14 }}>
+        بعد ما يدفع العميل في سلة، انسخي بياناته من لوحة سلة، وأدخليها هنا. النظام بيولّد كود ويربطه بالعميل، وتقدرين ترسلين الكود مباشرة عبر واتساب.
+      </p>
+
+      <div className="adm-card" style={{ marginBottom: 20 }}>
+        <h3 style={{ marginBottom: 12 }}>إضافة طلب سلة جديد</h3>
+        <form onSubmit={onSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            اسم العميلة *
+            <input value={name} onChange={(e) => setName(e.target.value)} required maxLength={120} style={inp} placeholder="فاطمة محمد" />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            رقم الجوال *
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} required maxLength={30} style={inp} placeholder="05xxxxxxxx" />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            رقم طلب سلة
+            <input value={orderId} onChange={(e) => setOrderId(e.target.value)} maxLength={60} style={inp} placeholder="#12345" />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
+            الإيميل (اختياري)
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inp} placeholder="customer@email.com" />
+          </label>
+          <button className="adm-btn-primary" disabled={busy}>{busy ? "..." : "توليد كود"}</button>
+        </form>
+        {msg && <p style={{ marginTop: 10, fontSize: 13, color: "#6B1F1F" }}>{msg}</p>}
+        {lastCode && (
+          <div style={{ marginTop: 12, padding: 12, background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 8, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <span>الكود الجاهز:</span>
+            <code style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace" }}>{lastCode.code}</code>
+            <button type="button" onClick={() => copy(lastCode.code)} className="adm-btn-secondary">نسخ</button>
+            <a href={whatsappLink(lastCode)} target="_blank" rel="noreferrer" className="adm-btn-primary" style={{ textDecoration: "none", background: "#25D366" }}>
+              📱 إرسال عبر واتساب
+            </a>
+          </div>
+        )}
+      </div>
+
+      <div className="adm-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 10, flexWrap: "wrap" }}>
+          <div style={{ fontSize: 14 }}>
+            الإجمالي: <b>{rows.length}</b> &nbsp;|&nbsp; مستخدم: <b>{used}</b> &nbsp;|&nbsp; غير مستخدم: <b>{rows.length - used}</b>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="بحث (اسم، جوال، رقم طلب، كود)" style={{ ...inp, minWidth: 260 }} />
+            <button className="adm-btn-secondary" onClick={exportCsv} disabled={rows.length === 0}>تصدير CSV</button>
+          </div>
+        </div>
+        {filtered.length === 0 ? (
+          <p className="adm-empty">لا توجد طلبات بعد.</p>
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>العميلة</th><th>الجوال</th><th>رقم طلب سلة</th><th>الكود</th><th>الحالة</th><th>تاريخ الإضافة</th><th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.customer_name ?? "—"}</td>
+                    <td style={{ direction: "ltr", textAlign: "right" }}>{r.customer_phone ?? "—"}</td>
+                    <td>{r.salla_order_id ?? "—"}</td>
+                    <td>
+                      <button onClick={() => copy(r.code)} title="نسخ" style={{ background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 6, padding: "4px 10px", fontFamily: "monospace", cursor: "pointer", fontWeight: 700 }}>
+                        {r.code}
+                      </button>
+                    </td>
+                    <td>
+                      {r.used_at
+                        ? <span className="adm-badge adm-badge-admin">مستخدم</span>
+                        : <span className="adm-badge">متاح</span>}
+                    </td>
+                    <td>{fmt(r.created_at)}</td>
+                    <td style={{ display: "flex", gap: 6 }}>
+                      {!r.used_at && r.customer_phone && (
+                        <a href={whatsappLink(r)} target="_blank" rel="noreferrer" title="إرسال واتساب"
+                          style={{ background: "#25D366", color: "#fff", borderRadius: 6, padding: "4px 10px", textDecoration: "none", fontSize: 13 }}>
+                          📱
+                        </a>
+                      )}
+                      <button onClick={async () => { if (confirm("حذف هذا الطلب؟")) { await del({ data: { id: r.id } }); logActivity("delete", "salla_order", r.id, { code: r.code }); reload(); } }}
+                        style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+
+
 const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
 
 // ============ ACTIVITY LOG ============
