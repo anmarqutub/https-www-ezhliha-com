@@ -182,7 +182,7 @@ function UsersTab() {
   });
   const [ipUserId, setIpUserId] = useState<string | null>(null);
   const [ipUserLabel, setIpUserLabel] = useState<string>("");
-  const [ipData, setIpData] = useState<Array<{ ip: string; user_agent: string | null; first_seen_at: string; last_seen_at: string; hit_count: number }> | null>(null);
+  const [ipData, setIpData] = useState<Array<{ ip: string | null; user_agent: string | null; first_seen_at: string; last_seen_at: string; hit_count: number }> | null>(null);
   const [ipLoading, setIpLoading] = useState(false);
 
   async function openIps(userId: string, label: string) {
