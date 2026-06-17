@@ -1719,6 +1719,38 @@ function CodesTab() {
   );
 }
 
+function MergedCodesTab() {
+  const [sub, setSub] = useState<"salla" | "bulk">("salla");
+  return (
+    <>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, borderBottom: "1px solid #E8DADA" }}>
+        <button
+          onClick={() => setSub("salla")}
+          style={{
+            background: "transparent", border: "none", padding: "10px 16px", cursor: "pointer",
+            fontSize: 14, fontWeight: sub === "salla" ? 700 : 500,
+            color: sub === "salla" ? "#6B1F1F" : "#777",
+            borderBottom: sub === "salla" ? "2px solid #6B1F1F" : "2px solid transparent",
+            marginBottom: -1,
+          }}
+        >طلبات سلة (مع بيانات العميل)</button>
+        <button
+          onClick={() => setSub("bulk")}
+          style={{
+            background: "transparent", border: "none", padding: "10px 16px", cursor: "pointer",
+            fontSize: 14, fontWeight: sub === "bulk" ? 700 : 500,
+            color: sub === "bulk" ? "#6B1F1F" : "#777",
+            borderBottom: sub === "bulk" ? "2px solid #6B1F1F" : "2px solid transparent",
+            marginBottom: -1,
+          }}
+        >توليد دفعة عامة</button>
+      </div>
+      {sub === "salla" ? <SallaOrdersTab /> : <CodesTab />}
+    </>
+  );
+}
+
+
 type SallaRow = {
   id: string; code: string; email: string | null; note: string | null;
   customer_name: string | null; customer_phone: string | null; salla_order_id: string | null;
