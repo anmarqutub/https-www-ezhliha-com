@@ -329,27 +329,36 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          customer_name: string | null
+          customer_phone: string | null
           email: string | null
           id: string
           note: string | null
+          salla_order_id: string | null
           used_at: string | null
           used_by: string | null
         }
         Insert: {
           code: string
           created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
           email?: string | null
           id?: string
           note?: string | null
+          salla_order_id?: string | null
           used_at?: string | null
           used_by?: string | null
         }
         Update: {
           code?: string
           created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
           email?: string | null
           id?: string
           note?: string | null
+          salla_order_id?: string | null
           used_at?: string | null
           used_by?: string | null
         }
