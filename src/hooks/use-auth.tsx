@@ -134,7 +134,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function startHeartbeat() {
     if (beatRef.current) return;
-    const tick = () => { beat().catch(() => {}); };
+    const tick = async () => {
+      try {
+        const res = await beat();
+        if (res?.suspended && !kickedRef.current) {
+          kickedRef.current = true;
+          stopHeartbeat();
+          stopPolling();
+          toast.error("تم تعليق حسابك. يرجى التواصل مع الإدارة.");
+          await supabase.auth.signOut();
+        }
+      } catch {
+        /* network blip — ignore */
+      }
+    };
     tick();
     beatRef.current = setInterval(tick, 60000);
   }

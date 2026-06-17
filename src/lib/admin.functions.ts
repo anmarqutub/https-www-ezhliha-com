@@ -101,3 +101,41 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 500 });
     return { success: true };
   });
+
+// Fetch login events (IPs) for a specific user — admin only.
+export const getUserLoginEvents = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows } = await supabaseAdmin
+      .from("login_events")
+      .select("ip, user_agent, first_seen_at, last_seen_at, hit_count")
+      .eq("user_id", data.userId)
+      .order("last_seen_at", { ascending: false });
+    return { events: rows ?? [] };
+  });
+
+// Suspend / unsuspend a user — admin only.
+// Suspended users get signed out on next heartbeat (within ~60s).
+export const setUserSuspended = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    userId: z.string().uuid(),
+    suspended: z.boolean(),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    if (data.userId === context.userId) {
+      throw new Response("لا يمكنك تعليق حسابك", { status: 400 });
+    }
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        suspended_at: data.suspended ? new Date().toISOString() : null,
+        // Clear active session so the user gets kicked immediately.
+        ...(data.suspended ? { active_session_id: null } : {}),
+      })
+      .eq("id", data.userId);
+    return { ok: true };
+  });
