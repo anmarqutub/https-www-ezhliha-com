@@ -1883,12 +1883,6 @@ const adminCss = `
 const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
 
 // ============ ACTIVITY LOG ============
-
-
-
-const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
-
-// ============ ACTIVITY LOG ============
 type LogRow = {
   id: string;
   admin_id: string;
