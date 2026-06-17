@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
-import { generateCodes, listCodes, deleteCode } from "@/lib/codes.functions";
+
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
@@ -49,7 +49,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "salla" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
 function AdminPage() {
@@ -132,7 +132,6 @@ function AdminPage() {
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
           <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
-          <SideBtn label="أكواد الاشتراك" active={tab === "codes"} onClick={() => setTab("codes")} />
 
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
@@ -145,7 +144,6 @@ function AdminPage() {
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
           {tab === "users" && <StatsAndUsers showUsers={true} />}
-          {tab === "codes" && <MergedCodesTab />}
 
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
@@ -532,9 +530,9 @@ type DashboardData = {
   reviewsAvg: number;
   reviews7d: number;
   favoritesTotal: number;
-  codesTotal: number;
-  codesUsed: number;
-  codesAvailable: number;
+  devicesTotal: number;
+  devicesPending: number;
+  suspendedUsers: number;
   topProvidersByReviews: { id: string; name: string; count: number; avg: number }[];
   topCities: { id: string; name: string; count: number }[];
   topCategories: { id: string; name: string; count: number }[];
@@ -558,7 +556,7 @@ function DashboardTab() {
 
     const [
       provsRes, citiesRes, catsRes, subsRes, bannersRes,
-      reviewsRes, favRes, codesRes, logsRes,
+      reviewsRes, favRes, devicesRes, logsRes,
     ] = await Promise.all([
       supabase.from("providers").select("id,name,city_id,subcategory_id,active,is_featured,created_at"),
       supabase.from("cities").select("id,name_ar,active"),
@@ -567,7 +565,7 @@ function DashboardTab() {
       supabase.from("banners").select("id,active"),
       supabase.from("reviews").select("id,provider_id,rating,created_at"),
       supabase.from("favorites").select("id", { count: "exact", head: true }),
-      supabase.from("purchase_codes").select("id,used_at"),
+      supabase.from("user_devices").select("id,approved"),
       supabase.from("admin_activity_log").select("id,admin_email,action,entity,created_at,details").order("created_at", { ascending: false }).limit(10),
     ]);
 
@@ -576,9 +574,9 @@ function DashboardTab() {
     const cats = catsRes.data ?? [];
     const subs = subsRes.data ?? [];
     const banners = bannersRes.data ?? [];
-    const reviews = reviewsRes.data ?? [];
-    const codes = codesRes.data ?? [];
-    const logs = logsRes.data ?? [];
+      const reviews = reviewsRes.data ?? [];
+      const devices = devicesRes.data ?? [];
+      const logs = logsRes.data ?? [];
 
     // Reviews aggregations
     const reviewsByProv = new Map<string, { count: number; sum: number }>();
@@ -657,9 +655,9 @@ function DashboardTab() {
       reviewsAvg,
       reviews7d,
       favoritesTotal: favRes.count ?? 0,
-      codesTotal: codes.length,
-      codesUsed: codes.filter((c) => c.used_at).length,
-      codesAvailable: codes.filter((c) => !c.used_at).length,
+      devicesTotal: devices.length,
+      devicesPending: devices.filter((dev: { approved: boolean }) => !dev.approved).length,
+      suspendedUsers: users.filter((u) => u.profile?.suspended_at).length,
       topProvidersByReviews,
       topCities,
       topCategories,
@@ -680,7 +678,7 @@ function DashboardTab() {
     );
   }
 
-  const codeUsage = d.codesTotal ? Math.round((d.codesUsed / d.codesTotal) * 100) : 0;
+  
   const maxSignup = Math.max(1, ...d.signupSeries.map((x) => x.count));
 
   return (
@@ -714,8 +712,8 @@ function DashboardTab() {
       <div className="adm-stats">
         <StatCard label="إجمالي التقييمات" value={d.reviewsTotal} hint={`${d.reviews7d} في آخر 7 أيام`} color="#6B1F1F" />
         <StatCard label="متوسط التقييم" value={d.reviewsTotal ? `${d.reviewsAvg.toFixed(1)} ★` : "—"} color="#E8A317" />
-        <StatCard label="أكواد الاشتراك" value={d.codesTotal} hint={`${d.codesUsed} مستخدمة · ${d.codesAvailable} متاحة`} color="#5A4A4A" />
-        <StatCard label="معدل استخدام الأكواد" value={`${codeUsage}%`} color={codeUsage >= 70 ? "#2E7D32" : "#C47A7A"} progress={codeUsage} />
+        <StatCard label="الأجهزة المسجلة" value={d.devicesTotal} hint={`${d.devicesPending} بانتظار الموافقة`} color="#5A4A4A" />
+        <StatCard label="المستخدمات المعلّقة" value={d.suspendedUsers} color={d.suspendedUsers > 0 ? "#C47A7A" : "#2E7D32"} />
       </div>
 
       {/* Signup chart */}
@@ -1881,356 +1879,6 @@ const adminCss = `
     .adm-grid2 { grid-template-columns:1fr; }
   }
 `;
-
-// ============ CODES ============
-function CodesTab() {
-  const gen = useServerFn(generateCodes);
-  const list = useServerFn(listCodes);
-  const del = useServerFn(deleteCode);
-  const [count, setCount] = useState(1);
-  const [email, setEmail] = useState("");
-  const [note, setNote] = useState("");
-  const [rows, setRows] = useState<Array<{ id: string; code: string; email: string | null; note: string | null; used_at: string | null; used_by: string | null; created_at: string }>>([]);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-
-  const reload = useCallback(async () => {
-    const res = await list();
-    setRows(res.codes as typeof rows);
-  }, [list]);
-
-  useEffect(() => { reload(); }, [reload]);
-
-  async function onGenerate(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true); setMsg(null);
-    try {
-      const res = await gen({ data: { count, email, note } });
-      setMsg(`تم توليد ${res.codes.length} كود`);
-      logActivity("generate", "purchase_codes", null, { count: res.codes.length, email: email || null, note: note || null });
-      setEmail(""); setNote("");
-      await reload();
-    } catch (e) {
-      setMsg("خطأ: " + (e as Error).message);
-    } finally { setBusy(false); }
-  }
-
-  async function copy(code: string) {
-    try { await navigator.clipboard.writeText(code); setMsg("تم نسخ الكود: " + code); } catch {}
-  }
-
-  function exportCsv() {
-    const header = ["code", "email", "note", "used_at", "created_at"];
-    const lines = [header.join(",")].concat(
-      rows.map((r) => [r.code, r.email ?? "", (r.note ?? "").replaceAll(",", " "), r.used_at ?? "", r.created_at].join(","))
-    );
-    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `purchase-codes-${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  const unused = rows.filter((r) => !r.used_at).length;
-
-  return (
-    <>
-      <h1 className="adm-title">أكواد الاشتراك</h1>
-      <p style={{ color: "#555", marginBottom: 16, fontSize: 14 }}>
-        التسجيل في الموقع مغلق. المشتري من سلة يحتاج كود اشتراك ترسله له يدوياً عبر الواتساب. ولّد الأكواد هنا ثم أرسلها للعملاء.
-      </p>
-
-      <div className="adm-card" style={{ marginBottom: 20 }}>
-        <h3 style={{ marginBottom: 12 }}>توليد أكواد جديدة</h3>
-        <form onSubmit={onGenerate} style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr auto", gap: 10, alignItems: "end" }}>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            العدد
-            <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Number(e.target.value))} style={inp} />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            ربط بإيميل محدد (اختياري)
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="customer@email.com" style={inp} />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            ملاحظة (اختياري)
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثلا: طلب سلة #1234" style={inp} />
-          </label>
-          <button className="adm-btn-primary" disabled={busy}>{busy ? "..." : "توليد"}</button>
-        </form>
-        {msg && <p style={{ marginTop: 10, fontSize: 13, color: "#6B1F1F" }}>{msg}</p>}
-      </div>
-
-      <div className="adm-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <div style={{ fontSize: 14 }}>
-            الإجمالي: <b>{rows.length}</b> &nbsp;|&nbsp; غير مستخدمة: <b>{unused}</b>
-          </div>
-          <button className="adm-btn-secondary" onClick={exportCsv} disabled={rows.length === 0}>تصدير CSV</button>
-        </div>
-        {rows.length === 0 ? (
-          <p className="adm-empty">لا توجد أكواد بعد.</p>
-        ) : (
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th>الكود</th><th>الإيميل</th><th>ملاحظة</th><th>الحالة</th><th>تاريخ الإنشاء</th><th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td>
-                      <button onClick={() => copy(r.code)} title="نسخ" style={{ background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 6, padding: "4px 10px", fontFamily: "monospace", cursor: "pointer", fontWeight: 700 }}>
-                        {r.code}
-                      </button>
-                    </td>
-                    <td>{r.email ?? "—"}</td>
-                    <td>{r.note ?? "—"}</td>
-                    <td>
-                      {r.used_at
-                        ? <span className="adm-badge adm-badge-admin">مستخدم</span>
-                        : <span className="adm-badge">متاح</span>}
-                    </td>
-                    <td>{fmt(r.created_at)}</td>
-                    <td>
-                      <button onClick={async () => { if (confirm("حذف هذا الكود؟")) { await del({ data: { id: r.id } }); logActivity("delete", "purchase_code", r.id, { code: r.code }); reload(); } }}
-                        style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-function MergedCodesTab() {
-  const [sub, setSub] = useState<"salla" | "bulk">("salla");
-  return (
-    <>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16, borderBottom: "1px solid #E8DADA" }}>
-        <button
-          onClick={() => setSub("salla")}
-          style={{
-            background: "transparent", border: "none", padding: "10px 16px", cursor: "pointer",
-            fontSize: 14, fontWeight: sub === "salla" ? 700 : 500,
-            color: sub === "salla" ? "#6B1F1F" : "#777",
-            borderBottom: sub === "salla" ? "2px solid #6B1F1F" : "2px solid transparent",
-            marginBottom: -1,
-          }}
-        >طلبات سلة (مع بيانات العميل)</button>
-        <button
-          onClick={() => setSub("bulk")}
-          style={{
-            background: "transparent", border: "none", padding: "10px 16px", cursor: "pointer",
-            fontSize: 14, fontWeight: sub === "bulk" ? 700 : 500,
-            color: sub === "bulk" ? "#6B1F1F" : "#777",
-            borderBottom: sub === "bulk" ? "2px solid #6B1F1F" : "2px solid transparent",
-            marginBottom: -1,
-          }}
-        >توليد دفعة عامة</button>
-      </div>
-      {sub === "salla" ? <SallaOrdersTab /> : <CodesTab />}
-    </>
-  );
-}
-
-
-type SallaRow = {
-  id: string; code: string; email: string | null; note: string | null;
-  customer_name: string | null; customer_phone: string | null; salla_order_id: string | null;
-  used_at: string | null; used_by: string | null; created_at: string;
-};
-
-function SallaOrdersTab() {
-  const gen = useServerFn(generateCodes);
-  const list = useServerFn(listCodes);
-  const del = useServerFn(deleteCode);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [orderId, setOrderId] = useState("");
-  const [email, setEmail] = useState("");
-  const [rows, setRows] = useState<SallaRow[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [lastCode, setLastCode] = useState<SallaRow | null>(null);
-  const [search, setSearch] = useState("");
-
-  const reload = useCallback(async () => {
-    const res = await list();
-    const all = (res.codes as SallaRow[]).filter((r) => r.customer_name || r.customer_phone || r.salla_order_id);
-    setRows(all);
-  }, [list]);
-
-  useEffect(() => { reload(); }, [reload]);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim() || !phone.trim()) { setMsg("الاسم والجوال مطلوبان"); return; }
-    setBusy(true); setMsg(null); setLastCode(null);
-    try {
-      const res = await gen({ data: {
-        count: 1, email,
-        note: orderId ? `طلب سلة #${orderId}` : "",
-        customer_name: name.trim(),
-        customer_phone: phone.trim(),
-        salla_order_id: orderId.trim(),
-      }});
-      const created = res.codes[0] as SallaRow;
-      setLastCode(created);
-      setMsg(`✅ تم توليد الكود: ${created.code}`);
-      logActivity("salla_order", "purchase_codes", created.id, { customer_name: name, salla_order_id: orderId });
-      setName(""); setPhone(""); setOrderId(""); setEmail("");
-      await reload();
-    } catch (e) {
-      setMsg("خطأ: " + (e as Error).message);
-    } finally { setBusy(false); }
-  }
-
-  function whatsappLink(r: SallaRow) {
-    const phone = (r.customer_phone ?? "").replace(/\D/g, "").replace(/^0/, "966");
-    const text = `مرحباً ${r.customer_name ?? ""}،%0Aشكراً لطلبك من إزهليها 🌸%0Aكود التسجيل الخاص بك: *${r.code}*%0Aفعّليه من هنا: ${window.location.origin}/signup`;
-    return `https://wa.me/${phone}?text=${text}`;
-  }
-
-  async function copy(code: string) {
-    try { await navigator.clipboard.writeText(code); setMsg("تم نسخ: " + code); } catch {}
-  }
-
-  function exportCsv() {
-    const header = ["customer_name", "customer_phone", "salla_order_id", "code", "status", "used_at", "created_at"];
-    const lines = [header.join(",")].concat(
-      rows.map((r) => [
-        (r.customer_name ?? "").replaceAll(",", " "),
-        r.customer_phone ?? "",
-        r.salla_order_id ?? "",
-        r.code,
-        r.used_at ? "مستخدم" : "متاح",
-        r.used_at ?? "",
-        r.created_at,
-      ].join(","))
-    );
-    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `salla-orders-${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  const filtered = rows.filter((r) => {
-    if (!search.trim()) return true;
-    const q = search.trim().toLowerCase();
-    return (r.customer_name ?? "").toLowerCase().includes(q)
-      || (r.customer_phone ?? "").includes(q)
-      || (r.salla_order_id ?? "").toLowerCase().includes(q)
-      || r.code.toLowerCase().includes(q);
-  });
-  const used = rows.filter((r) => r.used_at).length;
-
-  return (
-    <>
-      <h1 className="adm-title">طلبات سلة</h1>
-      <p style={{ color: "#555", marginBottom: 16, fontSize: 14 }}>
-        بعد ما يدفع العميل في سلة، انسخي بياناته من لوحة سلة، وأدخليها هنا. النظام بيولّد كود ويربطه بالعميل، وتقدرين ترسلين الكود مباشرة عبر واتساب.
-      </p>
-
-      <div className="adm-card" style={{ marginBottom: 20 }}>
-        <h3 style={{ marginBottom: 12 }}>إضافة طلب سلة جديد</h3>
-        <form onSubmit={onSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            اسم العميلة *
-            <input value={name} onChange={(e) => setName(e.target.value)} required maxLength={120} style={inp} placeholder="فاطمة محمد" />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            رقم الجوال *
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} required maxLength={30} style={inp} placeholder="05xxxxxxxx" />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            رقم طلب سلة
-            <input value={orderId} onChange={(e) => setOrderId(e.target.value)} maxLength={60} style={inp} placeholder="#12345" />
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13 }}>
-            الإيميل (اختياري)
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inp} placeholder="customer@email.com" />
-          </label>
-          <button className="adm-btn-primary" disabled={busy}>{busy ? "..." : "توليد كود"}</button>
-        </form>
-        {msg && <p style={{ marginTop: 10, fontSize: 13, color: "#6B1F1F" }}>{msg}</p>}
-        {lastCode && (
-          <div style={{ marginTop: 12, padding: 12, background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 8, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <span>الكود الجاهز:</span>
-            <code style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace" }}>{lastCode.code}</code>
-            <button type="button" onClick={() => copy(lastCode.code)} className="adm-btn-secondary">نسخ</button>
-            <a href={whatsappLink(lastCode)} target="_blank" rel="noreferrer" className="adm-btn-primary" style={{ textDecoration: "none", background: "#25D366" }}>
-              📱 إرسال عبر واتساب
-            </a>
-          </div>
-        )}
-      </div>
-
-      <div className="adm-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 10, flexWrap: "wrap" }}>
-          <div style={{ fontSize: 14 }}>
-            الإجمالي: <b>{rows.length}</b> &nbsp;|&nbsp; مستخدم: <b>{used}</b> &nbsp;|&nbsp; غير مستخدم: <b>{rows.length - used}</b>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="بحث (اسم، جوال، رقم طلب، كود)" style={{ ...inp, minWidth: 260 }} />
-            <button className="adm-btn-secondary" onClick={exportCsv} disabled={rows.length === 0}>تصدير CSV</button>
-          </div>
-        </div>
-        {filtered.length === 0 ? (
-          <p className="adm-empty">لا توجد طلبات بعد.</p>
-        ) : (
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th>العميلة</th><th>الجوال</th><th>رقم طلب سلة</th><th>الكود</th><th>الحالة</th><th>تاريخ الإضافة</th><th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.customer_name ?? "—"}</td>
-                    <td style={{ direction: "ltr", textAlign: "right" }}>{r.customer_phone ?? "—"}</td>
-                    <td>{r.salla_order_id ?? "—"}</td>
-                    <td>
-                      <button onClick={() => copy(r.code)} title="نسخ" style={{ background: "#f6f0ea", border: "1px solid #e3d8cc", borderRadius: 6, padding: "4px 10px", fontFamily: "monospace", cursor: "pointer", fontWeight: 700 }}>
-                        {r.code}
-                      </button>
-                    </td>
-                    <td>
-                      {r.used_at
-                        ? <span className="adm-badge adm-badge-admin">مستخدم</span>
-                        : <span className="adm-badge">متاح</span>}
-                    </td>
-                    <td>{fmt(r.created_at)}</td>
-                    <td style={{ display: "flex", gap: 6 }}>
-                      {!r.used_at && r.customer_phone && (
-                        <a href={whatsappLink(r)} target="_blank" rel="noreferrer" title="إرسال واتساب"
-                          style={{ background: "#25D366", color: "#fff", borderRadius: 6, padding: "4px 10px", textDecoration: "none", fontSize: 13 }}>
-                          📱
-                        </a>
-                      )}
-                      <button onClick={async () => { if (confirm("حذف هذا الطلب؟")) { await del({ data: { id: r.id } }); logActivity("delete", "salla_order", r.id, { code: r.code }); reload(); } }}
-                        style={{ background: "transparent", border: "none", color: "#a00", cursor: "pointer" }}>حذف</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-
 
 const inp: React.CSSProperties = { border: "1px solid #E8DADA", borderRadius: 8, padding: "9px 12px", fontFamily: "inherit", fontSize: 14, background: "#FAF6F2", outline: "none" };
 
