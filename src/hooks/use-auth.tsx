@@ -61,9 +61,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => fetchRoles(s.user.id), 0);
         startHeartbeat();
         if (event === "SIGNED_IN") {
-          // New login: rotate sid and claim — invalidates other devices.
+          // New login: rotate sid and claim. If 3rd+ device, sign out and notify.
           const sid = rotateDeviceSid();
-          claim({ data: { sessionId: sid } }).catch(() => {});
+          claim({ data: { sessionId: sid } })
+            .then(async (res) => {
+              if (res?.status === "pending") {
+                kickedRef.current = true;
+                stopPolling();
+                stopHeartbeat();
+                toast.error(
+                  "هذا جهاز جديد. وصلت الحد المسموح (جهازين). الطلب مرسل للإدارة، تواصل معنا للموافقة.",
+                  { duration: 8000 }
+                );
+                await supabase.auth.signOut();
+              }
+            })
+            .catch(() => {});
         }
       } else {
         setRoles([]);
@@ -113,7 +126,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!res.valid && !res.admin) {
           kickedRef.current = true;
           stopPolling();
-          toast.error("تم تسجيل الدخول من جهاز آخر. سيتم تسجيل خروجك.");
+          const msg = (res as { status?: string }).status === "pending"
+            ? "بانتظار موافقة الإدارة على هذا الجهاز."
+            : "تم إلغاء الوصول من هذا الجهاز.";
+          toast.error(msg);
           await supabase.auth.signOut();
         }
       } catch {

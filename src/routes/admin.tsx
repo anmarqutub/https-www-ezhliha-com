@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
 import { generateCodes, listCodes, deleteCode } from "@/lib/codes.functions";
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
@@ -176,14 +176,27 @@ function UsersTab() {
   const fetchUsers = useServerFn(getAdminUsers);
   const fetchEvents = useServerFn(getUserLoginEvents);
   const toggleSuspend = useServerFn(setUserSuspended);
+  const fetchDevices = useServerFn(getUserDevices);
+  const updateDevice = useServerFn(setDeviceStatus);
+  const fetchPending = useServerFn(getPendingDevicesSummary);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
+  });
+  const { data: pending, refetch: refetchPending } = useQuery({
+    queryKey: ["admin-pending-devices"],
+    queryFn: () => fetchPending(),
+    refetchInterval: 30000,
   });
   const [ipUserId, setIpUserId] = useState<string | null>(null);
   const [ipUserLabel, setIpUserLabel] = useState<string>("");
   const [ipData, setIpData] = useState<Array<{ ip: string | null; user_agent: string | null; first_seen_at: string; last_seen_at: string; hit_count: number }> | null>(null);
   const [ipLoading, setIpLoading] = useState(false);
+
+  const [devUserId, setDevUserId] = useState<string | null>(null);
+  const [devUserLabel, setDevUserLabel] = useState<string>("");
+  const [devData, setDevData] = useState<Array<{ id: string; device_sid: string; user_agent: string | null; ip: string | null; approved: boolean; created_at: string; approved_at: string | null; last_seen_at: string }> | null>(null);
+  const [devLoading, setDevLoading] = useState(false);
 
   async function openIps(userId: string, label: string) {
     setIpUserId(userId);
@@ -195,6 +208,36 @@ function UsersTab() {
       setIpData(res.events);
     } finally {
       setIpLoading(false);
+    }
+  }
+
+  async function openDevices(userId: string, label: string) {
+    setDevUserId(userId);
+    setDevUserLabel(label);
+    setDevData(null);
+    setDevLoading(true);
+    try {
+      const res = await fetchDevices({ data: { userId } });
+      setDevData(res.devices);
+    } finally {
+      setDevLoading(false);
+    }
+  }
+
+  async function handleDeviceAction(deviceId: string, action: "approve" | "revoke" | "delete") {
+    const labels = { approve: "الموافقة على", revoke: "إلغاء", delete: "حذف" };
+    if (!confirm(`هل أنت متأكد من ${labels[action]} هذا الجهاز؟`)) return;
+    try {
+      await updateDevice({ data: { deviceId, action } });
+      await logActivity(`device.${action}`, "device", deviceId);
+      if (devUserId) {
+        const res = await fetchDevices({ data: { userId: devUserId } });
+        setDevData(res.devices);
+      }
+      refetch();
+      refetchPending();
+    } catch (e) {
+      alert((e as Error).message);
     }
   }
 
@@ -213,7 +256,18 @@ function UsersTab() {
 
   return (
     <>
-      <h1 className="adm-title">المستخدمات</h1>
+      <h1 className="adm-title">
+        المستخدمات
+        {pending && pending.total > 0 && (
+          <span style={{
+            marginInlineStart: 12, fontSize: 14, fontWeight: 700,
+            background: "#fef3c7", color: "#92400e",
+            padding: "4px 10px", borderRadius: 999,
+          }}>
+            ⚠️ {pending.total} جهاز بانتظار الموافقة
+          </span>
+        )}
+      </h1>
       <div className="adm-card">
         {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
         {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
@@ -224,7 +278,7 @@ function UsersTab() {
               <thead>
                 <tr>
                   <th>الحالة</th><th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
-                  <th>الدور</th><th>IPs</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th><th>إجراء</th>
+                  <th>الدور</th><th>الأجهزة</th><th>IPs</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th><th>إجراء</th>
                 </tr>
               </thead>
               <tbody>
@@ -260,6 +314,27 @@ function UsersTab() {
                           {r === "admin" ? "أدمن" : "مستخدمة"}
                         </span>
                       ))}
+                    </td>
+                    <td>
+                      {!isAdmin && (() => {
+                        const pendCount = (pending?.byUser as Record<string, number> | undefined)?.[u.id] ?? 0;
+                        return (
+                          <button
+                            type="button"
+                            onClick={() => openDevices(u.id, u.email ?? u.profile?.full_name ?? u.id)}
+                            style={{
+                              background: pendCount > 0 ? "#fef3c7" : "#f3f4f6",
+                              color: pendCount > 0 ? "#92400e" : "#374151",
+                              border: "1px solid " + (pendCount > 0 ? "#fbbf24" : "#e5e7eb"),
+                              borderRadius: 6, padding: "2px 8px", cursor: "pointer",
+                              fontWeight: 600, fontSize: 12,
+                            }}
+                            title="عرض/إدارة أجهزة هذا الحساب"
+                          >
+                            🖥️ {pendCount > 0 ? `${pendCount} بانتظار` : "عرض"}
+                          </button>
+                        );
+                      })()}
                     </td>
                     <td>
                       <button
@@ -347,6 +422,87 @@ function UsersTab() {
               <p style={{ marginTop: 12, padding: 10, background: "#fef3c7", borderRadius: 6, color: "#92400e", fontSize: 13 }}>
                 ⚠️ هذا الحساب استُخدم من {ipData.length} عناوين مختلفة — قد يكون مشاركاً بين أشخاص.
               </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {devUserId && (
+        <div
+          onClick={() => setDevUserId(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 800,
+              width: "94%", maxHeight: "85vh", overflow: "auto",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ margin: 0 }}>الأجهزة — {devUserLabel}</h3>
+              <button onClick={() => setDevUserId(null)} style={{ border: "none", background: "transparent", fontSize: 22, cursor: "pointer" }}>×</button>
+            </div>
+            <p style={{ fontSize: 12, color: "#666", marginTop: 0, marginBottom: 12 }}>
+              يُسمح تلقائياً بأول جهازين. الجهاز الثالث وما بعده يحتاج موافقتك.
+            </p>
+            {devLoading && <p>جارٍ التحميل...</p>}
+            {devData && devData.length === 0 && <p style={{ color: "#777" }}>لا توجد أجهزة بعد.</p>}
+            {devData && devData.length > 0 && (
+              <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
+                <thead>
+                  <tr>
+                    <th>الحالة</th><th>المتصفح / الجهاز</th><th>IP</th>
+                    <th>أول دخول</th><th>آخر نشاط</th><th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {devData.map((d) => (
+                    <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
+                      <td>
+                        <span style={{
+                          display: "inline-block", padding: "2px 8px", borderRadius: 999,
+                          fontSize: 11, fontWeight: 700,
+                          background: d.approved ? "#dcfce7" : "#fef3c7",
+                          color: d.approved ? "#166534" : "#92400e",
+                        }}>
+                          {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 11, color: "#444", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={d.user_agent ?? ""}>
+                        {d.user_agent ?? "—"}
+                      </td>
+                      <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
+                      <td>{fmt(d.created_at)}</td>
+                      <td>{fmt(d.last_seen_at)}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        {!d.approved && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeviceAction(d.id, "approve")}
+                            style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600, marginInlineEnd: 6 }}
+                          >موافقة</button>
+                        )}
+                        {d.approved && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeviceAction(d.id, "revoke")}
+                            style={{ background: "#f59e0b", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600, marginInlineEnd: 6 }}
+                          >إلغاء الموافقة</button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeviceAction(d.id, "delete")}
+                          style={{ background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                        >حذف</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>

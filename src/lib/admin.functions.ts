@@ -139,3 +139,58 @@ export const setUserSuspended = createServerFn({ method: "POST" })
       .eq("id", data.userId);
     return { ok: true };
   });
+
+// List a user's devices — admin only.
+export const getUserDevices = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows } = await supabaseAdmin
+      .from("user_devices")
+      .select("id, device_sid, user_agent, ip, approved, created_at, approved_at, last_seen_at")
+      .eq("user_id", data.userId)
+      .order("created_at", { ascending: false });
+    return { devices: rows ?? [] };
+  });
+
+// Approve, revoke, or delete a device — admin only.
+export const setDeviceStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    deviceId: z.string().uuid(),
+    action: z.enum(["approve", "revoke", "delete"]),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    if (data.action === "delete") {
+      await supabaseAdmin.from("user_devices").delete().eq("id", data.deviceId);
+    } else if (data.action === "approve") {
+      await supabaseAdmin
+        .from("user_devices")
+        .update({ approved: true, approved_at: new Date().toISOString() })
+        .eq("id", data.deviceId);
+    } else {
+      await supabaseAdmin
+        .from("user_devices")
+        .update({ approved: false, approved_at: null })
+        .eq("id", data.deviceId);
+    }
+    return { ok: true };
+  });
+
+// Count of pending (unapproved) devices across all users — for admin badge.
+export const getPendingDevicesSummary = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows } = await supabaseAdmin
+      .from("user_devices")
+      .select("user_id")
+      .eq("approved", false);
+    const byUser = new Map<string, number>();
+    (rows ?? []).forEach((r: { user_id: string }) => {
+      byUser.set(r.user_id, (byUser.get(r.user_id) ?? 0) + 1);
+    });
+    return { total: rows?.length ?? 0, byUser: Object.fromEntries(byUser) };
+  });
