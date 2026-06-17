@@ -49,7 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const claim = useServerFn(claimSession);
   const verify = useServerFn(verifySession);
+  const beat = useServerFn(heartbeat);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const beatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickedRef = useRef(false);
 
   useEffect(() => {
