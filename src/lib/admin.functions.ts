@@ -1,6 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+async function ensureAdmin(supabase: any, userId: string) {
+  const { data } = await supabase
+    .from("user_roles").select("role")
+    .eq("user_id", userId).eq("role", "admin").maybeSingle();
+  if (!data) throw new Response("Forbidden", { status: 403 });
+}
 
 export const getAdminUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -27,8 +35,19 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const ids = authData.users.map((u) => u.id);
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, full_name, phone, city, email, created_at, last_seen_at")
+      .select("id, full_name, phone, city, email, created_at, last_seen_at, suspended_at")
       .in("id", ids);
+
+    // Distinct IP counts per user
+    const { data: ipRows } = await supabaseAdmin
+      .from("login_events")
+      .select("user_id, ip")
+      .in("user_id", ids);
+    const ipCount = new Map<string, number>();
+    (ipRows ?? []).forEach((r: { user_id: string; ip: string | null }) => {
+      if (!r.ip) return;
+      ipCount.set(r.user_id, (ipCount.get(r.user_id) ?? 0) + 1);
+    });
     const { data: roles } = await supabaseAdmin
       .from("user_roles")
       .select("user_id, role")
@@ -50,6 +69,7 @@ export const getAdminUsers = createServerFn({ method: "GET" })
       email_confirmed: !!u.email_confirmed_at,
       profile: profileMap.get(u.id) ?? null,
       roles: rolesMap.get(u.id) ?? [],
+      ip_count: ipCount.get(u.id) ?? 0,
     }));
 
     return {
