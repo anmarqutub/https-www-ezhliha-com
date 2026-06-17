@@ -83,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       sub.subscription.unsubscribe();
       stopPolling();
+      stopHeartbeat();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
