@@ -160,6 +160,11 @@ function Home() {
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
 
+  if (!authLoading && !user) {
+    return <AuthGate />;
+  }
+
+
   return (
     <div dir="rtl" className="ez-root">
       <style>{css}</style>
