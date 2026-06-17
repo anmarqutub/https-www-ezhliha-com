@@ -530,9 +530,9 @@ type DashboardData = {
   reviewsAvg: number;
   reviews7d: number;
   favoritesTotal: number;
-  codesTotal: number;
-  codesUsed: number;
-  codesAvailable: number;
+  devicesTotal: number;
+  devicesPending: number;
+  suspendedUsers: number;
   topProvidersByReviews: { id: string; name: string; count: number; avg: number }[];
   topCities: { id: string; name: string; count: number }[];
   topCategories: { id: string; name: string; count: number }[];
