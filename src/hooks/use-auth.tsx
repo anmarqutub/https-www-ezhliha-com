@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import type { Session, User } from "@supabase/supabase-js";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { claimSession, verifySession } from "@/lib/session.functions";
+import { claimSession, verifySession, heartbeat } from "@/lib/session.functions";
 import { toast } from "sonner";
 
 type Role = "admin" | "user";
