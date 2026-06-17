@@ -173,6 +173,36 @@ export type Database = {
         }
         Relationships: []
       }
+      login_events: {
+        Row: {
+          first_seen_at: string
+          hit_count: number
+          id: string
+          ip: string | null
+          last_seen_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          first_seen_at?: string
+          hit_count?: number
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          first_seen_at?: string
+          hit_count?: number
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           active_session_id: string | null
@@ -183,6 +213,7 @@ export type Database = {
           id: string
           last_seen_at: string | null
           phone: string | null
+          suspended_at: string | null
           updated_at: string
         }
         Insert: {
@@ -194,6 +225,7 @@ export type Database = {
           id: string
           last_seen_at?: string | null
           phone?: string | null
+          suspended_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -205,6 +237,7 @@ export type Database = {
           id?: string
           last_seen_at?: string | null
           phone?: string | null
+          suspended_at?: string | null
           updated_at?: string
         }
         Relationships: []
