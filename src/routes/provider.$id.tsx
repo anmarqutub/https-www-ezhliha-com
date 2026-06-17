@@ -20,7 +20,7 @@ type Provider = {
   video_url: string | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
-type Review = { id: string; user_id: string; rating: number; comment: string | null; created_at: string };
+type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
 
 function ProviderPage() {
   const { id } = Route.useParams();
@@ -37,7 +37,6 @@ function ProviderPage() {
   const [activeImg, setActiveImg] = useState(0);
 
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewerNames, setReviewerNames] = useState<Map<string, string>>(new Map());
   const [myRating, setMyRating] = useState(5);
   const [myComment, setMyComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +49,7 @@ function ProviderPage() {
     const [p, imgs, r] = await Promise.all([
       supabase.from("providers").select("*").eq("id", id).single(),
       supabase.from("provider_images").select("*").eq("provider_id", id).order("sort_order"),
-      supabase.from("reviews").select("*").eq("provider_id", id).order("created_at", { ascending: false }),
+      supabase.rpc("get_provider_reviews", { p_provider_id: id }),
     ]);
     if (p.data) {
       setProvider(p.data as Provider);
@@ -62,15 +61,7 @@ function ProviderPage() {
       setSubName(s.data?.name_ar ?? "");
     }
     setImages((imgs.data ?? []) as Image[]);
-    const revs = (r.data ?? []) as Review[];
-    setReviews(revs);
-    const uids = Array.from(new Set(revs.map((x) => x.user_id)));
-    if (uids.length > 0) {
-      const { data: profs } = await supabase.from("profiles").select("id, full_name").in("id", uids);
-      const m = new Map<string, string>();
-      (profs ?? []).forEach((p: { id: string; full_name: string | null }) => m.set(p.id, p.full_name ?? ""));
-      setReviewerNames(m);
-    }
+    setReviews(((r.data ?? []) as unknown) as Review[]);
     setLoading(false);
   };
 
@@ -275,9 +266,9 @@ function ProviderPage() {
             {reviews.map((r) => (
               <div key={r.id} className="pv-review-item">
                 <div className="pv-review-head">
-                  <strong>{reviewerNames.get(r.user_id) || "مستخدم"}</strong>
+                  <strong>{r.reviewer_name || "مستخدم"}</strong>
                   <span className="pv-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
-                  {(isAdmin || (user && user.id === r.user_id)) && (
+                  {(isAdmin || r.is_mine) && (
                     <button className="pv-review-del" onClick={() => deleteReview(r.id)}>حذف</button>
                   )}
                 </div>

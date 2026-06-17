@@ -462,6 +462,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_provider_reviews: {
+        Args: { p_provider_id: string }
+        Returns: {
+          comment: string
+          created_at: string
+          id: string
+          is_mine: boolean
+          rating: number
+          reviewer_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
