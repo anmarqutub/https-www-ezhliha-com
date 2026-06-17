@@ -49,7 +49,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "salla" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
 function AdminPage() {
