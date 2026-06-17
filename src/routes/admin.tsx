@@ -574,9 +574,9 @@ function DashboardTab() {
     const cats = catsRes.data ?? [];
     const subs = subsRes.data ?? [];
     const banners = bannersRes.data ?? [];
-    const reviews = reviewsRes.data ?? [];
-    const codes = codesRes.data ?? [];
-    const logs = logsRes.data ?? [];
+      const reviews = reviewsRes.data ?? [];
+      const devices = devicesRes.data ?? [];
+      const logs = logsRes.data ?? [];
 
     // Reviews aggregations
     const reviewsByProv = new Map<string, { count: number; sum: number }>();
