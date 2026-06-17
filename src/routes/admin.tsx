@@ -678,7 +678,7 @@ function DashboardTab() {
     );
   }
 
-  const pendingDevicesPct = d.devicesTotal ? Math.round((d.devicesPending / d.devicesTotal) * 100) : 0;
+  
   const maxSignup = Math.max(1, ...d.signupSeries.map((x) => x.count));
 
   return (
