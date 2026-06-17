@@ -46,7 +46,7 @@ type Banner = { id: string; title: string | null; image_url: string; link_url: s
 export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
 
 function Home() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -55,6 +55,9 @@ function Home() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [loading, setLoading] = useState(true);
+
+
+
 
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -156,6 +159,11 @@ function Home() {
 
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
+
+  if (!authLoading && !user) {
+    return <AuthGate />;
+  }
+
 
   return (
     <div dir="rtl" className="ez-root">
@@ -439,6 +447,30 @@ function ProviderCard({
     </article>
   );
 }
+
+function AuthGate() {
+  return (
+    <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
+      <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
+        <img src={logoUrl} alt="إزهليها" style={{ height: 90, marginBottom: 16 }} />
+        <h1 style={{ color: "#660000", fontSize: 24, marginBottom: 10 }}>محتوى خاص بالأعضاء</h1>
+        <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
+          للوصول إلى دليل مقدمي الخدمات يجب تسجيل الدخول. إذا لم يكن لديك حساب، أدخل الكود الخاص بك لإنشاء حساب جديد.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <Link to="/login" style={{ background: "#660000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
+            تسجيل الدخول
+          </Link>
+          <Link to="/signup" style={{ background: "#fff", color: "#660000", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700, border: "2px solid #660000" }}>
+            عندي كود — أنشئ حسابي
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 const css = `
   .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
