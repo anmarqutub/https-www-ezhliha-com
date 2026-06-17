@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
+import { listCodes, generateCodes, deleteCode } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
@@ -49,7 +50,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
 function AdminPage() {
