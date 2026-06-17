@@ -556,7 +556,7 @@ function DashboardTab() {
 
     const [
       provsRes, citiesRes, catsRes, subsRes, bannersRes,
-      reviewsRes, favRes, codesRes, logsRes,
+      reviewsRes, favRes, devicesRes, logsRes,
     ] = await Promise.all([
       supabase.from("providers").select("id,name,city_id,subcategory_id,active,is_featured,created_at"),
       supabase.from("cities").select("id,name_ar,active"),
@@ -565,7 +565,7 @@ function DashboardTab() {
       supabase.from("banners").select("id,active"),
       supabase.from("reviews").select("id,provider_id,rating,created_at"),
       supabase.from("favorites").select("id", { count: "exact", head: true }),
-      supabase.from("purchase_codes").select("id,used_at"),
+      supabase.from("user_devices").select("id,approved"),
       supabase.from("admin_activity_log").select("id,admin_email,action,entity,created_at,details").order("created_at", { ascending: false }).limit(10),
     ]);
 
