@@ -426,6 +426,87 @@ function UsersTab() {
           </div>
         </div>
       )}
+
+      {devUserId && (
+        <div
+          onClick={() => setDevUserId(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 800,
+              width: "94%", maxHeight: "85vh", overflow: "auto",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ margin: 0 }}>الأجهزة — {devUserLabel}</h3>
+              <button onClick={() => setDevUserId(null)} style={{ border: "none", background: "transparent", fontSize: 22, cursor: "pointer" }}>×</button>
+            </div>
+            <p style={{ fontSize: 12, color: "#666", marginTop: 0, marginBottom: 12 }}>
+              يُسمح تلقائياً بأول جهازين. الجهاز الثالث وما بعده يحتاج موافقتك.
+            </p>
+            {devLoading && <p>جارٍ التحميل...</p>}
+            {devData && devData.length === 0 && <p style={{ color: "#777" }}>لا توجد أجهزة بعد.</p>}
+            {devData && devData.length > 0 && (
+              <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
+                <thead>
+                  <tr>
+                    <th>الحالة</th><th>المتصفح / الجهاز</th><th>IP</th>
+                    <th>أول دخول</th><th>آخر نشاط</th><th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {devData.map((d) => (
+                    <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
+                      <td>
+                        <span style={{
+                          display: "inline-block", padding: "2px 8px", borderRadius: 999,
+                          fontSize: 11, fontWeight: 700,
+                          background: d.approved ? "#dcfce7" : "#fef3c7",
+                          color: d.approved ? "#166534" : "#92400e",
+                        }}>
+                          {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 11, color: "#444", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={d.user_agent ?? ""}>
+                        {d.user_agent ?? "—"}
+                      </td>
+                      <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
+                      <td>{fmt(d.created_at)}</td>
+                      <td>{fmt(d.last_seen_at)}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        {!d.approved && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeviceAction(d.id, "approve")}
+                            style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600, marginInlineEnd: 6 }}
+                          >موافقة</button>
+                        )}
+                        {d.approved && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeviceAction(d.id, "revoke")}
+                            style={{ background: "#f59e0b", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600, marginInlineEnd: 6 }}
+                          >إلغاء الموافقة</button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeviceAction(d.id, "delete")}
+                          style={{ background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                        >حذف</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
