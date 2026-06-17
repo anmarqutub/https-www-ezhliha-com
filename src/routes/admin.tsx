@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended } from "@/lib/admin.functions";
 import { generateCodes, listCodes, deleteCode } from "@/lib/codes.functions";
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
@@ -174,10 +174,42 @@ function StatsAndUsers({ showUsers }: { showUsers: boolean }) {
 
 function UsersTab() {
   const fetchUsers = useServerFn(getAdminUsers);
-  const { data, isLoading, error } = useQuery({
+  const fetchEvents = useServerFn(getUserLoginEvents);
+  const toggleSuspend = useServerFn(setUserSuspended);
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
   });
+  const [ipUserId, setIpUserId] = useState<string | null>(null);
+  const [ipUserLabel, setIpUserLabel] = useState<string>("");
+  const [ipData, setIpData] = useState<Array<{ ip: string | null; user_agent: string | null; first_seen_at: string; last_seen_at: string; hit_count: number }> | null>(null);
+  const [ipLoading, setIpLoading] = useState(false);
+
+  async function openIps(userId: string, label: string) {
+    setIpUserId(userId);
+    setIpUserLabel(label);
+    setIpData(null);
+    setIpLoading(true);
+    try {
+      const res = await fetchEvents({ data: { userId } });
+      setIpData(res.events);
+    } finally {
+      setIpLoading(false);
+    }
+  }
+
+  async function handleToggleSuspend(u: { id: string; email: string | null; profile: { suspended_at?: string | null } | null }) {
+    const isSusp = !!u.profile?.suspended_at;
+    const verb = isSusp ? "إلغاء التعليق عن" : "تعليق";
+    if (!confirm(`هل أنت متأكد من ${verb} الحساب: ${u.email ?? u.id}؟`)) return;
+    try {
+      await toggleSuspend({ data: { userId: u.id, suspended: !isSusp } });
+      await logActivity(isSusp ? "user.unsuspend" : "user.suspend", "user", u.id, { email: u.email });
+      refetch();
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  }
 
   return (
     <>
@@ -192,25 +224,29 @@ function UsersTab() {
               <thead>
                 <tr>
                   <th>الحالة</th><th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
-                  <th>الدور</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th>
+                  <th>الدور</th><th>IPs</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th><th>إجراء</th>
                 </tr>
               </thead>
               <tbody>
                 {data.users.map((u) => {
-                  const lastSeen = (u.profile as { last_seen_at?: string | null } | null)?.last_seen_at ?? null;
-                  const online = lastSeen ? (Date.now() - new Date(lastSeen).getTime()) < 2 * 60 * 1000 : false;
+                  const prof = u.profile as { last_seen_at?: string | null; suspended_at?: string | null } | null;
+                  const lastSeen = prof?.last_seen_at ?? null;
+                  const suspended = !!prof?.suspended_at;
+                  const online = !suspended && lastSeen ? (Date.now() - new Date(lastSeen).getTime()) < 2 * 60 * 1000 : false;
+                  const ipCount = (u as { ip_count?: number }).ip_count ?? 0;
+                  const isAdmin = u.roles.includes("admin");
                   return (
-                  <tr key={u.id}>
+                  <tr key={u.id} style={suspended ? { background: "#fef2f2" } : undefined}>
                     <td>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                         <span style={{
                           width: 10, height: 10, borderRadius: "50%",
-                          background: online ? "#16a34a" : "#9ca3af",
+                          background: suspended ? "#dc2626" : (online ? "#16a34a" : "#9ca3af"),
                           display: "inline-block",
                           boxShadow: online ? "0 0 0 3px rgba(22,163,74,0.18)" : "none",
                         }} />
-                        <span style={{ fontSize: 12, color: online ? "#16a34a" : "#777" }}>
-                          {online ? "متصل" : "غير متصل"}
+                        <span style={{ fontSize: 12, color: suspended ? "#dc2626" : (online ? "#16a34a" : "#777") }}>
+                          {suspended ? "معلّق" : (online ? "متصل" : "غير متصل")}
                         </span>
                       </span>
                     </td>
@@ -225,9 +261,40 @@ function UsersTab() {
                         </span>
                       ))}
                     </td>
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => openIps(u.id, u.email ?? u.profile?.full_name ?? u.id)}
+                        style={{
+                          background: ipCount > 2 ? "#fee2e2" : "#f3f4f6",
+                          color: ipCount > 2 ? "#b91c1c" : "#374151",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 6, padding: "2px 8px", cursor: "pointer",
+                          fontWeight: 600, fontSize: 12,
+                        }}
+                        title="عرض عناوين IP لهذا الحساب"
+                      >
+                        {ipCount} {ipCount > 2 ? "⚠️" : ""}
+                      </button>
+                    </td>
                     <td>{fmt(u.created_at)}</td>
                     <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
                     <td>{lastSeen ? fmt(lastSeen) : "—"}</td>
+                    <td>
+                      {!isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSuspend(u)}
+                          style={{
+                            background: suspended ? "#16a34a" : "#dc2626",
+                            color: "#fff", border: "none", borderRadius: 6,
+                            padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                          }}
+                        >
+                          {suspended ? "إلغاء التعليق" : "تعليق"}
+                        </button>
+                      )}
+                    </td>
                   </tr>
                   );
                 })}
@@ -236,6 +303,54 @@ function UsersTab() {
           </div>
         )}
       </div>
+
+      {ipUserId && (
+        <div
+          onClick={() => setIpUserId(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 700,
+              width: "92%", maxHeight: "80vh", overflow: "auto",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>عناوين IP — {ipUserLabel}</h3>
+              <button onClick={() => setIpUserId(null)} style={{ border: "none", background: "transparent", fontSize: 22, cursor: "pointer" }}>×</button>
+            </div>
+            {ipLoading && <p>جارٍ التحميل...</p>}
+            {ipData && ipData.length === 0 && <p style={{ color: "#777" }}>لا توجد بيانات بعد.</p>}
+            {ipData && ipData.length > 0 && (
+              <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
+                <thead>
+                  <tr><th>IP</th><th>عدد الزيارات</th><th>أول ظهور</th><th>آخر ظهور</th><th>المتصفح</th></tr>
+                </thead>
+                <tbody>
+                  {ipData.map((e, i) => (
+                    <tr key={i}>
+                      <td style={{ fontFamily: "monospace" }}>{e.ip}</td>
+                      <td>{e.hit_count}</td>
+                      <td>{fmt(e.first_seen_at)}</td>
+                      <td>{fmt(e.last_seen_at)}</td>
+                      <td style={{ fontSize: 11, color: "#666", maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.user_agent ?? ""}>{e.user_agent ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {ipData && ipData.length > 2 && (
+              <p style={{ marginTop: 12, padding: 10, background: "#fef3c7", borderRadius: 6, color: "#92400e", fontSize: 13 }}>
+                ⚠️ هذا الحساب استُخدم من {ipData.length} عناوين مختلفة — قد يكون مشاركاً بين أشخاص.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

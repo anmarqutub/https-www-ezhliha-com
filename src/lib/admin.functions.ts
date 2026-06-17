@@ -1,6 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+async function ensureAdmin(supabase: any, userId: string) {
+  const { data } = await supabase
+    .from("user_roles").select("role")
+    .eq("user_id", userId).eq("role", "admin").maybeSingle();
+  if (!data) throw new Response("Forbidden", { status: 403 });
+}
 
 export const getAdminUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -27,8 +35,19 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const ids = authData.users.map((u) => u.id);
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, full_name, phone, city, email, created_at, last_seen_at")
+      .select("id, full_name, phone, city, email, created_at, last_seen_at, suspended_at")
       .in("id", ids);
+
+    // Distinct IP counts per user
+    const { data: ipRows } = await supabaseAdmin
+      .from("login_events")
+      .select("user_id, ip")
+      .in("user_id", ids);
+    const ipCount = new Map<string, number>();
+    (ipRows ?? []).forEach((r: { user_id: string; ip: string | null }) => {
+      if (!r.ip) return;
+      ipCount.set(r.user_id, (ipCount.get(r.user_id) ?? 0) + 1);
+    });
     const { data: roles } = await supabaseAdmin
       .from("user_roles")
       .select("user_id, role")
@@ -50,6 +69,7 @@ export const getAdminUsers = createServerFn({ method: "GET" })
       email_confirmed: !!u.email_confirmed_at,
       profile: profileMap.get(u.id) ?? null,
       roles: rolesMap.get(u.id) ?? [],
+      ip_count: ipCount.get(u.id) ?? 0,
     }));
 
     return {
@@ -80,4 +100,42 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
       .insert({ user_id: userId, role: "admin" });
     if (error) throw new Response(error.message, { status: 500 });
     return { success: true };
+  });
+
+// Fetch login events (IPs) for a specific user — admin only.
+export const getUserLoginEvents = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows } = await supabaseAdmin
+      .from("login_events")
+      .select("ip, user_agent, first_seen_at, last_seen_at, hit_count")
+      .eq("user_id", data.userId)
+      .order("last_seen_at", { ascending: false });
+    return { events: rows ?? [] };
+  });
+
+// Suspend / unsuspend a user — admin only.
+// Suspended users get signed out on next heartbeat (within ~60s).
+export const setUserSuspended = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    userId: z.string().uuid(),
+    suspended: z.boolean(),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    if (data.userId === context.userId) {
+      throw new Response("لا يمكنك تعليق حسابك", { status: 400 });
+    }
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        suspended_at: data.suspended ? new Date().toISOString() : null,
+        // Clear active session so the user gets kicked immediately.
+        ...(data.suspended ? { active_session_id: null } : {}),
+      })
+      .eq("id", data.userId);
+    return { ok: true };
   });
