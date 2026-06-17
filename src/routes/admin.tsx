@@ -133,6 +133,7 @@ function AdminPage() {
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
           <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
+          <SideBtn label="أكواد الشراء" active={tab === "codes"} onClick={() => setTab("codes")} />
 
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
@@ -145,6 +146,7 @@ function AdminPage() {
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
           {tab === "users" && <StatsAndUsers showUsers={true} />}
+          {tab === "codes" && <CodesTab />}
 
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
