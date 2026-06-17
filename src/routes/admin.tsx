@@ -655,9 +655,9 @@ function DashboardTab() {
       reviewsAvg,
       reviews7d,
       favoritesTotal: favRes.count ?? 0,
-      codesTotal: codes.length,
-      codesUsed: codes.filter((c) => c.used_at).length,
-      codesAvailable: codes.filter((c) => !c.used_at).length,
+      devicesTotal: devices.length,
+      devicesPending: devices.filter((dev: { approved: boolean }) => !dev.approved).length,
+      suspendedUsers: users.filter((u) => u.profile?.suspended_at).length,
       topProvidersByReviews,
       topCities,
       topCategories,
@@ -678,7 +678,7 @@ function DashboardTab() {
     );
   }
 
-  const codeUsage = d.codesTotal ? Math.round((d.codesUsed / d.codesTotal) * 100) : 0;
+  const pendingDevicesPct = d.devicesTotal ? Math.round((d.devicesPending / d.devicesTotal) * 100) : 0;
   const maxSignup = Math.max(1, ...d.signupSeries.map((x) => x.count));
 
   return (
@@ -712,8 +712,8 @@ function DashboardTab() {
       <div className="adm-stats">
         <StatCard label="إجمالي التقييمات" value={d.reviewsTotal} hint={`${d.reviews7d} في آخر 7 أيام`} color="#6B1F1F" />
         <StatCard label="متوسط التقييم" value={d.reviewsTotal ? `${d.reviewsAvg.toFixed(1)} ★` : "—"} color="#E8A317" />
-        <StatCard label="أكواد الاشتراك" value={d.codesTotal} hint={`${d.codesUsed} مستخدمة · ${d.codesAvailable} متاحة`} color="#5A4A4A" />
-        <StatCard label="معدل استخدام الأكواد" value={`${codeUsage}%`} color={codeUsage >= 70 ? "#2E7D32" : "#C47A7A"} progress={codeUsage} />
+        <StatCard label="الأجهزة المسجلة" value={d.devicesTotal} hint={`${d.devicesPending} بانتظار الموافقة`} color="#5A4A4A" />
+        <StatCard label="المستخدمات المعلّقة" value={d.suspendedUsers} color={d.suspendedUsers > 0 ? "#C47A7A" : "#2E7D32"} />
       </div>
 
       {/* Signup chart */}
