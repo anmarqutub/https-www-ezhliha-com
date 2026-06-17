@@ -145,8 +145,7 @@ function AdminPage() {
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
           {tab === "users" && <StatsAndUsers showUsers={true} />}
-          {tab === "salla" && <SallaOrdersTab />}
-          {tab === "codes" && <CodesTab />}
+          {tab === "codes" && <MergedCodesTab />}
 
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
