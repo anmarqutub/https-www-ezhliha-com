@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
+import { listCodes, generateCodes, deleteCode } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
@@ -49,7 +50,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "codes" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
 
 
 function AdminPage() {
@@ -132,6 +133,7 @@ function AdminPage() {
         <aside className="adm-side">
           <SideBtn label="الإحصائيات" active={tab === "stats"} onClick={() => setTab("stats")} />
           <SideBtn label="المستخدمون" active={tab === "users"} onClick={() => setTab("users")} />
+          <SideBtn label="أكواد الشراء" active={tab === "codes"} onClick={() => setTab("codes")} />
 
           <div className="adm-side-group">الإعدادات</div>
           <SideBtn label="المدن" active={tab === "cities"} onClick={() => setTab("cities")} />
@@ -144,6 +146,7 @@ function AdminPage() {
         <main className="adm-content">
           {tab === "stats" && <StatsAndUsers showUsers={false} />}
           {tab === "users" && <StatsAndUsers showUsers={true} />}
+          {tab === "codes" && <CodesTab />}
 
           {tab === "cities" && <CitiesTab />}
           {tab === "categories" && <CategoriesTab />}
@@ -2075,3 +2078,126 @@ function ActivityLogTab() {
 }
 
 
+
+function CodesTab() {
+  const list = useServerFn(listCodes);
+  const gen = useServerFn(generateCodes);
+  const del = useServerFn(deleteCode);
+  const q = useQuery({ queryKey: ["admin-codes"], queryFn: () => list() });
+  const [count, setCount] = useState(10);
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState<"all" | "unused" | "used">("all");
+
+  const codes = q.data?.codes ?? [];
+  const filtered = codes.filter((c: any) =>
+    filter === "all" ? true : filter === "unused" ? !c.used_at : !!c.used_at
+  );
+  const unusedCount = codes.filter((c: any) => !c.used_at).length;
+
+  async function onGenerate(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await gen({ data: { count, note } });
+      await q.refetch();
+      setNote("");
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : (e as Error).message;
+      alert(msg);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onDelete(id: string) {
+    if (!confirm("حذف هذا الكود؟")) return;
+    try {
+      await del({ data: { id } });
+      await q.refetch();
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : (e as Error).message;
+      alert(msg);
+    }
+  }
+
+  function copyAll() {
+    const unused = codes.filter((c: any) => !c.used_at).map((c: any) => c.code).join("\n");
+    navigator.clipboard.writeText(unused);
+    alert("تم نسخ الأكواد غير المستخدمة");
+  }
+
+  return (
+    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#660000", marginBottom: 16 }}>
+        أكواد الشراء — {codes.length} كود (متاح: {unusedCount})
+      </h2>
+
+      <form onSubmit={onGenerate} style={{ background: "#fff", padding: 16, borderRadius: 12, marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "end", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600 }}>
+          عدد الأكواد
+          <input type="number" min={1} max={200} value={count} onChange={(e) => setCount(parseInt(e.target.value) || 1)} style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd", width: 100 }} />
+        </label>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600, flex: 1, minWidth: 200 }}>
+          ملاحظة (اختياري)
+          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثال: دفعة سلة يناير" style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
+        </label>
+        <button disabled={busy} style={{ background: "#660000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+          {busy ? "..." : "توليد"}
+        </button>
+        <button type="button" onClick={copyAll} style={{ background: "#fff", color: "#660000", border: "2px solid #660000", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+          نسخ غير المستخدمة
+        </button>
+      </form>
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        {(["all", "unused", "used"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)} style={{ padding: "6px 14px", borderRadius: 50, border: "1px solid #660000", background: filter === f ? "#660000" : "#fff", color: filter === f ? "#fff" : "#660000", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+            {f === "all" ? "الكل" : f === "unused" ? "غير مستخدم" : "مستخدم"}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+          <thead style={{ background: "#f5f5f5" }}>
+            <tr>
+              <th style={cellStyle}>الكود</th>
+              <th style={cellStyle}>الحالة</th>
+              <th style={cellStyle}>الإيميل</th>
+              <th style={cellStyle}>ملاحظة</th>
+              <th style={cellStyle}>تاريخ الإنشاء</th>
+              <th style={cellStyle}>إجراء</th>
+            </tr>
+          </thead>
+          <tbody>
+            {q.isLoading && <tr><td colSpan={6} style={{ padding: 20, textAlign: "center" }}>جاري التحميل...</td></tr>}
+            {filtered.map((c: any) => (
+              <tr key={c.id} style={{ borderTop: "1px solid #eee" }}>
+                <td style={{ ...cellStyle, fontFamily: "monospace", fontWeight: 700, letterSpacing: 1 }}>{c.code}</td>
+                <td style={cellStyle}>
+                  {c.used_at
+                    ? <span style={{ color: "#999" }}>مستخدم</span>
+                    : <span style={{ color: "#0a7a3a", fontWeight: 700 }}>متاح</span>}
+                </td>
+                <td style={cellStyle}>{c.email || "—"}</td>
+                <td style={cellStyle}>{c.note || "—"}</td>
+                <td style={cellStyle}>{new Date(c.created_at).toLocaleDateString("ar-SA")}</td>
+                <td style={cellStyle}>
+                  <button onClick={() => onDelete(c.id)} style={{ background: "#fee", color: "#c00", border: "1px solid #fcc", padding: "4px 10px", borderRadius: 6, cursor: "pointer", fontSize: 12 }}>
+                    حذف
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {!q.isLoading && filtered.length === 0 && (
+              <tr><td colSpan={6} style={{ padding: 20, textAlign: "center", color: "#999" }}>لا توجد أكواد</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const cellStyle: React.CSSProperties = { padding: "10px 12px", textAlign: "right" };
