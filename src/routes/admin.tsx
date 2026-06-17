@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
 import { generateCodes, listCodes, deleteCode } from "@/lib/codes.functions";
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
@@ -176,14 +176,27 @@ function UsersTab() {
   const fetchUsers = useServerFn(getAdminUsers);
   const fetchEvents = useServerFn(getUserLoginEvents);
   const toggleSuspend = useServerFn(setUserSuspended);
+  const fetchDevices = useServerFn(getUserDevices);
+  const updateDevice = useServerFn(setDeviceStatus);
+  const fetchPending = useServerFn(getPendingDevicesSummary);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
+  });
+  const { data: pending, refetch: refetchPending } = useQuery({
+    queryKey: ["admin-pending-devices"],
+    queryFn: () => fetchPending(),
+    refetchInterval: 30000,
   });
   const [ipUserId, setIpUserId] = useState<string | null>(null);
   const [ipUserLabel, setIpUserLabel] = useState<string>("");
   const [ipData, setIpData] = useState<Array<{ ip: string | null; user_agent: string | null; first_seen_at: string; last_seen_at: string; hit_count: number }> | null>(null);
   const [ipLoading, setIpLoading] = useState(false);
+
+  const [devUserId, setDevUserId] = useState<string | null>(null);
+  const [devUserLabel, setDevUserLabel] = useState<string>("");
+  const [devData, setDevData] = useState<Array<{ id: string; device_sid: string; user_agent: string | null; ip: string | null; approved: boolean; created_at: string; approved_at: string | null; last_seen_at: string }> | null>(null);
+  const [devLoading, setDevLoading] = useState(false);
 
   async function openIps(userId: string, label: string) {
     setIpUserId(userId);
@@ -195,6 +208,36 @@ function UsersTab() {
       setIpData(res.events);
     } finally {
       setIpLoading(false);
+    }
+  }
+
+  async function openDevices(userId: string, label: string) {
+    setDevUserId(userId);
+    setDevUserLabel(label);
+    setDevData(null);
+    setDevLoading(true);
+    try {
+      const res = await fetchDevices({ data: { userId } });
+      setDevData(res.devices);
+    } finally {
+      setDevLoading(false);
+    }
+  }
+
+  async function handleDeviceAction(deviceId: string, action: "approve" | "revoke" | "delete") {
+    const labels = { approve: "الموافقة على", revoke: "إلغاء", delete: "حذف" };
+    if (!confirm(`هل أنت متأكد من ${labels[action]} هذا الجهاز؟`)) return;
+    try {
+      await updateDevice({ data: { deviceId, action } });
+      await logActivity(`device.${action}`, "device", deviceId);
+      if (devUserId) {
+        const res = await fetchDevices({ data: { userId: devUserId } });
+        setDevData(res.devices);
+      }
+      refetch();
+      refetchPending();
+    } catch (e) {
+      alert((e as Error).message);
     }
   }
 
