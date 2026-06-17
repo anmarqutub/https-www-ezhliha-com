@@ -266,9 +266,9 @@ function ProviderPage() {
             {reviews.map((r) => (
               <div key={r.id} className="pv-review-item">
                 <div className="pv-review-head">
-                  <strong>{reviewerNames.get(r.user_id) || "مستخدم"}</strong>
+                  <strong>{r.reviewer_name || "مستخدم"}</strong>
                   <span className="pv-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
-                  {(isAdmin || (user && user.id === r.user_id)) && (
+                  {(isAdmin || r.is_mine) && (
                     <button className="pv-review-del" onClick={() => deleteReview(r.id)}>حذف</button>
                   )}
                 </div>
