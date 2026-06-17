@@ -126,7 +126,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!res.valid && !res.admin) {
           kickedRef.current = true;
           stopPolling();
-          toast.error("تم تسجيل الدخول من جهاز آخر. سيتم تسجيل خروجك.");
+          const msg = (res as { status?: string }).status === "pending"
+            ? "بانتظار موافقة الإدارة على هذا الجهاز."
+            : "تم إلغاء الوصول من هذا الجهاز.";
+          toast.error(msg);
           await supabase.auth.signOut();
         }
       } catch {
