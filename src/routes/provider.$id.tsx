@@ -20,7 +20,7 @@ type Provider = {
   video_url: string | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
-type Review = { id: string; user_id: string; rating: number; comment: string | null; created_at: string };
+type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
 
 function ProviderPage() {
   const { id } = Route.useParams();
