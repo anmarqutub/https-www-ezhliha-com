@@ -49,7 +49,7 @@ function ProviderPage() {
     const [p, imgs, r] = await Promise.all([
       supabase.from("providers").select("*").eq("id", id).single(),
       supabase.from("provider_images").select("*").eq("provider_id", id).order("sort_order"),
-      supabase.from("reviews").select("*").eq("provider_id", id).order("created_at", { ascending: false }),
+      supabase.rpc("get_provider_reviews", { p_provider_id: id }),
     ]);
     if (p.data) {
       setProvider(p.data as Provider);
@@ -61,15 +61,7 @@ function ProviderPage() {
       setSubName(s.data?.name_ar ?? "");
     }
     setImages((imgs.data ?? []) as Image[]);
-    const revs = (r.data ?? []) as Review[];
-    setReviews(revs);
-    const uids = Array.from(new Set(revs.map((x) => x.user_id)));
-    if (uids.length > 0) {
-      const { data: profs } = await supabase.from("profiles").select("id, full_name").in("id", uids);
-      const m = new Map<string, string>();
-      (profs ?? []).forEach((p: { id: string; full_name: string | null }) => m.set(p.id, p.full_name ?? ""));
-      setReviewerNames(m);
-    }
+    setReviews(((r.data ?? []) as unknown) as Review[]);
     setLoading(false);
   };
 
