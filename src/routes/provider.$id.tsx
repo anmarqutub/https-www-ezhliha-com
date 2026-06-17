@@ -25,7 +25,10 @@ type Review = { id: string; user_id: string; rating: number; comment: string | n
 function ProviderPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, loading: authLoading } = useAuth();
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/login" });
+  }, [authLoading, user, navigate]);
   const [provider, setProvider] = useState<Provider | null>(null);
   const [images, setImages] = useState<Image[]>([]);
   const [cityName, setCityName] = useState<string>("");
