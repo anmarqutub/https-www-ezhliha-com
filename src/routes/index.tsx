@@ -452,7 +452,7 @@ function AuthGate() {
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
-        <img src={logoUrl} alt="إزهليها" style={{ height: 90, marginBottom: 16 }} />
+        <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
         <h1 style={{ color: "#660000", fontSize: 24, marginBottom: 10 }}>محتوى خاص بالأعضاء</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
           للوصول إلى دليل مقدمي الخدمات يجب تسجيل الدخول. إذا لم يكن لديك حساب، أدخل الكود الخاص بك لإنشاء حساب جديد.
