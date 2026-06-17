@@ -256,7 +256,18 @@ function UsersTab() {
 
   return (
     <>
-      <h1 className="adm-title">المستخدمات</h1>
+      <h1 className="adm-title">
+        المستخدمات
+        {pending && pending.total > 0 && (
+          <span style={{
+            marginInlineStart: 12, fontSize: 14, fontWeight: 700,
+            background: "#fef3c7", color: "#92400e",
+            padding: "4px 10px", borderRadius: 999,
+          }}>
+            ⚠️ {pending.total} جهاز بانتظار الموافقة
+          </span>
+        )}
+      </h1>
       <div className="adm-card">
         {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
         {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
@@ -267,7 +278,7 @@ function UsersTab() {
               <thead>
                 <tr>
                   <th>الحالة</th><th>الاسم</th><th>الإيميل</th><th>الجوال</th><th>المدينة</th>
-                  <th>الدور</th><th>IPs</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th><th>إجراء</th>
+                  <th>الدور</th><th>الأجهزة</th><th>IPs</th><th>التسجيل</th><th>آخر دخول</th><th>آخر ظهور</th><th>إجراء</th>
                 </tr>
               </thead>
               <tbody>
@@ -303,6 +314,27 @@ function UsersTab() {
                           {r === "admin" ? "أدمن" : "مستخدمة"}
                         </span>
                       ))}
+                    </td>
+                    <td>
+                      {!isAdmin && (() => {
+                        const pendCount = (pending?.byUser as Record<string, number> | undefined)?.[u.id] ?? 0;
+                        return (
+                          <button
+                            type="button"
+                            onClick={() => openDevices(u.id, u.email ?? u.profile?.full_name ?? u.id)}
+                            style={{
+                              background: pendCount > 0 ? "#fef3c7" : "#f3f4f6",
+                              color: pendCount > 0 ? "#92400e" : "#374151",
+                              border: "1px solid " + (pendCount > 0 ? "#fbbf24" : "#e5e7eb"),
+                              borderRadius: 6, padding: "2px 8px", cursor: "pointer",
+                              fontWeight: 600, fontSize: 12,
+                            }}
+                            title="عرض/إدارة أجهزة هذا الحساب"
+                          >
+                            🖥️ {pendCount > 0 ? `${pendCount} بانتظار` : "عرض"}
+                          </button>
+                        );
+                      })()}
                     </td>
                     <td>
                       <button
