@@ -131,6 +131,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  function startHeartbeat() {
+    if (beatRef.current) return;
+    const tick = () => { beat().catch(() => {}); };
+    tick();
+    beatRef.current = setInterval(tick, 60000);
+  }
+
+  function stopHeartbeat() {
+    if (beatRef.current) {
+      clearInterval(beatRef.current);
+      beatRef.current = null;
+    }
+  }
+
+
   const value: AuthContextValue = {
     session,
     user: session?.user ?? null,
