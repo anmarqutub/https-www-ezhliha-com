@@ -2203,3 +2203,179 @@ function CodesTab() {
 }
 
 const cellStyle: React.CSSProperties = { padding: "10px 12px", textAlign: "right" };
+
+function SallaOrdersTab() {
+  const list = useServerFn(listSallaOrders);
+  const create = useServerFn(createSallaOrder);
+  const del = useServerFn(deleteCode);
+  const q = useQuery({ queryKey: ["admin-salla-orders"], queryFn: () => list() });
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [search, setSearch] = useState("");
+  const [lastCode, setLastCode] = useState<{ code: string; phone: string; name: string } | null>(null);
+
+  const orders = q.data?.orders ?? [];
+  const filtered = orders.filter((o: any) => {
+    if (!search.trim()) return true;
+    const s = search.trim().toLowerCase();
+    return (
+      (o.customer_name || "").toLowerCase().includes(s) ||
+      (o.customer_phone || "").includes(s) ||
+      (o.salla_order_id || "").toLowerCase().includes(s) ||
+      (o.code || "").toLowerCase().includes(s) ||
+      (o.email || "").toLowerCase().includes(s)
+    );
+  });
+
+  function normalizePhone(p: string) {
+    let d = p.replace(/\D/g, "");
+    if (d.startsWith("00")) d = d.slice(2);
+    if (d.startsWith("05")) d = "966" + d.slice(1);
+    else if (d.startsWith("5") && d.length === 9) d = "966" + d;
+    return d;
+  }
+
+  function waLink(phone: string, name: string, code: string) {
+    const msg = `مرحباً ${name} 🌷\nشكراً لطلبك من متجرنا عبر سلة.\nكود الاشتراك الخاص بك:\n\n${code}\n\nاستخدمي الكود للتسجيل في الموقع.`;
+    return `https://wa.me/${normalizePhone(phone)}?text=${encodeURIComponent(msg)}`;
+  }
+
+  async function onCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const res: any = await create({ data: { customer_name: name, customer_phone: phone, salla_order_id: orderId, email } });
+      setLastCode({ code: res.order.code, phone, name });
+      await q.refetch();
+      setName(""); setPhone(""); setOrderId(""); setEmail("");
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : (e as Error).message;
+      alert(msg);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onDelete(id: string) {
+    if (!confirm("حذف هذا الطلب وكوده؟")) return;
+    try { await del({ data: { id } }); await q.refetch(); }
+    catch (e) { alert(e instanceof Response ? await e.text() : (e as Error).message); }
+  }
+
+  function exportCSV() {
+    const header = ["التاريخ", "اسم العميلة", "الجوال", "رقم طلب سلة", "الإيميل", "الكود", "الحالة"];
+    const rows = filtered.map((o: any) => [
+      new Date(o.created_at).toLocaleString("ar-SA"),
+      o.customer_name || "",
+      o.customer_phone || "",
+      o.salla_order_id || "",
+      o.email || "",
+      o.code,
+      o.used_at ? "مستخدم" : "متاح",
+    ]);
+    const csv = [header, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `salla-orders-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#660000", marginBottom: 16 }}>
+        طلبات سلة — {orders.length} طلب
+      </h2>
+
+      <form onSubmit={onCreate} style={{ background: "#fff", padding: 16, borderRadius: 12, marginBottom: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600 }}>
+          اسم العميلة *
+          <input required value={name} onChange={(e) => setName(e.target.value)} style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
+        </label>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600 }}>
+          الجوال *
+          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05xxxxxxxx" style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
+        </label>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600 }}>
+          رقم طلب سلة *
+          <input required value={orderId} onChange={(e) => setOrderId(e.target.value)} style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
+        </label>
+        <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 13, fontWeight: 600 }}>
+          الإيميل (اختياري)
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
+        </label>
+        <div style={{ display: "flex", alignItems: "end" }}>
+          <button disabled={busy} style={{ background: "#660000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer", width: "100%" }}>
+            {busy ? "..." : "توليد كود وحفظ"}
+          </button>
+        </div>
+      </form>
+
+      {lastCode && (
+        <div style={{ background: "#e8f5e9", border: "1px solid #4caf50", padding: 14, borderRadius: 12, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: 13, color: "#2e7d32", fontWeight: 600 }}>تم إنشاء الكود لـ {lastCode.name}</div>
+            <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, letterSpacing: 2, color: "#1b5e20" }}>{lastCode.code}</div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => { navigator.clipboard.writeText(lastCode.code); alert("نسخ"); }} style={{ background: "#fff", color: "#2e7d32", border: "1px solid #2e7d32", padding: "8px 16px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>نسخ الكود</button>
+            <a href={waLink(lastCode.phone, lastCode.name, lastCode.code)} target="_blank" rel="noreferrer" style={{ background: "#25D366", color: "#fff", padding: "8px 16px", borderRadius: 50, fontWeight: 700, textDecoration: "none" }}>إرسال واتساب</a>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="بحث بالاسم/الجوال/رقم الطلب/الكود..." style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd", flex: 1, minWidth: 200 }} />
+        <button onClick={exportCSV} style={{ background: "#fff", color: "#660000", border: "2px solid #660000", padding: "8px 18px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>تصدير CSV</button>
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: 12, overflow: "auto", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+          <thead style={{ background: "#f5f5f5" }}>
+            <tr>
+              <th style={cellStyle}>التاريخ</th>
+              <th style={cellStyle}>العميلة</th>
+              <th style={cellStyle}>الجوال</th>
+              <th style={cellStyle}>رقم طلب سلة</th>
+              <th style={cellStyle}>الكود</th>
+              <th style={cellStyle}>الحالة</th>
+              <th style={cellStyle}>إجراء</th>
+            </tr>
+          </thead>
+          <tbody>
+            {q.isLoading && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>جاري التحميل...</td></tr>}
+            {filtered.map((o: any) => (
+              <tr key={o.id} style={{ borderTop: "1px solid #eee" }}>
+                <td style={{ ...cellStyle, fontSize: 12, whiteSpace: "nowrap" }}>{new Date(o.created_at).toLocaleDateString("ar-SA")}</td>
+                <td style={cellStyle}>{o.customer_name || "—"}</td>
+                <td style={{ ...cellStyle, direction: "ltr", textAlign: "right" }}>{o.customer_phone || "—"}</td>
+                <td style={cellStyle}>{o.salla_order_id || "—"}</td>
+                <td style={{ ...cellStyle, fontFamily: "monospace", fontWeight: 700, letterSpacing: 1 }}>{o.code}</td>
+                <td style={cellStyle}>
+                  {o.used_at
+                    ? <span style={{ color: "#999" }}>مستخدم</span>
+                    : <span style={{ color: "#0a7a3a", fontWeight: 700 }}>متاح</span>}
+                </td>
+                <td style={cellStyle}>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {!o.used_at && o.customer_phone && (
+                      <a href={waLink(o.customer_phone, o.customer_name || "عميلتنا", o.code)} target="_blank" rel="noreferrer" style={{ background: "#25D366", color: "#fff", padding: "4px 10px", borderRadius: 6, fontSize: 12, textDecoration: "none", fontWeight: 700 }}>واتساب</a>
+                    )}
+                    <button onClick={() => { navigator.clipboard.writeText(o.code); }} style={{ background: "#eee", border: "1px solid #ddd", padding: "4px 10px", borderRadius: 6, cursor: "pointer", fontSize: 12 }}>نسخ</button>
+                    <button onClick={() => onDelete(o.id)} style={{ background: "#fee", color: "#c00", border: "1px solid #fcc", padding: "4px 10px", borderRadius: 6, cursor: "pointer", fontSize: 12 }}>حذف</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {!q.isLoading && filtered.length === 0 && (
+              <tr><td colSpan={7} style={{ padding: 20, textAlign: "center", color: "#999" }}>لا توجد طلبات</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
