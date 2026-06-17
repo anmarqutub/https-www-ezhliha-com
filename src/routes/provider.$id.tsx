@@ -37,7 +37,6 @@ function ProviderPage() {
   const [activeImg, setActiveImg] = useState(0);
 
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewerNames, setReviewerNames] = useState<Map<string, string>>(new Map());
   const [myRating, setMyRating] = useState(5);
   const [myComment, setMyComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
