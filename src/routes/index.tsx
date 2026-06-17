@@ -459,7 +459,7 @@ function AuthGate() {
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
         <h1 style={{ color: "#660000", fontSize: 24, marginBottom: 10 }}>محتوى خاص بالأعضاء</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          للوصول إلى دليل مقدمي الخدمات يجب تسجيل الدخول. إذا لم يكن لديك حساب، أنشئ حسابك الآن.
+          للوصول إلى دليل مقدمي الخدمات يجب تسجيل الدخول. للتسجيل تحتاجين كود الشراء الذي يصلكِ بعد إتمام الطلب من متجر سلة.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#660000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>

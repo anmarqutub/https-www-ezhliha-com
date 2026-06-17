@@ -34,7 +34,7 @@ function SignupPage() {
     setSubmitting(true);
     try {
       await register({
-        data: { email, password, full_name: fullName, phone, city },
+        data: { email, password, full_name: fullName, phone, city, code },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
       if (sErr) throw new Error(sErr.message);
@@ -48,8 +48,11 @@ function SignupPage() {
   }
 
   return (
-    <AuthShell title="إنشاء حساب جديد" sub="أهلاً بكِ في إزهليها — سجلي بياناتك">
+    <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة للتسجيل">
       <form onSubmit={onSubmit} className="auth-form">
+        <Field label="كود الشراء (من متجر سلة)">
+          <input required value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
+        </Field>
         <Field label="الاسم الكامل">
           <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
         </Field>
