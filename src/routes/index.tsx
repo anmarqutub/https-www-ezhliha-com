@@ -489,6 +489,9 @@ const css = `
   .ez-nav-btn:hover { background:#4a0000; }
   .ez-nav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
   .ez-nav-btn-out:hover { background:#660000; color:#fff; }
+  .ez-nav-contact { background:#25D366; color:#fff !important; padding:8px 16px; border-radius:50px; font-weight:700; }
+  .ez-nav-contact:hover { background:#1da851; color:#fff !important; }
+  .ez-nav-contact-disabled { background:#ccc; color:#fff; cursor:not-allowed; }
 
   .ez-hero { max-width:1200px; margin:18px auto 0; padding:0 24px; }
   .ez-hero-inner { background:linear-gradient(135deg, #660000 0%, #4a0000 100%); color:#e6e4d7; padding:50px 30px; text-align:center; border-radius:20px; }
