@@ -61,3 +61,51 @@ export const deleteCode = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 500 });
     return { ok: true };
   });
+
+export const createSallaOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      customer_name: z.string().trim().min(1).max(120),
+      customer_phone: z.string().trim().min(5).max(30),
+      salla_order_id: z.string().trim().min(1).max(60),
+      email: z.string().trim().email().max(255).optional().or(z.literal("")),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = randomCode(8);
+      const { data: row, error } = await supabaseAdmin
+        .from("purchase_codes")
+        .insert({
+          code,
+          customer_name: data.customer_name,
+          customer_phone: data.customer_phone,
+          salla_order_id: data.salla_order_id,
+          email: data.email || null,
+          note: `طلب سلة #${data.salla_order_id}`,
+        })
+        .select("id, code, customer_name, customer_phone, salla_order_id, email, created_at")
+        .single();
+      if (!error) return { order: row };
+      if (!/duplicate|unique/i.test(error.message)) {
+        throw new Response(error.message, { status: 500 });
+      }
+    }
+    throw new Response("تعذر توليد كود فريد، حاول مجدداً", { status: 500 });
+  });
+
+export const listSallaOrders = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data, error } = await supabaseAdmin
+      .from("purchase_codes")
+      .select("id, code, customer_name, customer_phone, salla_order_id, email, used_at, used_by, created_at")
+      .not("salla_order_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    if (error) throw new Response(error.message, { status: 500 });
+    return { orders: data ?? [] };
+  });
