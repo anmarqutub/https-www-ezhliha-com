@@ -27,6 +27,9 @@ export const generateCodes = createServerFn({ method: "POST" })
       count: z.number().int().min(1).max(100),
       email: z.string().email().optional().or(z.literal("")),
       note: z.string().max(200).optional().or(z.literal("")),
+      customer_name: z.string().max(120).optional().or(z.literal("")),
+      customer_phone: z.string().max(30).optional().or(z.literal("")),
+      salla_order_id: z.string().max(60).optional().or(z.literal("")),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -35,6 +38,9 @@ export const generateCodes = createServerFn({ method: "POST" })
       code: randCode(),
       email: data.email || null,
       note: data.note || null,
+      customer_name: data.customer_name || null,
+      customer_phone: data.customer_phone || null,
+      salla_order_id: data.salla_order_id || null,
     }));
     const { data: inserted, error } = await supabaseAdmin
       .from("purchase_codes")
@@ -43,6 +49,7 @@ export const generateCodes = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 500 });
     return { codes: inserted };
   });
+
 
 export const listCodes = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
