@@ -59,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       if (s?.user) {
         setTimeout(() => fetchRoles(s.user.id), 0);
+        startHeartbeat();
         if (event === "SIGNED_IN") {
           // New login: rotate sid and claim — invalidates other devices.
           const sid = rotateDeviceSid();
@@ -67,11 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setRoles([]);
         stopPolling();
+        stopHeartbeat();
       }
     });
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (data.session?.user) {
+        startHeartbeat();
         fetchRoles(data.session.user.id).finally(() => setLoading(false));
       } else {
         setLoading(false);
