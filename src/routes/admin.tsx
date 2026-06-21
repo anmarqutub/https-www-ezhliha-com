@@ -1261,6 +1261,7 @@ function ProvidersTab() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
+  const [showImport, setShowImport] = useState(false);
 
   const reload = useCallback(async () => {
     setLoading(true);
