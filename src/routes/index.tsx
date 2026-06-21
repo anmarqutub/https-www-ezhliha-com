@@ -518,6 +518,38 @@ function ProviderCard({
   );
 }
 
+function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void | Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  const initial = (email || "?").trim().charAt(0).toUpperCase();
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [open]);
+  return (
+    <div className="ez-acct" onClick={(e) => e.stopPropagation()}>
+      <button className="ez-acct-btn" onClick={() => setOpen((o) => !o)} aria-label="حسابي">
+        <span className="ez-acct-avatar">{initial}</span>
+        <span className="ez-acct-caret">▾</span>
+      </button>
+      {open && (
+        <div className="ez-acct-menu" role="menu">
+          <div className="ez-acct-head">
+            <div className="ez-acct-avatar lg">{initial}</div>
+            <div>
+              <div className="ez-acct-title">حسابي</div>
+              <div className="ez-acct-email">{email}</div>
+            </div>
+          </div>
+          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>♥ المفضلة</Link>
+          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>↩ تسجيل الخروج</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function AuthGate() {
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
