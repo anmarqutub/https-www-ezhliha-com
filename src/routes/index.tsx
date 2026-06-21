@@ -452,6 +452,8 @@ function Home() {
 
       <footer className="ez-footer">
         <div className="ez-footer-actions">
+          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
+          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
           <a
             className="ez-footer-wa"
             href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
@@ -465,8 +467,6 @@ function Home() {
             </svg>
             <span>تواصل معنا</span>
           </a>
-          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
-          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
         </div>
         <p>© 2026 إزهليها — Ezhliha</p>
       </footer>
