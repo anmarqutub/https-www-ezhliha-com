@@ -218,6 +218,21 @@ function Home() {
         )}
       </section>
 
+      <section className="ez-quick">
+        <div className="ez-search ez-search-big">
+          <span className="ez-search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="ابحث عن مقدم خدمة، تصنيف، أو وصف..."
+            value={quickSearch}
+            onChange={(e) => setQuickSearch(e.target.value)}
+          />
+          {quickSearch && (
+            <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>
+          )}
+        </div>
+      </section>
+
       <section className="ez-step">
         <label className="ez-step-label">📍 اختر مدينتك</label>
         <select
