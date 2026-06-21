@@ -176,12 +176,20 @@ function Home() {
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
-        {!user && (
-          <div className="ez-nav-actions">
-            <Link to="/login" className="ez-nav-link">دخول</Link>
-            <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
-          </div>
-        )}
+        <div className="ez-nav-actions">
+          {!user && (
+            <>
+              <Link to="/login" className="ez-nav-link">دخول</Link>
+              <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
+            </>
+          )}
+          {user && (
+            <>
+              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
+              <AccountMenu email={user.email ?? ""} onSignOut={signOut} />
+            </>
+          )}
+        </div>
       </header>
 
       {/* Hero banner — supports admin-managed ad banners */}
@@ -424,28 +432,23 @@ function Home() {
       </main>
 
       <footer className="ez-footer">
-        {user && (
-          <div className="ez-footer-actions">
-            <a
-              className="ez-footer-wa"
-              href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="تواصل معنا عبر واتساب"
-              title="تواصل معنا"
-            >
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
-                <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
-              </svg>
-              <span>تواصل معنا</span>
-            </a>
-            <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>
-            {isAdmin && <Link to="/admin" className="ez-footer-link">لوحة الأدمن</Link>}
-            <button className="ez-footer-link ez-footer-out" onClick={() => signOut()}>خروج</button>
-            <span className="ez-footer-user">{user.email}</span>
-          </div>
-        )}
-        <p>© {new Date().getFullYear()} إزهليها — AZHLEHA</p>
+        <div className="ez-footer-actions">
+          <a
+            className="ez-footer-wa"
+            href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="تواصل معنا عبر واتساب"
+            title="تواصل معنا"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+              <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
+            </svg>
+            <span>تواصل معنا</span>
+          </a>
+          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
+        </div>
+        <p>© 2026 إزهليها — Ezhliha</p>
       </footer>
     </div>
   );
@@ -512,6 +515,38 @@ function ProviderCard({
         )}
       </div>
     </article>
+  );
+}
+
+function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void | Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  const initial = (email || "?").trim().charAt(0).toUpperCase();
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [open]);
+  return (
+    <div className="ez-acct" onClick={(e) => e.stopPropagation()}>
+      <button className="ez-acct-btn" onClick={() => setOpen((o) => !o)} aria-label="حسابي">
+        <span className="ez-acct-avatar">{initial}</span>
+        <span className="ez-acct-caret">▾</span>
+      </button>
+      {open && (
+        <div className="ez-acct-menu" role="menu">
+          <div className="ez-acct-head">
+            <div className="ez-acct-avatar lg">{initial}</div>
+            <div>
+              <div className="ez-acct-title">حسابي</div>
+              <div className="ez-acct-email">{email}</div>
+            </div>
+          </div>
+          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>♥ المفضلة</Link>
+          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>↩ تسجيل الخروج</button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -641,4 +676,18 @@ const css = `
     .ez-cat-card .ez-cat-name { font-size:14px; }
     .ez-cat-icon { font-size:24px; }
   }
+
+  .ez-acct { position:relative; }
+  .ez-acct-btn { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #d8d4c0; border-radius:50px; padding:4px 10px 4px 4px; cursor:pointer; font-family:inherit; }
+  .ez-acct-btn:hover { border-color:#660000; }
+  .ez-acct-avatar { width:34px; height:34px; border-radius:50%; background:#660000; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
+  .ez-acct-avatar.lg { width:44px; height:44px; font-size:18px; }
+  .ez-acct-caret { color:#660000; font-size:12px; }
+  .ez-acct-menu { position:absolute; top:calc(100% + 8px); inset-inline-end:0; background:#fff; border:1px solid #d8d4c0; border-radius:14px; box-shadow:0 12px 30px rgba(102,0,0,0.16); min-width:240px; padding:8px; z-index:200; }
+  .ez-acct-head { display:flex; align-items:center; gap:10px; padding:10px 8px; border-bottom:1px solid #f0ecd9; margin-bottom:6px; }
+  .ez-acct-title { font-weight:800; color:#000; font-size:14px; }
+  .ez-acct-email { font-size:12px; color:#666; word-break:break-all; }
+  .ez-acct-item { display:block; width:100%; text-align:right; padding:10px 12px; border-radius:8px; color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; }
+  .ez-acct-item:hover { background:#f5f3eb; color:#660000; }
+  .ez-acct-out { color:#660000; }
 `;
