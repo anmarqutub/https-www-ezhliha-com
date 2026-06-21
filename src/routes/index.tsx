@@ -194,24 +194,42 @@ function Home() {
 
       {/* Hero banner — supports admin-managed ad banners */}
       <section className="ez-hero">
-        {currentBanner ? (
-          currentBanner.link_url ? (
-            <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
-              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
-            </a>
+        <div className="ez-hero-wrap">
+          {currentBanner ? (
+            currentBanner.link_url ? (
+              <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
+                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+              </a>
+            ) : (
+              <div className="ez-hero-banner">
+                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+              </div>
+            )
           ) : (
-            <div className="ez-hero-banner">
-              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+            <div className="ez-hero-inner">
+              <h1>إزهليها</h1>
+              <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
             </div>
-          )
-        ) : (
-          <div className="ez-hero-inner">
-            <h1>إزهليها</h1>
-            <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
-          </div>
-        )}
+          )}
+          {banners.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="ez-hero-arrow ez-hero-arrow-prev"
+                onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
+                aria-label="السابق"
+              >‹</button>
+              <button
+                type="button"
+                className="ez-hero-arrow ez-hero-arrow-next"
+                onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
+                aria-label="التالي"
+              >›</button>
+            </>
+          )}
+        </div>
         {banners.length > 1 && (
           <div className="ez-hero-dots">
             {banners.map((_, i) => (
