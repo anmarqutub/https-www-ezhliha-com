@@ -619,6 +619,11 @@ const css = `
   .ez-hero-dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
   .ez-hero-dots button { width:10px; height:10px; border-radius:50%; border:none; background:#d8d4c0; cursor:pointer; padding:0; }
   .ez-hero-dots button.active { background:#660000; transform:scale(1.2); }
+  .ez-hero-wrap { position:relative; }
+  .ez-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:none; background:rgba(0,0,0,0.55); color:#fff; font-size:28px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; z-index:2; }
+  .ez-hero-arrow:hover { background:#660000; }
+  .ez-hero-arrow-prev { right:12px; }
+  .ez-hero-arrow-next { left:12px; }
 
   .ez-step { max-width:1200px; margin:20px auto 0; padding:0 24px; }
   .ez-step-label { display:block; font-size:14px; color:#000; margin-bottom:8px; font-weight:700; }
