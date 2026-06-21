@@ -452,6 +452,8 @@ function Home() {
 
       <footer className="ez-footer">
         <div className="ez-footer-actions">
+          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
+          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
           <a
             className="ez-footer-wa"
             href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
@@ -465,8 +467,6 @@ function Home() {
             </svg>
             <span>تواصل معنا</span>
           </a>
-          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
-          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
         </div>
         <p>© 2026 إزهليها — Ezhliha</p>
       </footer>
@@ -699,11 +699,11 @@ const css = `
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
   .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
   .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px 18px; margin-bottom:16px; }
-  .ez-footer-link { color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; }
+  .ez-footer-link { color:#000; text-decoration:none; font-size:14px; font-weight:400; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; }
   .ez-footer-link:hover { color:#660000; background:#f5f3eb; }
   .ez-footer-out { color:#660000; }
   .ez-footer-user { font-size:12px; color:#888; }
-  .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; background:transparent; color:inherit; padding:4px 0; text-decoration:none; font-weight:600; font-size:13px; }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; background:transparent; color:inherit; padding:4px 0; text-decoration:none; font-weight:400; font-size:14px; }
   .ez-footer-wa svg { color:#25D366; }
   .ez-footer-wa:hover { color:#25D366; }
   .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
