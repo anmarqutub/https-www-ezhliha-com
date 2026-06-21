@@ -176,23 +176,12 @@ function Home() {
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
-        <div className="ez-nav-actions">
-          {user ? (
-            <>
-              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
-              <Link to="/favorites" className="ez-nav-link">♥ المفضلة</Link>
-              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
-              <span className="ez-nav-user">{user.email}</span>
-              <button className="ez-nav-btn-out" onClick={() => signOut()}>خروج</button>
-            </>
-          ) : (
-            <>
-              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
-              <Link to="/login" className="ez-nav-link">دخول</Link>
-              <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
-            </>
-          )}
-        </div>
+        {!user && (
+          <div className="ez-nav-actions">
+            <Link to="/login" className="ez-nav-link">دخول</Link>
+            <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
+          </div>
+        )}
       </header>
 
       {/* Hero banner — supports admin-managed ad banners */}
