@@ -676,4 +676,18 @@ const css = `
     .ez-cat-card .ez-cat-name { font-size:14px; }
     .ez-cat-icon { font-size:24px; }
   }
+
+  .ez-acct { position:relative; }
+  .ez-acct-btn { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #d8d4c0; border-radius:50px; padding:4px 10px 4px 4px; cursor:pointer; font-family:inherit; }
+  .ez-acct-btn:hover { border-color:#660000; }
+  .ez-acct-avatar { width:34px; height:34px; border-radius:50%; background:#660000; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
+  .ez-acct-avatar.lg { width:44px; height:44px; font-size:18px; }
+  .ez-acct-caret { color:#660000; font-size:12px; }
+  .ez-acct-menu { position:absolute; top:calc(100% + 8px); inset-inline-end:0; background:#fff; border:1px solid #d8d4c0; border-radius:14px; box-shadow:0 12px 30px rgba(102,0,0,0.16); min-width:240px; padding:8px; z-index:200; }
+  .ez-acct-head { display:flex; align-items:center; gap:10px; padding:10px 8px; border-bottom:1px solid #f0ecd9; margin-bottom:6px; }
+  .ez-acct-title { font-weight:800; color:#000; font-size:14px; }
+  .ez-acct-email { font-size:12px; color:#666; word-break:break-all; }
+  .ez-acct-item { display:block; width:100%; text-align:right; padding:10px 12px; border-radius:8px; color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; }
+  .ez-acct-item:hover { background:#f5f3eb; color:#660000; }
+  .ez-acct-out { color:#660000; }
 `;
