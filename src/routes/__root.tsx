@@ -7,9 +7,25 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
+
+const CANONICAL_HOST = "www.ezhliha.com";
+
+function useCanonicalHostRedirect() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname;
+    // Redirect any *.lovable.app host (preview/published) to the official domain
+    if (host.endsWith(".lovable.app")) {
+      const target = `https://${CANONICAL_HOST}${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.replace(target);
+    }
+  }, []);
+}
+
 
 function NotFoundComponent() {
   return (
@@ -123,6 +139,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useCanonicalHostRedirect();
 
   return (
     <QueryClientProvider client={queryClient}>
