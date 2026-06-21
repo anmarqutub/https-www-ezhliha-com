@@ -194,3 +194,35 @@ export const getPendingDevicesSummary = createServerFn({ method: "GET" })
     });
     return { total: rows?.length ?? 0, byUser: Object.fromEntries(byUser) };
   });
+
+// Promote a user to admin or demote them — admin only.
+export const setUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    userId: z.string().uuid(),
+    makeAdmin: z.boolean(),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    if (data.userId === context.userId && !data.makeAdmin) {
+      throw new Response("لا يمكنك إزالة صلاحية الأدمن عن نفسك", { status: 400 });
+    }
+    if (data.makeAdmin) {
+      await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role" });
+    } else {
+      // Safety: don't allow removing the last admin
+      const { data: admins } = await supabaseAdmin
+        .from("user_roles").select("user_id").eq("role", "admin");
+      if ((admins?.length ?? 0) <= 1) {
+        throw new Response("لا يمكن إزالة آخر أدمن في النظام", { status: 400 });
+      }
+      await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", data.userId)
+        .eq("role", "admin");
+    }
+    return { ok: true };
+  });
