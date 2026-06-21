@@ -185,6 +185,26 @@ function UsersTab() {
   const updateDevice = useServerFn(setDeviceStatus);
   const fetchPending = useServerFn(getPendingDevicesSummary);
   const toggleRole = useServerFn(setUserRole);
+  const createAdmin = useServerFn(createAdminUser);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({ email: "", password: "", full_name: "", phone: "", city: "" });
+  const [creating, setCreating] = useState(false);
+
+  async function handleCreateAdmin(e: React.FormEvent) {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      await createAdmin({ data: newAdmin });
+      await logActivity("user.create_admin", "user", newAdmin.email, { email: newAdmin.email });
+      setShowCreate(false);
+      setNewAdmin({ email: "", password: "", full_name: "", phone: "", city: "" });
+      refetch();
+    } catch (err) {
+      alert((err as Error).message);
+    } finally {
+      setCreating(false);
+    }
+  }
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
