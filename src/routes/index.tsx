@@ -65,6 +65,7 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSub, setSelectedSub] = useState<string | "all">("all");
   const [search, setSearch] = useState("");
+  const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -175,23 +176,12 @@ function Home() {
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
-        <div className="ez-nav-actions">
-          {user ? (
-            <>
-              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
-              <Link to="/favorites" className="ez-nav-link">♥ المفضلة</Link>
-              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
-              <span className="ez-nav-user">{user.email}</span>
-              <button className="ez-nav-btn-out" onClick={() => signOut()}>خروج</button>
-            </>
-          ) : (
-            <>
-              <a className="ez-nav-link ez-nav-contact" href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">📱 تواصل معنا</a>
-              <Link to="/login" className="ez-nav-link">دخول</Link>
-              <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
-            </>
-          )}
-        </div>
+        {!user && (
+          <div className="ez-nav-actions">
+            <Link to="/login" className="ez-nav-link">دخول</Link>
+            <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
+          </div>
+        )}
       </header>
 
       {/* Hero banner — supports admin-managed ad banners */}
@@ -228,6 +218,21 @@ function Home() {
         )}
       </section>
 
+      <section className="ez-quick">
+        <div className="ez-search ez-search-big">
+          <span className="ez-search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="ابحث عن مقدم خدمة، تصنيف، أو وصف..."
+            value={quickSearch}
+            onChange={(e) => setQuickSearch(e.target.value)}
+          />
+          {quickSearch && (
+            <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>
+          )}
+        </div>
+      </section>
+
       <section className="ez-step">
         <label className="ez-step-label">📍 اختر مدينتك</label>
         <select
@@ -250,6 +255,43 @@ function Home() {
       <main className="ez-main">
         {loading ? (
           <p className="ez-empty">جارٍ التحميل...</p>
+        ) : quickSearch.trim() ? (
+          (() => {
+            const q = quickSearch.trim().toLowerCase();
+            const results = providers.filter((p) => {
+              if (selectedCity && p.city_id !== selectedCity) return false;
+              const sub = subcategories.find((s) => s.id === p.subcategory_id);
+              const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
+              return (
+                p.name.toLowerCase().includes(q) ||
+                (p.description ?? "").toLowerCase().includes(q) ||
+                (sub?.name_ar ?? "").toLowerCase().includes(q) ||
+                (cat?.name_ar ?? "").toLowerCase().includes(q)
+              );
+            });
+            return (
+              <>
+                <div className="ez-section-head">
+                  <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
+                </div>
+                {results.length === 0 ? (
+                  <p className="ez-empty">لا توجد نتائج مطابقة. جربي كلمة أخرى أو تصفّحي التصنيفات.</p>
+                ) : (
+                  <div className="ez-grid">
+                    {results.map((p) => (
+                      <ProviderCard
+                        key={p.id}
+                        provider={p}
+                        city={cities.find((c) => c.id === p.city_id)}
+                        sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                        images={imgsByProvider.get(p.id) ?? []}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()
         ) : !selectedCategory ? (
           <>
             <div className="ez-section-head">
@@ -382,6 +424,27 @@ function Home() {
       </main>
 
       <footer className="ez-footer">
+        {user && (
+          <div className="ez-footer-actions">
+            <a
+              className="ez-footer-wa"
+              href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="تواصل معنا عبر واتساب"
+              title="تواصل معنا"
+            >
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
+              </svg>
+              <span>تواصل معنا</span>
+            </a>
+            <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>
+            {isAdmin && <Link to="/admin" className="ez-footer-link">لوحة الأدمن</Link>}
+            <button className="ez-footer-link ez-footer-out" onClick={() => signOut()}>خروج</button>
+            <span className="ez-footer-user">{user.email}</span>
+          </div>
+        )}
         <p>© {new Date().getFullYear()} إزهليها — AZHLEHA</p>
       </footer>
     </div>
@@ -553,7 +616,20 @@ const css = `
   .ez-wa-btn { display:block; width:100%; text-align:center; background:#25D366; color:#fff; padding:10px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; border:none; cursor:pointer; font-family:inherit; }
   .ez-wa-btn:hover { background:#1da851; }
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
-  .ez-footer { text-align:center; padding:30px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
+  .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
+  .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px 18px; margin-bottom:16px; }
+  .ez-footer-link { color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; }
+  .ez-footer-link:hover { color:#660000; background:#f5f3eb; }
+  .ez-footer-out { color:#660000; }
+  .ez-footer-user { font-size:12px; color:#888; }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:9px 16px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
+  .ez-footer-wa:hover { background:#1da851; color:#fff; }
+
+  .ez-quick { max-width:1200px; margin:18px auto 0; padding:0 24px; }
+  .ez-search-big { max-width:720px; margin:0 auto; display:flex; align-items:center; gap:6px; padding:6px 10px; box-shadow:0 4px 18px rgba(102,0,0,0.08); }
+  .ez-search-icon { font-size:16px; padding-inline-start:6px; color:#660000; }
+  .ez-search-big input { flex:1; }
+  .ez-search-clear { background:transparent; border:none; color:#660000; font-size:16px; cursor:pointer; padding:4px 10px; font-family:inherit; }
 
   @media (max-width: 640px) {
     .ez-brand-logo { height:64px; }
