@@ -255,6 +255,7 @@ function UsersTab() {
       refetch();
     } catch (e) {
       alert((e as Error).message);
+    }
   }
 
   async function handleToggleRole(u: { id: string; email: string | null; roles: string[] }) {
@@ -268,7 +269,6 @@ function UsersTab() {
     } catch (e) {
       alert((e as Error).message);
     }
-  }
   }
 
   return (
