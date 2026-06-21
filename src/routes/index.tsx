@@ -56,6 +56,7 @@ function Home() {
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
 
@@ -465,9 +466,31 @@ function Home() {
             <span>تواصل معنا</span>
           </a>
           {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
+          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
         </div>
         <p>© 2026 إزهليها — Ezhliha</p>
       </footer>
+
+      {aboutOpen && (
+        <div className="ez-about-overlay" onClick={() => setAboutOpen(false)}>
+          <div className="ez-about-modal" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
+            <h2 className="ez-about-title">من نحن</h2>
+            <p className="ez-about-text">
+              <strong>إزهليها</strong> هي منصتك الأولى لتجهيز الأفراح والمناسبات في المملكة العربية السعودية.
+              نجمع لكِ في مكان واحد نخبة من أفضل مزودي الخدمات — من كوافيرات وخياطات ومصورات ومنسقي حفلات
+              وقاعات ومطاعم وكل ما تحتاجينه ليكون يومكِ مميزاً.
+            </p>
+            <p className="ez-about-text">
+              مهمتنا أن نوفر عليكِ عناء البحث، ونمنحكِ تجربة سهلة وسريعة لاختيار الأنسب لكِ من حيث الجودة
+              والسعر والموقع، مع إمكانية التواصل المباشر عبر واتساب وحفظ المفضلة لديكِ.
+            </p>
+            <p className="ez-about-text">
+              نسعى لأن نكون الدليل الموثوق لكل عروس وكل عائلة تبحث عن التميز في مناسباتها. شكراً لثقتكِ بنا 💐
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -682,6 +705,13 @@ const css = `
   .ez-footer-user { font-size:12px; color:#888; }
   .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:9px 16px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
   .ez-footer-wa:hover { background:#1da851; color:#fff; }
+  .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
+  .ez-about-modal { background:#fff; max-width:560px; width:100%; border-radius:16px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:85vh; overflow-y:auto; border-top:4px solid #660000; }
+  .ez-about-close { position:absolute; top:10px; left:14px; background:transparent; border:none; font-size:28px; line-height:1; cursor:pointer; color:#666; padding:4px 10px; border-radius:8px; }
+  .ez-about-close:hover { background:#f5f3eb; color:#660000; }
+  .ez-about-title { color:#660000; font-size:22px; margin:0 0 16px; font-weight:800; text-align:center; }
+  .ez-about-text { color:#333; font-size:15px; line-height:1.9; margin:0 0 12px; }
+  @keyframes ezFade { from { opacity:0 } to { opacity:1 } }
 
   .ez-quick { max-width:1200px; margin:18px auto 0; padding:0 24px; }
   .ez-search-big { max-width:720px; margin:0 auto; display:flex; align-items:center; gap:6px; padding:6px 10px; box-shadow:0 4px 18px rgba(102,0,0,0.08); }
