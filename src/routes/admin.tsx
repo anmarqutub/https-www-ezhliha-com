@@ -182,6 +182,7 @@ function UsersTab() {
   const fetchDevices = useServerFn(getUserDevices);
   const updateDevice = useServerFn(setDeviceStatus);
   const fetchPending = useServerFn(getPendingDevicesSummary);
+  const toggleRole = useServerFn(setUserRole);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
