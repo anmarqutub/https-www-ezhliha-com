@@ -456,6 +456,16 @@ function UsersTab() {
                             {suspended ? "إلغاء التعليق" : "تعليق"}
                           </button>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => handleSendReset(u)}
+                          title="إرسال رابط إعادة تعيين كلمة المرور للمستخدم"
+                          style={{
+                            background: "#fff", color: "#660000", border: "1px solid #660000",
+                            borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
+                          }}
+                        >
+                          🔑 إعادة تعيين كلمة المرور
                       </div>
                     </td>
                   </tr>
