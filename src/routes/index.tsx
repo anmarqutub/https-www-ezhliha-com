@@ -194,24 +194,42 @@ function Home() {
 
       {/* Hero banner — supports admin-managed ad banners */}
       <section className="ez-hero">
-        {currentBanner ? (
-          currentBanner.link_url ? (
-            <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
-              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
-            </a>
+        <div className="ez-hero-wrap">
+          {currentBanner ? (
+            currentBanner.link_url ? (
+              <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
+                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+              </a>
+            ) : (
+              <div className="ez-hero-banner">
+                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+              </div>
+            )
           ) : (
-            <div className="ez-hero-banner">
-              <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-              {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+            <div className="ez-hero-inner">
+              <h1>إزهليها</h1>
+              <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
             </div>
-          )
-        ) : (
-          <div className="ez-hero-inner">
-            <h1>إزهليها</h1>
-            <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
-          </div>
-        )}
+          )}
+          {banners.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="ez-hero-arrow ez-hero-arrow-prev"
+                onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
+                aria-label="السابق"
+              >‹</button>
+              <button
+                type="button"
+                className="ez-hero-arrow ez-hero-arrow-next"
+                onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
+                aria-label="التالي"
+              >›</button>
+            </>
+          )}
+        </div>
         {banners.length > 1 && (
           <div className="ez-hero-dots">
             {banners.map((_, i) => (
@@ -601,6 +619,11 @@ const css = `
   .ez-hero-dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
   .ez-hero-dots button { width:10px; height:10px; border-radius:50%; border:none; background:#d8d4c0; cursor:pointer; padding:0; }
   .ez-hero-dots button.active { background:#660000; transform:scale(1.2); }
+  .ez-hero-wrap { position:relative; }
+  .ez-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:none; background:rgba(0,0,0,0.55); color:#fff; font-size:28px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; z-index:2; }
+  .ez-hero-arrow:hover { background:#660000; }
+  .ez-hero-arrow-prev { right:12px; }
+  .ez-hero-arrow-next { left:12px; }
 
   .ez-step { max-width:1200px; margin:20px auto 0; padding:0 24px; }
   .ez-step-label { display:block; font-size:14px; color:#000; margin-bottom:8px; font-weight:700; }
