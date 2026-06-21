@@ -255,6 +255,43 @@ function Home() {
       <main className="ez-main">
         {loading ? (
           <p className="ez-empty">جارٍ التحميل...</p>
+        ) : quickSearch.trim() ? (
+          (() => {
+            const q = quickSearch.trim().toLowerCase();
+            const results = providers.filter((p) => {
+              if (selectedCity && p.city_id !== selectedCity) return false;
+              const sub = subcategories.find((s) => s.id === p.subcategory_id);
+              const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
+              return (
+                p.name.toLowerCase().includes(q) ||
+                (p.description ?? "").toLowerCase().includes(q) ||
+                (sub?.name_ar ?? "").toLowerCase().includes(q) ||
+                (cat?.name_ar ?? "").toLowerCase().includes(q)
+              );
+            });
+            return (
+              <>
+                <div className="ez-section-head">
+                  <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
+                </div>
+                {results.length === 0 ? (
+                  <p className="ez-empty">لا توجد نتائج مطابقة. جربي كلمة أخرى أو تصفّحي التصنيفات.</p>
+                ) : (
+                  <div className="ez-grid">
+                    {results.map((p) => (
+                      <ProviderCard
+                        key={p.id}
+                        provider={p}
+                        city={cities.find((c) => c.id === p.city_id)}
+                        sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                        images={imgsByProvider.get(p.id) ?? []}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()
         ) : !selectedCategory ? (
           <>
             <div className="ez-section-head">
