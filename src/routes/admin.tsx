@@ -373,19 +373,35 @@ function UsersTab() {
                     <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
                     <td>{lastSeen ? fmt(lastSeen) : "—"}</td>
                     <td>
-                      {!isAdmin && (
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         <button
                           type="button"
-                          onClick={() => handleToggleSuspend(u)}
+                          onClick={() => handleToggleRole(u)}
                           style={{
-                            background: suspended ? "#16a34a" : "#dc2626",
-                            color: "#fff", border: "none", borderRadius: 6,
-                            padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                            background: isAdmin ? "#fff" : "#660000",
+                            color: isAdmin ? "#660000" : "#fff",
+                            border: "1px solid #660000",
+                            borderRadius: 6,
+                            padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
                           }}
+                          title={isAdmin ? "إزالة صلاحية الأدمن" : "ترقية إلى أدمن"}
                         >
-                          {suspended ? "إلغاء التعليق" : "تعليق"}
+                          {isAdmin ? "إزالة الأدمن" : "ترقية لأدمن"}
                         </button>
-                      )}
+                        {!isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSuspend(u)}
+                            style={{
+                              background: suspended ? "#16a34a" : "#dc2626",
+                              color: "#fff", border: "none", borderRadius: 6,
+                              padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                            }}
+                          >
+                            {suspended ? "إلغاء التعليق" : "تعليق"}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                   );
