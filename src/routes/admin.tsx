@@ -508,29 +508,35 @@ function UsersTab() {
               <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
                 <thead>
                   <tr>
-                    <th>الحالة</th><th>المتصفح / الجهاز</th><th>IP</th>
+                    <th>الحالة</th><th>الجهاز</th><th>المتصفح</th><th>IP</th><th>الموقع</th>
                     <th>أول دخول</th><th>آخر نشاط</th><th>إجراء</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {devData.map((d) => (
-                    <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
-                      <td>
-                        <span style={{
-                          display: "inline-block", padding: "2px 8px", borderRadius: 999,
-                          fontSize: 11, fontWeight: 700,
-                          background: d.approved ? "#dcfce7" : "#fef3c7",
-                          color: d.approved ? "#166534" : "#92400e",
-                        }}>
-                          {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: 11, color: "#444", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={d.user_agent ?? ""}>
-                        {d.user_agent ?? "—"}
-                      </td>
-                      <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
-                      <td>{fmt(d.created_at)}</td>
-                      <td>{fmt(d.last_seen_at)}</td>
+                  {devData.map((d) => {
+                    const g = d.ip ? geoMap[d.ip] : null;
+                    return (
+                      <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
+                        <td>
+                          <span style={{
+                            display: "inline-block", padding: "2px 8px", borderRadius: 999,
+                            fontSize: 11, fontWeight: 700,
+                            background: d.approved ? "#dcfce7" : "#fef3c7",
+                            color: d.approved ? "#166534" : "#92400e",
+                          }}>
+                            {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: 12, fontWeight: 600 }} title={d.user_agent ?? ""}>
+                          {parseDevice(d.user_agent)}
+                        </td>
+                        <td style={{ fontSize: 12, color: "#555" }}>{parseBrowser(d.user_agent)}</td>
+                        <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
+                        <td style={{ fontSize: 12 }} title={g?.isp ?? ""}>
+                          {d.ip ? (d.ip in geoMap ? formatGeo(g) : "…") : "—"}
+                        </td>
+                        <td>{fmt(d.created_at)}</td>
+                        <td>{fmt(d.last_seen_at)}</td>
                       <td style={{ whiteSpace: "nowrap" }}>
                         {!d.approved && (
                           <button
