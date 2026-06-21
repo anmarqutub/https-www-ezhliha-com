@@ -139,6 +139,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useCanonicalHostRedirect();
 
   return (
     <QueryClientProvider client={queryClient}>
