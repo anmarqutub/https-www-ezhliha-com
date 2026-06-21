@@ -277,3 +277,27 @@ export const createAdminUser = createServerFn({ method: "POST" })
 
     return { ok: true, userId: created.user.id };
   });
+
+// Admin triggers password reset email for a specific user.
+export const sendUserPasswordReset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    userId: z.string().uuid(),
+    redirectTo: z.string().url(),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+
+    const { data: userRes, error: uErr } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    if (uErr || !userRes?.user?.email) {
+      throw new Response("لم يتم العثور على بريد المستخدم", { status: 404 });
+    }
+    const email = userRes.user.email;
+
+    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+      redirectTo: data.redirectTo,
+    });
+    if (error) throw new Response(error.message, { status: 500 });
+
+    return { ok: true, email };
+  });
