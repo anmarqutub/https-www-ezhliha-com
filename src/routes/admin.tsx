@@ -8,6 +8,7 @@ import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders
 
 import { supabase } from "@/integrations/supabase/client";
 import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
+import { parseDevice, parseBrowser, lookupIp, formatGeo, type GeoInfo } from "@/lib/device-info";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
@@ -202,6 +203,17 @@ function UsersTab() {
   const [devUserLabel, setDevUserLabel] = useState<string>("");
   const [devData, setDevData] = useState<Array<{ id: string; device_sid: string; user_agent: string | null; ip: string | null; approved: boolean; created_at: string; approved_at: string | null; last_seen_at: string }> | null>(null);
   const [devLoading, setDevLoading] = useState(false);
+
+  const [geoMap, setGeoMap] = useState<Record<string, GeoInfo | null>>({});
+  const loadGeos = useCallback((ips: Array<string | null | undefined>) => {
+    const unique = Array.from(new Set(ips.filter(Boolean) as string[]));
+    unique.forEach((ip) => {
+      if (ip in geoMap) return;
+      lookupIp(ip).then((g) => setGeoMap((m) => ({ ...m, [ip]: g })));
+    });
+  }, [geoMap]);
+  useEffect(() => { if (ipData) loadGeos(ipData.map((e) => e.ip)); }, [ipData, loadGeos]);
+  useEffect(() => { if (devData) loadGeos(devData.map((d) => d.ip)); }, [devData, loadGeos]);
 
   async function openIps(userId: string, label: string) {
     setIpUserId(userId);
@@ -424,7 +436,7 @@ function UsersTab() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 700,
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 980,
               width: "92%", maxHeight: "80vh", overflow: "auto",
             }}
           >
@@ -437,18 +449,25 @@ function UsersTab() {
             {ipData && ipData.length > 0 && (
               <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
                 <thead>
-                  <tr><th>IP</th><th>عدد الزيارات</th><th>أول ظهور</th><th>آخر ظهور</th><th>المتصفح</th></tr>
+                  <tr><th>IP</th><th>الموقع</th><th>الجهاز</th><th>المتصفح</th><th>عدد الزيارات</th><th>أول ظهور</th><th>آخر ظهور</th></tr>
                 </thead>
                 <tbody>
-                  {ipData.map((e, i) => (
-                    <tr key={i}>
-                      <td style={{ fontFamily: "monospace" }}>{e.ip}</td>
-                      <td>{e.hit_count}</td>
-                      <td>{fmt(e.first_seen_at)}</td>
-                      <td>{fmt(e.last_seen_at)}</td>
-                      <td style={{ fontSize: 11, color: "#666", maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.user_agent ?? ""}>{e.user_agent ?? "—"}</td>
-                    </tr>
-                  ))}
+                  {ipData.map((e, i) => {
+                    const g = e.ip ? geoMap[e.ip] : null;
+                    return (
+                      <tr key={i}>
+                        <td style={{ fontFamily: "monospace" }}>{e.ip ?? "—"}</td>
+                        <td style={{ fontSize: 12 }} title={g?.isp ?? ""}>
+                          {e.ip ? (e.ip in geoMap ? formatGeo(g) : "…") : "—"}
+                        </td>
+                        <td style={{ fontSize: 12, fontWeight: 600 }}>{parseDevice(e.user_agent)}</td>
+                        <td style={{ fontSize: 12, color: "#555" }} title={e.user_agent ?? ""}>{parseBrowser(e.user_agent)}</td>
+                        <td>{e.hit_count}</td>
+                        <td>{fmt(e.first_seen_at)}</td>
+                        <td>{fmt(e.last_seen_at)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}
@@ -472,7 +491,7 @@ function UsersTab() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 800,
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 1080,
               width: "94%", maxHeight: "85vh", overflow: "auto",
             }}
           >
@@ -489,29 +508,35 @@ function UsersTab() {
               <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
                 <thead>
                   <tr>
-                    <th>الحالة</th><th>المتصفح / الجهاز</th><th>IP</th>
+                    <th>الحالة</th><th>الجهاز</th><th>المتصفح</th><th>IP</th><th>الموقع</th>
                     <th>أول دخول</th><th>آخر نشاط</th><th>إجراء</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {devData.map((d) => (
-                    <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
-                      <td>
-                        <span style={{
-                          display: "inline-block", padding: "2px 8px", borderRadius: 999,
-                          fontSize: 11, fontWeight: 700,
-                          background: d.approved ? "#dcfce7" : "#fef3c7",
-                          color: d.approved ? "#166534" : "#92400e",
-                        }}>
-                          {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: 11, color: "#444", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={d.user_agent ?? ""}>
-                        {d.user_agent ?? "—"}
-                      </td>
-                      <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
-                      <td>{fmt(d.created_at)}</td>
-                      <td>{fmt(d.last_seen_at)}</td>
+                  {devData.map((d) => {
+                    const g = d.ip ? geoMap[d.ip] : null;
+                    return (
+                      <tr key={d.id} style={!d.approved ? { background: "#fffbeb" } : undefined}>
+                        <td>
+                          <span style={{
+                            display: "inline-block", padding: "2px 8px", borderRadius: 999,
+                            fontSize: 11, fontWeight: 700,
+                            background: d.approved ? "#dcfce7" : "#fef3c7",
+                            color: d.approved ? "#166534" : "#92400e",
+                          }}>
+                            {d.approved ? "موافَق عليه" : "بانتظار الموافقة"}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: 12, fontWeight: 600 }} title={d.user_agent ?? ""}>
+                          {parseDevice(d.user_agent)}
+                        </td>
+                        <td style={{ fontSize: 12, color: "#555" }}>{parseBrowser(d.user_agent)}</td>
+                        <td style={{ fontFamily: "monospace", fontSize: 12 }}>{d.ip ?? "—"}</td>
+                        <td style={{ fontSize: 12 }} title={g?.isp ?? ""}>
+                          {d.ip ? (d.ip in geoMap ? formatGeo(g) : "…") : "—"}
+                        </td>
+                        <td>{fmt(d.created_at)}</td>
+                        <td>{fmt(d.last_seen_at)}</td>
                       <td style={{ whiteSpace: "nowrap" }}>
                         {!d.approved && (
                           <button
@@ -533,8 +558,9 @@ function UsersTab() {
                           style={{ background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
                         >حذف</button>
                       </td>
-                    </tr>
-                  ))}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}
