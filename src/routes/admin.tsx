@@ -454,6 +454,43 @@ function UsersTab() {
         )}
       </div>
 
+      {showCreate && (
+        <div
+          onClick={() => !creating && setShowCreate(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={handleCreateAdmin}
+            style={{ background: "#fff", borderRadius: 12, padding: 24, width: "92%", maxWidth: 480, display: "flex", flexDirection: "column", gap: 12 }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0 }}>إضافة أدمن جديد</h3>
+              <button type="button" onClick={() => !creating && setShowCreate(false)} style={{ border: "none", background: "transparent", fontSize: 22, cursor: "pointer" }}>×</button>
+            </div>
+            <p style={{ fontSize: 13, color: "#666", margin: 0 }}>يُنشأ الحساب مباشرة بصلاحية أدمن بدون الحاجة لكود اشتراك.</p>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الاسم الكامل
+              <input required value={newAdmin.full_name} onChange={(e) => setNewAdmin({ ...newAdmin, full_name: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الإيميل
+              <input required type="email" value={newAdmin.email} onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>كلمة المرور (٦ أحرف على الأقل)
+              <input required type="text" minLength={6} value={newAdmin.password} onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الجوال (اختياري)
+              <input value={newAdmin.phone} onChange={(e) => setNewAdmin({ ...newAdmin, phone: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>المدينة (اختياري)
+              <input value={newAdmin.city} onChange={(e) => setNewAdmin({ ...newAdmin, city: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <button type="submit" disabled={creating} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px", fontWeight: 700, cursor: creating ? "wait" : "pointer", marginTop: 4 }}>
+              {creating ? "جارٍ الإنشاء..." : "إنشاء الأدمن"}
+            </button>
+          </form>
+        </div>
+      )}
+
       {ipUserId && (
         <div
           onClick={() => setIpUserId(null)}
