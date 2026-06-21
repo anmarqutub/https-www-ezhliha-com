@@ -7,6 +7,7 @@ import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, g
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
+import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
@@ -1260,6 +1261,7 @@ function ProvidersTab() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
+  const [showImport, setShowImport] = useState(false);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -1390,12 +1392,27 @@ function ProvidersTab() {
           <button
             className="adm-btn-primary"
             style={{ marginRight: "auto" }}
+            onClick={() => setShowImport(true)}
+          >
+            📥 رفع من Excel
+          </button>
+          <button
+            className="adm-btn-primary"
             onClick={() => exportProvidersCsv(filtered, cities, subs, cats, images)}
             disabled={filtered.length === 0}
           >
             📊 تصدير Excel ({filtered.length})
           </button>
         </div>
+        {showImport && (
+          <ImportProvidersDialog
+            cities={cities}
+            cats={cats}
+            subs={subs}
+            onClose={() => setShowImport(false)}
+            onDone={reload}
+          />
+        )}
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div className="adm-table-wrap">
             <table className="adm-table">
