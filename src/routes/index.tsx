@@ -616,7 +616,20 @@ const css = `
   .ez-wa-btn { display:block; width:100%; text-align:center; background:#25D366; color:#fff; padding:10px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; border:none; cursor:pointer; font-family:inherit; }
   .ez-wa-btn:hover { background:#1da851; }
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
-  .ez-footer { text-align:center; padding:30px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
+  .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
+  .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px 18px; margin-bottom:16px; }
+  .ez-footer-link { color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; }
+  .ez-footer-link:hover { color:#660000; background:#f5f3eb; }
+  .ez-footer-out { color:#660000; }
+  .ez-footer-user { font-size:12px; color:#888; }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:9px 16px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
+  .ez-footer-wa:hover { background:#1da851; color:#fff; }
+
+  .ez-quick { max-width:1200px; margin:18px auto 0; padding:0 24px; }
+  .ez-search-big { max-width:720px; margin:0 auto; display:flex; align-items:center; gap:6px; padding:6px 10px; box-shadow:0 4px 18px rgba(102,0,0,0.08); }
+  .ez-search-icon { font-size:16px; padding-inline-start:6px; color:#660000; }
+  .ez-search-big input { flex:1; }
+  .ez-search-clear { background:transparent; border:none; color:#660000; font-size:16px; cursor:pointer; padding:4px 10px; font-family:inherit; }
 
   @media (max-width: 640px) {
     .ez-brand-logo { height:64px; }
