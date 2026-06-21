@@ -449,18 +449,25 @@ function UsersTab() {
             {ipData && ipData.length > 0 && (
               <table className="adm-table" style={{ width: "100%", fontSize: 13 }}>
                 <thead>
-                  <tr><th>IP</th><th>عدد الزيارات</th><th>أول ظهور</th><th>آخر ظهور</th><th>المتصفح</th></tr>
+                  <tr><th>IP</th><th>الموقع</th><th>الجهاز</th><th>المتصفح</th><th>عدد الزيارات</th><th>أول ظهور</th><th>آخر ظهور</th></tr>
                 </thead>
                 <tbody>
-                  {ipData.map((e, i) => (
-                    <tr key={i}>
-                      <td style={{ fontFamily: "monospace" }}>{e.ip}</td>
-                      <td>{e.hit_count}</td>
-                      <td>{fmt(e.first_seen_at)}</td>
-                      <td>{fmt(e.last_seen_at)}</td>
-                      <td style={{ fontSize: 11, color: "#666", maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={e.user_agent ?? ""}>{e.user_agent ?? "—"}</td>
-                    </tr>
-                  ))}
+                  {ipData.map((e, i) => {
+                    const g = e.ip ? geoMap[e.ip] : null;
+                    return (
+                      <tr key={i}>
+                        <td style={{ fontFamily: "monospace" }}>{e.ip ?? "—"}</td>
+                        <td style={{ fontSize: 12 }} title={g?.isp ?? ""}>
+                          {e.ip ? (e.ip in geoMap ? formatGeo(g) : "…") : "—"}
+                        </td>
+                        <td style={{ fontSize: 12, fontWeight: 600 }}>{parseDevice(e.user_agent)}</td>
+                        <td style={{ fontSize: 12, color: "#555" }} title={e.user_agent ?? ""}>{parseBrowser(e.user_agent)}</td>
+                        <td>{e.hit_count}</td>
+                        <td>{fmt(e.first_seen_at)}</td>
+                        <td>{fmt(e.last_seen_at)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}
