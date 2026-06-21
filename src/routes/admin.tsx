@@ -255,7 +255,20 @@ function UsersTab() {
       refetch();
     } catch (e) {
       alert((e as Error).message);
+  }
+
+  async function handleToggleRole(u: { id: string; email: string | null; roles: string[] }) {
+    const isAdmin = u.roles.includes("admin");
+    const verb = isAdmin ? "إزالة صلاحية الأدمن عن" : "ترقية إلى أدمن";
+    if (!confirm(`هل أنت متأكدة من ${verb}: ${u.email ?? u.id}؟`)) return;
+    try {
+      await toggleRole({ data: { userId: u.id, makeAdmin: !isAdmin } });
+      await logActivity(isAdmin ? "user.demote" : "user.promote", "user", u.id, { email: u.email });
+      refetch();
+    } catch (e) {
+      alert((e as Error).message);
     }
+  }
   }
 
   return (
