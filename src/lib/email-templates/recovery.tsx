@@ -1,41 +1,29 @@
 import * as React from 'react'
-
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Text,
-} from '@react-email/components'
+import { Body, Button, Container, Head, Heading, Html, Preview, Text } from '@react-email/components'
 
 interface RecoveryEmailProps {
   siteName: string
   confirmationUrl: string
 }
 
-export const RecoveryEmail = ({
-  siteName,
-  confirmationUrl,
-}: RecoveryEmailProps) => (
-  <Html lang="en" dir="ltr">
+export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps) => (
+  <Html lang="ar" dir="rtl">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>إعادة تعيين كلمة المرور — {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Reset your password</Heading>
+        <div style={brandBar}>{siteName}</div>
+        <Heading style={h1}>إعادة تعيين كلمة المرور</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
+          استلمنا طلباً لإعادة تعيين كلمة المرور لحسابك في <b>{siteName}</b>.
+          اضغطي الزر بالأسفل لاختيار كلمة مرور جديدة.
         </Text>
-        <Button style={button} href={confirmationUrl}>
-          Reset Password
-        </Button>
+        <div style={{ textAlign: 'center' as const }}>
+          <Button style={button} href={confirmationUrl}>إعادة تعيين كلمة المرور</Button>
+        </div>
+        <Text style={hint}>الرابط صالح لمدة محدودة لأسباب أمنية.</Text>
         <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
+          إذا لم تطلبي إعادة التعيين، يمكنك تجاهل هذه الرسالة بأمان — لن يتم تغيير كلمة المرور.
         </Text>
       </Container>
     </Body>
@@ -44,26 +32,11 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const main = { backgroundColor: '#ffffff', fontFamily: '"Segoe UI", Tahoma, Arial, sans-serif' }
+const container = { padding: '24px', maxWidth: '560px', margin: '0 auto' }
+const brandBar = { color: '#660000', fontSize: '20px', fontWeight: 'bold' as const, borderBottom: '3px solid #660000', paddingBottom: '10px', marginBottom: '20px' }
+const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#660000', margin: '0 0 16px' }
+const text = { fontSize: '15px', color: '#333', lineHeight: '1.8', margin: '0 0 20px' }
+const button = { backgroundColor: '#660000', color: '#fff', fontSize: '15px', fontWeight: 'bold' as const, borderRadius: '8px', padding: '12px 28px', textDecoration: 'none', display: 'inline-block' }
+const hint = { fontSize: '13px', color: '#777', margin: '20px 0 0', textAlign: 'center' as const }
+const footer = { fontSize: '12px', color: '#999', margin: '24px 0 0', borderTop: '1px solid #eee', paddingTop: '14px' }
