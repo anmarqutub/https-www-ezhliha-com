@@ -65,6 +65,7 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSub, setSelectedSub] = useState<string | "all">("all");
   const [search, setSearch] = useState("");
+  const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
     (async () => {
