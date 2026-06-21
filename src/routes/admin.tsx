@@ -466,6 +466,7 @@ function UsersTab() {
                           }}
                         >
                           🔑 إعادة تعيين كلمة المرور
+                        </button>
                       </div>
                     </td>
                   </tr>
