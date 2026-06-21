@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole, createAdminUser } from "@/lib/admin.functions";
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -185,6 +185,26 @@ function UsersTab() {
   const updateDevice = useServerFn(setDeviceStatus);
   const fetchPending = useServerFn(getPendingDevicesSummary);
   const toggleRole = useServerFn(setUserRole);
+  const createAdmin = useServerFn(createAdminUser);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({ email: "", password: "", full_name: "", phone: "", city: "" });
+  const [creating, setCreating] = useState(false);
+
+  async function handleCreateAdmin(e: React.FormEvent) {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      await createAdmin({ data: newAdmin });
+      await logActivity("user.create_admin", "user", newAdmin.email, { email: newAdmin.email });
+      setShowCreate(false);
+      setNewAdmin({ email: "", password: "", full_name: "", phone: "", city: "" });
+      refetch();
+    } catch (err) {
+      alert((err as Error).message);
+    } finally {
+      setCreating(false);
+    }
+  }
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
@@ -298,6 +318,15 @@ function UsersTab() {
           </span>
         )}
       </h1>
+      <div style={{ marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => setShowCreate(true)}
+          style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, cursor: "pointer" }}
+        >
+          + إضافة أدمن جديد
+        </button>
+      </div>
       <div className="adm-card">
         {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
         {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
@@ -424,6 +453,43 @@ function UsersTab() {
           </div>
         )}
       </div>
+
+      {showCreate && (
+        <div
+          onClick={() => !creating && setShowCreate(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={handleCreateAdmin}
+            style={{ background: "#fff", borderRadius: 12, padding: 24, width: "92%", maxWidth: 480, display: "flex", flexDirection: "column", gap: 12 }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0 }}>إضافة أدمن جديد</h3>
+              <button type="button" onClick={() => !creating && setShowCreate(false)} style={{ border: "none", background: "transparent", fontSize: 22, cursor: "pointer" }}>×</button>
+            </div>
+            <p style={{ fontSize: 13, color: "#666", margin: 0 }}>يُنشأ الحساب مباشرة بصلاحية أدمن بدون الحاجة لكود اشتراك.</p>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الاسم الكامل
+              <input required value={newAdmin.full_name} onChange={(e) => setNewAdmin({ ...newAdmin, full_name: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الإيميل
+              <input required type="email" value={newAdmin.email} onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>كلمة المرور (٦ أحرف على الأقل)
+              <input required type="text" minLength={6} value={newAdmin.password} onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>الجوال (اختياري)
+              <input value={newAdmin.phone} onChange={(e) => setNewAdmin({ ...newAdmin, phone: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>المدينة (اختياري)
+              <input value={newAdmin.city} onChange={(e) => setNewAdmin({ ...newAdmin, city: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
+            </label>
+            <button type="submit" disabled={creating} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px", fontWeight: 700, cursor: creating ? "wait" : "pointer", marginTop: 4 }}>
+              {creating ? "جارٍ الإنشاء..." : "إنشاء الأدمن"}
+            </button>
+          </form>
+        </div>
+      )}
 
       {ipUserId && (
         <div
