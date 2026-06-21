@@ -1392,12 +1392,27 @@ function ProvidersTab() {
           <button
             className="adm-btn-primary"
             style={{ marginRight: "auto" }}
+            onClick={() => setShowImport(true)}
+          >
+            📥 رفع من Excel
+          </button>
+          <button
+            className="adm-btn-primary"
             onClick={() => exportProvidersCsv(filtered, cities, subs, cats, images)}
             disabled={filtered.length === 0}
           >
             📊 تصدير Excel ({filtered.length})
           </button>
         </div>
+        {showImport && (
+          <ImportProvidersDialog
+            cities={cities}
+            cats={cats}
+            subs={subs}
+            onClose={() => setShowImport(false)}
+            onDone={reload}
+          />
+        )}
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div className="adm-table-wrap">
             <table className="adm-table">
