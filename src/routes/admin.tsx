@@ -436,7 +436,7 @@ function UsersTab() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 700,
+              background: "#fff", borderRadius: 12, padding: 20, maxWidth: 980,
               width: "92%", maxHeight: "80vh", overflow: "auto",
             }}
           >
