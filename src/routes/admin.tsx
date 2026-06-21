@@ -204,6 +204,17 @@ function UsersTab() {
   const [devData, setDevData] = useState<Array<{ id: string; device_sid: string; user_agent: string | null; ip: string | null; approved: boolean; created_at: string; approved_at: string | null; last_seen_at: string }> | null>(null);
   const [devLoading, setDevLoading] = useState(false);
 
+  const [geoMap, setGeoMap] = useState<Record<string, GeoInfo | null>>({});
+  const loadGeos = useCallback((ips: Array<string | null | undefined>) => {
+    const unique = Array.from(new Set(ips.filter(Boolean) as string[]));
+    unique.forEach((ip) => {
+      if (ip in geoMap) return;
+      lookupIp(ip).then((g) => setGeoMap((m) => ({ ...m, [ip]: g })));
+    });
+  }, [geoMap]);
+  useEffect(() => { if (ipData) loadGeos(ipData.map((e) => e.ip)); }, [ipData, loadGeos]);
+  useEffect(() => { if (devData) loadGeos(devData.map((d) => d.ip)); }, [devData, loadGeos]);
+
   async function openIps(userId: string, label: string) {
     setIpUserId(userId);
     setIpUserLabel(label);
