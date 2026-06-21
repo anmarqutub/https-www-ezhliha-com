@@ -466,9 +466,31 @@ function Home() {
             <span>تواصل معنا</span>
           </a>
           {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
+          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
         </div>
         <p>© 2026 إزهليها — Ezhliha</p>
       </footer>
+
+      {aboutOpen && (
+        <div className="ez-about-overlay" onClick={() => setAboutOpen(false)}>
+          <div className="ez-about-modal" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
+            <h2 className="ez-about-title">من نحن</h2>
+            <p className="ez-about-text">
+              <strong>إزهليها</strong> هي منصتك الأولى لتجهيز الأفراح والمناسبات في المملكة العربية السعودية.
+              نجمع لكِ في مكان واحد نخبة من أفضل مزودي الخدمات — من كوافيرات وخياطات ومصورات ومنسقي حفلات
+              وقاعات ومطاعم وكل ما تحتاجينه ليكون يومكِ مميزاً.
+            </p>
+            <p className="ez-about-text">
+              مهمتنا أن نوفر عليكِ عناء البحث، ونمنحكِ تجربة سهلة وسريعة لاختيار الأنسب لكِ من حيث الجودة
+              والسعر والموقع، مع إمكانية التواصل المباشر عبر واتساب وحفظ المفضلة لديكِ.
+            </p>
+            <p className="ez-about-text">
+              نسعى لأن نكون الدليل الموثوق لكل عروس وكل عائلة تبحث عن التميز في مناسباتها. شكراً لثقتكِ بنا 💐
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
