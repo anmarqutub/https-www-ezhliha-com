@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole } from "@/lib/admin.functions";
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -182,6 +182,7 @@ function UsersTab() {
   const fetchDevices = useServerFn(getUserDevices);
   const updateDevice = useServerFn(setDeviceStatus);
   const fetchPending = useServerFn(getPendingDevicesSummary);
+  const toggleRole = useServerFn(setUserRole);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => fetchUsers(),
@@ -251,6 +252,19 @@ function UsersTab() {
     try {
       await toggleSuspend({ data: { userId: u.id, suspended: !isSusp } });
       await logActivity(isSusp ? "user.unsuspend" : "user.suspend", "user", u.id, { email: u.email });
+      refetch();
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  }
+
+  async function handleToggleRole(u: { id: string; email: string | null; roles: string[] }) {
+    const isAdmin = u.roles.includes("admin");
+    const verb = isAdmin ? "إزالة صلاحية الأدمن عن" : "ترقية إلى أدمن";
+    if (!confirm(`هل أنت متأكدة من ${verb}: ${u.email ?? u.id}؟`)) return;
+    try {
+      await toggleRole({ data: { userId: u.id, makeAdmin: !isAdmin } });
+      await logActivity(isAdmin ? "user.demote" : "user.promote", "user", u.id, { email: u.email });
       refetch();
     } catch (e) {
       alert((e as Error).message);
@@ -359,19 +373,35 @@ function UsersTab() {
                     <td>{u.last_sign_in_at ? fmt(u.last_sign_in_at) : "—"}</td>
                     <td>{lastSeen ? fmt(lastSeen) : "—"}</td>
                     <td>
-                      {!isAdmin && (
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         <button
                           type="button"
-                          onClick={() => handleToggleSuspend(u)}
+                          onClick={() => handleToggleRole(u)}
                           style={{
-                            background: suspended ? "#16a34a" : "#dc2626",
-                            color: "#fff", border: "none", borderRadius: 6,
-                            padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                            background: isAdmin ? "#fff" : "#660000",
+                            color: isAdmin ? "#660000" : "#fff",
+                            border: "1px solid #660000",
+                            borderRadius: 6,
+                            padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
                           }}
+                          title={isAdmin ? "إزالة صلاحية الأدمن" : "ترقية إلى أدمن"}
                         >
-                          {suspended ? "إلغاء التعليق" : "تعليق"}
+                          {isAdmin ? "إزالة الأدمن" : "ترقية لأدمن"}
                         </button>
-                      )}
+                        {!isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSuspend(u)}
+                            style={{
+                              background: suspended ? "#16a34a" : "#dc2626",
+                              color: "#fff", border: "none", borderRadius: 6,
+                              padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                            }}
+                          >
+                            {suspended ? "إلغاء التعليق" : "تعليق"}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                   );
