@@ -318,6 +318,15 @@ function UsersTab() {
           </span>
         )}
       </h1>
+      <div style={{ marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => setShowCreate(true)}
+          style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, cursor: "pointer" }}
+        >
+          + إضافة أدمن جديد
+        </button>
+      </div>
       <div className="adm-card">
         {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
         {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
