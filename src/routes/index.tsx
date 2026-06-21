@@ -56,6 +56,7 @@ function Home() {
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
 
