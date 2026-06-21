@@ -46,6 +46,9 @@ function LoginPage() {
         </label>
         {error && <div className="auth-error">{error}</div>}
         <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "تسجيل الدخول"}</button>
+        <div className="auth-switch" style={{ textAlign: "center" }}>
+          <Link to="/forgot-password">نسيت كلمة المرور؟</Link>
+        </div>
         <div className="auth-switch">
           ليس لديك حساب؟ <Link to="/signup">سجّل الآن</Link>
         </div>
