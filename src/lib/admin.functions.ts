@@ -226,3 +226,54 @@ export const setUserRole = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+// Create a new admin user directly (no purchase code) — admin only.
+export const createAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    email: z.string().email(),
+    password: z.string().min(6).max(72),
+    full_name: z.string().trim().min(1).max(120),
+    phone: z.string().trim().max(30).optional().or(z.literal("")),
+    city: z.string().trim().max(80).optional().or(z.literal("")),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+
+    const { data: existing } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const taken = existing.users?.some((u) => u.email?.toLowerCase() === data.email.toLowerCase());
+    if (taken) throw new Response("هذا الإيميل مسجل مسبقًا", { status: 400 });
+
+    const { data: created, error: uErr } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: data.full_name,
+        phone: data.phone || null,
+        city: data.city || null,
+      },
+    });
+    if (uErr || !created.user) {
+      throw new Response(uErr?.message ?? "تعذر إنشاء الحساب", { status: 400 });
+    }
+
+    const { error: pErr } = await supabaseAdmin
+      .from("profiles")
+      .upsert({
+        id: created.user.id,
+        full_name: data.full_name,
+        phone: data.phone || null,
+        city: data.city || null,
+      });
+    if (pErr) {
+      await supabaseAdmin.auth.admin.deleteUser(created.user.id);
+      throw new Response("تعذر إكمال إنشاء الحساب", { status: 500 });
+    }
+
+    await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: created.user.id, role: "admin" }, { onConflict: "user_id,role" });
+
+    return { ok: true, userId: created.user.id };
+  });
