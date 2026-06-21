@@ -703,8 +703,8 @@ const css = `
   .ez-footer-link:hover { color:#660000; background:#f5f3eb; }
   .ez-footer-out { color:#660000; }
   .ez-footer-user { font-size:12px; color:#888; }
-  .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:9px 16px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
-  .ez-footer-wa:hover { background:#1da851; color:#fff; }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; background:#86efac; color:#065f46; padding:9px 16px; border-radius:50px; text-decoration:none; font-weight:700; font-size:13px; }
+  .ez-footer-wa:hover { background:#6ee7a8; color:#064e3b; }
   .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
   .ez-about-modal { background:#fff; max-width:560px; width:100%; border-radius:16px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:85vh; overflow-y:auto; border-top:4px solid #660000; }
   .ez-about-close { position:absolute; top:10px; left:14px; background:transparent; border:none; font-size:28px; line-height:1; cursor:pointer; color:#666; padding:4px 10px; border-radius:8px; }
