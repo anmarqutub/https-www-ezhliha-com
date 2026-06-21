@@ -7,6 +7,7 @@ import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, g
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
 
 import { supabase } from "@/integrations/supabase/client";
+import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
