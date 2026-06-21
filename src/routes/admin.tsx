@@ -186,6 +186,19 @@ function UsersTab() {
   const fetchPending = useServerFn(getPendingDevicesSummary);
   const toggleRole = useServerFn(setUserRole);
   const createAdmin = useServerFn(createAdminUser);
+  const resetPwd = useServerFn(sendUserPasswordReset);
+
+  async function handleSendReset(u: { id: string; email: string | null }) {
+    if (!u.email) { alert("هذا المستخدم لا يملك بريداً إلكترونياً."); return; }
+    if (!confirm(`إرسال رابط إعادة تعيين كلمة المرور إلى:\n${u.email}؟`)) return;
+    try {
+      await resetPwd({ data: { userId: u.id, redirectTo: `${window.location.origin}/reset-password` } });
+      await logActivity("user.password_reset_sent", "user", u.id, { email: u.email });
+      alert(`تم إرسال رابط إعادة التعيين إلى:\n${u.email}`);
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  }
   const [showCreate, setShowCreate] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ email: "", password: "", full_name: "", phone: "", city: "" });
   const [creating, setCreating] = useState(false);
