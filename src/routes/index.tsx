@@ -468,7 +468,7 @@ function Home() {
             <span>تواصل معنا</span>
           </a>
         </div>
-        <p>© 2026 إزهليها — Ezhliha</p>
+        <p className="ez-footer-copy">Ezhliha © 2026 — Powered by AQ</p>
       </footer>
 
       {aboutOpen && (
@@ -706,6 +706,7 @@ const css = `
   .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; background:transparent; color:inherit; padding:4px 0; text-decoration:none; font-weight:400; font-size:14px; }
   .ez-footer-wa svg { color:#25D366; }
   .ez-footer-wa:hover { color:#25D366; }
+  .ez-footer-copy { font-size:11px; color:#777; margin:0; letter-spacing:.3px; }
   .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
   .ez-about-modal { background:#fff; max-width:560px; width:100%; border-radius:16px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:85vh; overflow-y:auto; border-top:4px solid #660000; }
   .ez-about-close { position:absolute; top:10px; left:14px; background:transparent; border:none; font-size:28px; line-height:1; cursor:pointer; color:#666; padding:4px 10px; border-radius:8px; }
