@@ -468,7 +468,7 @@ function Home() {
             <span>تواصل معنا</span>
           </a>
         </div>
-        <p>© 2026 إزهليها — Ezhliha</p>
+        <p className="ez-footer-copy">Ezhliha © 2026 — Powered by AQ</p>
       </footer>
 
       {aboutOpen && (
