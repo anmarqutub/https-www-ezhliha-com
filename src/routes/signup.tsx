@@ -158,5 +158,7 @@ export const authCss = `
   .auth-btn:disabled { opacity:.6; cursor:not-allowed; }
   .auth-error { background:#fde8e8; color:#7a1a1a; padding:10px 14px; border-radius:8px; font-size:13px; }
   .auth-switch { text-align:center; font-size:14px; color:#5A4A4A; margin-top:8px; }
+  .auth-field-hint { font-size:11.5px; color:#9A8A8A; font-weight:500; margin-top:2px; }
+  .auth-field-error { font-size:11.5px; color:#B01818; font-weight:600; margin-top:2px; }
   .auth-switch a { color:#6B1F1F; font-weight:700; text-decoration:none; }
 `;
