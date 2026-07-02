@@ -11,7 +11,7 @@ export const createUser = createServerFn({ method: "POST" })
       phone: z
         .string()
         .trim()
-        .regex(/^05\d{8}$/, "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من ١٠ أرقام"),
+        .regex(/^(05\d{8}|9665\d{8}|\+[1-9]\d{6,14})$/, "رقم الجوال غير صحيح"),
       city: z.string().trim().max(80).optional().or(z.literal("")),
       code: z.string().trim().min(4, "كود الشراء مطلوب").max(40),
     }).parse(input),
