@@ -30,7 +30,7 @@ function SignupPage() {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const phoneNorm = phone.replace(/[\s\-+]/g, "");
-  const phoneValid = /^(05\d{8}|9665\d{8})$/.test(phoneNorm);
+  const phoneValid = /^05\d{8}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
   const formValid = emailValid && phoneValid && passwordValid && fullName.trim() && code.trim();
 
@@ -38,11 +38,11 @@ function SignupPage() {
     e.preventDefault();
     setError(null);
     if (!emailValid) return setError("البريد الإلكتروني غير صالح");
-    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)");
+    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من ١٠ أرقام");
     setSubmitting(true);
     try {
       await register({
-        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, city, code },
+        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, code },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
