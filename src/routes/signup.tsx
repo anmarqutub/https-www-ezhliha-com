@@ -118,11 +118,12 @@ export function AuthShell({ title, sub, children }: { title: string; sub: string
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: React.ReactNode }) {
   return (
     <label className="auth-field">
       <span>{label}</span>
       {children}
+      {error ? <small className="auth-field-error">{error}</small> : hint ? <small className="auth-field-hint">{hint}</small> : null}
     </label>
   );
 }
