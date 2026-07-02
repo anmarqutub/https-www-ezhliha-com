@@ -62,8 +62,8 @@ function SignupPage() {
         <Field label="كلمة المرور">
           <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="٦ أحرف على الأقل" />
         </Field>
-        <Field label="رقم الجوال (اختياري)">
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
+        <Field label="رقم الجوال">
+          <input required type="tel" pattern="[0-9+\-\s]{8,}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
         </Field>
         <Field label="المدينة">
           <select value={city} onChange={(e) => setCity(e.target.value)}>

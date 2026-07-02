@@ -8,7 +8,7 @@ export const createUser = createServerFn({ method: "POST" })
       email: z.string().email(),
       password: z.string().min(6).max(72),
       full_name: z.string().trim().min(1).max(120),
-      phone: z.string().trim().max(30).optional().or(z.literal("")),
+      phone: z.string().trim().min(8, "رقم الجوال مطلوب").max(30),
       city: z.string().trim().max(80).optional().or(z.literal("")),
       code: z.string().trim().min(4).max(40),
     }).parse(input),
