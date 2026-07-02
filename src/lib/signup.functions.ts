@@ -5,12 +5,15 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 export const createUser = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z.object({
-      email: z.string().email(),
-      password: z.string().min(6).max(72),
-      full_name: z.string().trim().min(1).max(120),
-      phone: z.string().trim().min(8, "رقم الجوال مطلوب").max(30),
+      email: z.string().trim().toLowerCase().email("البريد الإلكتروني غير صالح").max(255),
+      password: z.string().min(6, "كلمة المرور ٦ أحرف على الأقل").max(72),
+      full_name: z.string().trim().min(1, "الاسم مطلوب").max(120),
+      phone: z
+        .string()
+        .trim()
+        .regex(/^(05\d{8}|9665\d{8})$/, "رقم الجوال يجب أن يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)"),
       city: z.string().trim().max(80).optional().or(z.literal("")),
-      code: z.string().trim().min(4).max(40),
+      code: z.string().trim().min(4, "كود الشراء مطلوب").max(40),
     }).parse(input),
   )
   .handler(async ({ data }) => {
