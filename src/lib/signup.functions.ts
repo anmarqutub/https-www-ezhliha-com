@@ -38,7 +38,7 @@ export const createUser = createServerFn({ method: "POST" })
       (u) => u.email?.toLowerCase() === data.email.toLowerCase()
     );
     if (emailTaken) {
-      throw new Response("هذا الإيميل مسجل مسبقًا", { status: 400 });
+      throw new Error("هذا الإيميل مسجل مسبقًا");
     }
 
     // 3) Create auth user
