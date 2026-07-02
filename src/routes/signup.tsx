@@ -28,15 +28,23 @@ function SignupPage() {
     if (!loading && session) navigate({ to: "/" });
   }, [session, loading, navigate]);
 
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const phoneNorm = phone.replace(/[\s\-+]/g, "");
+  const phoneValid = /^(05\d{8}|9665\d{8})$/.test(phoneNorm);
+  const passwordValid = password.length >= 6;
+  const formValid = emailValid && phoneValid && passwordValid && fullName.trim() && code.trim();
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!emailValid) return setError("البريد الإلكتروني غير صالح");
+    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)");
     setSubmitting(true);
     try {
       await register({
-        data: { email, password, full_name: fullName, phone, city, code },
+        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, city, code },
       });
-      const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
       navigate({ to: "/" });
     } catch (e) {
@@ -49,21 +57,32 @@ function SignupPage() {
 
   return (
     <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة للتسجيل">
-      <form onSubmit={onSubmit} className="auth-form">
-        <Field label="كود الشراء (من متجر سلة)">
+      <form onSubmit={onSubmit} className="auth-form" noValidate>
+        <Field label="كود الشراء (من متجر سلة)" hint="الكود المرسل لك بعد الشراء">
           <input required value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
-        <Field label="الاسم الكامل">
-          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="الاسم الكامل" />
+        <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك">
+          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="مثال: نورة عبدالله" />
         </Field>
-        <Field label="البريد الإلكتروني">
+        <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined}>
           <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
         </Field>
-        <Field label="كلمة المرور">
-          <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="٦ أحرف على الأقل" />
+        <Field label="كلمة المرور" hint="٦ أحرف على الأقل" error={password.length > 0 && !passwordValid ? "كلمة المرور قصيرة" : undefined}>
+          <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" />
         </Field>
-        <Field label="رقم الجوال">
-          <input required type="tel" pattern="[0-9+\-\s]{8,}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
+        <Field
+          label="رقم الجوال"
+          hint="يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)"
+          error={phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined}
+        >
+          <input
+            required
+            type="tel"
+            inputMode="numeric"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="05XXXXXXXX أو 9665XXXXXXXX"
+          />
         </Field>
         <Field label="المدينة">
           <select value={city} onChange={(e) => setCity(e.target.value)}>
@@ -74,7 +93,7 @@ function SignupPage() {
           </select>
         </Field>
         {error && <div className="auth-error">{error}</div>}
-        <button className="auth-btn" disabled={submitting}>{submitting ? "..." : "إنشاء الحساب"}</button>
+        <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>
         <div className="auth-switch">
           لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
         </div>
