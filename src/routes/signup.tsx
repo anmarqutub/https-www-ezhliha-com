@@ -19,7 +19,7 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("الرياض");
+  
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +30,7 @@ function SignupPage() {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const phoneNorm = phone.replace(/[\s\-+]/g, "");
-  const phoneValid = /^(05\d{8}|9665\d{8})$/.test(phoneNorm);
+  const phoneValid = /^05\d{8}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
   const formValid = emailValid && phoneValid && passwordValid && fullName.trim() && code.trim();
 
@@ -38,11 +38,11 @@ function SignupPage() {
     e.preventDefault();
     setError(null);
     if (!emailValid) return setError("البريد الإلكتروني غير صالح");
-    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)");
+    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من ١٠ أرقام");
     setSubmitting(true);
     try {
       await register({
-        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, city, code },
+        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, code },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
@@ -58,7 +58,7 @@ function SignupPage() {
   return (
     <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة للتسجيل">
       <form onSubmit={onSubmit} className="auth-form" noValidate>
-        <Field label="كود الشراء (من متجر سلة)" hint="الكود المرسل لك بعد الشراء">
+        <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة">
           <input required value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
         <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك">
@@ -72,7 +72,6 @@ function SignupPage() {
         </Field>
         <Field
           label="رقم الجوال"
-          hint="يبدأ بـ 05 (١٠ أرقام) أو 966 (١٢ رقم)"
           error={phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined}
         >
           <input
@@ -81,16 +80,8 @@ function SignupPage() {
             inputMode="numeric"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="05XXXXXXXX أو 9665XXXXXXXX"
+            placeholder="05XXXXXXXX"
           />
-        </Field>
-        <Field label="المدينة">
-          <select value={city} onChange={(e) => setCity(e.target.value)}>
-            <option>الرياض</option>
-            <option>جدة</option>
-            <option>الدمام</option>
-            <option>مكة المكرمة</option>
-          </select>
         </Field>
         {error && <div className="auth-error">{error}</div>}
         <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>
