@@ -49,9 +49,8 @@ function SignupPage() {
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
       navigate({ to: "/" });
-    } catch (e) {
-      const msg = e instanceof Response ? await e.text() : (e as Error).message;
-      setError(msg || "حدث خطأ");
+    } catch (e: any) {
+      setError(e?.message || "حدث خطأ");
     } finally {
       setSubmitting(false);
     }
