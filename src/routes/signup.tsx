@@ -29,8 +29,10 @@ function SignupPage() {
   }, [session, loading, navigate]);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-  const phoneNorm = phone.replace(/[\s\-+]/g, "");
-  const phoneValid = /^05\d{8}$/.test(phoneNorm);
+  const phoneNorm = phone.replace(/[\s\-]/g, "");
+  const phoneValid = /^05\d{8}$/.test(phoneNorm)
+    || /^9665\d{8}$/.test(phoneNorm)
+    || /^\+[1-9]\d{6,14}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
   const formValid = emailValid && phoneValid && passwordValid && fullName.trim() && code.trim();
 
