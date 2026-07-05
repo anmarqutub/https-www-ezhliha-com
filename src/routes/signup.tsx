@@ -21,7 +21,7 @@ function SignupPage() {
   const [phone, setPhone] = useState("");
   
   const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -34,13 +34,28 @@ function SignupPage() {
     || /^9665\d{8}$/.test(phoneNorm)
     || /^\+[1-9]\d{6,14}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
-  const formValid = emailValid && phoneValid && passwordValid && fullName.trim() && code.trim();
+  const nameValid = fullName.trim().length > 0;
+  const codeValid = code.trim().length >= 4;
+  const formValid = emailValid && phoneValid && passwordValid && nameValid && codeValid;
+
+  const emailError = serverErrors.email ?? (email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined);
+  const phoneError = serverErrors.phone ?? (phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined);
+  const passwordError = serverErrors.password ?? (password.length > 0 && !passwordValid ? "كلمة المرور يجب أن تكون ٦ أحرف على الأقل" : undefined);
+  const nameError = serverErrors.full_name ?? undefined;
+  const codeError = serverErrors.code ?? undefined;
+  const formError = serverErrors.form ?? undefined;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    if (!emailValid) return setError("البريد الإلكتروني غير صالح");
-    if (!phoneValid) return setError("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من ١٠ أرقام");
+    setServerErrors({});
+    const errs: Record<string, string> = {};
+    if (!nameValid) errs.full_name = "الاسم مطلوب";
+    if (!codeValid) errs.code = "كود الشراء مطلوب";
+    if (!emailValid) errs.email = "البريد الإلكتروني غير صالح";
+    if (!passwordValid) errs.password = "كلمة المرور يجب أن تكون ٦ أحرف على الأقل";
+    if (!phoneValid) errs.phone = "رقم الجوال غير صحيح";
+    if (Object.keys(errs).length) { setServerErrors(errs); return; }
+
     setSubmitting(true);
     try {
       await register({
@@ -49,8 +64,18 @@ function SignupPage() {
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
       navigate({ to: "/" });
-    } catch (e: any) {
-      setError(e?.message || "حدث خطأ");
+    } catch (err: any) {
+      const raw = err?.message || "حدث خطأ";
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.field && parsed.message) {
+          setServerErrors({ [parsed.field]: parsed.message });
+        } else {
+          setServerErrors({ form: raw });
+        }
+      } catch {
+        setServerErrors({ form: raw });
+      }
     } finally {
       setSubmitting(false);
     }
@@ -59,32 +84,29 @@ function SignupPage() {
   return (
     <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة للتسجيل">
       <form onSubmit={onSubmit} className="auth-form" noValidate>
-        <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة">
-          <input required value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
+        <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة" error={codeError}>
+          <input required value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setServerErrors((s) => ({ ...s, code: "" })); }} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
-        <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك">
-          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="مثال: نورة عبدالله" />
+        <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك" error={nameError}>
+          <input required value={fullName} onChange={(e) => { setFullName(e.target.value); setServerErrors((s) => ({ ...s, full_name: "" })); }} placeholder="مثال: نورة عبدالله" />
         </Field>
-        <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined}>
-          <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
+        <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={emailError}>
+          <input required type="email" value={email} onChange={(e) => { setEmail(e.target.value); setServerErrors((s) => ({ ...s, email: "" })); }} placeholder="example@email.com" />
         </Field>
-        <Field label="كلمة المرور" hint="٦ أحرف على الأقل" error={password.length > 0 && !passwordValid ? "كلمة المرور قصيرة" : undefined}>
-          <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" />
+        <Field label="كلمة المرور" hint="٦ أحرف على الأقل" error={passwordError}>
+          <input required type="password" minLength={6} value={password} onChange={(e) => { setPassword(e.target.value); setServerErrors((s) => ({ ...s, password: "" })); }} placeholder="••••••" />
         </Field>
-        <Field
-          label="رقم الجوال"
-          error={phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined}
-        >
+        <Field label="رقم الجوال" error={phoneError}>
           <input
             required
             type="tel"
-            inputMode="numeric"
+            inputMode="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => { setPhone(e.target.value); setServerErrors((s) => ({ ...s, phone: "" })); }}
             placeholder="05XXXXXXXX"
           />
         </Field>
-        {error && <div className="auth-error">{error}</div>}
+        {formError && <div className="auth-error">{formError}</div>}
         <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>
         <div className="auth-switch">
           لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
