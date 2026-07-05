@@ -60,6 +60,7 @@ function SignupPage() {
   const passwordError = serverErrors.password ?? (password.length > 0 && !passwordValid ? "كلمة المرور يجب أن تكون ٦ أحرف على الأقل" : undefined);
   const nameError = serverErrors.full_name ?? undefined;
   const codeError = serverErrors.code ?? undefined;
+  const cityError = serverErrors.city ?? undefined;
   const formError = serverErrors.form ?? undefined;
 
   async function onSubmit(e: React.FormEvent) {
