@@ -2062,6 +2062,8 @@ const pageStyle: React.CSSProperties = {
   minHeight: "100vh", background: "#FAF6F2", fontFamily: "Tajawal, system-ui, sans-serif", color: "#1A1A1A",
 };
 const loadingStyle: React.CSSProperties = { ...pageStyle, display: "flex", alignItems: "center", justifyContent: "center" };
+const filterBarStyle: React.CSSProperties = { display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", padding: "10px 12px", background: "#fafafa", border: "1px solid #eee", borderRadius: 8, marginBottom: 12 };
+const filterInputStyle: React.CSSProperties = { padding: "6px 10px", borderRadius: 6, border: "1px solid #ddd", fontSize: 13, background: "#fff", fontFamily: "inherit" };
 
 const adminCss = `
   .adm-nav { background:#fff; border-bottom:1px solid #E8DADA; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(107,31,31,0.06); }
