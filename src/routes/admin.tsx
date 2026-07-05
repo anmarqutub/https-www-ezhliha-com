@@ -203,6 +203,19 @@ function UsersTab() {
   const [newAdmin, setNewAdmin] = useState({ email: "", password: "", full_name: "", phone: "", city: "" });
   const [creating, setCreating] = useState(false);
 
+  // Filters
+  const [fName, setFName] = useState("");
+  const [fStatus, setFStatus] = useState<"all" | "online" | "offline" | "suspended">("all");
+  const [fCity, setFCity] = useState<string>("all");
+  const [fRole, setFRole] = useState<"all" | "admin" | "user">("all");
+  const [fDateField, setFDateField] = useState<"created_at" | "last_sign_in_at" | "last_seen_at">("last_sign_in_at");
+  const [fFrom, setFFrom] = useState("");
+  const [fTo, setFTo] = useState("");
+  function resetFilters() {
+    setFName(""); setFStatus("all"); setFCity("all"); setFRole("all");
+    setFDateField("last_sign_in_at"); setFFrom(""); setFTo("");
+  }
+
   async function handleCreateAdmin(e: React.FormEvent) {
     e.preventDefault();
     setCreating(true);
