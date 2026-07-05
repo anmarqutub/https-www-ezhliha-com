@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { createUser } from "@/lib/signup.functions";
@@ -19,10 +20,25 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  
+  const [city, setCity] = useState("");
   const [code, setCode] = useState("");
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: cities } = useQuery({
+    queryKey: ["cities-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cities")
+        .select("id, name_ar")
+        .eq("active", true)
+        .order("sort_order", { ascending: true })
+        .order("name_ar", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/" });
@@ -35,14 +51,16 @@ function SignupPage() {
     || /^\+[1-9]\d{6,14}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
   const nameValid = fullName.trim().length > 0;
+  const cityValid = city.trim().length > 0;
   const codeValid = code.trim().length >= 4;
-  const formValid = emailValid && phoneValid && passwordValid && nameValid && codeValid;
+  const formValid = emailValid && phoneValid && passwordValid && nameValid && cityValid && codeValid;
 
   const emailError = serverErrors.email ?? (email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined);
   const phoneError = serverErrors.phone ?? (phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined);
   const passwordError = serverErrors.password ?? (password.length > 0 && !passwordValid ? "كلمة المرور يجب أن تكون ٦ أحرف على الأقل" : undefined);
   const nameError = serverErrors.full_name ?? undefined;
   const codeError = serverErrors.code ?? undefined;
+  const cityError = serverErrors.city ?? undefined;
   const formError = serverErrors.form ?? undefined;
 
   async function onSubmit(e: React.FormEvent) {
@@ -54,12 +72,13 @@ function SignupPage() {
     if (!emailValid) errs.email = "البريد الإلكتروني غير صالح";
     if (!passwordValid) errs.password = "كلمة المرور يجب أن تكون ٦ أحرف على الأقل";
     if (!phoneValid) errs.phone = "رقم الجوال غير صحيح";
+    if (!cityValid) errs.city = "المدينة مطلوبة";
     if (Object.keys(errs).length) { setServerErrors(errs); return; }
 
     setSubmitting(true);
     try {
       await register({
-        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, code },
+        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, city, code },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
@@ -105,6 +124,18 @@ function SignupPage() {
             onChange={(e) => { setPhone(e.target.value); setServerErrors((s) => ({ ...s, phone: "" })); }}
             placeholder="05XXXXXXXX"
           />
+        </Field>
+        <Field label="المدينة" error={cityError}>
+          <select
+            required
+            value={city}
+            onChange={(e) => { setCity(e.target.value); setServerErrors((s) => ({ ...s, city: "" })); }}
+          >
+            <option value="">اختاري المدينة</option>
+            {cities?.map((c) => (
+              <option key={c.id} value={c.name_ar}>{c.name_ar}</option>
+            ))}
+          </select>
         </Field>
         {formError && <div className="auth-error">{formError}</div>}
         <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>

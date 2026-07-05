@@ -16,7 +16,7 @@ export const createUser = createServerFn({ method: "POST" })
         .string()
         .trim()
         .regex(/^(05\d{8}|9665\d{8}|\+[1-9]\d{6,14})$/, "رقم الجوال غير صحيح"),
-      city: z.string().trim().max(80).optional().or(z.literal("")),
+      city: z.string().trim().min(1, "المدينة مطلوبة").max(80),
       code: z.string().trim().min(4, "كود الشراء مطلوب").max(40),
     }).parse(input),
   )
