@@ -72,12 +72,13 @@ function SignupPage() {
     if (!emailValid) errs.email = "البريد الإلكتروني غير صالح";
     if (!passwordValid) errs.password = "كلمة المرور يجب أن تكون ٦ أحرف على الأقل";
     if (!phoneValid) errs.phone = "رقم الجوال غير صحيح";
+    if (!cityValid) errs.city = "المدينة مطلوبة";
     if (Object.keys(errs).length) { setServerErrors(errs); return; }
 
     setSubmitting(true);
     try {
       await register({
-        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, code },
+        data: { email: email.trim(), password, full_name: fullName, phone: phoneNorm, city, code },
       });
       const { error: sErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (sErr) throw new Error(sErr.message);
