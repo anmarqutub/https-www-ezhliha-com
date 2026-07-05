@@ -33,15 +33,6 @@ function getOrCreateDeviceSid(): string {
   }
 }
 
-function rotateDeviceSid(): string {
-  const sid = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now();
-  try {
-    localStorage.setItem(SID_KEY, sid);
-  } catch {
-    /* ignore */
-  }
-  return sid;
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -61,8 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => fetchRoles(s.user.id), 0);
         startHeartbeat();
         if (event === "SIGNED_IN") {
-          // New login: rotate sid and claim. If 3rd+ device, sign out and notify.
-          const sid = rotateDeviceSid();
+          // Reuse the persistent device sid for this browser. Do NOT rotate,
+          // or every token refresh / tab focus would register a new device.
+          const sid = getOrCreateDeviceSid();
           claim({ data: { sessionId: sid } })
             .then(async (res) => {
               if (res?.status === "pending") {
