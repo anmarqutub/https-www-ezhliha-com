@@ -61,19 +61,19 @@ export const createUser = createServerFn({ method: "POST" })
     });
     if (uErr || !created.user) fieldError("email", uErr?.message ?? "تعذر إنشاء الحساب");
 
-    // 5) Profile is auto-created via on_auth_user_created trigger.
-    // Ensure phone/city are set (trigger reads from user_metadata but we make sure here).
-    const { error: pErr } = await supabaseAdmin
-      .from("profiles")
-      .update({
-        full_name: data.full_name,
-        phone: data.phone || null,
-        city: data.city || null,
-      })
-      .eq("id", created.user.id);
-    if (pErr) {
-      await supabaseAdmin.auth.admin.deleteUser(created.user.id);
-      fieldError("form", "تعذر إكمال التسجيل، حاول مجددًا");
+    // 5) Profile is auto-created via on_auth_user_created trigger from user_metadata.
+    // Best-effort sync — do NOT fail signup if this update errors.
+    try {
+      await supabaseAdmin
+        .from("profiles")
+        .update({
+          full_name: data.full_name,
+          phone: data.phone || null,
+          city: data.city || null,
+        })
+        .eq("id", created.user.id);
+    } catch (e) {
+      console.warn("[signup] profile update failed (non-fatal):", e);
     }
 
     // 6) Claim code atomically
