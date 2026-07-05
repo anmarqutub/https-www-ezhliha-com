@@ -33,15 +33,6 @@ function getOrCreateDeviceSid(): string {
   }
 }
 
-function rotateDeviceSid(): string {
-  const sid = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now();
-  try {
-    localStorage.setItem(SID_KEY, sid);
-  } catch {
-    /* ignore */
-  }
-  return sid;
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
