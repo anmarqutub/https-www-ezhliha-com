@@ -357,7 +357,89 @@ function UsersTab() {
         {isLoading && <p className="adm-empty">جارٍ التحميل...</p>}
         {error && <p className="adm-error">خطأ: {(error as Error).message}</p>}
         {data && data.users.length === 0 && <p className="adm-empty">لا توجد مستخدمات بعد.</p>}
-        {data && data.users.length > 0 && (
+        {data && data.users.length > 0 && (() => {
+          const allCities = Array.from(
+            new Set(
+              data.users
+                .map((u) => (u.profile?.city ?? "").trim())
+                .filter((c) => c.length > 0),
+            ),
+          ).sort();
+          const fromTs = fFrom ? new Date(fFrom).getTime() : null;
+          const toTs = fTo ? new Date(fTo).getTime() + 24 * 60 * 60 * 1000 - 1 : null;
+          const nameQ = fName.trim().toLowerCase();
+          const filtered = data.users.filter((u) => {
+            const prof = u.profile as { last_seen_at?: string | null; suspended_at?: string | null; city?: string | null; full_name?: string | null } | null;
+            const lastSeen = prof?.last_seen_at ?? null;
+            const suspended = !!prof?.suspended_at;
+            const online = !suspended && lastSeen ? (Date.now() - new Date(lastSeen).getTime()) < 2 * 60 * 1000 : false;
+            const isAdminRow = u.roles.includes("admin");
+            if (fStatus === "online" && !online) return false;
+            if (fStatus === "offline" && (online || suspended)) return false;
+            if (fStatus === "suspended" && !suspended) return false;
+            if (fRole === "admin" && !isAdminRow) return false;
+            if (fRole === "user" && isAdminRow) return false;
+            if (fCity !== "all" && (prof?.city ?? "") !== fCity) return false;
+            if (nameQ) {
+              const hay = `${prof?.full_name ?? ""} ${u.email ?? ""} ${prof?.city ?? ""}`.toLowerCase();
+              if (!hay.includes(nameQ)) return false;
+            }
+            if (fromTs || toTs) {
+              const raw = fDateField === "created_at" ? u.created_at
+                : fDateField === "last_sign_in_at" ? u.last_sign_in_at
+                : lastSeen;
+              if (!raw) return false;
+              const t = new Date(raw).getTime();
+              if (fromTs && t < fromTs) return false;
+              if (toTs && t > toTs) return false;
+            }
+            return true;
+          });
+          return (
+            <>
+              <div style={filterBarStyle}>
+                <input
+                  type="search"
+                  placeholder="بحث بالاسم أو الإيميل..."
+                  value={fName}
+                  onChange={(e) => setFName(e.target.value)}
+                  style={filterInputStyle}
+                />
+                <select value={fStatus} onChange={(e) => setFStatus(e.target.value as typeof fStatus)} style={filterInputStyle}>
+                  <option value="all">كل الحالات</option>
+                  <option value="online">متصل الآن</option>
+                  <option value="offline">غير متصل</option>
+                  <option value="suspended">معلّق</option>
+                </select>
+                <select value={fCity} onChange={(e) => setFCity(e.target.value)} style={filterInputStyle}>
+                  <option value="all">كل المدن</option>
+                  {allCities.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <select value={fRole} onChange={(e) => setFRole(e.target.value as typeof fRole)} style={filterInputStyle}>
+                  <option value="all">كل الأدوار</option>
+                  <option value="admin">أدمن</option>
+                  <option value="user">مستخدمة</option>
+                </select>
+                <select value={fDateField} onChange={(e) => setFDateField(e.target.value as typeof fDateField)} style={filterInputStyle} title="الحقل المستخدم للفلترة بالتاريخ">
+                  <option value="last_sign_in_at">آخر دخول</option>
+                  <option value="created_at">تاريخ التسجيل</option>
+                  <option value="last_seen_at">آخر ظهور</option>
+                </select>
+                <label style={{ fontSize: 12, color: "#555", display: "flex", alignItems: "center", gap: 4 }}>
+                  من
+                  <input type="date" value={fFrom} onChange={(e) => setFFrom(e.target.value)} style={filterInputStyle} />
+                </label>
+                <label style={{ fontSize: 12, color: "#555", display: "flex", alignItems: "center", gap: 4 }}>
+                  إلى
+                  <input type="date" value={fTo} onChange={(e) => setFTo(e.target.value)} style={filterInputStyle} />
+                </label>
+                <button type="button" onClick={resetFilters} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 6, padding: "6px 12px", fontSize: 12, cursor: "pointer", fontWeight: 600 }}>
+                  إعادة تعيين
+                </button>
+                <span style={{ fontSize: 12, color: "#666", marginInlineStart: "auto", fontWeight: 600 }}>
+                  {filtered.length} من {data.users.length}
+                </span>
+              </div>
           <div className="adm-table-wrap">
             <table className="adm-table">
               <thead>
@@ -367,7 +449,7 @@ function UsersTab() {
                 </tr>
               </thead>
               <tbody>
-                {data.users.map((u) => {
+                {filtered.map((u) => {
                   const prof = u.profile as { last_seen_at?: string | null; suspended_at?: string | null } | null;
                   const lastSeen = prof?.last_seen_at ?? null;
                   const suspended = !!prof?.suspended_at;
