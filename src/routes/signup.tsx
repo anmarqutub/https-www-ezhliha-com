@@ -20,10 +20,25 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  
+  const [city, setCity] = useState("");
   const [code, setCode] = useState("");
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: cities } = useQuery({
+    queryKey: ["cities-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cities")
+        .select("id, name_ar")
+        .eq("active", true)
+        .order("sort_order", { ascending: true })
+        .order("name_ar", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/" });
