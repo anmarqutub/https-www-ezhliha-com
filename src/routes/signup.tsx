@@ -125,6 +125,18 @@ function SignupPage() {
             placeholder="05XXXXXXXX"
           />
         </Field>
+        <Field label="المدينة" error={cityError}>
+          <select
+            required
+            value={city}
+            onChange={(e) => { setCity(e.target.value); setServerErrors((s) => ({ ...s, city: "" })); }}
+          >
+            <option value="">اختاري المدينة</option>
+            {cities?.map((c) => (
+              <option key={c.id} value={c.name_ar}>{c.name_ar}</option>
+            ))}
+          </select>
+        </Field>
         {formError && <div className="auth-error">{formError}</div>}
         <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>
         <div className="auth-switch">
