@@ -51,8 +51,9 @@ function SignupPage() {
     || /^\+[1-9]\d{6,14}$/.test(phoneNorm);
   const passwordValid = password.length >= 6;
   const nameValid = fullName.trim().length > 0;
+  const cityValid = city.trim().length > 0;
   const codeValid = code.trim().length >= 4;
-  const formValid = emailValid && phoneValid && passwordValid && nameValid && codeValid;
+  const formValid = emailValid && phoneValid && passwordValid && nameValid && cityValid && codeValid;
 
   const emailError = serverErrors.email ?? (email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined);
   const phoneError = serverErrors.phone ?? (phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined);
