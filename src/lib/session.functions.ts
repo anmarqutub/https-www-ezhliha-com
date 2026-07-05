@@ -23,6 +23,13 @@ async function isAdmin(supabase: any, userId: string): Promise<boolean> {
   return !!data;
 }
 
+// Device identity is keyed on client IP so the same physical device (any
+// browser, any tab) counts as ONE device. sessionId from the client is only
+// a fallback when the IP is unavailable (rare — local dev, missing headers).
+function deviceKey(ip: string | null, fallbackSid: string): string {
+  return ip ? `ip:${ip}` : `sid:${fallbackSid}`;
+}
+
 // Claim this device. Returns the device's status:
 //   - "approved": ok to use
 //   - "pending":  3rd+ device, awaiting admin approval
@@ -37,14 +44,15 @@ export const claimSession = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const ua = getRequestHeader("user-agent") ?? null;
     const ip = getClientIp() || null;
+    const key = deviceKey(ip, data.sessionId);
     const now = new Date().toISOString();
 
-    // Existing device?
+    // Existing device (matched by IP-based key)?
     const { data: existing } = await supabaseAdmin
       .from("user_devices")
       .select("id, approved")
       .eq("user_id", userId)
-      .eq("device_sid", data.sessionId)
+      .eq("device_sid", key)
       .maybeSingle();
 
     if (existing) {
@@ -66,7 +74,7 @@ export const claimSession = createServerFn({ method: "POST" })
 
     await supabaseAdmin.from("user_devices").insert({
       user_id: userId,
-      device_sid: data.sessionId,
+      device_sid: key,
       user_agent: ua,
       ip,
       approved: autoApprove,
@@ -86,11 +94,13 @@ export const verifySession = createServerFn({ method: "POST" })
       return { valid: true, admin: true, status: "admin" as const };
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ip = getClientIp() || null;
+    const key = deviceKey(ip, data.sessionId);
     const { data: dev } = await supabaseAdmin
       .from("user_devices")
       .select("id, approved")
       .eq("user_id", userId)
-      .eq("device_sid", data.sessionId)
+      .eq("device_sid", key)
       .maybeSingle();
 
     if (dev?.approved) {
