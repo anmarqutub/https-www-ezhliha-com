@@ -2,6 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+function fieldError(field: string, message: string): never {
+  throw new Error(JSON.stringify({ field, message }));
+}
+
 export const createUser = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z.object({
@@ -19,29 +23,32 @@ export const createUser = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const codeNorm = data.code.trim().toUpperCase();
 
-    // 1) Validate code exists and is unused
+    // 1) Validate code
     const { data: codeRow, error: cErr } = await supabaseAdmin
       .from("purchase_codes")
       .select("id, used_at")
       .eq("code", codeNorm)
       .maybeSingle();
-    if (cErr) throw new Response("تعذر التحقق من الكود", { status: 500 });
-    if (!codeRow) throw new Response("كود الشراء غير صحيح", { status: 400 });
-    if (codeRow.used_at) throw new Response("كود الشراء مستخدم مسبقًا", { status: 400 });
+    if (cErr) fieldError("code", "تعذر التحقق من الكود");
+    if (!codeRow) fieldError("code", "كود الشراء غير صحيح");
+    if (codeRow.used_at) fieldError("code", "كود الشراء مستخدم مسبقًا");
 
-    // 2) Check email not taken
-    const { data: existing } = await supabaseAdmin.auth.admin.listUsers({
-      page: 1,
-      perPage: 1000,
-    });
+    // 2) Email uniqueness
+    const { data: existing } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const emailTaken = existing.users?.some(
       (u) => u.email?.toLowerCase() === data.email.toLowerCase()
     );
-    if (emailTaken) {
-      throw new Error("هذا الإيميل مسجل مسبقًا");
-    }
+    if (emailTaken) fieldError("email", "هذا الإيميل مسجل مسبقًا");
 
-    // 3) Create auth user
+    // 3) Phone uniqueness
+    const { data: phoneRow } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("phone", data.phone)
+      .maybeSingle();
+    if (phoneRow) fieldError("phone", "رقم الجوال مسجل مسبقًا");
+
+    // 4) Create auth user
     const { data: created, error: uErr } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
@@ -52,11 +59,9 @@ export const createUser = createServerFn({ method: "POST" })
         city: data.city || null,
       },
     });
-    if (uErr || !created.user) {
-      throw new Response(uErr?.message ?? "تعذر إنشاء الحساب", { status: 400 });
-    }
+    if (uErr || !created.user) fieldError("email", uErr?.message ?? "تعذر إنشاء الحساب");
 
-    // 4) Create profile
+    // 5) Profile
     const { error: pErr } = await supabaseAdmin
       .from("profiles")
       .insert({
@@ -67,10 +72,10 @@ export const createUser = createServerFn({ method: "POST" })
       });
     if (pErr) {
       await supabaseAdmin.auth.admin.deleteUser(created.user.id);
-      throw new Response("تعذر إكمال التسجيل، حاول مجددًا", { status: 500 });
+      fieldError("form", "تعذر إكمال التسجيل، حاول مجددًا");
     }
 
-    // 5) Mark code as used (atomic guard: only update if still unused)
+    // 6) Claim code atomically
     const { data: claimed, error: clErr } = await supabaseAdmin
       .from("purchase_codes")
       .update({ used_at: new Date().toISOString(), used_by: created.user.id, email: data.email })
@@ -79,11 +84,9 @@ export const createUser = createServerFn({ method: "POST" })
       .select("id")
       .maybeSingle();
     if (clErr || !claimed) {
-      // race: someone else claimed it — rollback user
       await supabaseAdmin.auth.admin.deleteUser(created.user.id);
-      throw new Response("كود الشراء مستخدم مسبقًا", { status: 400 });
+      fieldError("code", "كود الشراء مستخدم مسبقًا");
     }
 
     return { ok: true };
   });
-
