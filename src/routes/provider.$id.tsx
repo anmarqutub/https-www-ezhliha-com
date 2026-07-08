@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderImg from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
@@ -110,7 +111,7 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=900";
+  const cover = images[activeImg]?.image_url ?? defaultProviderImg;
   const waUrl = waLink(provider.whatsapp);
   const ig = cleanHandle(provider.instagram);
   const tk = cleanHandle(provider.tiktok);

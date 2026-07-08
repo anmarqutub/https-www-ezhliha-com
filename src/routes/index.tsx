@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderImg from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -521,7 +522,7 @@ function ProviderCard({
   images: ProviderImage[];
   featured?: boolean;
 }) {
-  const cover = images[0]?.image_url ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600";
+  const cover = images[0]?.image_url ?? defaultProviderImg;
   const waUrl = waLink(provider.whatsapp);
 
   return (
