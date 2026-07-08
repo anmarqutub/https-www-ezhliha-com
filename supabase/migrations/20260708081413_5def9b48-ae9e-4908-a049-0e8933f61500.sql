@@ -1,0 +1,3 @@
+ALTER TABLE public.providers
+  ADD COLUMN IF NOT EXISTS people_from INTEGER,
+  ADD COLUMN IF NOT EXISTS people_to INTEGER;

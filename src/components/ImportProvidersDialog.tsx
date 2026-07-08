@@ -19,6 +19,8 @@ type ParsedRow = {
     description: string | null;
     price_from: number | null;
     price_to: number | null;
+    people_from: number | null;
+    people_to: number | null;
     whatsapp: string | null;
     instagram: string | null;
     tiktok: string | null;
@@ -123,6 +125,8 @@ export function ImportProvidersDialog({
           description: norm(raw.description) || null,
           price_from: toNum(raw.price_from),
           price_to: toNum(raw.price_to),
+          people_from: toNum(raw.people_from),
+          people_to: toNum(raw.people_to),
           whatsapp: norm(raw.whatsapp) || null,
           instagram: norm(raw.instagram) || null,
           tiktok: norm(raw.tiktok) || null,
