@@ -12,7 +12,7 @@ export const Route = createFileRoute("/provider/$id")({
 
 type Provider = {
   id: string; name: string; description: string | null;
-  price_from: number | null; price_to: number | null;
+  price_from: number | null; price_to: number | null; price: string | null;
   people_from: number | null; people_to: number | null;
   whatsapp: string | null; instagram: string | null;
   tiktok: string | null; twitter: string | null; snapchat: string | null;
@@ -196,6 +196,7 @@ function ProviderPage() {
                 {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
               </div>
             )}
+            {provider.price && <div className="pv-price">{provider.price}</div>}
             {(provider.people_from || provider.people_to) && (
               <div className="pv-people">
                 👥 تكفي {provider.people_from ?? ""}
