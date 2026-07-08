@@ -19,6 +19,8 @@ type ParsedRow = {
     description: string | null;
     price_from: number | null;
     price_to: number | null;
+    people_from: number | null;
+    people_to: number | null;
     whatsapp: string | null;
     instagram: string | null;
     tiktok: string | null;
