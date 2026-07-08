@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
-import defaultProviderImg from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
@@ -111,7 +110,7 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url ?? defaultProviderImg;
+  const cover = images[activeImg]?.image_url;
   const waUrl = waLink(provider.whatsapp);
   const ig = cleanHandle(provider.instagram);
   const tk = cleanHandle(provider.tiktok);
@@ -146,7 +145,11 @@ function ProviderPage() {
         <div className="pv-grid">
           <section className="pv-gallery">
             <div className="pv-cover-wrap">
-              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+              {cover ? (
+                <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+              ) : (
+                <div className="pv-cover pv-cover-empty" />
+              )}
               {images.length > 1 && (
                 <>
                   <button
