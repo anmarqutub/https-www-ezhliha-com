@@ -25,6 +25,7 @@ type ParsedRow = {
     twitter: string | null;
     snapchat: string | null;
     address: string | null;
+    map_url: string | null;
     rating: number | null;
     is_featured: boolean;
     featured_until: string | null;
@@ -128,6 +129,7 @@ export function ImportProvidersDialog({
           twitter: norm(raw.twitter) || null,
           snapchat: norm(raw.snapchat) || null,
           address: norm(raw.address) || null,
+          map_url: norm(raw.map_url) || null,
           rating,
           is_featured: toBool(raw.is_featured),
           featured_until: norm(raw.featured_until) || null,
