@@ -25,6 +25,7 @@ type ParsedRow = {
     twitter: string | null;
     snapchat: string | null;
     address: string | null;
+    map_url: string | null;
     rating: number | null;
     is_featured: boolean;
     featured_until: string | null;
