@@ -347,6 +347,7 @@ const css = `
   .pv-meta { display:flex; gap:10px; color:#555; font-size:13px; flex-wrap:wrap; margin-bottom:14px; }
   .pv-desc { font-size:15px; color:#222; line-height:1.8; margin-bottom:14px; }
   .pv-price { font-size:15px; color:#660000; font-weight:800; margin-bottom:10px; }
+  .pv-people { font-size:14px; color:#333; font-weight:700; background:#f5f2e5; display:inline-block; padding:6px 12px; border-radius:8px; margin-bottom:12px; }
   .pv-addr { font-size:13px; color:#555; margin-bottom:18px; }
   .pv-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
   .pv-btn-wa { background:#25D366; color:#fff; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:700; }
