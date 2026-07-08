@@ -374,6 +374,8 @@ export type Database = {
           is_featured: boolean
           map_url: string | null
           name: string
+          people_from: number | null
+          people_to: number | null
           price_from: number | null
           price_to: number | null
           rating: number | null
@@ -398,6 +400,8 @@ export type Database = {
           is_featured?: boolean
           map_url?: string | null
           name: string
+          people_from?: number | null
+          people_to?: number | null
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
@@ -422,6 +426,8 @@ export type Database = {
           is_featured?: boolean
           map_url?: string | null
           name?: string
+          people_from?: number | null
+          people_to?: number | null
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
