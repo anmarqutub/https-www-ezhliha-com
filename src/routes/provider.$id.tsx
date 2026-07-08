@@ -196,6 +196,13 @@ function ProviderPage() {
                 {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
               </div>
             )}
+            {(provider.people_from || provider.people_to) && (
+              <div className="pv-people">
+                👥 تكفي {provider.people_from ?? ""}
+                {provider.people_from && provider.people_to ? `–${provider.people_to}` : (provider.people_to ?? "")}
+                {" "}شخص
+              </div>
+            )}
             {provider.address && <div className="pv-addr">📌 {provider.address}</div>}
 
             <div className="pv-actions">
