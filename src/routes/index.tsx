@@ -521,15 +521,19 @@ function ProviderCard({
   images: ProviderImage[];
   featured?: boolean;
 }) {
-  const cover = images[0]?.image_url ?? defaultProviderImg;
+  const cover = images[0]?.image_url;
   const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
-        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-          {featured && <span className="ez-badge">مميز</span>}
-        </div>
+        {cover ? (
+          <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+            {featured && <span className="ez-badge">مميز</span>}
+          </div>
+        ) : (
+          <div className="ez-card-img ez-card-img-empty" />
+        )}
         <div className="ez-card-body">
           <div className="ez-card-head">
             <h3>{provider.name}</h3>

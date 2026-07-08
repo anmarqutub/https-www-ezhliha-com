@@ -110,7 +110,7 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url ?? defaultProviderImg;
+  const cover = images[activeImg]?.image_url;
   const waUrl = waLink(provider.whatsapp);
   const ig = cleanHandle(provider.instagram);
   const tk = cleanHandle(provider.tiktok);
