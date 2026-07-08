@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderImg from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
