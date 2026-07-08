@@ -522,7 +522,7 @@ function ProviderCard({
   images: ProviderImage[];
   featured?: boolean;
 }) {
-  const cover = images[0]?.image_url ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600";
+  const cover = images[0]?.image_url ?? defaultProviderImg;
   const waUrl = waLink(provider.whatsapp);
 
   return (
