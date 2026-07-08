@@ -145,7 +145,11 @@ function ProviderPage() {
         <div className="pv-grid">
           <section className="pv-gallery">
             <div className="pv-cover-wrap">
-              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+              {cover ? (
+                <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+              ) : (
+                <div className="pv-cover pv-cover-empty" />
+              )}
               {images.length > 1 && (
                 <>
                   <button
