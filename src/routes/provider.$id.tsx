@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderImg from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
