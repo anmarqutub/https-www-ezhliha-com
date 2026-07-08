@@ -12,7 +12,7 @@ export const Route = createFileRoute("/provider/$id")({
 
 type Provider = {
   id: string; name: string; description: string | null;
-  price_from: number | null; price_to: number | null;
+  price_from: number | null; price_to: number | null; price: string | null;
   people_from: number | null; people_to: number | null;
   whatsapp: string | null; instagram: string | null;
   tiktok: string | null; twitter: string | null; snapchat: string | null;
