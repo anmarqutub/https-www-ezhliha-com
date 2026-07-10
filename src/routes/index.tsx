@@ -376,7 +376,7 @@ function Home() {
           <>
             <div className="ez-section-head">
               <button className="ez-back" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); setSearch(""); }}>
-                ‹ رجوع للتصنيفات
+                {txt("home.category.back", "‹ رجوع للتصنيفات")}
               </button>
               <h2 className="ez-section-title">
                 {activeCategory?.icon} {activeCategory?.name_ar}
@@ -386,7 +386,7 @@ function Home() {
             <div className="ez-search">
               <input
                 type="text"
-                placeholder="دوّر داخل هذا التصنيف..."
+                placeholder={txt("home.category.search_placeholder", "دوّر داخل هذا التصنيف...")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -394,7 +394,7 @@ function Home() {
 
             {visibleSubs.length > 0 && (
               <div className="ez-chips" style={{ marginBottom: 12 }}>
-                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
+                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
                 {visibleSubs.map((s) => (
                   <button
                     key={s.id}
