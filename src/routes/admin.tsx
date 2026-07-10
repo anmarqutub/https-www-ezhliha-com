@@ -2030,8 +2030,18 @@ function ProvidersTab() {
                   <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); logActivity("delete_video", "provider", editing.id!, { name: editing.name }); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
                 </div>
               )}
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px dashed #E8DADA" }}>
+                <h5 style={{ fontWeight: 700, marginBottom: 8 }}>فيديوهات إضافية (حتى 5)</h5>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editing.videos)}
+                  onChange={(next) => setEditing({ ...editing, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
             </div>
           )}
+
           {editing.id && (
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
