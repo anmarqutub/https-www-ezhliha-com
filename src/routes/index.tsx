@@ -283,7 +283,7 @@ function Home() {
 
       <main className="ez-main">
         {loading ? (
-          <p className="ez-empty">جارٍ التحميل...</p>
+          <p className="ez-empty">لحظات.. نجهّز لك كل شي ✨</p>
         ) : quickSearch.trim() ? (
           (() => {
             const q = quickSearch.trim().toLowerCase();
@@ -304,7 +304,7 @@ function Home() {
                   <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
                 </div>
                 {results.length === 0 ? (
-                  <p className="ez-empty">لا توجد نتائج مطابقة. جربي كلمة أخرى أو تصفّحي التصنيفات.</p>
+                  <p className="ez-empty">ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷</p>
                 ) : (
                   <div className="ez-grid">
                     {results.map((p) => (
