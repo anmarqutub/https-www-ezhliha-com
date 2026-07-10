@@ -1548,6 +1548,9 @@ function ProvidersTab() {
       logo_url: editing.logo_url ?? null,
       video_url: editing.video_url ?? null,
       video_thumbnail_url: editing.video_thumbnail_url ?? null,
+      show_packages: editing.show_packages ?? true,
+      show_services: editing.show_services ?? true,
+      show_branches: editing.show_branches ?? true,
     };
     if (editing.id) {
       const before = rows.find((r) => r.id === editing.id);
