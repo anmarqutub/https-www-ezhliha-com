@@ -470,6 +470,9 @@ export type Database = {
           price_from: number | null
           price_to: number | null
           rating: number | null
+          show_branches: boolean
+          show_packages: boolean
+          show_services: boolean
           snapchat: string | null
           sort_order: number
           subcategory_id: string
@@ -500,6 +503,9 @@ export type Database = {
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
+          show_branches?: boolean
+          show_packages?: boolean
+          show_services?: boolean
           snapchat?: string | null
           sort_order?: number
           subcategory_id: string
@@ -530,6 +536,9 @@ export type Database = {
           price_from?: number | null
           price_to?: number | null
           rating?: number | null
+          show_branches?: boolean
+          show_packages?: boolean
+          show_services?: boolean
           snapchat?: string | null
           sort_order?: number
           subcategory_id?: string
