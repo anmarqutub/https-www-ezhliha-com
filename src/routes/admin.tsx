@@ -1640,6 +1640,8 @@ function ProvidersTab() {
 
   const editingImages = editing?.id ? images.filter((i) => i.provider_id === editing.id) : [];
   const editingPackages = editing?.id ? packages.filter((p) => p.provider_id === editing.id) : [];
+  const editingServices = editing?.id ? services.filter((x) => x.provider_id === editing.id) : [];
+  const editingBranches = editing?.id ? branches.filter((x) => x.provider_id === editing.id) : [];
   const editSubs = editing?.subcategory_id ? subs : subs;
 
   const savePackage = async () => {
@@ -1667,6 +1669,60 @@ function ProvidersTab() {
     if (!confirm("حذف هذه الباقة؟")) return;
     await supabase.from("packages").delete().eq("id", pkg.id);
     logActivity("delete", "package", pkg.id, { name: pkg.name });
+    reload();
+  };
+
+  const saveService = async () => {
+    if (!editing?.id || !editingService?.name?.trim()) { alert("اكتب اسم الخدمة"); return; }
+    const payload = {
+      provider_id: editing.id,
+      name: editingService.name.trim(),
+      description: editingService.description?.trim() || null,
+      price: editingService.price?.trim() || null,
+      image_url: editingService.image_url?.trim() || null,
+      sort_order: editingService.sort_order ?? 0,
+    };
+    if (editingService.id) {
+      await supabase.from("services").update(payload).eq("id", editingService.id);
+      logActivity("update", "service", editingService.id, { name: payload.name });
+    } else {
+      const { data } = await supabase.from("services").insert(payload).select().single();
+      logActivity("create", "service", data?.id ?? null, { name: payload.name, provider: editing.name });
+    }
+    setEditingService(null);
+    reload();
+  };
+  const deleteService = async (row: ServiceRow) => {
+    if (!confirm("حذف هذه الخدمة؟")) return;
+    await supabase.from("services").delete().eq("id", row.id);
+    logActivity("delete", "service", row.id, { name: row.name });
+    reload();
+  };
+
+  const saveBranch = async () => {
+    if (!editing?.id || !editingBranch?.name?.trim()) { alert("اكتب اسم الفرع"); return; }
+    const payload = {
+      provider_id: editing.id,
+      name: editingBranch.name.trim(),
+      address: editingBranch.address?.trim() || null,
+      map_url: editingBranch.map_url?.trim() || null,
+      phone: normalizeSaudiPhoneInput(editingBranch.phone),
+      sort_order: editingBranch.sort_order ?? 0,
+    };
+    if (editingBranch.id) {
+      await supabase.from("branches").update(payload).eq("id", editingBranch.id);
+      logActivity("update", "branch", editingBranch.id, { name: payload.name });
+    } else {
+      const { data } = await supabase.from("branches").insert(payload).select().single();
+      logActivity("create", "branch", data?.id ?? null, { name: payload.name, provider: editing.name });
+    }
+    setEditingBranch(null);
+    reload();
+  };
+  const deleteBranch = async (row: BranchRow) => {
+    if (!confirm("حذف هذا الفرع؟")) return;
+    await supabase.from("branches").delete().eq("id", row.id);
+    logActivity("delete", "branch", row.id, { name: row.name });
     reload();
   };
 
