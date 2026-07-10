@@ -376,7 +376,7 @@ function Home() {
             <div className="ez-search">
               <input
                 type="text"
-                placeholder="ابحث داخل هذا التصنيف..."
+                placeholder="دوّر داخل هذا التصنيف..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
