@@ -150,6 +150,15 @@ function ProviderPage() {
               ) : (
                 <div className="pv-cover pv-cover-empty" />
               )}
+              <button
+                type="button"
+                className={`pv-fav-icon ${isFav ? "active" : ""}`}
+                disabled={favLoading}
+                onClick={toggleFav}
+                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+              >
+                {isFav ? "♥" : "♡"}
+              </button>
               {images.length > 1 && (
                 <>
                   <button
@@ -168,6 +177,7 @@ function ProviderPage() {
                 </>
               )}
             </div>
+
             {images.length > 1 && (
               <div className="pv-thumbs">
                 {images.map((im, i) => (
