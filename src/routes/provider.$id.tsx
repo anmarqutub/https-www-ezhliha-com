@@ -393,76 +393,8 @@ function ProviderPage() {
           </section>
         )}
 
-        {(packages.length > 0 || services.length > 0 || branches.length > 0) && (
-          <section className="pv-packages">
-            <div className="pv-tabs">
-              {packages.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
-                  {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
-                </button>
-              )}
-              {services.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
-                  {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
-                </button>
-              )}
-              {branches.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
-                  {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
-                </button>
-              )}
-            </div>
 
-            {activeTab === "packages" && packages.length > 0 && (
-              <div className="pv-package-grid">
-                {packages.map((pkg) => (
-                  <article className="pv-package" key={pkg.id}>
-                    {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                    <div>
-                      <h3>{pkg.name}</h3>
-                      {pkg.price && <strong>{pkg.price}</strong>}
-                      {pkg.description && <p>{pkg.description}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
 
-            {activeTab === "services" && services.length > 0 && (
-              <div className="pv-package-grid">
-                {services.map((sv) => (
-                  <article className="pv-package" key={sv.id}>
-                    {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                    <div>
-                      <h3>{sv.name}</h3>
-                      {sv.price && <strong>{sv.price}</strong>}
-                      {sv.description && <p>{sv.description}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-
-            {activeTab === "branches" && branches.length > 0 && (
-              <div className="pv-branch-list">
-                {branches.map((br) => (
-                  <article className="pv-branch" key={br.id}>
-                    <div className="pv-branch-body">
-                      <h3>📍 {br.name}</h3>
-                      {br.address && <p>{br.address}</p>}
-                      {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
-                    </div>
-                    {br.map_url && (
-                      <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
-                        🗺️ الموقع
-                      </a>
-                    )}
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
 
 
 
