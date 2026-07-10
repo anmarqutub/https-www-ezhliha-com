@@ -321,7 +321,7 @@ function Home() {
           (() => {
             const q = quickSearch.trim().toLowerCase();
             const results = providers.filter((p) => {
-              if (selectedCity && p.city_id !== selectedCity) return false;
+              if (!matchesCity(p)) return false;
               const sub = subcategories.find((s) => s.id === p.subcategory_id);
               const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
               return (
