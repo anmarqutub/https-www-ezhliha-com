@@ -1462,6 +1462,7 @@ type ProvRow = {
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
   logo_url: string | null; video_url: string | null; video_thumbnail_url: string | null;
+  show_packages: boolean; show_services: boolean; show_branches: boolean;
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
