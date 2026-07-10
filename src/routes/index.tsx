@@ -414,7 +414,7 @@ function Home() {
 
             {featured.length > 0 && (
               <>
-                <h3 className="ez-sub-title">⭐ مقدمو خدمة مميزون</h3>
+                <h3 className="ez-sub-title">⭐ نخبة مختارة لك</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
