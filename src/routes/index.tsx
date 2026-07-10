@@ -73,9 +73,11 @@ function Home() {
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
 
+  const [branches, setBranches] = useState<{ provider_id: string; city_id: string | null }[]>([]);
+
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -88,12 +90,12 @@ function Home() {
         supabase.from("provider_images").select("*").order("sort_order"),
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
+        supabase.from("branches").select("provider_id,city_id"),
       ]);
       const allCities = (cRes.data ?? []) as City[];
       const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
       const citiesData = allCities.filter((c) => allowedIds.includes(c.id));
       setCities(citiesData);
-      // Default to "All cities" (empty selection)
       setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
@@ -101,6 +103,7 @@ function Home() {
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
+      setBranches(((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]).filter((b) => !!b.city_id));
       setLoading(false);
     })();
   }, []);
