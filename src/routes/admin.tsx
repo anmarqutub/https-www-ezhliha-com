@@ -1518,13 +1518,14 @@ function ProvidersTab() {
       supabase.from("services").select("*").order("sort_order"),
       supabase.from("branches").select("*").order("sort_order"),
     ]);
-    setRows((p.data ?? []) as ProvRow[]);
+    setRows((p.data ?? []) as unknown as ProvRow[]);
     setCities((ci.data ?? []) as CityRow[]);
     setSubs((s.data ?? []) as SubRow[]);
     setCats((c.data ?? []) as CatRow[]);
     setImages((i.data ?? []) as ImgRow[]);
-    setPackages((pkg.data ?? []) as PackageRow[]);
-    setServices((srv.data ?? []) as ServiceRow[]);
+    setPackages((pkg.data ?? []) as unknown as PackageRow[]);
+    setServices((srv.data ?? []) as unknown as ServiceRow[]);
+
     setBranches((br.data ?? []) as BranchRow[]);
     setLoading(false);
   }, []);
