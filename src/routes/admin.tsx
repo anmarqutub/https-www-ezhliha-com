@@ -1706,7 +1706,7 @@ function ProvidersTab() {
       name: editingBranch.name.trim(),
       address: editingBranch.address?.trim() || null,
       map_url: editingBranch.map_url?.trim() || null,
-      phone: normalizeSaudiPhoneInput(editingBranch.phone),
+      phone: editingBranch.phone?.trim() || null,
       sort_order: editingBranch.sort_order ?? 0,
     };
     if (editingBranch.id) {
