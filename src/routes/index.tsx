@@ -560,10 +560,10 @@ function ProviderCard({
       <div className="ez-card-foot">
         {waUrl ? (
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
-            📱 تواصل واتساب
+            📱 كلّمه واتساب
           </a>
         ) : (
-          <button className="ez-wa-btn" disabled>لا يوجد رقم تواصل</button>
+          <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
         )}
       </div>
     </article>
