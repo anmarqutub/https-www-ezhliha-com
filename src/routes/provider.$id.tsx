@@ -283,10 +283,11 @@ function ProviderPage() {
                       {packages.map((pkg) => (
                         <article className="pv-package" key={pkg.id}>
                           {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                          <div>
+                          <div style={{ flex: 1 }}>
                             <h3>{pkg.name}</h3>
                             {pkg.price && <strong>{pkg.price}</strong>}
                             {pkg.description && <p>{pkg.description}</p>}
+                            <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
                           </div>
                         </article>
                       ))}
@@ -297,15 +298,17 @@ function ProviderPage() {
                       {services.map((sv) => (
                         <article className="pv-package" key={sv.id}>
                           {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                          <div>
+                          <div style={{ flex: 1 }}>
                             <h3>{sv.name}</h3>
                             {sv.price && <strong>{sv.price}</strong>}
                             {sv.description && <p>{sv.description}</p>}
+                            <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
                           </div>
                         </article>
                       ))}
                     </div>
                   )}
+
                   {activeTab === "branches" && showBr && (
                     <div className="pv-branch-list">
                       {branches.map((br) => (
