@@ -623,20 +623,27 @@ function AccountMenu({ email, onSignOut, texts }: { email: string; onSignOut: ()
 }
 
 function AuthGate() {
+  const [texts, setTexts] = useState<Record<string, string>>({});
+  useEffect(() => {
+    supabase.from("site_texts").select("key,value").then(({ data }) => {
+      setTexts(Object.fromEntries(((data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
+    });
+  }, []);
+  const t = (k: string, f: string) => texts[k] || f;
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
-        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>محتوى للأعضاء بس</h1>
+        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍
+          {t("auth_gate.description", "عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#660000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
-            تسجيل الدخول
+            {t("auth_gate.login", "تسجيل الدخول")}
           </Link>
           <Link to="/signup" style={{ background: "#fff", color: "#660000", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700, border: "2px solid #660000" }}>
-            إنشاء حساب جديد
+            {t("auth_gate.signup", "إنشاء حساب جديد")}
           </Link>
         </div>
       </div>
