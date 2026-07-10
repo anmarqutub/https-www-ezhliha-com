@@ -88,7 +88,52 @@ function ProviderPage() {
       setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
       setSiteTexts(Object.fromEntries(((txt.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
+
+      // Suggested providers: same subcategory first, then top-up with same city
+      const wanted = 8;
+      const collected = new Map<string, any>();
+      const sameSub = await supabase
+        .from("providers")
+        .select("id,name,logo_url,price_from,price,city_id")
+        .eq("subcategory_id", p.data.subcategory_id)
+        .eq("active", true)
+        .neq("id", id)
+        .order("is_featured", { ascending: false })
+        .order("sort_order", { ascending: true })
+        .limit(wanted);
+      (sameSub.data ?? []).forEach((r: any) => collected.set(r.id, r));
+      if (collected.size < wanted) {
+        const sameCity = await supabase
+          .from("providers")
+          .select("id,name,logo_url,price_from,price,city_id")
+          .eq("city_id", p.data.city_id)
+          .eq("active", true)
+          .neq("id", id)
+          .limit(wanted);
+        (sameCity.data ?? []).forEach((r: any) => { if (!collected.has(r.id)) collected.set(r.id, r); });
+      }
+      const arr = Array.from(collected.values()).slice(0, wanted);
+      if (arr.length) {
+        const ids = arr.map((r: any) => r.id);
+        const cityIds = Array.from(new Set(arr.map((r: any) => r.city_id).filter(Boolean)));
+        const [covers, citiesRes] = await Promise.all([
+          supabase.from("provider_images").select("provider_id,image_url,sort_order").in("provider_id", ids).order("sort_order"),
+          cityIds.length ? supabase.from("cities").select("id,name_ar").in("id", cityIds) : Promise.resolve({ data: [] as any[] }),
+        ]);
+        const coverMap = new Map<string, string>();
+        ((covers.data ?? []) as any[]).forEach((im) => { if (!coverMap.has(im.provider_id)) coverMap.set(im.provider_id, im.image_url); });
+        const cityMap = new Map<string, string>();
+        ((citiesRes.data ?? []) as any[]).forEach((c) => cityMap.set(c.id, c.name_ar));
+        setSuggestions(arr.map((r: any) => ({
+          id: r.id, name: r.name, logo_url: r.logo_url, price_from: r.price_from, price: r.price,
+          cover: coverMap.get(r.id) ?? null,
+          city_name: r.city_id ? (cityMap.get(r.city_id) ?? null) : null,
+        })));
+      } else {
+        setSuggestions([]);
+      }
     }
+
 
     setImages((imgs.data ?? []) as Image[]);
     setReviews(((r.data ?? []) as unknown) as Review[]);
