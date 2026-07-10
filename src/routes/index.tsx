@@ -127,6 +127,24 @@ function Home() {
     return m;
   }, [images]);
 
+  const providerCityIds = useMemo(() => {
+    const m = new Map<string, Set<string>>();
+    providers.forEach((p) => {
+      const s = new Set<string>();
+      if (p.city_id) s.add(p.city_id);
+      m.set(p.id, s);
+    });
+    branchCities.forEach((b) => {
+      if (!b.city_id) return;
+      const s = m.get(b.provider_id);
+      if (s) s.add(b.city_id);
+    });
+    return m;
+  }, [providers, branchCities]);
+
+  const matchesCity = (p: Provider) =>
+    !selectedCity || (providerCityIds.get(p.id)?.has(selectedCity) ?? false);
+
   const visibleSubs = selectedCategory
     ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
