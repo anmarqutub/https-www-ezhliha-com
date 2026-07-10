@@ -409,7 +409,7 @@ function Home() {
 
             {visibleTertiaries.length > 0 && (
               <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
-                <span className="ez-tertiary-label">تصنيفات فرعية:</span>
+                <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
                 {visibleTertiaries.map((t) => (
                   <button
                     key={t.id}
@@ -424,7 +424,7 @@ function Home() {
 
             {featured.length > 0 && (
               <>
-                <h3 className="ez-sub-title">⭐ نخبة مختارة لك</h3>
+                <h3 className="ez-sub-title">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
@@ -442,7 +442,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h3 className="ez-sub-title">كل المقدمين</h3>
+                <h3 className="ez-sub-title">{txt("home.all_providers.title", "كل المقدمين")}</h3>
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
@@ -458,7 +458,7 @@ function Home() {
               </>
             )}
             {categoryProviders.length === 0 && (
-              <p className="ez-empty">ما فيه مقدمين بهذا التصنيف لحد الحين 🌷</p>
+              <p className="ez-empty">{txt("home.category.empty", "ما فيه مقدمين بهذا التصنيف لحد الحين 🌷")}</p>
             )}
           </>
         )}
