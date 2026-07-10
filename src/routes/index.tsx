@@ -589,9 +589,10 @@ function WhatsAppIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void | Promise<void> }) {
+function AccountMenu({ email, onSignOut, texts }: { email: string; onSignOut: () => void | Promise<void>; texts: Record<string, string> }) {
   const [open, setOpen] = useState(false);
   const initial = (email || "?").trim().charAt(0).toUpperCase();
+  const t = (k: string, f: string) => texts[k] || f;
   useEffect(() => {
     if (!open) return;
     const close = () => setOpen(false);
@@ -609,12 +610,12 @@ function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => voi
           <div className="ez-acct-head">
             <div className="ez-acct-avatar lg">{initial}</div>
             <div>
-              <div className="ez-acct-title">حسابي</div>
+              <div className="ez-acct-title">{t("account.title", "حسابي")}</div>
               <div className="ez-acct-email">{email}</div>
             </div>
           </div>
-          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>♥ المفضلة</Link>
-          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>↩ تسجيل الخروج</button>
+          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.favorites", "♥ المفضلة")}</Link>
+          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>{t("account.signout", "↩ تسجيل الخروج")}</button>
         </div>
       )}
     </div>
