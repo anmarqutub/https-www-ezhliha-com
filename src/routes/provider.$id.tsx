@@ -629,6 +629,9 @@ const css = `
   .pv-tab { background:none; border:none; padding:10px 18px; font-family:inherit; font-size:15px; font-weight:700; color:#5a4a4a; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .15s; }
   .pv-tab:hover { color:#660000; }
   .pv-tab.on { color:#660000; border-bottom-color:#660000; }
+  .pv-inline-tabs { margin:14px 0 16px; }
+  .pv-inline-tabs .pv-tabs { margin-bottom:12px; }
+  .pv-inline-list { display:flex; flex-direction:column; gap:10px; max-height:340px; overflow-y:auto; padding-inline-end:4px; }
   .pv-branch-list { display:flex; flex-direction:column; gap:10px; }
   .pv-branch { border:1px solid #e8e6d7; border-radius:12px; padding:14px; background:#fffdf8; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
   .pv-branch h3 { font-size:16px; font-weight:900; margin:0 0 4px; }
