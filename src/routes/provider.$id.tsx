@@ -45,7 +45,7 @@ function ProviderPage() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
-  const [activeTab, setActiveTab] = useState<OfferTab>("packages");
+  const [activeTab, setActiveTab] = useState<OfferTab>("overview");
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [cityName, setCityName] = useState<string>("");
   const [subName, setSubName] = useState<string>("");
