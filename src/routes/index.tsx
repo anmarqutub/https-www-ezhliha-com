@@ -191,14 +191,14 @@ function Home() {
         <div className="ez-nav-actions">
           {!user && (
             <>
-              <Link to="/login" className="ez-nav-link">دخول</Link>
-              <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
+              <Link to="/login" className="ez-nav-link">{txt("nav.login", "دخول")}</Link>
+              <Link to="/signup" className="ez-nav-btn">{txt("nav.signup", "تسجيل")}</Link>
             </>
           )}
           {user && (
             <>
-              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
-              <AccountMenu email={user.email ?? ""} onSignOut={signOut} />
+              {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
+              <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
           )}
         </div>
