@@ -110,7 +110,7 @@ function SignupPage() {
           <input required value={fullName} onChange={(e) => { setFullName(e.target.value); setServerErrors((s) => ({ ...s, full_name: "" })); }} placeholder="مثال: نورة عبدالله" />
         </Field>
         <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={emailError}>
-          <input required type="email" value={email} onChange={(e) => { setEmail(e.target.value); setServerErrors((s) => ({ ...s, email: "" })); }} placeholder="example@email.com" />
+          <input required type="email" value={email} onChange={(e) => { setEmail(e.target.value); setServerErrors((s) => ({ ...s, email: "" })); }} placeholder="name@email.com" />
         </Field>
         <Field label="كلمة المرور" hint="٦ أحرف على الأقل" error={passwordError}>
           <input required type="password" minLength={6} value={password} onChange={(e) => { setPassword(e.target.value); setServerErrors((s) => ({ ...s, password: "" })); }} placeholder="••••••" />

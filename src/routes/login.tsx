@@ -38,7 +38,7 @@ function LoginPage() {
       <form onSubmit={onSubmit} className="auth-form">
         <label className="auth-field">
           <span>البريد الإلكتروني</span>
-          <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" />
+          <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@email.com" />
         </label>
         <label className="auth-field">
           <span>كلمة المرور</span>
