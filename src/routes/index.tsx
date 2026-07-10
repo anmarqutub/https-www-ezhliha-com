@@ -273,8 +273,8 @@ function Home() {
             setSelectedSub("all");
           }}
         >
-          {cities.length === 0 && <option value="">لا توجد مدن بعد</option>}
-          {cities.length > 0 && <option value="">🌍 جميع المدن</option>}
+          {cities.length === 0 && <option value="">ما فيه مدن لحد الحين</option>}
+          {cities.length > 0 && <option value="">🌍 كل المدن</option>}
           {cities.map((c) => (
             <option key={c.id} value={c.id}>{c.name_ar}</option>
           ))}
