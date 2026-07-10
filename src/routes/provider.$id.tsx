@@ -19,9 +19,14 @@ type Provider = {
   address: string | null; map_url: string | null;
   rating: number | null; city_id: string; subcategory_id: string;
   video_url: string | null;
+  contact_phone: string | null;
+  logo_url: string | null;
+  video_thumbnail_url: string | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
+type Package = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type SiteText = { key: string; value: string };
 
 function ProviderPage() {
   const { id } = Route.useParams();
@@ -32,10 +37,13 @@ function ProviderPage() {
   }, [authLoading, user, navigate]);
   const [provider, setProvider] = useState<Provider | null>(null);
   const [images, setImages] = useState<Image[]>([]);
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [cityName, setCityName] = useState<string>("");
   const [subName, setSubName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+  const [copiedShare, setCopiedShare] = useState(false);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [myRating, setMyRating] = useState(5);
@@ -54,12 +62,16 @@ function ProviderPage() {
     ]);
     if (p.data) {
       setProvider(p.data as Provider);
-      const [c, s] = await Promise.all([
+      const [c, s, pkg, txt] = await Promise.all([
         supabase.from("cities").select("name_ar").eq("id", p.data.city_id).maybeSingle(),
         supabase.from("subcategories").select("name_ar").eq("id", p.data.subcategory_id).maybeSingle(),
+        supabase.from("packages").select("id,name,description,price,image_url,sort_order").eq("provider_id", id).order("sort_order"),
+        supabase.from("site_texts").select("key,value"),
       ]);
       setCityName(c.data?.name_ar ?? "");
       setSubName(s.data?.name_ar ?? "");
+      setPackages((pkg.data ?? []) as Package[]);
+      setSiteTexts(Object.fromEntries(((txt.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
     }
     setImages((imgs.data ?? []) as Image[]);
     setReviews(((r.data ?? []) as unknown) as Review[]);
@@ -112,11 +124,27 @@ function ProviderPage() {
 
   const cover = images[activeImg]?.image_url;
   const waUrl = waLink(provider.whatsapp);
+  const callUrl = phoneLink(provider.contact_phone);
   const ig = cleanHandle(provider.instagram);
   const tk = cleanHandle(provider.tiktok);
   const tw = cleanHandle(provider.twitter);
   const sc = cleanHandle(provider.snapchat);
   const avgRating = reviews.length > 0 ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1) : null;
+  const contactLabel = siteTexts["provider.whatsapp.label"] || "للمزيد من التفاصيل";
+  const shareProvider = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: provider.name, text: provider.description ?? provider.name, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopiedShare(true);
+      window.setTimeout(() => setCopiedShare(false), 1600);
+    } catch {
+      // user cancelled share
+    }
+  };
 
   return (
     <div dir="rtl" className="pv-root">
@@ -223,7 +251,14 @@ function ProviderPage() {
             <div className="pv-actions">
               {waUrl && (
                 <a className="pv-btn-wa" href={waUrl} target="_blank" rel="noopener noreferrer">
-                  📱 تواصل واتساب
+                  <span>{contactLabel}</span>
+                  <WhatsAppIcon />
+                </a>
+              )}
+              {callUrl && (
+                <a className="pv-btn-call" href={callUrl}>
+                  <PhoneIcon />
+                  <span>اتصال مباشر</span>
                 </a>
               )}
               {provider.map_url && (
@@ -231,6 +266,10 @@ function ProviderPage() {
                   🗺️ الموقع على الخريطة
                 </a>
               )}
+              <button type="button" className="pv-btn-share" onClick={shareProvider}>
+                <ShareIcon />
+                <span>{copiedShare ? "تم نسخ الرابط" : "مشاركة"}</span>
+              </button>
 
 
             </div>
@@ -273,7 +312,25 @@ function ProviderPage() {
         {provider.video_url && (
           <section className="pv-video-section">
             <h2>فيديو تعريفي</h2>
-            <VideoEmbed url={provider.video_url} />
+            <VideoEmbed url={provider.video_url} thumbnailUrl={provider.video_thumbnail_url} />
+          </section>
+        )}
+
+        {packages.length > 0 && (
+          <section className="pv-packages">
+            <h2>الباقات</h2>
+            <div className="pv-package-grid">
+              {packages.map((pkg) => (
+                <article className="pv-package" key={pkg.id}>
+                  {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
+                  <div>
+                    <h3>{pkg.name}</h3>
+                    {pkg.price && <strong>{pkg.price}</strong>}
+                    {pkg.description && <p>{pkg.description}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
           </section>
         )}
 
@@ -329,13 +386,44 @@ function ProviderPage() {
   );
 }
 
-function VideoEmbed({ url }: { url: string }) {
+function phoneLink(value: string | null) {
+  let phone = (value ?? "").trim().replace(/[^0-9+]/g, "");
+  if (!phone) return null;
+  if (phone.startsWith("+")) return `tel:${phone}`;
+  if (phone.startsWith("00966")) phone = `+${phone.slice(2)}`;
+  else if (phone.startsWith("966")) phone = `+${phone}`;
+  else if (phone.startsWith("05")) phone = `+966${phone.slice(1)}`;
+  else if (phone.startsWith("5")) phone = `+966${phone}`;
+  else phone = `+${phone}`;
+  return `tel:${phone}`;
+}
+
+function getYouTubeId(url: string) {
+  return url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
+}
+
+function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
+  const [playing, setPlaying] = useState(false);
+  const ytId = getYouTubeId(url);
+  const poster = thumbnailUrl || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null);
+  if (poster && !playing) {
+    return (
+      <button
+        type="button"
+        className="pv-video-poster"
+        style={{ backgroundImage: `url(${poster})` }}
+        onClick={() => setPlaying(true)}
+        aria-label="تشغيل الفيديو"
+      >
+        <span><PlayIcon /></span>
+      </button>
+    );
+  }
   // YouTube
-  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-  if (yt) {
+  if (ytId) {
     return (
       <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${yt[1]}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=${playing ? 1 : 0}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
       </div>
     );
   }
@@ -343,14 +431,32 @@ function VideoEmbed({ url }: { url: string }) {
   if (/\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url)) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls playsInline preload="metadata" />
+        <video src={url} controls playsInline preload="metadata" poster={thumbnailUrl ?? undefined} />
       </div>
     );
   }
   // Fallback: open in new tab
+  return <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link"><PlayIcon /> مشاهدة الفيديو</a>;
+}
+
+function WhatsAppIcon() {
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">▶ مشاهدة الفيديو</a>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+      <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" />
+    </svg>
   );
+}
+
+function PhoneIcon() {
+  return <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>;
+}
+
+function ShareIcon() {
+  return <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11A2.99 2.99 0 1015 5c0 .24.04.47.09.7L8.04 9.81a3 3 0 100 4.38l7.12 4.17c-.05.2-.08.41-.08.63a2.92 2.92 0 102.92-2.91z" /></svg>;
+}
+
+function PlayIcon() {
+  return <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72c0 .78.86 1.25 1.52.82l10.78-6.86a.98.98 0 000-1.64L9.52 4.32A.98.98 0 008 5.14z" /></svg>;
 }
 
 const css = `
@@ -392,7 +498,11 @@ const css = `
   .pv-people { font-size:14px; color:#333; font-weight:700; background:#f5f2e5; display:inline-block; padding:6px 12px; border-radius:8px; margin-bottom:12px; }
   .pv-addr { font-size:13px; color:#555; margin-bottom:18px; }
   .pv-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
-  .pv-btn-wa { background:#25D366; color:#fff; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:700; }
+  .pv-btn-wa { background:transparent; color:#660000; padding:10px 0; border-radius:0; text-align:center; text-decoration:none; font-weight:900; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .pv-btn-wa svg { color:#25D366; }
+  .pv-btn-wa:hover { text-decoration:underline; text-underline-offset:4px; }
+  .pv-btn-call, .pv-btn-share { background:#f5f2e5; color:#660000; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid #d8d4c0; cursor:pointer; font-family:inherit; font-size:14px; }
+  .pv-btn-share { background:#fff; }
   .pv-btn-map { background:#4285F4; color:#fff; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:700; }
   .pv-btn-fav { background:#fff; color:#660000; border:1.5px solid #660000; padding:12px; border-radius:10px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:700; }
   .pv-btn-fav.active { background:#660000; color:#fff; }
@@ -408,7 +518,18 @@ const css = `
   .pv-video-section h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
   .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; }
   .pv-video-wrap iframe, .pv-video-wrap video { position:absolute; inset:0; width:100%; height:100%; border:none; }
-  .pv-video-link { display:inline-block; background:#660000; color:#fff; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; }
+  .pv-video-poster { width:100%; aspect-ratio:16/9; border:0; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .pv-video-poster::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.38)); }
+  .pv-video-poster span { position:relative; width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#fff; color:#660000; box-shadow:0 12px 30px rgba(0,0,0,0.22); }
+  .pv-video-link { display:inline-flex; align-items:center; gap:8px; background:#660000; color:#fff; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; }
+  .pv-packages { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
+  .pv-packages h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
+  .pv-package-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .pv-package { border:1px solid #e8e6d7; border-radius:12px; padding:12px; display:flex; gap:12px; align-items:flex-start; background:#fffdf8; }
+  .pv-package img { width:72px; height:72px; object-fit:cover; border-radius:10px; flex-shrink:0; }
+  .pv-package h3 { font-size:16px; font-weight:900; margin:0 0 4px; }
+  .pv-package strong { display:block; color:#660000; margin-bottom:5px; }
+  .pv-package p { margin:0; color:#333; line-height:1.7; font-size:13px; }
   .pv-reviews { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-reviews h2 { font-size:20px; font-weight:800; margin-bottom:16px; }
   .pv-review-form { background:#e6e4d7; padding:14px; border-radius:12px; margin-bottom:18px; display:flex; flex-direction:column; gap:10px; }
