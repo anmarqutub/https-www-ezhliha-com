@@ -2085,6 +2085,8 @@ type ReviewRow = {
 function ReviewsTab() {
   const [rows, setRows] = useState<ReviewRow[]>([]);
   const [providers, setProviders] = useState<Record<string, string>>({});
+  const [providerRows, setProviderRows] = useState<Array<{ id: string; name: string }>>([]);
+  const [editing, setEditing] = useState({ provider_id: "", custom_reviewer_name: "", rating: 5, comment: "" });
   const [loading, setLoading] = useState(true);
 
   const reload = useCallback(async () => {
@@ -2095,6 +2097,7 @@ function ReviewsTab() {
     const map: Record<string, string> = {};
     (provs ?? []).forEach((p: { id: string; name: string }) => { map[p.id] = p.name; });
     setProviders(map);
+    setProviderRows(((provs ?? []) as Array<{ id: string; name: string }>).sort((a, b) => a.name.localeCompare(b.name, "ar")));
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
@@ -2107,9 +2110,49 @@ function ReviewsTab() {
     reload();
   };
 
+  const addFakeReview = async () => {
+    if (!editing.provider_id) { alert("اختر مقدم الخدمة"); return; }
+    if (!editing.custom_reviewer_name.trim()) { alert("اكتب اسم صاحب التقييم"); return; }
+    const payload = {
+      provider_id: editing.provider_id,
+      user_id: null,
+      custom_reviewer_name: editing.custom_reviewer_name.trim(),
+      rating: Math.max(1, Math.min(5, Number(editing.rating) || 5)),
+      comment: editing.comment.trim() || null,
+    };
+    const { error } = await supabase.from("reviews").insert(payload);
+    if (error) { alert(error.message); return; }
+    logActivity("create", "review", editing.provider_id, { provider: providers[editing.provider_id], rating: payload.rating, fake: true });
+    setEditing({ provider_id: "", custom_reviewer_name: "", rating: 5, comment: "" });
+    reload();
+  };
+
   return (
     <>
       <h1 className="adm-title">التقييمات</h1>
+      <div className="adm-card" style={{ marginBottom: 16 }}>
+        <h3 style={{ fontWeight: 800, fontSize: 16, marginBottom: 12 }}>إضافة تقييم من جهة الأدمن</h3>
+        <div className="adm-grid2">
+          <Field label="مقدم الخدمة">
+            <select value={editing.provider_id} onChange={(e) => setEditing({ ...editing, provider_id: e.target.value })}>
+              <option value="">اختر...</option>
+              {providerRows.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+          </Field>
+          <Field label="اسم صاحب التقييم">
+            <input value={editing.custom_reviewer_name} onChange={(e) => setEditing({ ...editing, custom_reviewer_name: e.target.value })} placeholder="مثال: عميل إزهليها" />
+          </Field>
+          <Field label="التقييم">
+            <select value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: +e.target.value })}>
+              {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} نجوم</option>)}
+            </select>
+          </Field>
+        </div>
+        <Field label="التعليق">
+          <textarea rows={3} value={editing.comment} onChange={(e) => setEditing({ ...editing, comment: e.target.value })} placeholder="اكتب التعليق الذي سيظهر للزوار" />
+        </Field>
+        <button className="adm-btn-primary" onClick={addFakeReview}>+ إضافة التقييم</button>
+      </div>
       <div className="adm-card">
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : rows.length === 0 ? (
           <p className="adm-empty">لا توجد تقييمات بعد.</p>
@@ -2119,6 +2162,7 @@ function ReviewsTab() {
               <thead>
                 <tr>
                   <th>مقدم الخدمة</th>
+                  <th>الاسم</th>
                   <th>التقييم</th>
                   <th>التعليق</th>
                   <th>التاريخ</th>
@@ -2129,6 +2173,7 @@ function ReviewsTab() {
                 {rows.map((r) => (
                   <tr key={r.id}>
                     <td>{providers[r.provider_id] || r.provider_id.slice(0, 8)}</td>
+                    <td>{r.custom_reviewer_name || "مستخدم"}</td>
                     <td>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</td>
                     <td style={{ maxWidth: 360 }}>{r.comment || "-"}</td>
                     <td style={{ fontSize: 12, color: "#5A4A4A" }}>{fmt(r.created_at)}</td>
