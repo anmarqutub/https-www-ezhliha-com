@@ -59,6 +59,7 @@ function Home() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [branchCities, setBranchCities] = useState<{ provider_id: string; city_id: string | null }[]>([]);
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
