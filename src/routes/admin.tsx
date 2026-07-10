@@ -1828,6 +1828,7 @@ function ProvidersTab() {
     const payload = {
       provider_id: editing.id,
       name: editingBranch.name.trim(),
+      city_id: editingBranch.city_id || null,
       address: editingBranch.address?.trim() || null,
       map_url: editingBranch.map_url?.trim() || null,
       phone: editingBranch.phone?.trim() || null,
