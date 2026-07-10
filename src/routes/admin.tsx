@@ -2160,6 +2160,25 @@ function ProvidersTab() {
                 <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed #E8DADA" }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>صور إضافية (حتى 5)</label>
+                <MediaListEditor
+                  kind="image"
+                  items={toMediaArray(editingService.images)}
+                  onChange={(next) => setEditingService({ ...editingService, images: next })}
+                  upload={async (f) => await uploadOfferImage(f, "service")}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>فيديوهات الخدمة (حتى 5)</label>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editingService.videos)}
+                  onChange={(next) => setEditingService({ ...editingService, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "service")}
+                />
+              </div>
+
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
                 <button type="button" className="adm-btn-secondary" onClick={() => setEditingService(null)}>إلغاء</button>
                 <button type="button" className="adm-btn-primary" onClick={saveService}>حفظ الخدمة</button>
