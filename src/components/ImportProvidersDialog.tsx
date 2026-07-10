@@ -365,21 +365,21 @@ export function ImportProvidersDialog({
       });
     };
 
-    pushChildren(readSheet(wb, ["الباقات", "packages"]), "package", (raw) => ({
+    pushChildren(packageRowsSingle.length > 0 ? packageRowsSingle : readSheet(wb, ["الباقات", "packages"]), "package", (raw) => ({
       description: norm(raw.description) || null,
       price: norm(raw.price) || null,
       sort_order: toNum(raw.sort_order) ?? 0,
       images: toMedia(raw.image_urls),
       videos: toMedia(raw.video_urls),
     }));
-    pushChildren(readSheet(wb, ["الخدمات", "services"]), "service", (raw) => ({
+    pushChildren(serviceRowsSingle.length > 0 ? serviceRowsSingle : readSheet(wb, ["الخدمات", "services"]), "service", (raw) => ({
       description: norm(raw.description) || null,
       price: norm(raw.price) || null,
       sort_order: toNum(raw.sort_order) ?? 0,
       images: toMedia(raw.image_urls),
       videos: toMedia(raw.video_urls),
     }));
-    pushChildren(readSheet(wb, ["الفروع", "branches"]), "branch", (raw) => ({
+    pushChildren(branchRowsSingle.length > 0 ? branchRowsSingle : readSheet(wb, ["الفروع", "branches"]), "branch", (raw) => ({
       address: norm(raw.address) || null,
       map_url: norm(raw.map_url) || null,
       phone: normalizeSaudiPhone(raw.phone),
