@@ -554,6 +554,33 @@ function ProviderPage() {
           </section>
         )}
       </main>
+
+      {callOpen && callUrl && (
+        <div className="pv-modal-overlay" onClick={() => setCallOpen(false)}>
+          <div className="pv-modal" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="pv-modal-close" onClick={() => setCallOpen(false)} aria-label="إغلاق">×</button>
+            <div className="pv-modal-icon"><PhoneIcon /></div>
+            <h3 className="pv-modal-title">الاتصال بمقدم الخدمة</h3>
+            <div className="pv-modal-phone" dir="ltr">{callUrl.replace("tel:", "")}</div>
+            <div className="pv-modal-actions">
+              <a href={callUrl} className="pv-modal-call">📞 اتصال</a>
+              <button
+                type="button"
+                className="pv-modal-copy"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(callUrl.replace("tel:", ""));
+                    setCopiedPhone(true);
+                    setTimeout(() => setCopiedPhone(false), 1600);
+                  } catch { /* noop */ }
+                }}
+              >
+                {copiedPhone ? "✓ تم النسخ" : "نسخ الرقم"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
