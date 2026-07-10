@@ -519,10 +519,31 @@ function ProviderPage() {
             ))}
           </div>
         </section>
+
+        {suggestions.length > 0 && (
+          <section className="pv-suggest">
+            <h2>مقترحات لك</h2>
+            <div className="pv-suggest-grid">
+              {suggestions.map((s) => (
+                <Link key={s.id} to="/provider/$id" params={{ id: s.id }} className="pv-suggest-card" onClick={() => window.scrollTo({ top: 0 })}>
+                  <div className="pv-suggest-img" style={{ backgroundImage: `url(${s.cover || s.logo_url || defaultProviderUrl})` }} />
+                  <div className="pv-suggest-body">
+                    <h3>{s.name}</h3>
+                    {s.city_name && <span className="pv-suggest-city">📍 {s.city_name}</span>}
+                    {(s.price_from || s.price) && (
+                      <strong>{s.price_from ? `من ${s.price_from} ر.س` : s.price}</strong>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
 }
+
 
 function phoneLink(value: string | null) {
   let phone = (value ?? "").trim().replace(/[^0-9+]/g, "");
