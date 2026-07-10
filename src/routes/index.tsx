@@ -252,7 +252,7 @@ function Home() {
           <span className="ez-search-icon">🔍</span>
           <input
             type="text"
-            placeholder="ابحث عن مقدم خدمة، تصنيف، أو وصف..."
+            placeholder="دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه..."
             value={quickSearch}
             onChange={(e) => setQuickSearch(e.target.value)}
           />
