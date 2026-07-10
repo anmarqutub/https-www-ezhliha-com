@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderUrl from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
@@ -122,7 +123,7 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url;
+  const cover = images[activeImg]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
   const callUrl = phoneLink(provider.contact_phone);
   const ig = cleanHandle(provider.instagram);
@@ -173,11 +174,7 @@ function ProviderPage() {
         <div className="pv-grid">
           <section className="pv-gallery">
             <div className="pv-cover-wrap">
-              {cover ? (
-                <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
-              ) : (
-                <div className="pv-cover pv-cover-empty" />
-              )}
+              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
               <button
                 type="button"
                 className={`pv-fav-icon ${isFav ? "active" : ""}`}
@@ -225,7 +222,10 @@ function ProviderPage() {
           </section>
 
           <section className="pv-info">
-            <h1>{provider.name}</h1>
+            <div className="pv-title-row">
+              {provider.logo_url && <img src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
+              <h1>{provider.name}</h1>
+            </div>
             <div className="pv-meta">
               {cityName && <span>📍 {cityName}</span>}
               {subName && <span>• {subName}</span>}
@@ -391,6 +391,7 @@ function phoneLink(value: string | null) {
   if (!phone) return null;
   if (phone.startsWith("+")) return `tel:${phone}`;
   if (phone.startsWith("00966")) phone = `+${phone.slice(2)}`;
+  else if (phone.startsWith("9660")) phone = `+966${phone.slice(4)}`;
   else if (phone.startsWith("966")) phone = `+${phone}`;
   else if (phone.startsWith("05")) phone = `+966${phone.slice(1)}`;
   else if (phone.startsWith("5")) phone = `+966${phone}`;
@@ -491,7 +492,9 @@ const css = `
   .pv-empty-imgs { color:#555; font-size:14px; text-align:center; padding:14px; }
   .pv-empty-imgs a { color:#660000; font-weight:700; }
 
-  .pv-info h1 { font-size:28px; font-weight:900; margin-bottom:8px; }
+  .pv-title-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .pv-provider-logo { width:46px; height:46px; object-fit:cover; border-radius:10px; border:1px solid #d8d4c0; background:#fff; }
+  .pv-info h1 { font-size:28px; font-weight:900; margin-bottom:0; }
   .pv-meta { display:flex; gap:10px; color:#555; font-size:13px; flex-wrap:wrap; margin-bottom:14px; }
   .pv-desc { font-size:15px; color:#222; line-height:1.8; margin-bottom:14px; }
   .pv-price { font-size:15px; color:#660000; font-weight:800; margin-bottom:10px; }
