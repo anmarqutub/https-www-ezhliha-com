@@ -1452,6 +1452,7 @@ function CategoriesTab() {
 }
 
 // ============ PROVIDERS ============
+type MediaItem = { url: string; thumbnail_url?: string | null };
 type ProvRow = {
   id: string; subcategory_id: string; city_id: string; name: string;
   description: string | null; price_from: number | null; price_to: number | null;
@@ -1463,10 +1464,12 @@ type ProvRow = {
   sort_order: number; active: boolean;
   logo_url: string | null; video_url: string | null; video_thumbnail_url: string | null;
   show_packages: boolean; show_services: boolean; show_branches: boolean;
+  videos: MediaItem[];
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
-type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
-type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[]; videos: MediaItem[] };
+type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[]; videos: MediaItem[] };
+
 type BranchRow = { id: string; provider_id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 
 function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
