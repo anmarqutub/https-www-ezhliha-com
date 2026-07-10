@@ -498,10 +498,15 @@ function Home() {
 }
 
 export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE) {
-  const wa = (whatsapp ?? "").replace(/\D/g, "");
+  let wa = (whatsapp ?? "").replace(/\D/g, "");
   if (!wa) return null;
-  const num = wa.startsWith("0") ? "966" + wa.slice(1) : wa;
-  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+  // Saudi normalization:
+  // - 05XXXXXXXX (10 digits, leading 0) → 9665XXXXXXXX
+  // - 5XXXXXXXX  (9 digits, no leading 0, common when Excel drops the zero) → 9665XXXXXXXX
+  // - 9665XXXXXXXX (12 digits) → kept as-is
+  if (wa.length === 10 && wa.startsWith("05")) wa = "966" + wa.slice(1);
+  else if (wa.length === 9 && wa.startsWith("5")) wa = "966" + wa;
+  return `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
 }
 
 export function cleanHandle(v: string | null) {
