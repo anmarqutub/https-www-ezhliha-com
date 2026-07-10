@@ -382,7 +382,9 @@ export function ImportProvidersDialog({
       }
       if (!providerId) { childFail++; continue; }
       const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
-      const { error } = await supabase.from(table).insert({ ...c.payload, provider_id: providerId });
+      const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from(table) as any).insert(row);
       if (error) childFail++; else childOk++;
     }
 
