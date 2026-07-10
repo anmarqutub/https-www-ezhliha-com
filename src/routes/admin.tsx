@@ -1613,6 +1613,16 @@ function ProvidersTab() {
     reload();
   };
 
+  const uploadOfferImage = async (file: File, kind: "package" | "service") => {
+    if (!editing?.id) { alert("احفظ مقدم الخدمة أولاً قبل رفع الصورة"); return null; }
+    const ext = file.name.split(".").pop();
+    const path = `${editing.id}/${kind}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return null; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    return pub.publicUrl;
+  };
+
   const handleVideoUpload = async (file: File | undefined) => {
     if (!file || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الفيديو"); return; }
     if (file.size > 50 * 1024 * 1024) { alert("حجم الفيديو يجب أن يكون أقل من 50 ميغابايت"); return; }
