@@ -287,9 +287,20 @@ export function ImportProvidersDialog({
         // For children the provider's name comes from a dedicated column labeled "اسم المزود"
         // Our remap collapses that into `name` — but `name` here is also the child name.
         // So we look for the original two columns explicitly:
-        const rawProviderName = norm(rawIn["اسم المزود"] ?? rawIn["provider_name"] ?? "");
-        const rawProviderCity = norm(rawIn["مدينة المزود"] ?? rawIn["provider_city"] ?? "");
+        // New template uses a single "المزود *" column shaped "الاسم — المدينة".
+        // Old template used separate "اسم المزود" + "مدينة المزود" columns. Support both.
+        const combined = norm(rawIn["المزود *"] ?? rawIn["المزود"] ?? "");
+        let rawProviderName = norm(rawIn["اسم المزود"] ?? rawIn["provider_name"] ?? "");
+        let rawProviderCity = norm(rawIn["مدينة المزود"] ?? rawIn["provider_city"] ?? "");
+        if (combined && (!rawProviderName || !rawProviderCity)) {
+          const parts = combined.split(/\s*[—–-]\s*/);
+          if (parts.length >= 2) {
+            rawProviderName = rawProviderName || parts[0].trim();
+            rawProviderCity = rawProviderCity || parts.slice(1).join(" — ").trim();
+          }
+        }
         const childName = norm(
+          rawIn[kind === "package" ? "اسم الباقة *" : kind === "service" ? "اسم الخدمة *" : "اسم الفرع *"] ??
           rawIn[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
           rawIn["name"] ?? ""
         );
