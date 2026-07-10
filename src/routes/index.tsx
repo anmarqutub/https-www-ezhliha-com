@@ -322,6 +322,7 @@ function Home() {
                         city={cities.find((c) => c.id === p.city_id)}
                         sub={subcategories.find((s) => s.id === p.subcategory_id)}
                         images={imgsByProvider.get(p.id) ?? []}
+                        contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                       />
                     ))}
                   </div>
@@ -431,6 +432,7 @@ function Home() {
                       city={cities.find((c) => c.id === p.city_id)}
                       sub={subcategories.find((s) => s.id === p.subcategory_id)}
                       images={imgsByProvider.get(p.id) ?? []}
+                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                       featured
                     />
                   ))}
@@ -448,6 +450,7 @@ function Home() {
                       city={cities.find((c) => c.id === p.city_id)}
                       sub={subcategories.find((s) => s.id === p.subcategory_id)}
                       images={imgsByProvider.get(p.id) ?? []}
+                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                     />
                   ))}
                 </div>
@@ -524,12 +527,14 @@ function ProviderCard({
   sub,
   images,
   featured,
+  contactLabel,
 }: {
   provider: Provider;
   city?: City;
   sub?: Subcategory;
   images: ProviderImage[];
   featured?: boolean;
+  contactLabel: string;
 }) {
   const cover = images[0]?.image_url;
   const waUrl = waLink(provider.whatsapp);
@@ -565,7 +570,7 @@ function ProviderCard({
       <div className="ez-card-foot">
         {waUrl ? (
             <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
-              <span>للمزيد من التفاصيل</span>
+              <span>{contactLabel}</span>
               <WhatsAppIcon />
           </a>
         ) : (
