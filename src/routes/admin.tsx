@@ -1653,6 +1653,8 @@ function ProvidersTab() {
       show_packages: editing.show_packages ?? true,
       show_services: editing.show_services ?? true,
       show_branches: editing.show_branches ?? true,
+      videos: toMediaArray(editing.videos) as unknown as never,
+
     };
     if (editing.id) {
       const before = rows.find((r) => r.id === editing.id);
