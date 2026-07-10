@@ -102,6 +102,7 @@ function Home() {
       setProviders((pRes.data ?? []) as Provider[]);
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
+      setBranchCities((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]);
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
     })();
