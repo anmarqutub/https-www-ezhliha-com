@@ -1771,6 +1771,9 @@ function ProvidersTab() {
       price: editingPackage.price?.trim() || null,
       image_url: editingPackage.image_url?.trim() || null,
       sort_order: editingPackage.sort_order ?? 0,
+      images: toMediaArray(editingPackage.images) as unknown as never,
+      videos: toMediaArray(editingPackage.videos) as unknown as never,
+
     };
     if (editingPackage.id) {
       await supabase.from("packages").update(payload).eq("id", editingPackage.id);
