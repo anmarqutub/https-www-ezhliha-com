@@ -191,14 +191,14 @@ function Home() {
         <div className="ez-nav-actions">
           {!user && (
             <>
-              <Link to="/login" className="ez-nav-link">دخول</Link>
-              <Link to="/signup" className="ez-nav-btn">تسجيل</Link>
+              <Link to="/login" className="ez-nav-link">{txt("nav.login", "دخول")}</Link>
+              <Link to="/signup" className="ez-nav-btn">{txt("nav.signup", "تسجيل")}</Link>
             </>
           )}
           {user && (
             <>
-              {isAdmin && <Link to="/admin" className="ez-nav-link">لوحة الأدمن</Link>}
-              <AccountMenu email={user.email ?? ""} onSignOut={signOut} />
+              {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
+              <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
           )}
         </div>
@@ -272,7 +272,7 @@ function Home() {
       </section>
 
       <section className="ez-step">
-        <label className="ez-step-label">📍 اختر مدينتك</label>
+        <label className="ez-step-label">{txt("home.city.label", "📍 اختر مدينتك")}</label>
         <select
           className="ez-select"
           value={selectedCity}
@@ -282,8 +282,8 @@ function Home() {
             setSelectedSub("all");
           }}
         >
-          {cities.length === 0 && <option value="">ما فيه مدن لحد الحين</option>}
-          {cities.length > 0 && <option value="">🌍 كل المدن</option>}
+          {cities.length === 0 && <option value="">{txt("home.city.empty", "ما فيه مدن لحد الحين")}</option>}
+          {cities.length > 0 && <option value="">{txt("home.city.all", "🌍 كل المدن")}</option>}
           {cities.map((c) => (
             <option key={c.id} value={c.id}>{c.name_ar}</option>
           ))}
@@ -310,7 +310,7 @@ function Home() {
             return (
               <>
                 <div className="ez-section-head">
-                  <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
+                  <h2 className="ez-section-title">{txt("home.search.results", "🔍 نتائج البحث")} ({results.length})</h2>
                 </div>
                 {results.length === 0 ? (
                   <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
@@ -338,7 +338,7 @@ function Home() {
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
-                ما فيه تصنيفات لحد الحين. {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
+                {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
               </p>
             ) : (
               <div className="ez-cat-grid">
@@ -363,7 +363,7 @@ function Home() {
                         )}
                       </div>
                       <div className="ez-cat-meta">
-                        {count > 0 ? `${count} مقدم خدمة` : "قريباً 🌟"}
+                        {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً 🌟")}
                         <span className="ez-cat-arrow">‹</span>
                       </div>
                     </button>
@@ -376,7 +376,7 @@ function Home() {
           <>
             <div className="ez-section-head">
               <button className="ez-back" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); setSearch(""); }}>
-                ‹ رجوع للتصنيفات
+                {txt("home.category.back", "‹ رجوع للتصنيفات")}
               </button>
               <h2 className="ez-section-title">
                 {activeCategory?.icon} {activeCategory?.name_ar}
@@ -386,7 +386,7 @@ function Home() {
             <div className="ez-search">
               <input
                 type="text"
-                placeholder="دوّر داخل هذا التصنيف..."
+                placeholder={txt("home.category.search_placeholder", "دوّر داخل هذا التصنيف...")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -394,7 +394,7 @@ function Home() {
 
             {visibleSubs.length > 0 && (
               <div className="ez-chips" style={{ marginBottom: 12 }}>
-                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>الكل</button>
+                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
                 {visibleSubs.map((s) => (
                   <button
                     key={s.id}
@@ -409,7 +409,7 @@ function Home() {
 
             {visibleTertiaries.length > 0 && (
               <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
-                <span className="ez-tertiary-label">تصنيفات فرعية:</span>
+                <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
                 {visibleTertiaries.map((t) => (
                   <button
                     key={t.id}
@@ -424,7 +424,7 @@ function Home() {
 
             {featured.length > 0 && (
               <>
-                <h3 className="ez-sub-title">⭐ نخبة مختارة لك</h3>
+                <h3 className="ez-sub-title">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
@@ -442,7 +442,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h3 className="ez-sub-title">كل المقدمين</h3>
+                <h3 className="ez-sub-title">{txt("home.all_providers.title", "كل المقدمين")}</h3>
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
@@ -458,7 +458,7 @@ function Home() {
               </>
             )}
             {categoryProviders.length === 0 && (
-              <p className="ez-empty">ما فيه مقدمين بهذا التصنيف لحد الحين 🌷</p>
+              <p className="ez-empty">{txt("home.category.empty", "ما فيه مقدمين بهذا التصنيف لحد الحين 🌷")}</p>
             )}
           </>
         )}
@@ -466,7 +466,7 @@ function Home() {
 
       <footer className="ez-footer">
         <div className="ez-footer-actions">
-          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
+          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
           
           <a
             className="ez-footer-wa"
@@ -474,15 +474,15 @@ function Home() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="تواصل معنا عبر واتساب"
-            title="تواصل معنا"
+            title={txt("footer.contact", "تواصل معنا")}
           >
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
               <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
             </svg>
-            <span>تواصل معنا</span>
+            <span>{txt("footer.contact", "تواصل معنا")}</span>
           </a>
         </div>
-        <p className="ez-footer-copy">Ezhliha © 2026 — Powered by AQ</p>
+        <p className="ez-footer-copy">{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</p>
       </footer>
 
       {aboutOpen && (
@@ -497,7 +497,7 @@ function Home() {
               {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}
             </p>
             <p className="ez-about-text">
-              هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐
+              {txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}
             </p>
           </div>
         </div>
@@ -589,9 +589,10 @@ function WhatsAppIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void | Promise<void> }) {
+function AccountMenu({ email, onSignOut, texts }: { email: string; onSignOut: () => void | Promise<void>; texts: Record<string, string> }) {
   const [open, setOpen] = useState(false);
   const initial = (email || "?").trim().charAt(0).toUpperCase();
+  const t = (k: string, f: string) => texts[k] || f;
   useEffect(() => {
     if (!open) return;
     const close = () => setOpen(false);
@@ -609,12 +610,12 @@ function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => voi
           <div className="ez-acct-head">
             <div className="ez-acct-avatar lg">{initial}</div>
             <div>
-              <div className="ez-acct-title">حسابي</div>
+              <div className="ez-acct-title">{t("account.title", "حسابي")}</div>
               <div className="ez-acct-email">{email}</div>
             </div>
           </div>
-          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>♥ المفضلة</Link>
-          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>↩ تسجيل الخروج</button>
+          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.favorites", "♥ المفضلة")}</Link>
+          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>{t("account.signout", "↩ تسجيل الخروج")}</button>
         </div>
       )}
     </div>
@@ -622,20 +623,27 @@ function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => voi
 }
 
 function AuthGate() {
+  const [texts, setTexts] = useState<Record<string, string>>({});
+  useEffect(() => {
+    supabase.from("site_texts").select("key,value").then(({ data }) => {
+      setTexts(Object.fromEntries(((data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
+    });
+  }, []);
+  const t = (k: string, f: string) => texts[k] || f;
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
-        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>محتوى للأعضاء بس</h1>
+        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍
+          {t("auth_gate.description", "عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#660000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
-            تسجيل الدخول
+            {t("auth_gate.login", "تسجيل الدخول")}
           </Link>
           <Link to="/signup" style={{ background: "#fff", color: "#660000", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700, border: "2px solid #660000" }}>
-            إنشاء حساب جديد
+            {t("auth_gate.signup", "إنشاء حساب جديد")}
           </Link>
         </div>
       </div>
