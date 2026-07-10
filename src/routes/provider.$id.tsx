@@ -518,10 +518,17 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </div>
     );
   }
+  // Fallback (Instagram/TikTok/other) بدون صورة غلاف — عرض بوستر لايق يفتح الرابط في تبويعة جديدة
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">
-      <PlayIcon /> عرض الملف الشخصي
-    </a>
+    <button
+      type="button"
+      className="pv-video-poster pv-video-poster--empty"
+      onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+      aria-label="عرض الملف الشخصي"
+    >
+      <span><PlayIcon /></span>
+      <em className="pv-video-poster-label">عرض الملف الشخصي</em>
+    </button>
   );
 }
 
