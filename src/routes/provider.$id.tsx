@@ -401,47 +401,74 @@ function getYouTubeId(url: string) {
   return url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
 }
 
+function getTikTokEmbed(url: string) {
+  const id = url.match(/tiktok\.com\/(?:@[^/]+\/video\/|v\/|embed\/v2\/)(\d+)/)?.[1];
+  return id ? `https://www.tiktok.com/embed/v2/${id}` : null;
+}
+
+function getInstagramEmbed(url: string) {
+  const code = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
+  return code ? `https://www.instagram.com/p/${code}/embed` : null;
+}
+
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const [playing, setPlaying] = useState(false);
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  // Auto-fetch YouTube thumbnail if none provided
+  const ttEmbed = getTikTokEmbed(url);
+  const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
 
-  if (!playing) {
-    const handleClick = () => {
-      if (ytId || isDirect) setPlaying(true);
-      else window.open(url, "_blank", "noopener,noreferrer");
-    };
+  if (poster && !playing) {
+    const handleClick = () => setPlaying(true);
     return (
       <button
         type="button"
-        className={`pv-video-poster${poster ? "" : " pv-video-poster--empty"}`}
-        style={poster ? { backgroundImage: `url(${poster})` } : undefined}
+        className="pv-video-poster"
+        style={{ backgroundImage: `url(${poster})` }}
         onClick={handleClick}
         aria-label="مشاهدة الفيديو"
       >
         <span><PlayIcon /></span>
-        {!poster && <em className="pv-video-poster-label">مشاهدة الفيديو</em>}
       </button>
     );
   }
+
   if (ytId) {
     return (
       <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        <iframe src={`https://www.youtube.com/embed/${ytId}${playing ? "?autoplay=1" : ""}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
       </div>
     );
   }
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls autoPlay playsInline preload="metadata" poster={poster ?? undefined} />
+        <video src={url} controls autoPlay={playing} playsInline preload="metadata" poster={poster ?? undefined} />
       </div>
     );
   }
-  return null;
+  if (ttEmbed) {
+    return (
+      <div className="pv-video-wrap pv-video-wrap--tall">
+        <iframe src={ttEmbed} title="فيديو تيك توك" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+      </div>
+    );
+  }
+  if (igEmbed) {
+    return (
+      <div className="pv-video-wrap pv-video-wrap--tall">
+        <iframe src={igEmbed} title="فيديو إنستقرام" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen scrolling="no" />
+      </div>
+    );
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">
+      <PlayIcon /> مشاهدة الفيديو
+    </a>
+  );
 }
+
 
 function WhatsAppIcon() {
   return (
