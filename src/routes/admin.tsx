@@ -52,7 +52,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "texts" | "reviews" | "activity";
 
 
 function AdminPage() {
@@ -143,6 +143,7 @@ function AdminPage() {
           <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
           <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
+          <SideBtn label="عبارات الموقع" active={tab === "texts"} onClick={() => setTab("texts")} />
           <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
           <SideBtn label="سجل التعديلات" active={tab === "activity"} onClick={() => setTab("activity")} />
         </aside>
@@ -156,6 +157,7 @@ function AdminPage() {
           {tab === "categories" && <CategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
           {tab === "banners" && <BannersTab />}
+          {tab === "texts" && <SiteTextsTab />}
           {tab === "reviews" && <ReviewsTab />}
           {tab === "activity" && <ActivityLogTab />}
         </main>
