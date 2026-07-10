@@ -93,7 +93,8 @@ function Home() {
       const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
       const citiesData = allCities.filter((c) => allowedIds.includes(c.id));
       setCities(citiesData);
-      if (citiesData.length > 0) setSelectedCity(citiesData[0].id);
+      // Default to "All cities" (empty selection)
+      setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
       setProviders((pRes.data ?? []) as Provider[]);
