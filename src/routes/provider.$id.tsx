@@ -669,8 +669,8 @@ const css = `
   .pv-addr { font-size:13px; color:#555; margin-bottom:18px; }
   .pv-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
   .pv-btn-wa { background:transparent; color:#660000; padding:10px 0; border-radius:0; text-align:center; text-decoration:none; font-weight:900; display:flex; align-items:center; justify-content:center; gap:8px; }
-  .pv-btn-wa svg { color:#25D366; }
-  .pv-btn-wa-solid { background:#25D366; color:#fff; padding:14px; border-radius:12px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; font-size:15px; box-shadow:0 6px 18px rgba(37,211,102,0.25); }
+  .pv-btn-wa svg { color:#660000; }
+  .pv-btn-wa-solid { background:#660000; color:#fff; padding:14px; border-radius:12px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; font-size:15px; box-shadow:0 6px 18px rgba(102,0,0,0.25); }
   .pv-btn-wa-solid:hover { filter:brightness(0.95); }
   .pv-btn-wa-solid svg { color:#fff; }
   .pv-btn-call, .pv-btn-share { background:#f5f2e5; color:#660000; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid #d8d4c0; cursor:pointer; font-family:inherit; font-size:14px; }
