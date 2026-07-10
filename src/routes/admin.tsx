@@ -2040,6 +2040,15 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "auth_gate.login", label: "شاشة الأعضاء — زر الدخول", value: "تسجيل الدخول", updated_at: "" },
   { key: "auth_gate.signup", label: "شاشة الأعضاء — زر إنشاء الحساب", value: "إنشاء حساب جديد", updated_at: "" },
   { key: "provider.whatsapp.label", label: "عبارة زر الواتساب", value: "للمزيد من التفاصيل", updated_at: "" },
+  { key: "provider.tabs.packages", label: "تبويب — الباقات", value: "الباقات", updated_at: "" },
+  { key: "provider.tabs.services", label: "تبويب — الخدمات", value: "الخدمات", updated_at: "" },
+  { key: "provider.tabs.branches", label: "تبويب — الفروع", value: "الفروع", updated_at: "" },
+  { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Tajawal", updated_at: "" },
+];
+
+const FONT_OPTIONS = [
+  "Tajawal", "Cairo", "Almarai", "Amiri", "Reem Kufi Fun",
+  "Noto Kufi Arabic", "Changa", "El Messiri", "Rakkas",
 ];
 
 function SiteTextsTab() {
