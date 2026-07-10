@@ -238,6 +238,76 @@ function ProviderPage() {
               {subName && <span>• {subName}</span>}
               {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
             </div>
+
+            {(packages.length > 0 || services.length > 0 || branches.length > 0) && (
+              <div className="pv-inline-tabs">
+                <div className="pv-tabs">
+                  {packages.length > 0 && (
+                    <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
+                      {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
+                    </button>
+                  )}
+                  {services.length > 0 && (
+                    <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
+                      {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
+                    </button>
+                  )}
+                  {branches.length > 0 && (
+                    <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
+                      {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
+                    </button>
+                  )}
+                </div>
+
+                {activeTab === "packages" && packages.length > 0 && (
+                  <div className="pv-inline-list">
+                    {packages.map((pkg) => (
+                      <article className="pv-package" key={pkg.id}>
+                        {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
+                        <div>
+                          <h3>{pkg.name}</h3>
+                          {pkg.price && <strong>{pkg.price}</strong>}
+                          {pkg.description && <p>{pkg.description}</p>}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+                {activeTab === "services" && services.length > 0 && (
+                  <div className="pv-inline-list">
+                    {services.map((sv) => (
+                      <article className="pv-package" key={sv.id}>
+                        {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
+                        <div>
+                          <h3>{sv.name}</h3>
+                          {sv.price && <strong>{sv.price}</strong>}
+                          {sv.description && <p>{sv.description}</p>}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+                {activeTab === "branches" && branches.length > 0 && (
+                  <div className="pv-branch-list">
+                    {branches.map((br) => (
+                      <article className="pv-branch" key={br.id}>
+                        <div className="pv-branch-body">
+                          <h3>📍 {br.name}</h3>
+                          {br.address && <p>{br.address}</p>}
+                          {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
+                        </div>
+                        {br.map_url && (
+                          <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
+                            🗺️ الموقع
+                          </a>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {provider.description && <p className="pv-desc">{provider.description}</p>}
             {(provider.price_from || provider.price_to) && (
               <div className="pv-price">
@@ -323,76 +393,8 @@ function ProviderPage() {
           </section>
         )}
 
-        {(packages.length > 0 || services.length > 0 || branches.length > 0) && (
-          <section className="pv-packages">
-            <div className="pv-tabs">
-              {packages.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
-                  {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
-                </button>
-              )}
-              {services.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
-                  {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
-                </button>
-              )}
-              {branches.length > 0 && (
-                <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
-                  {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
-                </button>
-              )}
-            </div>
 
-            {activeTab === "packages" && packages.length > 0 && (
-              <div className="pv-package-grid">
-                {packages.map((pkg) => (
-                  <article className="pv-package" key={pkg.id}>
-                    {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                    <div>
-                      <h3>{pkg.name}</h3>
-                      {pkg.price && <strong>{pkg.price}</strong>}
-                      {pkg.description && <p>{pkg.description}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
 
-            {activeTab === "services" && services.length > 0 && (
-              <div className="pv-package-grid">
-                {services.map((sv) => (
-                  <article className="pv-package" key={sv.id}>
-                    {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                    <div>
-                      <h3>{sv.name}</h3>
-                      {sv.price && <strong>{sv.price}</strong>}
-                      {sv.description && <p>{sv.description}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-
-            {activeTab === "branches" && branches.length > 0 && (
-              <div className="pv-branch-list">
-                {branches.map((br) => (
-                  <article className="pv-branch" key={br.id}>
-                    <div className="pv-branch-body">
-                      <h3>📍 {br.name}</h3>
-                      {br.address && <p>{br.address}</p>}
-                      {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
-                    </div>
-                    {br.map_url && (
-                      <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
-                        🗺️ الموقع
-                      </a>
-                    )}
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
 
 
 
@@ -475,50 +477,42 @@ function getInstagramEmbed(url: string) {
 }
 
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
-  const [playing, setPlaying] = useState(false);
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
   const ttEmbed = getTikTokEmbed(url);
   const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
-  const isExternalFrame = !!ttEmbed || !!igEmbed;
-
-  if (poster && !playing) {
-    const handleClick = () => {
-      if (isExternalFrame) {
-        window.open(url, "_blank", "noopener,noreferrer");
-      } else {
-        setPlaying(true);
-      }
-    };
-    return (
-      <button
-        type="button"
-        className="pv-video-poster"
-        style={{ backgroundImage: `url(${poster})` }}
-        onClick={handleClick}
-        aria-label="عرض الملف الشخصي"
-      >
-        <span><PlayIcon /></span>
-      </button>
-    );
-  }
+  const isPortrait = !!ttEmbed || !!igEmbed;
 
   if (ytId) {
     return (
       <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${ytId}${playing ? "?autoplay=1" : ""}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        <iframe src={`https://www.youtube.com/embed/${ytId}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
       </div>
     );
   }
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls autoPlay={playing} playsInline preload="metadata" poster={poster ?? undefined} />
+        <video src={url} controls playsInline preload="metadata" poster={poster ?? undefined} />
       </div>
     );
   }
-  // Fallback (Instagram/TikTok/other) بدون صورة غلاف — عرض بوستر لايق يفتح الرابط في تبويعة جديدة
+  if (igEmbed) {
+    return (
+      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
+        <iframe src={igEmbed} title="Instagram" scrolling="no" allow="autoplay; encrypted-media" allowFullScreen />
+      </div>
+    );
+  }
+  if (ttEmbed) {
+    return (
+      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
+        <iframe src={ttEmbed} title="TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
+      </div>
+    );
+  }
+  // Fallback — رابط ما نقدر نضمنه
   return (
     <button
       type="button"
@@ -635,6 +629,9 @@ const css = `
   .pv-tab { background:none; border:none; padding:10px 18px; font-family:inherit; font-size:15px; font-weight:700; color:#5a4a4a; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .15s; }
   .pv-tab:hover { color:#660000; }
   .pv-tab.on { color:#660000; border-bottom-color:#660000; }
+  .pv-inline-tabs { margin:14px 0 16px; }
+  .pv-inline-tabs .pv-tabs { margin-bottom:12px; }
+  .pv-inline-list { display:flex; flex-direction:column; gap:10px; max-height:340px; overflow-y:auto; padding-inline-end:4px; }
   .pv-branch-list { display:flex; flex-direction:column; gap:10px; }
   .pv-branch { border:1px solid #e8e6d7; border-radius:12px; padding:14px; background:#fffdf8; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
   .pv-branch h3 { font-size:16px; font-weight:900; margin:0 0 4px; }

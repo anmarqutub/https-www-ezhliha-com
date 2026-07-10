@@ -1613,6 +1613,16 @@ function ProvidersTab() {
     reload();
   };
 
+  const uploadOfferImage = async (file: File, kind: "package" | "service") => {
+    if (!editing?.id) { alert("احفظ مقدم الخدمة أولاً قبل رفع الصورة"); return null; }
+    const ext = file.name.split(".").pop();
+    const path = `${editing.id}/${kind}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return null; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    return pub.publicUrl;
+  };
+
   const handleVideoUpload = async (file: File | undefined) => {
     if (!file || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الفيديو"); return; }
     if (file.size > 50 * 1024 * 1024) { alert("حجم الفيديو يجب أن يكون أقل من 50 ميغابايت"); return; }
@@ -1936,7 +1946,18 @@ function ProvidersTab() {
               <div className="adm-grid2">
                 <Field label="اسم الباقة"><input value={editingPackage.name ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, name: e.target.value })} /></Field>
                 <Field label="السعر"><input value={editingPackage.price ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, price: e.target.value })} placeholder="مثال: 2100 ر.س" /></Field>
-                <Field label="رابط صورة الباقة"><input value={editingPackage.image_url ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="صورة الباقة">
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    {editingPackage.image_url && <img src={editingPackage.image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                      const f = e.target.files?.[0]; if (!f) return;
+                      const url = await uploadOfferImage(f, "package");
+                      if (url) setEditingPackage({ ...editingPackage, image_url: url });
+                      e.target.value = "";
+                    }} />
+                    {editingPackage.image_url && <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditingPackage({ ...editingPackage, image_url: null })}>حذف</button>}
+                  </div>
+                </Field>
                 <Field label="الترتيب"><input type="number" value={editingPackage.sort_order ?? 0} onChange={(e) => setEditingPackage({ ...editingPackage, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الباقة"><textarea rows={3} value={editingPackage.description ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, description: e.target.value })} /></Field>
@@ -1978,7 +1999,18 @@ function ProvidersTab() {
               <div className="adm-grid2">
                 <Field label="اسم الخدمة"><input value={editingService.name ?? ""} onChange={(e) => setEditingService({ ...editingService, name: e.target.value })} /></Field>
                 <Field label="السعر"><input value={editingService.price ?? ""} onChange={(e) => setEditingService({ ...editingService, price: e.target.value })} placeholder="مثال: 150 ر.س" /></Field>
-                <Field label="رابط صورة الخدمة"><input value={editingService.image_url ?? ""} onChange={(e) => setEditingService({ ...editingService, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="صورة الخدمة">
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    {editingService.image_url && <img src={editingService.image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                      const f = e.target.files?.[0]; if (!f) return;
+                      const url = await uploadOfferImage(f, "service");
+                      if (url) setEditingService({ ...editingService, image_url: url });
+                      e.target.value = "";
+                    }} />
+                    {editingService.image_url && <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditingService({ ...editingService, image_url: null })}>حذف</button>}
+                  </div>
+                </Field>
                 <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
