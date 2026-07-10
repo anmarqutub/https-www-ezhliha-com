@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderUrl from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -29,7 +30,9 @@ type Provider = {
   description: string | null;
   price_from: number | null;
   price_to: number | null;
+  price: string | null;
   whatsapp: string | null;
+  contact_phone: string | null;
   instagram: string | null;
   tiktok: string | null;
   twitter: string | null;
@@ -42,6 +45,7 @@ type Provider = {
 };
 type ProviderImage = { id: string; provider_id: string; image_url: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
+type SiteText = { key: string; value: string };
 
 export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
@@ -55,6 +59,7 @@ function Home() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -70,7 +75,7 @@ function Home() {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -82,6 +87,7 @@ function Home() {
           .order("sort_order"),
         supabase.from("provider_images").select("*").order("sort_order"),
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
+        supabase.from("site_texts").select("key,value"),
       ]);
       const allCities = (cRes.data ?? []) as City[];
       const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
@@ -93,9 +99,12 @@ function Home() {
       setProviders((pRes.data ?? []) as Provider[]);
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
+      setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
     })();
   }, []);
+
+  const txt = (key: string, fallback: string) => siteTexts[key] || fallback;
 
   // Banner rotator
   useEffect(() => {
@@ -213,7 +222,7 @@ function Home() {
           ) : (
             <div className="ez-hero-inner">
               <h1 className="ez-logo-text">إزهليها</h1>
-              <p>دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍</p>
+              <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</p>
             </div>
           )}
           {banners.length > 1 && (
@@ -252,7 +261,7 @@ function Home() {
           <span className="ez-search-icon">🔍</span>
           <input
             type="text"
-            placeholder="دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه..."
+            placeholder={txt("home.search.placeholder", "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...")}
             value={quickSearch}
             onChange={(e) => setQuickSearch(e.target.value)}
           />
@@ -283,7 +292,7 @@ function Home() {
 
       <main className="ez-main">
         {loading ? (
-          <p className="ez-empty">لحظات.. نجهّز لك كل شي ✨</p>
+          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
         ) : quickSearch.trim() ? (
           (() => {
             const q = quickSearch.trim().toLowerCase();
@@ -304,7 +313,7 @@ function Home() {
                   <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
                 </div>
                 {results.length === 0 ? (
-                  <p className="ez-empty">ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷</p>
+                  <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
                 ) : (
                   <div className="ez-grid">
                     {results.map((p) => (
@@ -314,6 +323,7 @@ function Home() {
                         city={cities.find((c) => c.id === p.city_id)}
                         sub={subcategories.find((s) => s.id === p.subcategory_id)}
                         images={imgsByProvider.get(p.id) ?? []}
+                        contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                       />
                     ))}
                   </div>
@@ -324,7 +334,7 @@ function Home() {
         ) : !selectedCategory ? (
           <>
             <div className="ez-section-head">
-              <h2 className="ez-section-title">✿ تصفّح على كيفك.. حسب التصنيف</h2>
+              <h2 className="ez-section-title">{txt("home.categories.title", "✿ تصفّح على كيفك.. حسب التصنيف")}</h2>
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
@@ -423,6 +433,7 @@ function Home() {
                       city={cities.find((c) => c.id === p.city_id)}
                       sub={subcategories.find((s) => s.id === p.subcategory_id)}
                       images={imgsByProvider.get(p.id) ?? []}
+                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                       featured
                     />
                   ))}
@@ -440,6 +451,7 @@ function Home() {
                       city={cities.find((c) => c.id === p.city_id)}
                       sub={subcategories.find((s) => s.id === p.subcategory_id)}
                       images={imgsByProvider.get(p.id) ?? []}
+                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                     />
                   ))}
                 </div>
@@ -477,15 +489,12 @@ function Home() {
         <div className="ez-about-overlay" onClick={() => setAboutOpen(false)}>
           <div className="ez-about-modal" onClick={(e) => e.stopPropagation()}>
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
-            <h2 className="ez-about-title">من نحن</h2>
+            <h2 className="ez-about-title">{txt("home.about.title", "من نحن")}</h2>
             <p className="ez-about-text">
-              <strong className="ez-logo-text">إزهليها</strong> منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية.
-              نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات — كوافير، خياطة، تصوير، تنسيق حفلات،
-              قاعات، ضيافة، وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍
+              {txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}
             </p>
             <p className="ez-about-text">
-              مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة
-              والسعر والموقع، مع تواصل مباشر عبر واتساب وحفظ مفضّلتك بضغطة.
+              {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}
             </p>
             <p className="ez-about-text">
               هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐
@@ -504,6 +513,8 @@ export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE
   // - 05XXXXXXXX (10 digits, leading 0) → 9665XXXXXXXX
   // - 5XXXXXXXX  (9 digits, no leading 0, common when Excel drops the zero) → 9665XXXXXXXX
   // - 9665XXXXXXXX (12 digits) → kept as-is
+  if (wa.startsWith("00966")) wa = wa.slice(2);
+  if (wa.length === 13 && wa.startsWith("9660")) wa = "966" + wa.slice(4);
   if (wa.length === 10 && wa.startsWith("05")) wa = "966" + wa.slice(1);
   else if (wa.length === 9 && wa.startsWith("5")) wa = "966" + wa;
   return `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
@@ -519,26 +530,24 @@ function ProviderCard({
   sub,
   images,
   featured,
+  contactLabel,
 }: {
   provider: Provider;
   city?: City;
   sub?: Subcategory;
   images: ProviderImage[];
   featured?: boolean;
+  contactLabel: string;
 }) {
-  const cover = images[0]?.image_url;
+  const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
-        {cover ? (
-          <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-            {featured && <span className="ez-badge">مميز</span>}
-          </div>
-        ) : (
-          <div className="ez-card-img ez-card-img-empty" />
-        )}
+        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+          {featured && <span className="ez-badge">مميز</span>}
+        </div>
         <div className="ez-card-body">
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
@@ -555,18 +564,28 @@ function ProviderCard({
               {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
             </div>
           )}
+          {provider.price && <div className="ez-price">{provider.price}</div>}
         </div>
       </Link>
       <div className="ez-card-foot">
         {waUrl ? (
-          <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
-            📱 كلّمه واتساب
+            <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
+              <span>{contactLabel}</span>
+              <WhatsAppIcon />
           </a>
         ) : (
           <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
         )}
       </div>
     </article>
+  );
+}
+
+function WhatsAppIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
+      <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" />
+    </svg>
   );
 }
 
@@ -706,8 +725,9 @@ const css = `
   .ez-card-desc { font-size:13px; color:#555; line-height:1.6; margin-bottom:10px; flex:1; }
   .ez-price { font-size:13px; color:#660000; font-weight:700; margin-bottom:12px; }
   .ez-card-foot { padding:0 16px 16px; }
-  .ez-wa-btn { display:block; width:100%; text-align:center; background:#25D366; color:#fff; padding:10px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; border:none; cursor:pointer; font-family:inherit; }
-  .ez-wa-btn:hover { background:#1da851; }
+  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; text-align:center; background:transparent; color:#660000; padding:10px 0; border-radius:0; text-decoration:none; font-size:14px; font-weight:800; border:none; cursor:pointer; font-family:inherit; }
+  .ez-wa-btn svg { color:#25D366; flex-shrink:0; }
+  .ez-wa-btn:hover { color:#4a0000; text-decoration:underline; text-underline-offset:4px; }
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
   .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
   .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px 18px; margin-bottom:16px; }

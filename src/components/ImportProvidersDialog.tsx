@@ -23,6 +23,7 @@ type ParsedRow = {
     people_from: number | null;
     people_to: number | null;
     whatsapp: string | null;
+     contact_phone: string | null;
     instagram: string | null;
     tiktok: string | null;
     twitter: string | null;
@@ -52,6 +53,19 @@ function toNum(v: unknown): number | null {
 function toBool(v: unknown): boolean {
   const s = norm(v).toLowerCase();
   return s === "نعم" || s === "yes" || s === "true" || s === "1";
+}
+
+function normalizeSaudiPhone(v: unknown): string | null {
+  let s = norm(v)
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/\D/g, "");
+  if (!s) return null;
+  if (s.startsWith("00966")) s = s.slice(2);
+  if (s.length === 13 && s.startsWith("9660")) s = "966" + s.slice(4);
+  if (s.length === 10 && s.startsWith("05")) s = "966" + s.slice(1);
+  if (s.length === 9 && s.startsWith("5")) s = "966" + s;
+  return s;
 }
 
 export function ImportProvidersDialog({
@@ -130,7 +144,8 @@ export function ImportProvidersDialog({
           price: norm(raw.price) || null,
           people_from: toNum(raw.people_from),
           people_to: toNum(raw.people_to),
-          whatsapp: norm(raw.whatsapp) || null,
+          whatsapp: normalizeSaudiPhone(raw.whatsapp),
+          contact_phone: normalizeSaudiPhone(raw.contact_phone),
           instagram: norm(raw.instagram) || null,
           tiktok: norm(raw.tiktok) || null,
           twitter: norm(raw.twitter) || null,
@@ -218,7 +233,7 @@ export function ImportProvidersDialog({
                 <thead style={{ background: "#f5f3eb", position: "sticky", top: 0 }}>
                   <tr>
                     <th style={th}>#</th><th style={th}>الحالة</th><th style={th}>الاسم</th>
-                    <th style={th}>المدينة</th><th style={th}>التصنيف</th><th style={th}>الفرعي</th>
+                    <th style={th}>المدينة</th><th style={th}>التصنيف</th><th style={th}>الفرعي</th><th style={th}>واتساب</th><th style={th}>اتصال</th>
                     <th style={th}>الأخطاء</th>
                   </tr>
                 </thead>
@@ -231,6 +246,8 @@ export function ImportProvidersDialog({
                       <td style={td}>{norm(r.raw.city)}</td>
                       <td style={td}>{norm(r.raw.category)}</td>
                       <td style={td}>{norm(r.raw.subcategory)}{norm(r.raw.tertiary) ? ` › ${norm(r.raw.tertiary)}` : ""}</td>
+                      <td style={{ ...td, direction: "ltr" }}>{normalizeSaudiPhone(r.raw.whatsapp) ?? "—"}</td>
+                      <td style={{ ...td, direction: "ltr" }}>{normalizeSaudiPhone(r.raw.contact_phone) ?? "—"}</td>
                       <td style={{ ...td, color: "#b91c1c" }}>{r.errors.join("؛ ")}</td>
                     </tr>
                   ))}

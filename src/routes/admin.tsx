@@ -52,7 +52,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "reviews" | "activity";
+type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "texts" | "reviews" | "activity";
 
 
 function AdminPage() {
@@ -143,6 +143,7 @@ function AdminPage() {
           <SideBtn label="التصنيفات" active={tab === "categories"} onClick={() => setTab("categories")} />
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
           <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
+          <SideBtn label="عبارات الموقع" active={tab === "texts"} onClick={() => setTab("texts")} />
           <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
           <SideBtn label="سجل التعديلات" active={tab === "activity"} onClick={() => setTab("activity")} />
         </aside>
@@ -156,6 +157,7 @@ function AdminPage() {
           {tab === "categories" && <CategoriesTab />}
           {tab === "providers" && <ProvidersTab />}
           {tab === "banners" && <BannersTab />}
+          {tab === "texts" && <SiteTextsTab />}
           {tab === "reviews" && <ReviewsTab />}
           {tab === "activity" && <ActivityLogTab />}
         </main>
@@ -1453,14 +1455,30 @@ function CategoriesTab() {
 type ProvRow = {
   id: string; subcategory_id: string; city_id: string; name: string;
   description: string | null; price_from: number | null; price_to: number | null;
-  whatsapp: string | null; instagram: string | null;
+  price: string | null; people_from: number | null; people_to: number | null;
+  whatsapp: string | null; contact_phone: string | null; instagram: string | null;
   tiktok: string | null; twitter: string | null; snapchat: string | null;
-  address: string | null;
+  address: string | null; map_url: string | null;
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
-  video_url: string | null;
+  logo_url: string | null; video_url: string | null; video_thumbnail_url: string | null;
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
+type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+
+function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
+  let s = String(v ?? "")
+    .trim()
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/\D/g, "");
+  if (!s) return null;
+  if (s.startsWith("00966")) s = s.slice(2);
+  if (s.length === 13 && s.startsWith("9660")) s = "966" + s.slice(4);
+  if (s.length === 10 && s.startsWith("05")) s = "966" + s.slice(1);
+  if (s.length === 9 && s.startsWith("5")) s = "966" + s;
+  return s;
+}
 
 function ProvidersTab() {
   const [rows, setRows] = useState<ProvRow[]>([]);
@@ -1468,8 +1486,10 @@ function ProvidersTab() {
   const [subs, setSubs] = useState<SubRow[]>([]);
   const [cats, setCats] = useState<CatRow[]>([]);
   const [images, setImages] = useState<ImgRow[]>([]);
+  const [packages, setPackages] = useState<PackageRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<ProvRow> | null>(null);
+  const [editingPackage, setEditingPackage] = useState<Partial<PackageRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
@@ -1478,18 +1498,20 @@ function ProvidersTab() {
 
   const reload = useCallback(async () => {
     setLoading(true);
-    const [p, ci, s, c, i] = await Promise.all([
+    const [p, ci, s, c, i, pkg] = await Promise.all([
       supabase.from("providers").select("*").order("is_featured", { ascending: false }).order("sort_order"),
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("subcategories").select("*").order("sort_order"),
       supabase.from("categories").select("*").order("sort_order"),
       supabase.from("provider_images").select("*").order("sort_order"),
+      supabase.from("packages").select("*").order("sort_order"),
     ]);
     setRows((p.data ?? []) as ProvRow[]);
     setCities((ci.data ?? []) as CityRow[]);
     setSubs((s.data ?? []) as SubRow[]);
     setCats((c.data ?? []) as CatRow[]);
     setImages((i.data ?? []) as ImgRow[]);
+    setPackages((pkg.data ?? []) as PackageRow[]);
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
@@ -1501,13 +1523,20 @@ function ProvidersTab() {
       description: editing.description ?? null,
       price_from: editing.price_from ? +editing.price_from : null,
       price_to: editing.price_to ? +editing.price_to : null,
-      whatsapp: editing.whatsapp ?? null, instagram: editing.instagram ?? null,
+      price: editing.price ?? null,
+      people_from: editing.people_from ? +editing.people_from : null,
+      people_to: editing.people_to ? +editing.people_to : null,
+      whatsapp: normalizeSaudiPhoneInput(editing.whatsapp),
+      contact_phone: normalizeSaudiPhoneInput(editing.contact_phone),
+      instagram: editing.instagram ?? null,
       tiktok: editing.tiktok ?? null, twitter: editing.twitter ?? null, snapchat: editing.snapchat ?? null,
-      address: editing.address ?? null, rating: editing.rating ?? null,
+      address: editing.address ?? null, map_url: editing.map_url ?? null, rating: editing.rating ?? null,
       is_featured: editing.is_featured ?? false,
       featured_until: editing.featured_until || null,
       sort_order: editing.sort_order ?? 0, active: editing.active ?? true,
+      logo_url: editing.logo_url ?? null,
       video_url: editing.video_url ?? null,
+      video_thumbnail_url: editing.video_thumbnail_url ?? null,
     };
     if (editing.id) {
       const before = rows.find((r) => r.id === editing.id);
@@ -1561,6 +1590,19 @@ function ProvidersTab() {
     reload();
   };
 
+  const uploadProviderAsset = async (file: File, field: "logo_url" | "video_thumbnail_url") => {
+    if (!editing?.id) { alert("احفظ مقدم الخدمة أولاً قبل رفع الملف"); return; }
+    const ext = file.name.split(".").pop();
+    const path = `${editing.id}/${field}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    await supabase.from("providers").update({ [field]: pub.publicUrl } as never).eq("id", editing.id);
+    setEditing({ ...editing, [field]: pub.publicUrl });
+    logActivity("upload_image", "provider", editing.id, { field, name: editing.name });
+    reload();
+  };
+
   const handleVideoUpload = async (file: File | undefined) => {
     if (!file || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الفيديو"); return; }
     if (file.size > 50 * 1024 * 1024) { alert("حجم الفيديو يجب أن يكون أقل من 50 ميغابايت"); return; }
@@ -1587,7 +1629,36 @@ function ProvidersTab() {
   });
 
   const editingImages = editing?.id ? images.filter((i) => i.provider_id === editing.id) : [];
+  const editingPackages = editing?.id ? packages.filter((p) => p.provider_id === editing.id) : [];
   const editSubs = editing?.subcategory_id ? subs : subs;
+
+  const savePackage = async () => {
+    if (!editing?.id || !editingPackage?.name?.trim()) { alert("اكتب اسم الباقة"); return; }
+    const payload = {
+      provider_id: editing.id,
+      name: editingPackage.name.trim(),
+      description: editingPackage.description?.trim() || null,
+      price: editingPackage.price?.trim() || null,
+      image_url: editingPackage.image_url?.trim() || null,
+      sort_order: editingPackage.sort_order ?? 0,
+    };
+    if (editingPackage.id) {
+      await supabase.from("packages").update(payload).eq("id", editingPackage.id);
+      logActivity("update", "package", editingPackage.id, { name: payload.name });
+    } else {
+      const { data } = await supabase.from("packages").insert(payload).select().single();
+      logActivity("create", "package", data?.id ?? null, { name: payload.name, provider: editing.name });
+    }
+    setEditingPackage(null);
+    reload();
+  };
+
+  const deletePackage = async (pkg: PackageRow) => {
+    if (!confirm("حذف هذه الباقة؟")) return;
+    await supabase.from("packages").delete().eq("id", pkg.id);
+    logActivity("delete", "package", pkg.id, { name: pkg.name });
+    reload();
+  };
 
   return (
     <>
@@ -1631,7 +1702,7 @@ function ProvidersTab() {
             <table className="adm-table">
               <thead><tr>
                 <th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
-                <th>واتساب</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
+                <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
               </tr></thead>
               <tbody>
                 {filtered.map((r) => {
@@ -1643,6 +1714,8 @@ function ProvidersTab() {
                       <td>{sub?.name_ar ?? "—"}</td>
                       <td>{r.price_from ? `${r.price_from}${r.price_to ? `–${r.price_to}` : ""} ر.س` : "—"}</td>
                       <td style={{ direction: "ltr", fontSize: 12 }}>{r.whatsapp ?? "—"}</td>
+                      <td style={{ direction: "ltr", fontSize: 12 }}>{r.contact_phone ?? "—"}</td>
+                      <td>{packages.filter((p) => p.provider_id === r.id).length}</td>
                       <td>
                         <button onClick={() => toggleFeatured(r)} className={`adm-pill ${r.is_featured ? "on" : ""}`}>
                           {r.is_featured ? "★ مميز" : "عادي"}
@@ -1687,15 +1760,22 @@ function ProvidersTab() {
               </select>
             </Field>
             <Field label="رقم واتساب (مع رمز الدولة)">
-              <input value={editing.whatsapp ?? ""} onChange={(e) => setEditing({ ...editing, whatsapp: e.target.value })} placeholder="966555555555" dir="ltr" />
+              <input value={editing.whatsapp ?? ""} onChange={(e) => setEditing({ ...editing, whatsapp: e.target.value })} placeholder="05xxxxxxxx أو 9665xxxxxxxx" dir="ltr" />
+            </Field>
+            <Field label="رقم الاتصال (اختياري — إذا يختلف عن الواتساب)">
+              <input value={editing.contact_phone ?? ""} onChange={(e) => setEditing({ ...editing, contact_phone: e.target.value })} placeholder="05xxxxxxxx أو 9665xxxxxxxx" dir="ltr" />
             </Field>
             <Field label="السعر من (ر.س)"><input type="number" value={editing.price_from ?? ""} onChange={(e) => setEditing({ ...editing, price_from: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="السعر إلى (ر.س)"><input type="number" value={editing.price_to ?? ""} onChange={(e) => setEditing({ ...editing, price_to: e.target.value ? +e.target.value : null })} /></Field>
+            <Field label="نص السعر / تفاصيل الباقة العامة"><input value={editing.price ?? ""} onChange={(e) => setEditing({ ...editing, price: e.target.value })} placeholder="مثال: تبدأ الباقات من ٢١٠٠ ريال / حسب الحجم" /></Field>
+            <Field label="تكفي من"><input type="number" value={editing.people_from ?? ""} onChange={(e) => setEditing({ ...editing, people_from: e.target.value ? +e.target.value : null })} /></Field>
+            <Field label="تكفي إلى"><input type="number" value={editing.people_to ?? ""} onChange={(e) => setEditing({ ...editing, people_to: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="إنستغرام (اسم المستخدم)"><input value={editing.instagram ?? ""} onChange={(e) => setEditing({ ...editing, instagram: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="تيك توك (اسم المستخدم)"><input value={editing.tiktok ?? ""} onChange={(e) => setEditing({ ...editing, tiktok: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="اكس / تويتر (اسم المستخدم)"><input value={editing.twitter ?? ""} onChange={(e) => setEditing({ ...editing, twitter: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="سناب شات (اسم المستخدم)"><input value={editing.snapchat ?? ""} onChange={(e) => setEditing({ ...editing, snapchat: e.target.value })} dir="ltr" placeholder="username" /></Field>
             <Field label="العنوان"><input value={editing.address ?? ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} /></Field>
+            <Field label="رابط الخريطة"><input value={editing.map_url ?? ""} onChange={(e) => setEditing({ ...editing, map_url: e.target.value })} dir="ltr" placeholder="https://maps..." /></Field>
             <Field label="التقييم (0-5)"><input type="number" step="0.1" min="0" max="5" value={editing.rating ?? ""} onChange={(e) => setEditing({ ...editing, rating: e.target.value ? +e.target.value : null })} /></Field>
             <Field label="الترتيب اليدوي"><input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: +e.target.value })} /></Field>
           </div>
@@ -1711,6 +1791,13 @@ function ProvidersTab() {
           {editing.id && (
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
               <h4 style={{ marginBottom: 12, fontWeight: 700 }}>الصور</h4>
+              <Field label="لوقو مقدم الخدمة (اختياري)">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editing.logo_url && <img src={editing.logo_url} alt="" style={{ width: 74, height: 74, objectFit: "cover", borderRadius: 12, border: "1px solid #E8DADA" }} />}
+                  <input value={editing.logo_url ?? ""} onChange={(e) => setEditing({ ...editing, logo_url: e.target.value || null })} dir="ltr" placeholder="https://..." />
+                  <FileInput accept="image/*" onChange={(e) => e.target.files?.[0] && uploadProviderAsset(e.target.files[0], "logo_url")} label="رفع لوقو" />
+                </div>
+              </Field>
               <FileInput accept="image/*" multiple disabled={uploading} onChange={(e) => handleUpload(e.target.files)} label="اضغط لرفع صور (يمكن اختيار أكثر من صورة)" />
               {uploading && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(120px,1fr))", gap: 10, marginTop: 12 }}>
@@ -1734,6 +1821,13 @@ function ProvidersTab() {
                   placeholder="https://..."
                 />
               </Field>
+              <Field label="صورة واجهة الفيديو (اختياري)">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editing.video_thumbnail_url && <img src={editing.video_thumbnail_url} alt="" style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: 8 }} />}
+                  <input value={editing.video_thumbnail_url ?? ""} onChange={(e) => setEditing({ ...editing, video_thumbnail_url: e.target.value || null })} dir="ltr" placeholder="https://..." />
+                  <FileInput accept="image/*" onChange={(e) => e.target.files?.[0] && uploadProviderAsset(e.target.files[0], "video_thumbnail_url")} label="رفع صورة واجهة الفيديو" />
+                </div>
+              </Field>
               <p style={{ fontSize: 12, color: "#5A4A4A", margin: "4px 0 10px" }}>أو ارفعي ملف فيديو مباشرة (حد أقصى 50 ميغابايت):</p>
               <FileInput accept="video/*" disabled={uploadingVideo} onChange={(e) => handleVideoUpload(e.target.files?.[0])} label="اضغط لرفع فيديو" />
               {uploadingVideo && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
@@ -1743,6 +1837,47 @@ function ProvidersTab() {
                   <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); logActivity("delete_video", "provider", editing.id!, { name: editing.name }); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
                 </div>
               )}
+            </div>
+          )}
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <h4 style={{ fontWeight: 700 }}>تفصيل الباقات</h4>
+                <button type="button" className="adm-btn-sm" onClick={() => setEditingPackage({ sort_order: editingPackages.length })}>+ إضافة باقة</button>
+              </div>
+              {editingPackages.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت باقات لهذا المزود.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editingPackages.map((pkg) => (
+                    <div key={pkg.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
+                      <div>
+                        <strong>{pkg.name}</strong>
+                        {pkg.price && <span style={{ color: "#6B1F1F", fontWeight: 700, marginInlineStart: 8 }}>{pkg.price}</span>}
+                        {pkg.description && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>{pkg.description}</div>}
+                      </div>
+                      <div>
+                        <button type="button" className="adm-btn-sm" onClick={() => setEditingPackage(pkg)}>تعديل</button>
+                        <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => deletePackage(pkg)}>حذف</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {editingPackage && (
+            <div style={{ marginTop: 14, padding: 14, borderRadius: 12, background: "#FAF6F2", border: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingPackage.id ? "تعديل باقة" : "إضافة باقة"}</h4>
+              <div className="adm-grid2">
+                <Field label="اسم الباقة"><input value={editingPackage.name ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, name: e.target.value })} /></Field>
+                <Field label="السعر"><input value={editingPackage.price ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, price: e.target.value })} placeholder="مثال: 2100 ر.س" /></Field>
+                <Field label="رابط صورة الباقة"><input value={editingPackage.image_url ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="الترتيب"><input type="number" value={editingPackage.sort_order ?? 0} onChange={(e) => setEditingPackage({ ...editingPackage, sort_order: +e.target.value })} /></Field>
+              </div>
+              <Field label="تفاصيل الباقة"><textarea rows={3} value={editingPackage.description ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, description: e.target.value })} /></Field>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" className="adm-btn-secondary" onClick={() => setEditingPackage(null)}>إلغاء</button>
+                <button type="button" className="adm-btn-primary" onClick={savePackage}>حفظ الباقة</button>
+              </div>
             </div>
           )}
           {!editing.id && <p style={{ marginTop: 12, fontSize: 13, color: "#5A4A4A" }}>احفظي أولاً ثم سترين خيار رفع الصور.</p>}
@@ -1864,15 +1999,94 @@ function BannersTab() {
   );
 }
 
+// ============ SITE TEXTS ============
+type SiteTextRow = { key: string; value: string; label: string | null; updated_at: string };
+
+const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
+  { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍", updated_at: "" },
+  { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
+  { key: "home.categories.title", label: "عنوان التصنيفات", value: "✿ تصفّح على كيفك.. حسب التصنيف", updated_at: "" },
+  { key: "home.loading", label: "رسالة التحميل", value: "لحظات.. نجهّز لك كل شي ✨", updated_at: "" },
+  { key: "home.no_results", label: "رسالة لا توجد نتائج", value: "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷", updated_at: "" },
+  { key: "home.about.title", label: "عنوان من نحن", value: "من نحن", updated_at: "" },
+  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍", updated_at: "" },
+  { key: "home.about.p2", label: "من نحن — الفقرة الثانية", value: "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.", updated_at: "" },
+  { key: "provider.whatsapp.label", label: "عبارة زر الواتساب", value: "للمزيد من التفاصيل", updated_at: "" },
+];
+
+function SiteTextsTab() {
+  const [rows, setRows] = useState<SiteTextRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase.from("site_texts").select("*").order("key");
+    const byKey = new Map((data ?? []).map((r) => [r.key, r as SiteTextRow]));
+    const merged = SITE_TEXT_DEFAULTS.map((d) => byKey.get(d.key) ?? d);
+    const extras = ((data ?? []) as SiteTextRow[]).filter((r) => !SITE_TEXT_DEFAULTS.some((d) => d.key === r.key));
+    setRows([...merged, ...extras]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const updateRow = (key: string, value: string) => {
+    setRows((prev) => prev.map((r) => r.key === key ? { ...r, value } : r));
+  };
+
+  const save = async (row: SiteTextRow) => {
+    setSavingKey(row.key);
+    const payload = { key: row.key, label: row.label, value: row.value };
+    const { error } = await supabase.from("site_texts").upsert(payload, { onConflict: "key" });
+    setSavingKey(null);
+    if (error) { alert(error.message); return; }
+    logActivity("update", "site_text", row.key, { key: row.key, label: row.label });
+    reload();
+  };
+
+  return (
+    <>
+      <h1 className="adm-title">عبارات الموقع</h1>
+      <div className="adm-card">
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {rows.map((r) => (
+              <div key={r.key} style={{ border: "1px solid #F0E5E5", borderRadius: 12, padding: 14, background: "#fff" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
+                  <div>
+                    <strong>{r.label ?? r.key}</strong>
+                    <div style={{ direction: "ltr", textAlign: "left", fontSize: 11, color: "#9A8A8A", marginTop: 3 }}>{r.key}</div>
+                  </div>
+                  <button className="adm-btn-sm" disabled={savingKey === r.key} onClick={() => save(r)}>
+                    {savingKey === r.key ? "جارٍ الحفظ..." : "حفظ"}
+                  </button>
+                </div>
+                <textarea
+                  value={r.value}
+                  onChange={(e) => updateRow(r.key, e.target.value)}
+                  rows={r.value.length > 90 ? 4 : 2}
+                  style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ============ REVIEWS ============
 type ReviewRow = {
   id: string; provider_id: string; user_id: string;
-  rating: number; comment: string | null; created_at: string;
+  rating: number; comment: string | null; created_at: string; custom_reviewer_name: string | null;
 };
 
 function ReviewsTab() {
   const [rows, setRows] = useState<ReviewRow[]>([]);
   const [providers, setProviders] = useState<Record<string, string>>({});
+  const [providerRows, setProviderRows] = useState<Array<{ id: string; name: string }>>([]);
+  const [editing, setEditing] = useState({ provider_id: "", custom_reviewer_name: "", rating: 5, comment: "" });
   const [loading, setLoading] = useState(true);
 
   const reload = useCallback(async () => {
@@ -1883,6 +2097,7 @@ function ReviewsTab() {
     const map: Record<string, string> = {};
     (provs ?? []).forEach((p: { id: string; name: string }) => { map[p.id] = p.name; });
     setProviders(map);
+    setProviderRows(((provs ?? []) as Array<{ id: string; name: string }>).sort((a, b) => a.name.localeCompare(b.name, "ar")));
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
@@ -1895,9 +2110,49 @@ function ReviewsTab() {
     reload();
   };
 
+  const addFakeReview = async () => {
+    if (!editing.provider_id) { alert("اختر مقدم الخدمة"); return; }
+    if (!editing.custom_reviewer_name.trim()) { alert("اكتب اسم صاحب التقييم"); return; }
+    const payload = {
+      provider_id: editing.provider_id,
+      user_id: null,
+      custom_reviewer_name: editing.custom_reviewer_name.trim(),
+      rating: Math.max(1, Math.min(5, Number(editing.rating) || 5)),
+      comment: editing.comment.trim() || null,
+    };
+    const { error } = await supabase.from("reviews").insert(payload);
+    if (error) { alert(error.message); return; }
+    logActivity("create", "review", editing.provider_id, { provider: providers[editing.provider_id], rating: payload.rating, fake: true });
+    setEditing({ provider_id: "", custom_reviewer_name: "", rating: 5, comment: "" });
+    reload();
+  };
+
   return (
     <>
       <h1 className="adm-title">التقييمات</h1>
+      <div className="adm-card" style={{ marginBottom: 16 }}>
+        <h3 style={{ fontWeight: 800, fontSize: 16, marginBottom: 12 }}>إضافة تقييم من جهة الأدمن</h3>
+        <div className="adm-grid2">
+          <Field label="مقدم الخدمة">
+            <select value={editing.provider_id} onChange={(e) => setEditing({ ...editing, provider_id: e.target.value })}>
+              <option value="">اختر...</option>
+              {providerRows.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+          </Field>
+          <Field label="اسم صاحب التقييم">
+            <input value={editing.custom_reviewer_name} onChange={(e) => setEditing({ ...editing, custom_reviewer_name: e.target.value })} placeholder="مثال: عميل إزهليها" />
+          </Field>
+          <Field label="التقييم">
+            <select value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: +e.target.value })}>
+              {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} نجوم</option>)}
+            </select>
+          </Field>
+        </div>
+        <Field label="التعليق">
+          <textarea rows={3} value={editing.comment} onChange={(e) => setEditing({ ...editing, comment: e.target.value })} placeholder="اكتب التعليق الذي سيظهر للزوار" />
+        </Field>
+        <button className="adm-btn-primary" onClick={addFakeReview}>+ إضافة التقييم</button>
+      </div>
       <div className="adm-card">
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : rows.length === 0 ? (
           <p className="adm-empty">لا توجد تقييمات بعد.</p>
@@ -1907,6 +2162,7 @@ function ReviewsTab() {
               <thead>
                 <tr>
                   <th>مقدم الخدمة</th>
+                  <th>الاسم</th>
                   <th>التقييم</th>
                   <th>التعليق</th>
                   <th>التاريخ</th>
@@ -1917,6 +2173,7 @@ function ReviewsTab() {
                 {rows.map((r) => (
                   <tr key={r.id}>
                     <td>{providers[r.provider_id] || r.provider_id.slice(0, 8)}</td>
+                    <td>{r.custom_reviewer_name || "مستخدم"}</td>
                     <td>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</td>
                     <td style={{ maxWidth: 360 }}>{r.comment || "-"}</td>
                     <td style={{ fontSize: 12, color: "#5A4A4A" }}>{fmt(r.created_at)}</td>
@@ -2182,6 +2439,8 @@ const ENTITY_LABEL: Record<string, string> = {
   provider: "مقدم خدمة",
   banner: "بنر",
   review: "تقييم",
+  package: "باقة",
+  site_text: "عبارة موقع",
   purchase_code: "كود اشتراك",
   purchase_codes: "أكواد اشتراك",
 };
@@ -2189,9 +2448,10 @@ const ENTITY_LABEL: Record<string, string> = {
 const FIELD_LABEL: Record<string, string> = {
   name: "الاسم", name_ar: "الاسم", name_en: "الاسم (EN)", title: "العنوان",
   description: "الوصف", slug: "المعرّف", address: "العنوان",
-  whatsapp: "واتساب", instagram: "إنستغرام", tiktok: "تيكتوك",
+  whatsapp: "واتساب", contact_phone: "رقم الاتصال", instagram: "إنستغرام", tiktok: "تيكتوك",
   twitter: "تويتر", snapchat: "سناب شات", image_url: "الصورة", icon: "الأيقونة",
-  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى",
+  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى", price: "السعر النصي",
+  people_from: "تكفي من", people_to: "تكفي إلى", logo_url: "اللوقو", video_thumbnail_url: "واجهة الفيديو",
   rating: "التقييم", sort_order: "الترتيب", active: "مفعّل",
   is_featured: "مميّز", featured_until: "تمييز حتى",
   city_id: "المدينة", subcategory_id: "التصنيف الفرعي",
