@@ -63,6 +63,7 @@ function ProviderPage() {
 
   const [isFav, setIsFav] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; logo_url: string | null; price_from: number | null; price: string | null; cover: string | null; city_name: string | null }>>([]);
 
   const reload = async () => {
     setLoading(true);
