@@ -349,15 +349,9 @@ function ProviderPage() {
 
             <div className="pv-actions">
               {waUrl && (
-                <a className="pv-btn-wa" href={waUrl} target="_blank" rel="noopener noreferrer">
-                  <span>{contactLabel}</span>
+                <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
-                </a>
-              )}
-              {callUrl && (
-                <a className="pv-btn-call" href={callUrl}>
-                  <PhoneIcon />
-                  <span>اتصال مباشر</span>
+                  <span>{contactLabel || "للتواصل مع مقدم الخدمة"}</span>
                 </a>
               )}
               {provider.map_url && (
@@ -369,12 +363,15 @@ function ProviderPage() {
                 <ShareIcon />
                 <span>{copiedShare ? "تم نسخ الرابط" : "مشاركة"}</span>
               </button>
-
-
             </div>
 
-            {(ig || tk || tw || sc) && (
+            {(callUrl || ig || tk || tw || sc) && (
               <div className="pv-socials">
+                {callUrl && (
+                  <a href={callUrl} className="pv-soc pv-soc-call" aria-label="اتصال مباشر">
+                    <PhoneIcon />
+                  </a>
+                )}
                 {ig && (
                   <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="Instagram">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
