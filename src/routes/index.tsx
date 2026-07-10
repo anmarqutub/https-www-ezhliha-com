@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderUrl from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -512,6 +513,8 @@ export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE
   // - 05XXXXXXXX (10 digits, leading 0) → 9665XXXXXXXX
   // - 5XXXXXXXX  (9 digits, no leading 0, common when Excel drops the zero) → 9665XXXXXXXX
   // - 9665XXXXXXXX (12 digits) → kept as-is
+  if (wa.startsWith("00966")) wa = wa.slice(2);
+  if (wa.length === 13 && wa.startsWith("9660")) wa = "966" + wa.slice(4);
   if (wa.length === 10 && wa.startsWith("05")) wa = "966" + wa.slice(1);
   else if (wa.length === 9 && wa.startsWith("5")) wa = "966" + wa;
   return `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
@@ -536,19 +539,15 @@ function ProviderCard({
   featured?: boolean;
   contactLabel: string;
 }) {
-  const cover = images[0]?.image_url;
+  const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
-        {cover ? (
-          <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-            {featured && <span className="ez-badge">مميز</span>}
-          </div>
-        ) : (
-          <div className="ez-card-img ez-card-img-empty" />
-        )}
+        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+          {featured && <span className="ez-badge">مميز</span>}
+        </div>
         <div className="ez-card-body">
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
@@ -565,6 +564,7 @@ function ProviderCard({
               {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
             </div>
           )}
+          {provider.price && <div className="ez-price">{provider.price}</div>}
         </div>
       </Link>
       <div className="ez-card-foot">
