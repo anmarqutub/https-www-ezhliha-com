@@ -1489,9 +1489,13 @@ function ProvidersTab() {
   const [cats, setCats] = useState<CatRow[]>([]);
   const [images, setImages] = useState<ImgRow[]>([]);
   const [packages, setPackages] = useState<PackageRow[]>([]);
+  const [services, setServices] = useState<ServiceRow[]>([]);
+  const [branches, setBranches] = useState<BranchRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<ProvRow> | null>(null);
   const [editingPackage, setEditingPackage] = useState<Partial<PackageRow> | null>(null);
+  const [editingService, setEditingService] = useState<Partial<ServiceRow> | null>(null);
+  const [editingBranch, setEditingBranch] = useState<Partial<BranchRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
@@ -1500,13 +1504,15 @@ function ProvidersTab() {
 
   const reload = useCallback(async () => {
     setLoading(true);
-    const [p, ci, s, c, i, pkg] = await Promise.all([
+    const [p, ci, s, c, i, pkg, srv, br] = await Promise.all([
       supabase.from("providers").select("*").order("is_featured", { ascending: false }).order("sort_order"),
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("subcategories").select("*").order("sort_order"),
       supabase.from("categories").select("*").order("sort_order"),
       supabase.from("provider_images").select("*").order("sort_order"),
       supabase.from("packages").select("*").order("sort_order"),
+      supabase.from("services").select("*").order("sort_order"),
+      supabase.from("branches").select("*").order("sort_order"),
     ]);
     setRows((p.data ?? []) as ProvRow[]);
     setCities((ci.data ?? []) as CityRow[]);
@@ -1514,6 +1520,8 @@ function ProvidersTab() {
     setCats((c.data ?? []) as CatRow[]);
     setImages((i.data ?? []) as ImgRow[]);
     setPackages((pkg.data ?? []) as PackageRow[]);
+    setServices((srv.data ?? []) as ServiceRow[]);
+    setBranches((br.data ?? []) as BranchRow[]);
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
