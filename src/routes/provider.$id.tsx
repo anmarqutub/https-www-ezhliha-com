@@ -500,9 +500,15 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
   }
   if (igEmbed) {
     return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={igEmbed} title="Instagram" scrolling="no" allow="autoplay; encrypted-media" allowFullScreen />
-      </div>
+      <button
+        type="button"
+        className="pv-video-poster pv-video-poster--empty"
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+        aria-label="عرض الملف الشخصي على إنستقرام"
+      >
+        <span><PlayIcon /></span>
+        <em className="pv-video-poster-label">عرض الملف الشخصي على إنستقرام</em>
+      </button>
     );
   }
   if (ttEmbed) {
@@ -606,8 +612,8 @@ const css = `
 
   .pv-video-section { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-video-section h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
-  .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:transparent; }
-  .pv-video-wrap--tall { padding-top:0; height:min(720px, 90vh); max-width:420px; margin:0 auto; }
+  .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#fff; }
+  .pv-video-wrap--tall { padding-top:0; height:min(720px, 90vh); max-width:420px; margin:0 auto; background:#fff; }
 
   .pv-video-wrap iframe, .pv-video-wrap video { position:absolute; inset:0; width:100%; height:100%; border:none; }
   .pv-video-poster { width:100%; aspect-ratio:16/9; border:0; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
