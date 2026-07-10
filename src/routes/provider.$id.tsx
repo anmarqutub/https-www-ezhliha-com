@@ -500,9 +500,15 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
   }
   if (igEmbed) {
     return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={igEmbed} title="Instagram" scrolling="no" allow="autoplay; encrypted-media" allowFullScreen />
-      </div>
+      <button
+        type="button"
+        className="pv-video-poster pv-video-poster--empty"
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+        aria-label="عرض الملف الشخصي على إنستقرام"
+      >
+        <span><PlayIcon /></span>
+        <em className="pv-video-poster-label">عرض الملف الشخصي على إنستقرام</em>
+      </button>
     );
   }
   if (ttEmbed) {
