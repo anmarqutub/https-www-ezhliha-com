@@ -475,50 +475,42 @@ function getInstagramEmbed(url: string) {
 }
 
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
-  const [playing, setPlaying] = useState(false);
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
   const ttEmbed = getTikTokEmbed(url);
   const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
-  const isExternalFrame = !!ttEmbed || !!igEmbed;
-
-  if (poster && !playing) {
-    const handleClick = () => {
-      if (isExternalFrame) {
-        window.open(url, "_blank", "noopener,noreferrer");
-      } else {
-        setPlaying(true);
-      }
-    };
-    return (
-      <button
-        type="button"
-        className="pv-video-poster"
-        style={{ backgroundImage: `url(${poster})` }}
-        onClick={handleClick}
-        aria-label="عرض الملف الشخصي"
-      >
-        <span><PlayIcon /></span>
-      </button>
-    );
-  }
+  const isPortrait = !!ttEmbed || !!igEmbed;
 
   if (ytId) {
     return (
       <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${ytId}${playing ? "?autoplay=1" : ""}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        <iframe src={`https://www.youtube.com/embed/${ytId}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
       </div>
     );
   }
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls autoPlay={playing} playsInline preload="metadata" poster={poster ?? undefined} />
+        <video src={url} controls playsInline preload="metadata" poster={poster ?? undefined} />
       </div>
     );
   }
-  // Fallback (Instagram/TikTok/other) بدون صورة غلاف — عرض بوستر لايق يفتح الرابط في تبويعة جديدة
+  if (igEmbed) {
+    return (
+      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
+        <iframe src={igEmbed} title="Instagram" scrolling="no" allow="autoplay; encrypted-media" allowFullScreen />
+      </div>
+    );
+  }
+  if (ttEmbed) {
+    return (
+      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
+        <iframe src={ttEmbed} title="TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
+      </div>
+    );
+  }
+  // Fallback — رابط ما نقدر نضمنه
   return (
     <button
       type="button"
