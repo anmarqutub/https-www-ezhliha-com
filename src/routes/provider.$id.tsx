@@ -386,6 +386,7 @@ function ProviderPage() {
 function phoneLink(value: string | null) {
   let phone = (value ?? "").trim().replace(/[^0-9+]/g, "");
   if (!phone) return null;
+  if (phone.startsWith("+9660")) phone = `+966${phone.slice(5)}`;
   if (phone.startsWith("+")) return `tel:${phone}`;
   if (phone.startsWith("00966")) phone = `+${phone.slice(2)}`;
   else if (phone.startsWith("9660")) phone = `+966${phone.slice(4)}`;
@@ -403,7 +404,7 @@ function getYouTubeId(url: string) {
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const [playing, setPlaying] = useState(false);
   const ytId = getYouTubeId(url);
-  const poster = thumbnailUrl || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null);
+  const poster = thumbnailUrl;
   if (poster && !playing) {
     return (
       <button
