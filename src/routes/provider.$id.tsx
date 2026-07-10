@@ -11,6 +11,7 @@ export const Route = createFileRoute("/provider/$id")({
   head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — إزهليها" }] }),
 });
 
+type MediaItem = { url: string; thumbnail_url?: string | null };
 type Provider = {
   id: string; name: string; description: string | null;
   price_from: number | null; price_to: number | null; price: string | null;
@@ -24,12 +25,14 @@ type Provider = {
   logo_url: string | null;
   video_thumbnail_url: string | null;
   show_packages: boolean; show_services: boolean; show_branches: boolean;
+  videos: MediaItem[] | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
-type Package = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
-type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type Package = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[] | null; videos: MediaItem[] | null };
+type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[] | null; videos: MediaItem[] | null };
 type Branch = { id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
+
 type SiteText = { key: string; value: string };
 type OfferTab = "overview" | "packages" | "services" | "branches";
 
