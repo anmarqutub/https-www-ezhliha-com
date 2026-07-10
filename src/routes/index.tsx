@@ -353,7 +353,7 @@ function Home() {
                         )}
                       </div>
                       <div className="ez-cat-meta">
-                        {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
+                        {count > 0 ? `${count} مقدم خدمة` : "قريباً 🌟"}
                         <span className="ez-cat-arrow">‹</span>
                       </div>
                     </button>
