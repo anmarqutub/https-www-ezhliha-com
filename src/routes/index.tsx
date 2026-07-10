@@ -667,8 +667,8 @@ const css = `
   .ez-nav-btn:hover { background:#4a0000; }
   .ez-nav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
   .ez-nav-btn-out:hover { background:#660000; color:#fff; }
-  .ez-nav-contact { background:#25D366; color:#fff !important; padding:8px 16px; border-radius:50px; font-weight:700; }
-  .ez-nav-contact:hover { background:#1da851; color:#fff !important; }
+  .ez-nav-contact { background:#660000; color:#fff !important; padding:8px 16px; border-radius:50px; font-weight:700; }
+  .ez-nav-contact:hover { background:#4a0000; color:#fff !important; }
   .ez-nav-contact-disabled { background:#ccc; color:#fff; cursor:not-allowed; }
 
   .ez-hero { max-width:1200px; margin:18px auto 0; padding:0 24px; }
@@ -734,7 +734,7 @@ const css = `
   .ez-price { font-size:13px; color:#660000; font-weight:700; margin-bottom:12px; }
   .ez-card-foot { padding:0 16px 16px; }
   .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; text-align:center; background:transparent; color:#660000; padding:10px 0; border-radius:0; text-decoration:none; font-size:14px; font-weight:800; border:none; cursor:pointer; font-family:inherit; }
-  .ez-wa-btn svg { color:#25D366; flex-shrink:0; }
+  .ez-wa-btn svg { color:#660000; flex-shrink:0; }
   .ez-wa-btn:hover { color:#4a0000; text-decoration:underline; text-underline-offset:4px; }
   .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
   .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
@@ -744,8 +744,8 @@ const css = `
   .ez-footer-out { color:#660000; }
   .ez-footer-user { font-size:12px; color:#888; }
   .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; background:transparent; color:inherit; padding:4px 0; text-decoration:none; font-weight:400; font-size:14px; }
-  .ez-footer-wa svg { color:#25D366; }
-  .ez-footer-wa:hover { color:#25D366; }
+  .ez-footer-wa svg { color:#660000; }
+  .ez-footer-wa:hover { color:#660000; }
   .ez-footer-copy { font-size:11px; color:#777; margin:0; letter-spacing:.3px; }
   .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
   .ez-about-modal { background:#fff; max-width:560px; width:100%; border-radius:16px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:85vh; overflow-y:auto; border-top:4px solid #660000; }
