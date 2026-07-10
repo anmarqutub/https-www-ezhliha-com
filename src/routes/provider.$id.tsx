@@ -860,4 +860,18 @@ const css = `
   .pv-suggest-body h3 { font-size:15px; font-weight:800; margin:0; color:#000; }
   .pv-suggest-city { font-size:12px; color:#666; }
   .pv-suggest-body strong { color:#660000; font-size:13px; font-weight:800; }
+  .pv-soc-call { border:none; cursor:pointer; font-family:inherit; }
+  .pv-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:16px; }
+  .pv-modal { background:#fff; border-radius:18px; padding:28px 24px; max-width:360px; width:100%; text-align:center; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.3); font-family:'Tajawal', sans-serif; }
+  .pv-modal-close { position:absolute; top:10px; left:14px; background:none; border:none; font-size:26px; cursor:pointer; color:#888; line-height:1; }
+  .pv-modal-close:hover { color:#660000; }
+  .pv-modal-icon { width:64px; height:64px; border-radius:50%; background:#660000; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+  .pv-modal-icon svg { width:28px; height:28px; }
+  .pv-modal-title { font-size:18px; font-weight:800; color:#000; margin:0 0 12px; }
+  .pv-modal-phone { font-size:24px; font-weight:800; color:#660000; letter-spacing:1px; padding:14px; background:#f5f2e5; border-radius:12px; margin-bottom:18px; direction:ltr; }
+  .pv-modal-actions { display:flex; gap:10px; }
+  .pv-modal-call { flex:1; background:#660000; color:#fff; padding:14px; border-radius:10px; text-decoration:none; font-weight:800; font-size:15px; }
+  .pv-modal-call:hover { background:#4d0000; }
+  .pv-modal-copy { flex:1; background:#fff; color:#660000; padding:14px; border-radius:10px; font-weight:800; font-size:15px; border:2px solid #660000; cursor:pointer; font-family:inherit; }
+  .pv-modal-copy:hover { background:#f5f2e5; }
 `;
