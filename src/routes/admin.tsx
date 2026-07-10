@@ -1465,6 +1465,8 @@ type ProvRow = {
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type BranchRow = { id: string; provider_id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 
 function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
   let s = String(v ?? "")
@@ -1487,9 +1489,13 @@ function ProvidersTab() {
   const [cats, setCats] = useState<CatRow[]>([]);
   const [images, setImages] = useState<ImgRow[]>([]);
   const [packages, setPackages] = useState<PackageRow[]>([]);
+  const [services, setServices] = useState<ServiceRow[]>([]);
+  const [branches, setBranches] = useState<BranchRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<ProvRow> | null>(null);
   const [editingPackage, setEditingPackage] = useState<Partial<PackageRow> | null>(null);
+  const [editingService, setEditingService] = useState<Partial<ServiceRow> | null>(null);
+  const [editingBranch, setEditingBranch] = useState<Partial<BranchRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
@@ -1498,13 +1504,15 @@ function ProvidersTab() {
 
   const reload = useCallback(async () => {
     setLoading(true);
-    const [p, ci, s, c, i, pkg] = await Promise.all([
+    const [p, ci, s, c, i, pkg, srv, br] = await Promise.all([
       supabase.from("providers").select("*").order("is_featured", { ascending: false }).order("sort_order"),
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("subcategories").select("*").order("sort_order"),
       supabase.from("categories").select("*").order("sort_order"),
       supabase.from("provider_images").select("*").order("sort_order"),
       supabase.from("packages").select("*").order("sort_order"),
+      supabase.from("services").select("*").order("sort_order"),
+      supabase.from("branches").select("*").order("sort_order"),
     ]);
     setRows((p.data ?? []) as ProvRow[]);
     setCities((ci.data ?? []) as CityRow[]);
@@ -1512,6 +1520,8 @@ function ProvidersTab() {
     setCats((c.data ?? []) as CatRow[]);
     setImages((i.data ?? []) as ImgRow[]);
     setPackages((pkg.data ?? []) as PackageRow[]);
+    setServices((srv.data ?? []) as ServiceRow[]);
+    setBranches((br.data ?? []) as BranchRow[]);
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
@@ -1630,6 +1640,8 @@ function ProvidersTab() {
 
   const editingImages = editing?.id ? images.filter((i) => i.provider_id === editing.id) : [];
   const editingPackages = editing?.id ? packages.filter((p) => p.provider_id === editing.id) : [];
+  const editingServices = editing?.id ? services.filter((x) => x.provider_id === editing.id) : [];
+  const editingBranches = editing?.id ? branches.filter((x) => x.provider_id === editing.id) : [];
   const editSubs = editing?.subcategory_id ? subs : subs;
 
   const savePackage = async () => {
@@ -1657,6 +1669,60 @@ function ProvidersTab() {
     if (!confirm("حذف هذه الباقة؟")) return;
     await supabase.from("packages").delete().eq("id", pkg.id);
     logActivity("delete", "package", pkg.id, { name: pkg.name });
+    reload();
+  };
+
+  const saveService = async () => {
+    if (!editing?.id || !editingService?.name?.trim()) { alert("اكتب اسم الخدمة"); return; }
+    const payload = {
+      provider_id: editing.id,
+      name: editingService.name.trim(),
+      description: editingService.description?.trim() || null,
+      price: editingService.price?.trim() || null,
+      image_url: editingService.image_url?.trim() || null,
+      sort_order: editingService.sort_order ?? 0,
+    };
+    if (editingService.id) {
+      await supabase.from("services").update(payload).eq("id", editingService.id);
+      logActivity("update", "service", editingService.id, { name: payload.name });
+    } else {
+      const { data } = await supabase.from("services").insert(payload).select().single();
+      logActivity("create", "service", data?.id ?? null, { name: payload.name, provider: editing.name });
+    }
+    setEditingService(null);
+    reload();
+  };
+  const deleteService = async (row: ServiceRow) => {
+    if (!confirm("حذف هذه الخدمة؟")) return;
+    await supabase.from("services").delete().eq("id", row.id);
+    logActivity("delete", "service", row.id, { name: row.name });
+    reload();
+  };
+
+  const saveBranch = async () => {
+    if (!editing?.id || !editingBranch?.name?.trim()) { alert("اكتب اسم الفرع"); return; }
+    const payload = {
+      provider_id: editing.id,
+      name: editingBranch.name.trim(),
+      address: editingBranch.address?.trim() || null,
+      map_url: editingBranch.map_url?.trim() || null,
+      phone: editingBranch.phone?.trim() || null,
+      sort_order: editingBranch.sort_order ?? 0,
+    };
+    if (editingBranch.id) {
+      await supabase.from("branches").update(payload).eq("id", editingBranch.id);
+      logActivity("update", "branch", editingBranch.id, { name: payload.name });
+    } else {
+      const { data } = await supabase.from("branches").insert(payload).select().single();
+      logActivity("create", "branch", data?.id ?? null, { name: payload.name, provider: editing.name });
+    }
+    setEditingBranch(null);
+    reload();
+  };
+  const deleteBranch = async (row: BranchRow) => {
+    if (!confirm("حذف هذا الفرع؟")) return;
+    await supabase.from("branches").delete().eq("id", row.id);
+    logActivity("delete", "branch", row.id, { name: row.name });
     reload();
   };
 
@@ -1880,6 +1946,91 @@ function ProvidersTab() {
               </div>
             </div>
           )}
+
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <h4 style={{ fontWeight: 700 }}>الخدمات</h4>
+                <button type="button" className="adm-btn-sm" onClick={() => setEditingService({ sort_order: editingServices.length })}>+ إضافة خدمة</button>
+              </div>
+              {editingServices.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت خدمات لهذا المزود.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editingServices.map((row) => (
+                    <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
+                      <div>
+                        <strong>{row.name}</strong>
+                        {row.price && <span style={{ color: "#6B1F1F", fontWeight: 700, marginInlineStart: 8 }}>{row.price}</span>}
+                        {row.description && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>{row.description}</div>}
+                      </div>
+                      <div>
+                        <button type="button" className="adm-btn-sm" onClick={() => setEditingService(row)}>تعديل</button>
+                        <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => deleteService(row)}>حذف</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {editingService && (
+            <div style={{ marginTop: 14, padding: 14, borderRadius: 12, background: "#FAF6F2", border: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingService.id ? "تعديل خدمة" : "إضافة خدمة"}</h4>
+              <div className="adm-grid2">
+                <Field label="اسم الخدمة"><input value={editingService.name ?? ""} onChange={(e) => setEditingService({ ...editingService, name: e.target.value })} /></Field>
+                <Field label="السعر"><input value={editingService.price ?? ""} onChange={(e) => setEditingService({ ...editingService, price: e.target.value })} placeholder="مثال: 150 ر.س" /></Field>
+                <Field label="رابط صورة الخدمة"><input value={editingService.image_url ?? ""} onChange={(e) => setEditingService({ ...editingService, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
+              </div>
+              <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" className="adm-btn-secondary" onClick={() => setEditingService(null)}>إلغاء</button>
+                <button type="button" className="adm-btn-primary" onClick={saveService}>حفظ الخدمة</button>
+              </div>
+            </div>
+          )}
+
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <h4 style={{ fontWeight: 700 }}>الفروع</h4>
+                <button type="button" className="adm-btn-sm" onClick={() => setEditingBranch({ sort_order: editingBranches.length })}>+ إضافة فرع</button>
+              </div>
+              {editingBranches.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت فروع لهذا المزود.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editingBranches.map((row) => (
+                    <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
+                      <div>
+                        <strong>{row.name}</strong>
+                        {row.address && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>📍 {row.address}</div>}
+                        {row.phone && <div style={{ direction: "ltr", fontSize: 12, color: "#5A4A4A" }}>{row.phone}</div>}
+                      </div>
+                      <div>
+                        <button type="button" className="adm-btn-sm" onClick={() => setEditingBranch(row)}>تعديل</button>
+                        <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => deleteBranch(row)}>حذف</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {editingBranch && (
+            <div style={{ marginTop: 14, padding: 14, borderRadius: 12, background: "#FAF6F2", border: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingBranch.id ? "تعديل فرع" : "إضافة فرع"}</h4>
+              <div className="adm-grid2">
+                <Field label="اسم الفرع"><input value={editingBranch.name ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, name: e.target.value })} placeholder="مثال: فرع العليا" /></Field>
+                <Field label="رقم الهاتف"><input value={editingBranch.phone ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, phone: e.target.value })} dir="ltr" placeholder="05xxxxxxxx" /></Field>
+                <Field label="العنوان"><input value={editingBranch.address ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, address: e.target.value })} /></Field>
+                <Field label="رابط الخريطة"><input value={editingBranch.map_url ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, map_url: e.target.value })} dir="ltr" placeholder="https://maps..." /></Field>
+                <Field label="الترتيب"><input type="number" value={editingBranch.sort_order ?? 0} onChange={(e) => setEditingBranch({ ...editingBranch, sort_order: +e.target.value })} /></Field>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" className="adm-btn-secondary" onClick={() => setEditingBranch(null)}>إلغاء</button>
+                <button type="button" className="adm-btn-primary" onClick={saveBranch}>حفظ الفرع</button>
+              </div>
+            </div>
+          )}
+
           {!editing.id && <p style={{ marginTop: 12, fontSize: 13, color: "#5A4A4A" }}>احفظي أولاً ثم سترين خيار رفع الصور.</p>}
         </Modal>
       )}
@@ -2040,6 +2191,15 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "auth_gate.login", label: "شاشة الأعضاء — زر الدخول", value: "تسجيل الدخول", updated_at: "" },
   { key: "auth_gate.signup", label: "شاشة الأعضاء — زر إنشاء الحساب", value: "إنشاء حساب جديد", updated_at: "" },
   { key: "provider.whatsapp.label", label: "عبارة زر الواتساب", value: "للمزيد من التفاصيل", updated_at: "" },
+  { key: "provider.tabs.packages", label: "تبويب — الباقات", value: "الباقات", updated_at: "" },
+  { key: "provider.tabs.services", label: "تبويب — الخدمات", value: "الخدمات", updated_at: "" },
+  { key: "provider.tabs.branches", label: "تبويب — الفروع", value: "الفروع", updated_at: "" },
+  { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Tajawal", updated_at: "" },
+];
+
+const FONT_OPTIONS = [
+  "Tajawal", "Cairo", "Almarai", "Amiri", "Reem Kufi Fun",
+  "Noto Kufi Arabic", "Changa", "El Messiri", "Rakkas",
 ];
 
 function SiteTextsTab() {
@@ -2089,12 +2249,22 @@ function SiteTextsTab() {
                     {savingKey === r.key ? "جارٍ الحفظ..." : "حفظ"}
                   </button>
                 </div>
-                <textarea
-                  value={r.value}
-                  onChange={(e) => updateRow(r.key, e.target.value)}
-                  rows={r.value.length > 90 ? 4 : 2}
-                  style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
-                />
+                {r.key === "site.font_family" ? (
+                  <select
+                    value={r.value}
+                    onChange={(e) => updateRow(r.key, e.target.value)}
+                    style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: `"${r.value}", inherit`, fontSize: 15 }}
+                  >
+                    {FONT_OPTIONS.map((f) => <option key={f} value={f} style={{ fontFamily: `"${f}", sans-serif` }}>{f}</option>)}
+                  </select>
+                ) : (
+                  <textarea
+                    value={r.value}
+                    onChange={(e) => updateRow(r.key, e.target.value)}
+                    rows={r.value.length > 90 ? 4 : 2}
+                    style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
+                  />
+                )}
               </div>
             ))}
           </div>

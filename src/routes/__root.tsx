@@ -11,6 +11,7 @@ import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 const CANONICAL_HOST = "www.ezhliha.com";
 
@@ -18,11 +19,26 @@ function useCanonicalHostRedirect() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const host = window.location.hostname;
-    // Redirect any *.lovable.app host (preview/published) to the official domain
     if (host.endsWith(".lovable.app")) {
       const target = `https://${CANONICAL_HOST}${window.location.pathname}${window.location.search}${window.location.hash}`;
       window.location.replace(target);
     }
+  }, []);
+}
+
+function useAdminFont() {
+  useEffect(() => {
+    let cancelled = false;
+    supabase.from("site_texts").select("value").eq("key", "site.font_family").maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return;
+        const family = (data?.value ?? "").trim();
+        if (!family) return;
+        const stack = `"${family}", Tajawal, system-ui, sans-serif`;
+        document.documentElement.style.setProperty("--site-font", stack);
+        document.body.style.fontFamily = stack;
+      });
+    return () => { cancelled = true; };
   }, []);
 }
 
@@ -113,7 +129,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Rakkas&family=Reem+Kufi+Fun:wght@400..700&family=Tajawal:wght@300;400;500;700;800;900&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&family=Changa:wght@300;400;600;800&family=El+Messiri:wght@400;600;700&family=Noto+Kufi+Arabic:wght@300;400;600;800&family=Rakkas&family=Reem+Kufi+Fun:wght@400..700&family=Tajawal:wght@300;400;500;700;800;900&display=swap",
       },
     ],
   }),
@@ -140,6 +156,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useCanonicalHostRedirect();
+  useAdminFont();
 
   return (
     <QueryClientProvider client={queryClient}>
