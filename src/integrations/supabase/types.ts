@@ -290,6 +290,50 @@ export type Database = {
         }
         Relationships: []
       }
+      packages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price: string | null
+          provider_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price?: string | null
+          provider_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: string | null
+          provider_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packages_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           active_session_id: string | null
@@ -372,6 +416,7 @@ export type Database = {
           id: string
           instagram: string | null
           is_featured: boolean
+          logo_url: string | null
           map_url: string | null
           name: string
           people_from: number | null
@@ -386,6 +431,7 @@ export type Database = {
           tiktok: string | null
           twitter: string | null
           updated_at: string
+          video_thumbnail_url: string | null
           video_url: string | null
           whatsapp: string | null
         }
@@ -399,6 +445,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_featured?: boolean
+          logo_url?: string | null
           map_url?: string | null
           name: string
           people_from?: number | null
@@ -413,6 +460,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           updated_at?: string
+          video_thumbnail_url?: string | null
           video_url?: string | null
           whatsapp?: string | null
         }
@@ -426,6 +474,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_featured?: boolean
+          logo_url?: string | null
           map_url?: string | null
           name?: string
           people_from?: number | null
@@ -440,6 +489,7 @@ export type Database = {
           tiktok?: string | null
           twitter?: string | null
           updated_at?: string
+          video_thumbnail_url?: string | null
           video_url?: string | null
           whatsapp?: string | null
         }
@@ -503,26 +553,50 @@ export type Database = {
         Row: {
           comment: string | null
           created_at: string
+          custom_reviewer_name: string | null
           id: string
           provider_id: string
           rating: number
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           comment?: string | null
           created_at?: string
+          custom_reviewer_name?: string | null
           id?: string
           provider_id: string
           rating: number
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           comment?: string | null
           created_at?: string
+          custom_reviewer_name?: string | null
           id?: string
           provider_id?: string
           rating?: number
-          user_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      site_texts: {
+        Row: {
+          key: string
+          label: string | null
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          label?: string | null
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          label?: string | null
+          updated_at?: string
+          value?: string
         }
         Relationships: []
       }

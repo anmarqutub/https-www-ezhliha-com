@@ -237,10 +237,34 @@ function ProviderPage() {
 
             {(ig || tk || tw || sc) && (
               <div className="pv-socials">
-                {ig && <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="Instagram">IG</a>}
-                {tk && <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tk" aria-label="TikTok">TT</a>}
-                {tw && <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tw" aria-label="X">X</a>}
-                {sc && <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-sc" aria-label="Snapchat">SC</a>}
+                {ig && (
+                  <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                      <path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.25.07 1.63.07 4.8s0 3.55-.07 4.8c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.25.06-1.63.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.72 3.72 0 01-1.38-.9 3.72 3.72 0 01-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.4 2.2 8.8 2.2 12 2.2M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 00-2.13 1.39A5.9 5.9 0 00.62 4.15C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.48 1.39 2.13.65.67 1.33 1.08 2.13 1.39.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 002.13-1.39 5.9 5.9 0 001.39-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 00-1.39-2.13A5.9 5.9 0 0019.86.62c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1018.16 12 6.16 6.16 0 0012 5.84zm0 10.16A4 4 0 1116 12a4 4 0 01-4 4zm6.4-11.85a1.44 1.44 0 11-1.44-1.44 1.44 1.44 0 011.44 1.44z"/>
+                    </svg>
+                  </a>
+                )}
+                {tk && (
+                  <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tk" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005.8 20.1a6.34 6.34 0 0010.86-4.43V9a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.84-.43z"/>
+                    </svg>
+                  </a>
+                )}
+                {tw && (
+                  <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tw" aria-label="X">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+                )}
+                {sc && (
+                  <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-sc" aria-label="Snapchat">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                      <path d="M12.2 2c.4 0 3.6.1 5.3 3.2.5 1 .5 2.7.4 4.1v.2c0 .2 0 .4-.1.6.1.1.3.1.5.1.3 0 .7-.1 1.1-.3.2-.1.4-.1.5-.1.3 0 .6.1.7.3.2.3.1.7-.2 1-.1.1-.4.3-1.3.6-.1 0-.4.1-.5.4-.1.2 0 .5.2.9 0 0 1.2 2.6 3.6 3 .2 0 .4.2.4.5s-.4.5-.6.6c-.7.3-1.7.5-2.1.6-.2.1-.3.3-.4.7 0 .2-.1.4-.1.6-.1.1-.2.2-.4.2h-.1c-.2 0-.4-.1-.7-.1-.3-.1-.6-.1-1-.1-.2 0-.5 0-.7.1-.5.1-1 .5-1.5.8-.7.5-1.5 1.1-2.7 1.1h-.2c-1.2 0-2-.6-2.7-1.1-.5-.4-1-.7-1.5-.8-.2 0-.4-.1-.7-.1-.4 0-.8.1-1 .1-.3.1-.5.1-.6.1-.3 0-.4-.2-.4-.3 0-.2-.1-.4-.1-.6-.1-.4-.2-.6-.4-.7-.4-.1-1.4-.3-2.1-.6-.2-.1-.6-.3-.6-.6 0-.3.2-.5.4-.5C4.3 13.3 5.5 10.7 5.5 10.7c.2-.4.3-.7.2-.9-.1-.3-.4-.4-.5-.4-.9-.3-1.2-.5-1.3-.6-.3-.3-.4-.7-.2-1 .1-.2.4-.3.7-.3.1 0 .3 0 .5.1.4.2.8.3 1.1.3.2 0 .4 0 .5-.1v-.6-.3c-.1-1.4-.1-3.1.4-4.1C8.4 2.1 11.6 2 12 2h.2z"/>
+                    </svg>
+                  </a>
+                )}
               </div>
             )}
           </section>

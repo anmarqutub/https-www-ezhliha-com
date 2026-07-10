@@ -45,7 +45,7 @@ type Banner = { id: string; title: string | null; image_url: string; link_url: s
 
 export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
-export const CONTACT_WA_MESSAGE = "السلام عليكم .. عندي استفسار عن موقع إزهليها";
+export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
 function Home() {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
@@ -455,7 +455,7 @@ function Home() {
       <footer className="ez-footer">
         <div className="ez-footer-actions">
           <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>من نحن</button>
-          {user && <Link to="/favorites" className="ez-footer-link">♥ المفضلة</Link>}
+          
           <a
             className="ez-footer-wa"
             href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
@@ -498,10 +498,15 @@ function Home() {
 }
 
 export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE) {
-  const wa = (whatsapp ?? "").replace(/\D/g, "");
+  let wa = (whatsapp ?? "").replace(/\D/g, "");
   if (!wa) return null;
-  const num = wa.startsWith("0") ? "966" + wa.slice(1) : wa;
-  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+  // Saudi normalization:
+  // - 05XXXXXXXX (10 digits, leading 0) → 9665XXXXXXXX
+  // - 5XXXXXXXX  (9 digits, no leading 0, common when Excel drops the zero) → 9665XXXXXXXX
+  // - 9665XXXXXXXX (12 digits) → kept as-is
+  if (wa.length === 10 && wa.startsWith("05")) wa = "966" + wa.slice(1);
+  else if (wa.length === 9 && wa.startsWith("5")) wa = "966" + wa;
+  return `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
 }
 
 export function cleanHandle(v: string | null) {

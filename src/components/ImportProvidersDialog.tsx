@@ -85,10 +85,11 @@ export function ImportProvidersDialog({
     setFileName(file.name);
     setResult(null);
     const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, { type: "array" });
+    const wb = XLSX.read(buf, { type: "array", raw: false });
     const sheetName = wb.SheetNames.includes("providers") ? "providers" : wb.SheetNames[0];
     const ws = wb.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json<RawRow>(ws, { defval: "" });
+    // raw:false preserves formatted text (keeps leading zeros in phone numbers like 05xxxxxxxx)
+    const rows = XLSX.utils.sheet_to_json<RawRow>(ws, { defval: "", raw: false });
 
     const out: ParsedRow[] = rows.map((raw, idx) => {
       const rowNumber = idx + 2; // header is row 1
