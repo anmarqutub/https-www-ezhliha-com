@@ -55,7 +55,9 @@ type ParsedChild = {
 const HEADER_MAP: Record<string, string> = {
   // providers
   "اسم المزود": "name",
+  "اسم المزود *": "name",
   "المدينة": "city",
+  "المدينة *": "city",
   "مدينة المزود": "provider_city",
   "التصنيف الرئيسي": "category",
   "التصنيف الفرعي": "subcategory",
@@ -82,6 +84,7 @@ const HEADER_MAP: Record<string, string> = {
   "تيك توك": "tiktok",
   "تيكتوك": "tiktok",
   "تويتر (x)": "twitter",
+  "تويتر (X)": "twitter",
   "تويتر": "twitter",
   "سناب شات": "snapchat",
   "سناب": "snapchat",
@@ -99,14 +102,20 @@ const HEADER_MAP: Record<string, string> = {
   "الترتيب": "sort_order",
   "نشط؟": "active",
   "نشط": "active",
-  // packages / services
-  "اسم الباقة": "name",
+  // child rows
+  "اسم الباقة": "child_name",
+  "اسم الباقة *": "child_name",
   "وصف الباقة": "description",
-  "اسم الخدمة": "name",
+  "اسم الخدمة": "child_name",
+  "اسم الخدمة *": "child_name",
   "وصف الخدمة": "description",
-  // branches
-  "اسم الفرع": "name",
+  "اسم الفرع": "child_name",
+  "اسم الفرع *": "child_name",
+  "اسم العنصر": "child_name",
+  "اسم العنصر *": "child_name",
   "رقم الجوال": "phone",
+  "نوع الصف": "row_type",
+  "نوع الصف *": "row_type",
 };
 
 function normalizeHeader(h: string): string {
@@ -206,8 +215,33 @@ export function ImportProvidersDialog({
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: "array", raw: false });
 
-    // --- Providers sheet ---
-    const providerRows = readSheet(wb, ["مقدمو الخدمة", "providers"]);
+    // --- Single-sheet mode: split by "نوع الصف" ---
+    const singleRows = readSheet(wb, ["البيانات", "data"]);
+    let providerRowsSingle: RawRow[] = [];
+    let packageRowsSingle: RawRow[] = [];
+    let serviceRowsSingle: RawRow[] = [];
+    let branchRowsSingle: RawRow[] = [];
+    if (singleRows.length > 0) {
+      for (const r of singleRows) {
+        const t = norm(r["نوع الصف *"] ?? r["نوع الصف"] ?? r["row_type"]);
+        const providerName = norm(r["اسم المزود *"] ?? r["اسم المزود"]);
+        const providerCity = norm(r["المدينة *"] ?? r["المدينة"]);
+        const itemName = norm(r["اسم العنصر *"] ?? r["اسم العنصر"]);
+        if (!t && !providerName) continue;
+        if (t === "مزود" || t === "provider") {
+          providerRowsSingle.push(r);
+        } else if (t === "باقة" || t === "package") {
+          packageRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الباقة": itemName });
+        } else if (t === "خدمة" || t === "service") {
+          serviceRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الخدمة": itemName });
+        } else if (t === "فرع" || t === "branch") {
+          branchRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الفرع": itemName });
+        }
+      }
+    }
+
+    // --- Providers sheet (multi-sheet template) or single-sheet split ---
+    const providerRows = providerRowsSingle.length > 0 ? providerRowsSingle : readSheet(wb, ["مقدمو الخدمة", "providers"]);
 
     const out: ParsedProvider[] = providerRows.map((rawIn, idx) => {
       const raw = remapRow(rawIn);
@@ -331,21 +365,21 @@ export function ImportProvidersDialog({
       });
     };
 
-    pushChildren(readSheet(wb, ["الباقات", "packages"]), "package", (raw) => ({
+    pushChildren(packageRowsSingle.length > 0 ? packageRowsSingle : readSheet(wb, ["الباقات", "packages"]), "package", (raw) => ({
       description: norm(raw.description) || null,
       price: norm(raw.price) || null,
       sort_order: toNum(raw.sort_order) ?? 0,
       images: toMedia(raw.image_urls),
       videos: toMedia(raw.video_urls),
     }));
-    pushChildren(readSheet(wb, ["الخدمات", "services"]), "service", (raw) => ({
+    pushChildren(serviceRowsSingle.length > 0 ? serviceRowsSingle : readSheet(wb, ["الخدمات", "services"]), "service", (raw) => ({
       description: norm(raw.description) || null,
       price: norm(raw.price) || null,
       sort_order: toNum(raw.sort_order) ?? 0,
       images: toMedia(raw.image_urls),
       videos: toMedia(raw.video_urls),
     }));
-    pushChildren(readSheet(wb, ["الفروع", "branches"]), "branch", (raw) => ({
+    pushChildren(branchRowsSingle.length > 0 ? branchRowsSingle : readSheet(wb, ["الفروع", "branches"]), "branch", (raw) => ({
       address: norm(raw.address) || null,
       map_url: norm(raw.map_url) || null,
       phone: normalizeSaudiPhone(raw.phone),
@@ -420,17 +454,25 @@ export function ImportProvidersDialog({
         <div style={{ background: "#f9f7ef", border: "1px solid #e6e0c8", borderRadius: 10, padding: 14, marginBottom: 14, fontSize: 13, lineHeight: 1.9 }}>
           <strong>الخطوات:</strong>
           <ol style={{ margin: "6px 0 0", paddingInlineStart: 20 }}>
-            <li>حمّل القالب العربي واعبّي البيانات (الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع).</li>
-            <li>تأكد أن أسماء المدن والتصنيفات مطابقة لما في النظام.</li>
-            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
+            <li>حمّل القالب العربي واعبّي البيانات.</li>
+            <li>القالب الموحّد يستخدم <b>ورقة واحدة</b> فيها عمود «نوع الصف» (مزود / باقة / خدمة / فرع).</li>
+            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + المدينة).</li>
             <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
           </ol>
-          <a
-            href="/ezhliha_import_template_v2.xlsx"
-            style={{ display: "inline-block", marginTop: 8, color: "#660000", fontWeight: 700, textDecoration: "underline" }}
-          >
-            ⬇️ تحميل القالب العربي (ezhliha_import_template_v2.xlsx)
-          </a>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8 }}>
+            <a
+              href="/ezhliha_import_template_v4_single.xlsx"
+              style={{ color: "#660000", fontWeight: 700, textDecoration: "underline" }}
+            >
+              ⬇️ تحميل القالب الموحّد (ورقة واحدة)
+            </a>
+            <a
+              href="/ezhliha_import_template_v2.xlsx"
+              style={{ color: "#888", fontWeight: 600, textDecoration: "underline", fontSize: 12 }}
+            >
+              (القالب القديم متعدد الأوراق)
+            </a>
+          </div>
         </div>
 
         <input
