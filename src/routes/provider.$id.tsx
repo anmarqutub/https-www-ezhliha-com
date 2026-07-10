@@ -349,15 +349,9 @@ function ProviderPage() {
 
             <div className="pv-actions">
               {waUrl && (
-                <a className="pv-btn-wa" href={waUrl} target="_blank" rel="noopener noreferrer">
-                  <span>{contactLabel}</span>
+                <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
-                </a>
-              )}
-              {callUrl && (
-                <a className="pv-btn-call" href={callUrl}>
-                  <PhoneIcon />
-                  <span>اتصال مباشر</span>
+                  <span>{contactLabel || "للتواصل مع مقدم الخدمة"}</span>
                 </a>
               )}
               {provider.map_url && (
@@ -369,12 +363,15 @@ function ProviderPage() {
                 <ShareIcon />
                 <span>{copiedShare ? "تم نسخ الرابط" : "مشاركة"}</span>
               </button>
-
-
             </div>
 
-            {(ig || tk || tw || sc) && (
+            {(callUrl || ig || tk || tw || sc) && (
               <div className="pv-socials">
+                {callUrl && (
+                  <a href={callUrl} className="pv-soc pv-soc-call" aria-label="اتصال مباشر">
+                    <PhoneIcon />
+                  </a>
+                )}
                 {ig && (
                   <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="Instagram">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -673,7 +670,9 @@ const css = `
   .pv-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
   .pv-btn-wa { background:transparent; color:#660000; padding:10px 0; border-radius:0; text-align:center; text-decoration:none; font-weight:900; display:flex; align-items:center; justify-content:center; gap:8px; }
   .pv-btn-wa svg { color:#25D366; }
-  .pv-btn-wa:hover { text-decoration:underline; text-underline-offset:4px; }
+  .pv-btn-wa-solid { background:#25D366; color:#fff; padding:14px; border-radius:12px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; font-size:15px; box-shadow:0 6px 18px rgba(37,211,102,0.25); }
+  .pv-btn-wa-solid:hover { filter:brightness(0.95); }
+  .pv-btn-wa-solid svg { color:#fff; }
   .pv-btn-call, .pv-btn-share { background:#f5f2e5; color:#660000; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid #d8d4c0; cursor:pointer; font-family:inherit; font-size:14px; }
   .pv-btn-share { background:#fff; }
   .pv-btn-map { background:#4285F4; color:#fff; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:700; }
@@ -682,6 +681,7 @@ const css = `
 
   .pv-socials { display:flex; gap:10px; margin-top:6px; }
   .pv-soc { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; color:#fff; text-decoration:none; font-size:12px; font-weight:800; }
+  .pv-soc-call { background:#660000; }
   .pv-soc-ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
   .pv-soc-tk { background:#000; }
   .pv-soc-tw { background:#000; }
