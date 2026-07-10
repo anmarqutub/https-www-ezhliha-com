@@ -1999,10 +1999,87 @@ function BannersTab() {
   );
 }
 
+// ============ SITE TEXTS ============
+type SiteTextRow = { key: string; value: string; label: string | null; updated_at: string };
+
+const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
+  { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍", updated_at: "" },
+  { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
+  { key: "home.categories.title", label: "عنوان التصنيفات", value: "✿ تصفّح على كيفك.. حسب التصنيف", updated_at: "" },
+  { key: "home.loading", label: "رسالة التحميل", value: "لحظات.. نجهّز لك كل شي ✨", updated_at: "" },
+  { key: "home.no_results", label: "رسالة لا توجد نتائج", value: "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷", updated_at: "" },
+  { key: "home.about.title", label: "عنوان من نحن", value: "من نحن", updated_at: "" },
+  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍", updated_at: "" },
+  { key: "home.about.p2", label: "من نحن — الفقرة الثانية", value: "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.", updated_at: "" },
+  { key: "provider.whatsapp.label", label: "عبارة زر الواتساب", value: "للمزيد من التفاصيل", updated_at: "" },
+];
+
+function SiteTextsTab() {
+  const [rows, setRows] = useState<SiteTextRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase.from("site_texts").select("*").order("key");
+    const byKey = new Map((data ?? []).map((r) => [r.key, r as SiteTextRow]));
+    const merged = SITE_TEXT_DEFAULTS.map((d) => byKey.get(d.key) ?? d);
+    const extras = ((data ?? []) as SiteTextRow[]).filter((r) => !SITE_TEXT_DEFAULTS.some((d) => d.key === r.key));
+    setRows([...merged, ...extras]);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const updateRow = (key: string, value: string) => {
+    setRows((prev) => prev.map((r) => r.key === key ? { ...r, value } : r));
+  };
+
+  const save = async (row: SiteTextRow) => {
+    setSavingKey(row.key);
+    const payload = { key: row.key, label: row.label, value: row.value };
+    const { error } = await supabase.from("site_texts").upsert(payload, { onConflict: "key" });
+    setSavingKey(null);
+    if (error) { alert(error.message); return; }
+    logActivity("update", "site_text", row.key, { key: row.key, label: row.label });
+    reload();
+  };
+
+  return (
+    <>
+      <h1 className="adm-title">عبارات الموقع</h1>
+      <div className="adm-card">
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {rows.map((r) => (
+              <div key={r.key} style={{ border: "1px solid #F0E5E5", borderRadius: 12, padding: 14, background: "#fff" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
+                  <div>
+                    <strong>{r.label ?? r.key}</strong>
+                    <div style={{ direction: "ltr", textAlign: "left", fontSize: 11, color: "#9A8A8A", marginTop: 3 }}>{r.key}</div>
+                  </div>
+                  <button className="adm-btn-sm" disabled={savingKey === r.key} onClick={() => save(r)}>
+                    {savingKey === r.key ? "جارٍ الحفظ..." : "حفظ"}
+                  </button>
+                </div>
+                <textarea
+                  value={r.value}
+                  onChange={(e) => updateRow(r.key, e.target.value)}
+                  rows={r.value.length > 90 ? 4 : 2}
+                  style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ============ REVIEWS ============
 type ReviewRow = {
   id: string; provider_id: string; user_id: string;
-  rating: number; comment: string | null; created_at: string;
+  rating: number; comment: string | null; created_at: string; custom_reviewer_name: string | null;
 };
 
 function ReviewsTab() {
