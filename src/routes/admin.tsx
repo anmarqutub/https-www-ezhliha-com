@@ -1946,7 +1946,18 @@ function ProvidersTab() {
               <div className="adm-grid2">
                 <Field label="اسم الباقة"><input value={editingPackage.name ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, name: e.target.value })} /></Field>
                 <Field label="السعر"><input value={editingPackage.price ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, price: e.target.value })} placeholder="مثال: 2100 ر.س" /></Field>
-                <Field label="رابط صورة الباقة"><input value={editingPackage.image_url ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="صورة الباقة">
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    {editingPackage.image_url && <img src={editingPackage.image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                      const f = e.target.files?.[0]; if (!f) return;
+                      const url = await uploadOfferImage(f, "package");
+                      if (url) setEditingPackage({ ...editingPackage, image_url: url });
+                      e.target.value = "";
+                    }} />
+                    {editingPackage.image_url && <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditingPackage({ ...editingPackage, image_url: null })}>حذف</button>}
+                  </div>
+                </Field>
                 <Field label="الترتيب"><input type="number" value={editingPackage.sort_order ?? 0} onChange={(e) => setEditingPackage({ ...editingPackage, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الباقة"><textarea rows={3} value={editingPackage.description ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, description: e.target.value })} /></Field>
