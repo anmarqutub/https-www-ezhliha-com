@@ -446,7 +446,7 @@ function Home() {
               </>
             )}
             {categoryProviders.length === 0 && (
-              <p className="ez-empty">لا يوجد مقدمو خدمة في هذا التصنيف بعد.</p>
+              <p className="ez-empty">ما فيه مقدمين بهذا التصنيف لحد الحين 🌷</p>
             )}
           </>
         )}
