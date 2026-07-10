@@ -338,7 +338,7 @@ function Home() {
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
-                ما فيه تصنيفات لحد الحين. {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
+                {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
               </p>
             ) : (
               <div className="ez-cat-grid">
@@ -363,7 +363,7 @@ function Home() {
                         )}
                       </div>
                       <div className="ez-cat-meta">
-                        {count > 0 ? `${count} مقدم خدمة` : "قريباً 🌟"}
+                        {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً 🌟")}
                         <span className="ez-cat-arrow">‹</span>
                       </div>
                     </button>
