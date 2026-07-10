@@ -431,7 +431,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h3 className="ez-sub-title">جميع مقدمي الخدمة</h3>
+                <h3 className="ez-sub-title">كل المقدمين</h3>
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
