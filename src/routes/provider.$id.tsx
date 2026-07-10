@@ -418,16 +418,23 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
   const ttEmbed = getTikTokEmbed(url);
   const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const isExternalFrame = !!ttEmbed || !!igEmbed;
 
   if (poster && !playing) {
-    const handleClick = () => setPlaying(true);
+    const handleClick = () => {
+      if (isExternalFrame) {
+        window.open(url, "_blank", "noopener,noreferrer");
+      } else {
+        setPlaying(true);
+      }
+    };
     return (
       <button
         type="button"
         className="pv-video-poster"
         style={{ backgroundImage: `url(${poster})` }}
         onClick={handleClick}
-        aria-label="مشاهدة الفيديو"
+        aria-label="عرض الملف الشخصي"
       >
         <span><PlayIcon /></span>
       </button>
@@ -448,23 +455,9 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </div>
     );
   }
-  if (ttEmbed) {
-    return (
-      <div className="pv-video-wrap pv-video-wrap--tall">
-        <iframe src={ttEmbed} title="فيديو تيك توك" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
-  if (igEmbed) {
-    return (
-      <div className="pv-video-wrap pv-video-wrap--tall">
-        <iframe src={igEmbed} title="فيديو إنستقرام" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen scrolling="no" />
-      </div>
-    );
-  }
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="pv-video-link">
-      <PlayIcon /> مشاهدة الفيديو
+      <PlayIcon /> عرض الملف الشخصي
     </a>
   );
 }
@@ -549,7 +542,7 @@ const css = `
 
   .pv-video-section { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-video-section h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
-  .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; }
+  .pv-video-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:transparent; }
   .pv-video-wrap--tall { padding-top:0; height:min(720px, 90vh); max-width:420px; margin:0 auto; }
 
   .pv-video-wrap iframe, .pv-video-wrap video { position:absolute; inset:0; width:100%; height:100%; border:none; }
