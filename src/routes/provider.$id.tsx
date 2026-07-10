@@ -416,9 +416,21 @@ function ProviderPage() {
             {(callUrl || ig || tk || tw || sc) && (
               <div className="pv-socials">
                 {callUrl && (
-                  <a href={callUrl} className="pv-soc pv-soc-call" aria-label="اتصال مباشر">
+                  <button
+                    type="button"
+                    className="pv-soc pv-soc-call"
+                    aria-label="اتصال مباشر"
+                    onClick={() => {
+                      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                      if (isMobile) {
+                        window.location.href = callUrl;
+                      } else {
+                        setCallOpen(true);
+                      }
+                    }}
+                  >
                     <PhoneIcon />
-                  </a>
+                  </button>
                 )}
                 {ig && (
                   <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="إنستقرام">
