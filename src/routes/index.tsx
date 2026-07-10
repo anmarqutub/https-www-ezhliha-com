@@ -8,11 +8,11 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "إزهليها — دليلك لأجمل المناسبات" },
+      { title: "إزهليها — دليلك لأحلى المناسبات" },
       {
         name: "description",
         content:
-          "إزهليها — دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة.",
+          "إزهليها — دليلك الأول لتجهيز مناسباتك بأفخم مزودين الخدمات في المملكة، بضغطة زر.",
       },
     ],
   }),
@@ -43,7 +43,7 @@ type Provider = {
 type ProviderImage = { id: string; provider_id: string; image_url: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
 
-export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
+export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
@@ -212,8 +212,8 @@ function Home() {
             )
           ) : (
             <div className="ez-hero-inner">
-              <h1>إزهليها</h1>
-              <p>دليلك الأول لتجهيز الأفراح والمناسبات بأفضل مزودي الخدمات في المملكة</p>
+              <h1 className="ez-logo-text">إزهليها</h1>
+              <p>دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍</p>
             </div>
           )}
           {banners.length > 1 && (
@@ -252,7 +252,7 @@ function Home() {
           <span className="ez-search-icon">🔍</span>
           <input
             type="text"
-            placeholder="ابحث عن مقدم خدمة، تصنيف، أو وصف..."
+            placeholder="دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه..."
             value={quickSearch}
             onChange={(e) => setQuickSearch(e.target.value)}
           />
@@ -273,8 +273,8 @@ function Home() {
             setSelectedSub("all");
           }}
         >
-          {cities.length === 0 && <option value="">لا توجد مدن بعد</option>}
-          {cities.length > 0 && <option value="">🌍 جميع المدن</option>}
+          {cities.length === 0 && <option value="">ما فيه مدن لحد الحين</option>}
+          {cities.length > 0 && <option value="">🌍 كل المدن</option>}
           {cities.map((c) => (
             <option key={c.id} value={c.id}>{c.name_ar}</option>
           ))}
@@ -283,7 +283,7 @@ function Home() {
 
       <main className="ez-main">
         {loading ? (
-          <p className="ez-empty">جارٍ التحميل...</p>
+          <p className="ez-empty">لحظات.. نجهّز لك كل شي ✨</p>
         ) : quickSearch.trim() ? (
           (() => {
             const q = quickSearch.trim().toLowerCase();
@@ -304,7 +304,7 @@ function Home() {
                   <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
                 </div>
                 {results.length === 0 ? (
-                  <p className="ez-empty">لا توجد نتائج مطابقة. جربي كلمة أخرى أو تصفّحي التصنيفات.</p>
+                  <p className="ez-empty">ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷</p>
                 ) : (
                   <div className="ez-grid">
                     {results.map((p) => (
@@ -324,11 +324,11 @@ function Home() {
         ) : !selectedCategory ? (
           <>
             <div className="ez-section-head">
-              <h2 className="ez-section-title">✿ تصفّح حسب التصنيف</h2>
+              <h2 className="ez-section-title">✿ تصفّح على كيفك.. حسب التصنيف</h2>
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
-                لا توجد تصنيفات بعد. {isAdmin && <Link to="/admin">اذهب للوحة الأدمن لإضافة تصنيفات.</Link>}
+                ما فيه تصنيفات لحد الحين. {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
               </p>
             ) : (
               <div className="ez-cat-grid">
@@ -353,7 +353,7 @@ function Home() {
                         )}
                       </div>
                       <div className="ez-cat-meta">
-                        {count > 0 ? `${count} مقدم خدمة` : "قريباً"}
+                        {count > 0 ? `${count} مقدم خدمة` : "قريباً 🌟"}
                         <span className="ez-cat-arrow">‹</span>
                       </div>
                     </button>
@@ -376,7 +376,7 @@ function Home() {
             <div className="ez-search">
               <input
                 type="text"
-                placeholder="ابحث داخل هذا التصنيف..."
+                placeholder="دوّر داخل هذا التصنيف..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -399,7 +399,7 @@ function Home() {
 
             {visibleTertiaries.length > 0 && (
               <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
-                <span className="ez-tertiary-label">تصنيفات ثانوية:</span>
+                <span className="ez-tertiary-label">تصنيفات فرعية:</span>
                 {visibleTertiaries.map((t) => (
                   <button
                     key={t.id}
@@ -414,7 +414,7 @@ function Home() {
 
             {featured.length > 0 && (
               <>
-                <h3 className="ez-sub-title">⭐ مقدمو خدمة مميزون</h3>
+                <h3 className="ez-sub-title">⭐ نخبة مختارة لك</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
@@ -431,7 +431,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h3 className="ez-sub-title">جميع مقدمي الخدمة</h3>
+                <h3 className="ez-sub-title">كل المقدمين</h3>
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
@@ -446,7 +446,7 @@ function Home() {
               </>
             )}
             {categoryProviders.length === 0 && (
-              <p className="ez-empty">لا يوجد مقدمو خدمة في هذا التصنيف بعد.</p>
+              <p className="ez-empty">ما فيه مقدمين بهذا التصنيف لحد الحين 🌷</p>
             )}
           </>
         )}
@@ -479,16 +479,16 @@ function Home() {
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
             <h2 className="ez-about-title">من نحن</h2>
             <p className="ez-about-text">
-              <strong>إزهليها</strong> هي منصتك الأولى لتجهيز الأفراح والمناسبات في المملكة العربية السعودية.
-              نجمع لكِ في مكان واحد نخبة من أفضل مزودي الخدمات — من كوافيرات وخياطات ومصورات ومنسقي حفلات
-              وقاعات ومطاعم وكل ما تحتاجينه ليكون يومكِ مميزاً.
+              <strong className="ez-logo-text">إزهليها</strong> منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية.
+              نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات — كوافير، خياطة، تصوير، تنسيق حفلات،
+              قاعات، ضيافة، وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍
             </p>
             <p className="ez-about-text">
-              مهمتنا أن نوفر عليكِ عناء البحث، ونمنحكِ تجربة سهلة وسريعة لاختيار الأنسب لكِ من حيث الجودة
-              والسعر والموقع، مع إمكانية التواصل المباشر عبر واتساب وحفظ المفضلة لديكِ.
+              مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة
+              والسعر والموقع، مع تواصل مباشر عبر واتساب وحفظ مفضّلتك بضغطة.
             </p>
             <p className="ez-about-text">
-              نسعى لأن نكون الدليل الموثوق لكل عروس وكل عائلة تبحث عن التميز في مناسباتها. شكراً لثقتكِ بنا 💐
+              هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐
             </p>
           </div>
         </div>
@@ -560,10 +560,10 @@ function ProviderCard({
       <div className="ez-card-foot">
         {waUrl ? (
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
-            📱 تواصل واتساب
+            📱 كلّمه واتساب
           </a>
         ) : (
-          <button className="ez-wa-btn" disabled>لا يوجد رقم تواصل</button>
+          <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
         )}
       </div>
     </article>
@@ -607,9 +607,9 @@ function AuthGate() {
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
-        <h1 style={{ color: "#660000", fontSize: 24, marginBottom: 10 }}>محتوى خاص بالأعضاء</h1>
+        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>محتوى للأعضاء بس</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          للوصول إلى دليل مقدمي الخدمات يجب تسجيل الدخول. للتسجيل تحتاجين كود الشراء الذي يصلكِ بعد إتمام الطلب من متجر سلة.
+          عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#660000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
@@ -628,6 +628,7 @@ function AuthGate() {
 
 const css = `
   .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
+  .ez-logo-text { font-family:'Rakkas','Reem Kufi Fun',Tajawal,serif; font-weight:400; letter-spacing:1px; }
   .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; min-height:104px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
   .ez-brand-logo { height:88px; width:auto; object-fit:contain; }
