@@ -324,11 +324,11 @@ function Home() {
         ) : !selectedCategory ? (
           <>
             <div className="ez-section-head">
-              <h2 className="ez-section-title">✿ تصفّح حسب التصنيف</h2>
+              <h2 className="ez-section-title">✿ تصفّح على كيفك.. حسب التصنيف</h2>
             </div>
             {categories.length === 0 ? (
               <p className="ez-empty">
-                لا توجد تصنيفات بعد. {isAdmin && <Link to="/admin">اذهب للوحة الأدمن لإضافة تصنيفات.</Link>}
+                ما فيه تصنيفات لحد الحين. {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
               </p>
             ) : (
               <div className="ez-cat-grid">
