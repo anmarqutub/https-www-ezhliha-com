@@ -2088,6 +2088,25 @@ function ProvidersTab() {
                 <Field label="الترتيب"><input type="number" value={editingPackage.sort_order ?? 0} onChange={(e) => setEditingPackage({ ...editingPackage, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الباقة"><textarea rows={3} value={editingPackage.description ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, description: e.target.value })} /></Field>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed #E8DADA" }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>صور إضافية (حتى 5)</label>
+                <MediaListEditor
+                  kind="image"
+                  items={toMediaArray(editingPackage.images)}
+                  onChange={(next) => setEditingPackage({ ...editingPackage, images: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>فيديوهات الباقة (حتى 5)</label>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editingPackage.videos)}
+                  onChange={(next) => setEditingPackage({ ...editingPackage, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
+
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
                 <button type="button" className="adm-btn-secondary" onClick={() => setEditingPackage(null)}>إلغاء</button>
                 <button type="button" className="adm-btn-primary" onClick={savePackage}>حفظ الباقة</button>
