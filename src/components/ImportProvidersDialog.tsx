@@ -215,8 +215,33 @@ export function ImportProvidersDialog({
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: "array", raw: false });
 
-    // --- Providers sheet ---
-    const providerRows = readSheet(wb, ["مقدمو الخدمة", "providers"]);
+    // --- Single-sheet mode: split by "نوع الصف" ---
+    const singleRows = readSheet(wb, ["البيانات", "data"]);
+    let providerRowsSingle: RawRow[] = [];
+    let packageRowsSingle: RawRow[] = [];
+    let serviceRowsSingle: RawRow[] = [];
+    let branchRowsSingle: RawRow[] = [];
+    if (singleRows.length > 0) {
+      for (const r of singleRows) {
+        const t = norm(r["نوع الصف *"] ?? r["نوع الصف"] ?? r["row_type"]);
+        const providerName = norm(r["اسم المزود *"] ?? r["اسم المزود"]);
+        const providerCity = norm(r["المدينة *"] ?? r["المدينة"]);
+        const itemName = norm(r["اسم العنصر *"] ?? r["اسم العنصر"]);
+        if (!t && !providerName) continue;
+        if (t === "مزود" || t === "provider") {
+          providerRowsSingle.push(r);
+        } else if (t === "باقة" || t === "package") {
+          packageRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الباقة": itemName });
+        } else if (t === "خدمة" || t === "service") {
+          serviceRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الخدمة": itemName });
+        } else if (t === "فرع" || t === "branch") {
+          branchRowsSingle.push({ ...r, "اسم المزود": providerName, "مدينة المزود": providerCity, "اسم الفرع": itemName });
+        }
+      }
+    }
+
+    // --- Providers sheet (multi-sheet template) or single-sheet split ---
+    const providerRows = providerRowsSingle.length > 0 ? providerRowsSingle : readSheet(wb, ["مقدمو الخدمة", "providers"]);
 
     const out: ParsedProvider[] = providerRows.map((rawIn, idx) => {
       const raw = remapRow(rawIn);
