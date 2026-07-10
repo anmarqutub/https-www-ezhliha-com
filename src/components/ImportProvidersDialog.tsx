@@ -454,17 +454,25 @@ export function ImportProvidersDialog({
         <div style={{ background: "#f9f7ef", border: "1px solid #e6e0c8", borderRadius: 10, padding: 14, marginBottom: 14, fontSize: 13, lineHeight: 1.9 }}>
           <strong>الخطوات:</strong>
           <ol style={{ margin: "6px 0 0", paddingInlineStart: 20 }}>
-            <li>حمّل القالب العربي واعبّي البيانات (الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع).</li>
-            <li>تأكد أن أسماء المدن والتصنيفات مطابقة لما في النظام.</li>
-            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
+            <li>حمّل القالب العربي واعبّي البيانات.</li>
+            <li>القالب الموحّد يستخدم <b>ورقة واحدة</b> فيها عمود «نوع الصف» (مزود / باقة / خدمة / فرع).</li>
+            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + المدينة).</li>
             <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
           </ol>
-          <a
-            href="/ezhliha_import_template_v2.xlsx"
-            style={{ display: "inline-block", marginTop: 8, color: "#660000", fontWeight: 700, textDecoration: "underline" }}
-          >
-            ⬇️ تحميل القالب العربي (ezhliha_import_template_v2.xlsx)
-          </a>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8 }}>
+            <a
+              href="/ezhliha_import_template_v4_single.xlsx"
+              style={{ color: "#660000", fontWeight: 700, textDecoration: "underline" }}
+            >
+              ⬇️ تحميل القالب الموحّد (ورقة واحدة)
+            </a>
+            <a
+              href="/ezhliha_import_template_v2.xlsx"
+              style={{ color: "#888", fontWeight: 600, textDecoration: "underline", fontSize: 12 }}
+            >
+              (القالب القديم متعدد الأوراق)
+            </a>
+          </div>
         </div>
 
         <input
