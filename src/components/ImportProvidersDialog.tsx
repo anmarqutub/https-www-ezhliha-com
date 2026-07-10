@@ -426,10 +426,10 @@ export function ImportProvidersDialog({
             <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
           </ol>
           <a
-            href="/providers_template.xlsx"
+            href="/ezhliha_import_template_v2.xlsx"
             style={{ display: "inline-block", marginTop: 8, color: "#660000", fontWeight: 700, textDecoration: "underline" }}
           >
-            ⬇️ تحميل القالب العربي (providers_template.xlsx)
+            ⬇️ تحميل القالب العربي (ezhliha_import_template_v2.xlsx)
           </a>
         </div>
 
