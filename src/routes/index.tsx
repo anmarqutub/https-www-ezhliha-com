@@ -310,7 +310,7 @@ function Home() {
             return (
               <>
                 <div className="ez-section-head">
-                  <h2 className="ez-section-title">🔍 نتائج البحث ({results.length})</h2>
+                  <h2 className="ez-section-title">{txt("home.search.results", "🔍 نتائج البحث")} ({results.length})</h2>
                 </div>
                 {results.length === 0 ? (
                   <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
