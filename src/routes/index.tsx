@@ -399,7 +399,7 @@ function Home() {
 
             {visibleTertiaries.length > 0 && (
               <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
-                <span className="ez-tertiary-label">تصنيفات ثانوية:</span>
+                <span className="ez-tertiary-label">تصنيفات فرعية:</span>
                 {visibleTertiaries.map((t) => (
                   <button
                     key={t.id}
