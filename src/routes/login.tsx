@@ -34,7 +34,7 @@ function LoginPage() {
   }
 
   return (
-    <AuthShell title="تسجيل الدخول" sub="مرحبًا بعودتك إلى إزهليها">
+    <AuthShell title="تسجيل الدخول" sub="هلا بعودتك.. إزهليها بانتظارك 🤍">
       <form onSubmit={onSubmit} className="auth-form">
         <label className="auth-field">
           <span>البريد الإلكتروني</span>
