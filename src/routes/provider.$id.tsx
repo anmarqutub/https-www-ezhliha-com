@@ -509,6 +509,30 @@ function getInstagramEmbed(url: string) {
   return code ? `https://www.instagram.com/p/${code}/embed` : null;
 }
 
+function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
+  if (!images?.length && !videos?.length) return null;
+  return (
+    <div className="pv-offer-media">
+      {images?.length > 0 && (
+        <div className="pv-offer-imgs">
+          {images.map((im, i) => (
+            <a key={`i${i}`} href={im.url} target="_blank" rel="noopener noreferrer" style={{ backgroundImage: `url(${im.url})` }} />
+          ))}
+        </div>
+      )}
+      {videos?.length > 0 && (
+        <div className="pv-offer-vids">
+          {videos.map((v, i) => (
+            <VideoEmbed key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
