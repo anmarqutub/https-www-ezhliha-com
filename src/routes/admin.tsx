@@ -1452,6 +1452,7 @@ function CategoriesTab() {
 }
 
 // ============ PROVIDERS ============
+type MediaItem = { url: string; thumbnail_url?: string | null };
 type ProvRow = {
   id: string; subcategory_id: string; city_id: string; name: string;
   description: string | null; price_from: number | null; price_to: number | null;
@@ -1463,10 +1464,12 @@ type ProvRow = {
   sort_order: number; active: boolean;
   logo_url: string | null; video_url: string | null; video_thumbnail_url: string | null;
   show_packages: boolean; show_services: boolean; show_branches: boolean;
+  videos: MediaItem[];
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
-type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
-type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[]; videos: MediaItem[] };
+type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[]; videos: MediaItem[] };
+
 type BranchRow = { id: string; provider_id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 
 function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
@@ -1483,7 +1486,105 @@ function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
   return s;
 }
 
+function toMediaArray(v: unknown): MediaItem[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((x): MediaItem | null => {
+      if (typeof x === "string") return { url: x };
+      if (x && typeof x === "object" && typeof (x as { url?: unknown }).url === "string") {
+        const it = x as { url: string; thumbnail_url?: unknown };
+        return { url: it.url, thumbnail_url: typeof it.thumbnail_url === "string" ? it.thumbnail_url : null };
+      }
+      return null;
+    })
+    .filter((x): x is MediaItem => !!x)
+    .slice(0, 5);
+}
+
+function MediaListEditor({
+  kind, items, onChange, upload, max = 5,
+}: {
+  kind: "video" | "image";
+  items: MediaItem[];
+  onChange: (next: MediaItem[]) => void;
+  upload: (file: File) => Promise<string | null>;
+  max?: number;
+}) {
+  const [urlDraft, setUrlDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+  const addUrl = () => {
+    const u = urlDraft.trim();
+    if (!u) return;
+    if (items.length >= max) { alert(`الحد الأقصى ${max}`); return; }
+    onChange([...items, { url: u }]);
+    setUrlDraft("");
+  };
+  const addFile = async (f: File) => {
+    if (items.length >= max) { alert(`الحد الأقصى ${max}`); return; }
+    setBusy(true);
+    const url = await upload(f);
+    setBusy(false);
+    if (url) onChange([...items, { url }]);
+  };
+  const removeAt = (i: number) => onChange(items.filter((_, k) => k !== i));
+  const setThumbAt = (i: number, url: string) =>
+    onChange(items.map((it, k) => (k === i ? { ...it, thumbnail_url: url || null } : it)));
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <input
+          value={urlDraft}
+          onChange={(e) => setUrlDraft(e.target.value)}
+          dir="ltr"
+          placeholder={kind === "video" ? "رابط الفيديو (يوتيوب / تيك توك / إنستقرام / mp4)" : "رابط الصورة https://..."}
+          style={{ flex: 1, minWidth: 220 }}
+        />
+        <button type="button" className="adm-btn-sm" onClick={addUrl} disabled={items.length >= max}>+ إضافة رابط</button>
+        <label className="adm-btn-sm" style={{ cursor: "pointer", opacity: busy || items.length >= max ? 0.6 : 1 }}>
+          {busy ? "جارٍ الرفع..." : (kind === "video" ? "رفع فيديو" : "رفع صورة")}
+          <input
+            type="file"
+            accept={kind === "video" ? "video/*" : "image/*"}
+            style={{ display: "none" }}
+            disabled={busy || items.length >= max}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) addFile(f); e.target.value = ""; }}
+          />
+        </label>
+        <span style={{ fontSize: 12, color: "#5A4A4A", alignSelf: "center" }}>{items.length}/{max}</span>
+      </div>
+      {items.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8 }}>
+          {items.map((it, i) => (
+            <div key={i} style={{ border: "1px solid #E8DADA", borderRadius: 10, padding: 8, background: "#fff", display: "flex", flexDirection: "column", gap: 6 }}>
+              {kind === "image" ? (
+                <img src={it.url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 6 }} />
+              ) : (
+                <div style={{ width: "100%", height: 100, borderRadius: 6, background: it.thumbnail_url ? `url(${it.thumbnail_url}) center/cover` : "#F2E6E6", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B1F1F", fontSize: 12, fontWeight: 700 }}>
+                  {it.thumbnail_url ? "▶" : "فيديو"}
+                </div>
+              )}
+              <a href={it.url} target="_blank" rel="noopener noreferrer" dir="ltr" style={{ fontSize: 11, color: "#660000", textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.url}</a>
+              {kind === "video" && (
+                <input
+                  value={it.thumbnail_url ?? ""}
+                  onChange={(e) => setThumbAt(i, e.target.value)}
+                  placeholder="رابط صورة غلاف (اختياري)"
+                  dir="ltr"
+                  style={{ fontSize: 12 }}
+                />
+              )}
+              <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => removeAt(i)}>حذف</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProvidersTab() {
+
   const [rows, setRows] = useState<ProvRow[]>([]);
   const [cities, setCities] = useState<CityRow[]>([]);
   const [subs, setSubs] = useState<SubRow[]>([]);
@@ -1515,13 +1616,14 @@ function ProvidersTab() {
       supabase.from("services").select("*").order("sort_order"),
       supabase.from("branches").select("*").order("sort_order"),
     ]);
-    setRows((p.data ?? []) as ProvRow[]);
+    setRows((p.data ?? []) as unknown as ProvRow[]);
     setCities((ci.data ?? []) as CityRow[]);
     setSubs((s.data ?? []) as SubRow[]);
     setCats((c.data ?? []) as CatRow[]);
     setImages((i.data ?? []) as ImgRow[]);
-    setPackages((pkg.data ?? []) as PackageRow[]);
-    setServices((srv.data ?? []) as ServiceRow[]);
+    setPackages((pkg.data ?? []) as unknown as PackageRow[]);
+    setServices((srv.data ?? []) as unknown as ServiceRow[]);
+
     setBranches((br.data ?? []) as BranchRow[]);
     setLoading(false);
   }, []);
@@ -1551,6 +1653,8 @@ function ProvidersTab() {
       show_packages: editing.show_packages ?? true,
       show_services: editing.show_services ?? true,
       show_branches: editing.show_branches ?? true,
+      videos: toMediaArray(editing.videos) as unknown as never,
+
     };
     if (editing.id) {
       const before = rows.find((r) => r.id === editing.id);
@@ -1667,6 +1771,9 @@ function ProvidersTab() {
       price: editingPackage.price?.trim() || null,
       image_url: editingPackage.image_url?.trim() || null,
       sort_order: editingPackage.sort_order ?? 0,
+      images: toMediaArray(editingPackage.images) as unknown as never,
+      videos: toMediaArray(editingPackage.videos) as unknown as never,
+
     };
     if (editingPackage.id) {
       await supabase.from("packages").update(payload).eq("id", editingPackage.id);
@@ -1695,6 +1802,9 @@ function ProvidersTab() {
       price: editingService.price?.trim() || null,
       image_url: editingService.image_url?.trim() || null,
       sort_order: editingService.sort_order ?? 0,
+      images: toMediaArray(editingService.images) as unknown as never,
+      videos: toMediaArray(editingService.videos) as unknown as never,
+
     };
     if (editingService.id) {
       await supabase.from("services").update(payload).eq("id", editingService.id);
@@ -1920,8 +2030,18 @@ function ProvidersTab() {
                   <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); logActivity("delete_video", "provider", editing.id!, { name: editing.name }); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
                 </div>
               )}
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px dashed #E8DADA" }}>
+                <h5 style={{ fontWeight: 700, marginBottom: 8 }}>فيديوهات إضافية (حتى 5)</h5>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editing.videos)}
+                  onChange={(next) => setEditing({ ...editing, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
             </div>
           )}
+
           {editing.id && (
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
@@ -1968,6 +2088,25 @@ function ProvidersTab() {
                 <Field label="الترتيب"><input type="number" value={editingPackage.sort_order ?? 0} onChange={(e) => setEditingPackage({ ...editingPackage, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الباقة"><textarea rows={3} value={editingPackage.description ?? ""} onChange={(e) => setEditingPackage({ ...editingPackage, description: e.target.value })} /></Field>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed #E8DADA" }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>صور إضافية (حتى 5)</label>
+                <MediaListEditor
+                  kind="image"
+                  items={toMediaArray(editingPackage.images)}
+                  onChange={(next) => setEditingPackage({ ...editingPackage, images: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>فيديوهات الباقة (حتى 5)</label>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editingPackage.videos)}
+                  onChange={(next) => setEditingPackage({ ...editingPackage, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "package")}
+                />
+              </div>
+
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
                 <button type="button" className="adm-btn-secondary" onClick={() => setEditingPackage(null)}>إلغاء</button>
                 <button type="button" className="adm-btn-primary" onClick={savePackage}>حفظ الباقة</button>
@@ -2021,6 +2160,25 @@ function ProvidersTab() {
                 <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed #E8DADA" }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>صور إضافية (حتى 5)</label>
+                <MediaListEditor
+                  kind="image"
+                  items={toMediaArray(editingService.images)}
+                  onChange={(next) => setEditingService({ ...editingService, images: next })}
+                  upload={async (f) => await uploadOfferImage(f, "service")}
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontWeight: 700, display: "block", marginBottom: 6 }}>فيديوهات الخدمة (حتى 5)</label>
+                <MediaListEditor
+                  kind="video"
+                  items={toMediaArray(editingService.videos)}
+                  onChange={(next) => setEditingService({ ...editingService, videos: next })}
+                  upload={async (f) => await uploadOfferImage(f, "service")}
+                />
+              </div>
+
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
                 <button type="button" className="adm-btn-secondary" onClick={() => setEditingService(null)}>إلغاء</button>
                 <button type="button" className="adm-btn-primary" onClick={saveService}>حفظ الخدمة</button>

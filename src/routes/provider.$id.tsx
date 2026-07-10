@@ -11,6 +11,7 @@ export const Route = createFileRoute("/provider/$id")({
   head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — إزهليها" }] }),
 });
 
+type MediaItem = { url: string; thumbnail_url?: string | null };
 type Provider = {
   id: string; name: string; description: string | null;
   price_from: number | null; price_to: number | null; price: string | null;
@@ -24,12 +25,14 @@ type Provider = {
   logo_url: string | null;
   video_thumbnail_url: string | null;
   show_packages: boolean; show_services: boolean; show_branches: boolean;
+  videos: MediaItem[] | null;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
-type Package = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
-type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type Package = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[] | null; videos: MediaItem[] | null };
+type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number; images: MediaItem[] | null; videos: MediaItem[] | null };
 type Branch = { id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
+
 type SiteText = { key: string; value: string };
 type OfferTab = "overview" | "packages" | "services" | "branches";
 
@@ -69,22 +72,23 @@ function ProviderPage() {
       supabase.rpc("get_provider_reviews", { p_provider_id: id }),
     ]);
     if (p.data) {
-      setProvider(p.data as Provider);
+      setProvider(p.data as unknown as Provider);
       const [c, s, pkg, srv, br, txt] = await Promise.all([
         supabase.from("cities").select("name_ar").eq("id", p.data.city_id).maybeSingle(),
         supabase.from("subcategories").select("name_ar").eq("id", p.data.subcategory_id).maybeSingle(),
-        supabase.from("packages").select("id,name,description,price,image_url,sort_order").eq("provider_id", id).order("sort_order"),
-        supabase.from("services").select("id,name,description,price,image_url,sort_order").eq("provider_id", id).order("sort_order"),
+        supabase.from("packages").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
+        supabase.from("services").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("branches").select("id,name,address,map_url,phone,sort_order").eq("provider_id", id).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
       ]);
       setCityName(c.data?.name_ar ?? "");
       setSubName(s.data?.name_ar ?? "");
-      setPackages((pkg.data ?? []) as Package[]);
-      setServices((srv.data ?? []) as Service[]);
+      setPackages((pkg.data ?? []) as unknown as Package[]);
+      setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
       setSiteTexts(Object.fromEntries(((txt.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
     }
+
     setImages((imgs.data ?? []) as Image[]);
     setReviews(((r.data ?? []) as unknown) as Review[]);
     setLoading(false);
@@ -279,10 +283,11 @@ function ProviderPage() {
                       {packages.map((pkg) => (
                         <article className="pv-package" key={pkg.id}>
                           {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                          <div>
+                          <div style={{ flex: 1 }}>
                             <h3>{pkg.name}</h3>
                             {pkg.price && <strong>{pkg.price}</strong>}
                             {pkg.description && <p>{pkg.description}</p>}
+                            <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
                           </div>
                         </article>
                       ))}
@@ -293,15 +298,17 @@ function ProviderPage() {
                       {services.map((sv) => (
                         <article className="pv-package" key={sv.id}>
                           {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                          <div>
+                          <div style={{ flex: 1 }}>
                             <h3>{sv.name}</h3>
                             {sv.price && <strong>{sv.price}</strong>}
                             {sv.description && <p>{sv.description}</p>}
+                            <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
                           </div>
                         </article>
                       ))}
                     </div>
                   )}
+
                   {activeTab === "branches" && showBr && (
                     <div className="pv-branch-list">
                       {branches.map((br) => (
@@ -401,12 +408,23 @@ function ProviderPage() {
           </section>
         </div>
 
-        {provider.video_url && (
-          <section className="pv-video-section">
-            <h2>فيديو تعريفي</h2>
-            <VideoEmbed url={provider.video_url} thumbnailUrl={provider.video_thumbnail_url} />
-          </section>
-        )}
+        {(() => {
+          const vids: MediaItem[] = [];
+          if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
+          (provider.videos ?? []).forEach((v) => vids.push(v));
+          if (!vids.length) return null;
+          return (
+            <section className="pv-video-section">
+              <h2>فيديو تعريفي</h2>
+              <div className="pv-video-list">
+                {vids.map((v, i) => (
+                  <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
+                ))}
+              </div>
+            </section>
+          );
+        })()}
+
 
 
 
@@ -490,6 +508,30 @@ function getInstagramEmbed(url: string) {
   const code = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
   return code ? `https://www.instagram.com/p/${code}/embed` : null;
 }
+
+function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
+  if (!images?.length && !videos?.length) return null;
+  return (
+    <div className="pv-offer-media">
+      {images?.length > 0 && (
+        <div className="pv-offer-imgs">
+          {images.map((im, i) => (
+            <a key={`i${i}`} href={im.url} target="_blank" rel="noopener noreferrer" style={{ backgroundImage: `url(${im.url})` }} />
+          ))}
+        </div>
+      )}
+      {videos?.length > 0 && (
+        <div className="pv-offer-vids">
+          {videos.map((v, i) => (
+            <VideoEmbed key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const ytId = getYouTubeId(url);
@@ -694,4 +736,10 @@ const css = `
   .pv-review-del { background:transparent; color:#a01919; border:1px solid #f5d5d5; border-radius:6px; padding:3px 8px; font-size:11px; cursor:pointer; margin-right:auto; }
   .pv-review-item p { color:#222; line-height:1.7; margin:4px 0; }
   .pv-review-item small { color:#888; font-size:11px; }
+  .pv-video-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; }
+  .pv-offer-media { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+  .pv-offer-imgs { display:flex; gap:6px; flex-wrap:wrap; }
+  .pv-offer-imgs a { width:64px; height:64px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e8e6d7; }
+  .pv-offer-vids { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:8px; }
+
 `;
