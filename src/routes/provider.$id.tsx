@@ -231,9 +231,8 @@ function ProviderPage() {
                   🗺️ الموقع على الخريطة
                 </a>
               )}
-              <button className={`pv-btn-fav ${isFav ? "active" : ""}`} disabled={favLoading} onClick={toggleFav}>
-                {isFav ? "♥ في المفضلة" : "♡ أضف للمفضلة"}
-              </button>
+
+
             </div>
 
             {(ig || tk || tw || sc) && (
