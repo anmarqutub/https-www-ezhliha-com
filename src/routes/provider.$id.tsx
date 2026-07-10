@@ -63,6 +63,7 @@ function ProviderPage() {
 
   const [isFav, setIsFav] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string; logo_url: string | null; price_from: number | null; price: string | null; cover: string | null; city_name: string | null }>>([]);
 
   const reload = async () => {
     setLoading(true);
@@ -87,7 +88,52 @@ function ProviderPage() {
       setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
       setSiteTexts(Object.fromEntries(((txt.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
+
+      // Suggested providers: same subcategory first, then top-up with same city
+      const wanted = 8;
+      const collected = new Map<string, any>();
+      const sameSub = await supabase
+        .from("providers")
+        .select("id,name,logo_url,price_from,price,city_id")
+        .eq("subcategory_id", p.data.subcategory_id)
+        .eq("active", true)
+        .neq("id", id)
+        .order("is_featured", { ascending: false })
+        .order("sort_order", { ascending: true })
+        .limit(wanted);
+      (sameSub.data ?? []).forEach((r: any) => collected.set(r.id, r));
+      if (collected.size < wanted) {
+        const sameCity = await supabase
+          .from("providers")
+          .select("id,name,logo_url,price_from,price,city_id")
+          .eq("city_id", p.data.city_id)
+          .eq("active", true)
+          .neq("id", id)
+          .limit(wanted);
+        (sameCity.data ?? []).forEach((r: any) => { if (!collected.has(r.id)) collected.set(r.id, r); });
+      }
+      const arr = Array.from(collected.values()).slice(0, wanted);
+      if (arr.length) {
+        const ids = arr.map((r: any) => r.id);
+        const cityIds = Array.from(new Set(arr.map((r: any) => r.city_id).filter(Boolean)));
+        const [covers, citiesRes] = await Promise.all([
+          supabase.from("provider_images").select("provider_id,image_url,sort_order").in("provider_id", ids).order("sort_order"),
+          cityIds.length ? supabase.from("cities").select("id,name_ar").in("id", cityIds) : Promise.resolve({ data: [] as any[] }),
+        ]);
+        const coverMap = new Map<string, string>();
+        ((covers.data ?? []) as any[]).forEach((im) => { if (!coverMap.has(im.provider_id)) coverMap.set(im.provider_id, im.image_url); });
+        const cityMap = new Map<string, string>();
+        ((citiesRes.data ?? []) as any[]).forEach((c) => cityMap.set(c.id, c.name_ar));
+        setSuggestions(arr.map((r: any) => ({
+          id: r.id, name: r.name, logo_url: r.logo_url, price_from: r.price_from, price: r.price,
+          cover: coverMap.get(r.id) ?? null,
+          city_name: r.city_id ? (cityMap.get(r.city_id) ?? null) : null,
+        })));
+      } else {
+        setSuggestions([]);
+      }
     }
+
 
     setImages((imgs.data ?? []) as Image[]);
     setReviews(((r.data ?? []) as unknown) as Review[]);
@@ -473,10 +519,31 @@ function ProviderPage() {
             ))}
           </div>
         </section>
+
+        {suggestions.length > 0 && (
+          <section className="pv-suggest">
+            <h2>مقترحات لك</h2>
+            <div className="pv-suggest-grid">
+              {suggestions.map((s) => (
+                <Link key={s.id} to="/provider/$id" params={{ id: s.id }} className="pv-suggest-card" onClick={() => window.scrollTo({ top: 0 })}>
+                  <div className="pv-suggest-img" style={{ backgroundImage: `url(${s.cover || s.logo_url || defaultProviderUrl})` }} />
+                  <div className="pv-suggest-body">
+                    <h3>{s.name}</h3>
+                    {s.city_name && <span className="pv-suggest-city">📍 {s.city_name}</span>}
+                    {(s.price_from || s.price) && (
+                      <strong>{s.price_from ? `من ${s.price_from} ر.س` : s.price}</strong>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
 }
+
 
 function phoneLink(value: string | null) {
   let phone = (value ?? "").trim().replace(/[^0-9+]/g, "");
@@ -742,4 +809,14 @@ const css = `
   .pv-offer-imgs a { width:64px; height:64px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e8e6d7; }
   .pv-offer-vids { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:8px; }
 
+  .pv-suggest { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
+  .pv-suggest h2 { font-size:20px; font-weight:800; margin-bottom:16px; color:#660000; }
+  .pv-suggest-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px; }
+  .pv-suggest-card { display:flex; flex-direction:column; background:#fffdf8; border:1px solid #e8e6d7; border-radius:14px; overflow:hidden; text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
+  .pv-suggest-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(102,0,0,0.12); border-color:#660000; }
+  .pv-suggest-img { width:100%; aspect-ratio:4/3; background-size:cover; background-position:center; background-color:#e6e4d7; }
+  .pv-suggest-body { padding:10px 12px 14px; display:flex; flex-direction:column; gap:4px; }
+  .pv-suggest-body h3 { font-size:15px; font-weight:800; margin:0; color:#000; }
+  .pv-suggest-city { font-size:12px; color:#666; }
+  .pv-suggest-body strong { color:#660000; font-size:13px; font-weight:800; }
 `;
