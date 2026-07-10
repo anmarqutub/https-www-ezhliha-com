@@ -164,7 +164,7 @@ function Home() {
       m.set(cat, (m.get(cat) ?? 0) + 1);
     });
     return m;
-  }, [providers, subcategories, selectedCity]);
+  }, [providers, subcategories, selectedCity, providerCityIds]);
 
   const subMatches = (providerSubId: string, selSub: string) => {
     if (providerSubId === selSub) return true;
