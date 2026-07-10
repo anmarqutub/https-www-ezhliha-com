@@ -7,8 +7,9 @@ type Category = { id: string; name_ar: string };
 type Sub = { id: string; name_ar: string; category_id: string; parent_id: string | null };
 
 type RawRow = Record<string, unknown>;
+type MediaItem = { url: string; thumbnail_url?: string | null };
 
-type ParsedRow = {
+type ParsedProvider = {
   rowNumber: number;
   raw: RawRow;
   errors: string[];
@@ -23,13 +24,15 @@ type ParsedRow = {
     people_from: number | null;
     people_to: number | null;
     whatsapp: string | null;
-     contact_phone: string | null;
+    contact_phone: string | null;
     instagram: string | null;
     tiktok: string | null;
     twitter: string | null;
     snapchat: string | null;
     address: string | null;
     map_url: string | null;
+    logo_url: string | null;
+    videos: MediaItem[];
     rating: number | null;
     is_featured: boolean;
     featured_until: string | null;
@@ -38,6 +41,91 @@ type ParsedRow = {
   };
   imageUrls: string[];
 };
+
+type ParsedChild = {
+  rowNumber: number;
+  kind: "package" | "service" | "branch";
+  provider_name: string;
+  provider_city: string;
+  errors: string[];
+  payload?: Record<string, unknown>;
+};
+
+// ============ Arabic → internal-key header map ============
+const HEADER_MAP: Record<string, string> = {
+  // providers
+  "اسم المزود": "name",
+  "المدينة": "city",
+  "مدينة المزود": "provider_city",
+  "التصنيف الرئيسي": "category",
+  "التصنيف الفرعي": "subcategory",
+  "التصنيف الثانوي": "tertiary",
+  "الوصف": "description",
+  "السعر من": "price_from",
+  "السعر إلى": "price_to",
+  "السعر الى": "price_to",
+  "وصف السعر": "price",
+  "السعر": "price",
+  "تكفي من (شخص)": "people_from",
+  "تكفي من": "people_from",
+  "تكفي إلى (شخص)": "people_to",
+  "تكفي الى (شخص)": "people_to",
+  "تكفي إلى": "people_to",
+  "تكفي الى": "people_to",
+  "رقم واتساب": "whatsapp",
+  "واتساب": "whatsapp",
+  "رقم الاتصال": "contact_phone",
+  "إنستقرام": "instagram",
+  "انستقرام": "instagram",
+  "إنستغرام": "instagram",
+  "انستغرام": "instagram",
+  "تيك توك": "tiktok",
+  "تيكتوك": "tiktok",
+  "تويتر (x)": "twitter",
+  "تويتر": "twitter",
+  "سناب شات": "snapchat",
+  "سناب": "snapchat",
+  "العنوان": "address",
+  "رابط الموقع (خرائط جوجل)": "map_url",
+  "رابط الموقع": "map_url",
+  "رابط اللوقو": "logo_url",
+  "روابط الصور": "image_urls",
+  "روابط الفيديوهات": "video_urls",
+  "التقييم (0-5)": "rating",
+  "التقييم": "rating",
+  "مميز؟": "is_featured",
+  "مميز": "is_featured",
+  "تاريخ انتهاء التمييز": "featured_until",
+  "الترتيب": "sort_order",
+  "نشط؟": "active",
+  "نشط": "active",
+  // packages / services
+  "اسم الباقة": "name",
+  "وصف الباقة": "description",
+  "اسم الخدمة": "name",
+  "وصف الخدمة": "description",
+  // branches
+  "اسم الفرع": "name",
+  "رقم الجوال": "phone",
+};
+
+function normalizeHeader(h: string): string {
+  const s = String(h ?? "").trim();
+  const key = HEADER_MAP[s] ?? HEADER_MAP[s.toLowerCase()] ?? s;
+  return key;
+}
+
+function remapRow(raw: RawRow): RawRow {
+  const out: RawRow = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const nk = normalizeHeader(k);
+    // don't overwrite an existing populated key
+    if (out[nk] === undefined || out[nk] === "" || out[nk] === null) {
+      out[nk] = v;
+    }
+  }
+  return out;
+}
 
 const REQUIRED = ["name", "city", "category", "subcategory"];
 
@@ -52,7 +140,13 @@ function toNum(v: unknown): number | null {
 }
 function toBool(v: unknown): boolean {
   const s = norm(v).toLowerCase();
-  return s === "نعم" || s === "yes" || s === "true" || s === "1";
+  return s === "نعم" || s === "yes" || s === "true" || s === "1" || s === "y";
+}
+function splitLinks(v: unknown): string[] {
+  return norm(v).split(/[,\n]/).map((u) => u.trim()).filter(Boolean);
+}
+function toMedia(v: unknown): MediaItem[] {
+  return splitLinks(v).slice(0, 5).map((url) => ({ url }));
 }
 
 function normalizeSaudiPhone(v: unknown): string | null {
@@ -77,17 +171,18 @@ export function ImportProvidersDialog({
   onClose: () => void;
   onDone: () => void;
 }) {
-  const [parsed, setParsed] = useState<ParsedRow[] | null>(null);
+  const [parsed, setParsed] = useState<ParsedProvider[] | null>(null);
+  const [children, setChildren] = useState<ParsedChild[]>([]);
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ ok: number; fail: number } | null>(null);
+  const [result, setResult] = useState<{ ok: number; fail: number; childOk: number; childFail: number } | null>(null);
 
   const cityByName = new Map(cities.map((c) => [c.name_ar.trim(), c.id]));
   const catByName = new Map(cats.map((c) => [c.name_ar.trim(), c.id]));
 
   function findSub(catId: string, subName: string, tertiaryName: string): { id?: string; error?: string } {
     const primaryMatches = subs.filter((s) => s.category_id === catId && (s.parent_id === null) && s.name_ar.trim() === subName.trim());
-    if (primaryMatches.length === 0) return { error: `التصنيف الفرعي "${subName}" غير موجود تحت "${catByName.get(catId) ? "هذا التصنيف" : "—"}"` };
+    if (primaryMatches.length === 0) return { error: `التصنيف الفرعي "${subName}" غير موجود` };
     const primary = primaryMatches[0];
     if (!tertiaryName) return { id: primary.id };
     const tertiary = subs.find((s) => s.parent_id === primary.id && s.name_ar.trim() === tertiaryName.trim());
@@ -95,18 +190,28 @@ export function ImportProvidersDialog({
     return { id: tertiary.id };
   }
 
+  function readSheet(wb: XLSX.WorkBook, names: string[]): RawRow[] {
+    for (const n of names) {
+      if (wb.SheetNames.includes(n)) {
+        const ws = wb.Sheets[n];
+        return XLSX.utils.sheet_to_json<RawRow>(ws, { defval: "", raw: false });
+      }
+    }
+    return [];
+  }
+
   async function handleFile(file: File) {
     setFileName(file.name);
     setResult(null);
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: "array", raw: false });
-    const sheetName = wb.SheetNames.includes("providers") ? "providers" : wb.SheetNames[0];
-    const ws = wb.Sheets[sheetName];
-    // raw:false preserves formatted text (keeps leading zeros in phone numbers like 05xxxxxxxx)
-    const rows = XLSX.utils.sheet_to_json<RawRow>(ws, { defval: "", raw: false });
 
-    const out: ParsedRow[] = rows.map((raw, idx) => {
-      const rowNumber = idx + 2; // header is row 1
+    // --- Providers sheet ---
+    const providerRows = readSheet(wb, ["مقدمو الخدمة", "providers"]);
+
+    const out: ParsedProvider[] = providerRows.map((rawIn, idx) => {
+      const raw = remapRow(rawIn);
+      const rowNumber = idx + 2;
       const errors: string[] = [];
 
       for (const k of REQUIRED) {
@@ -129,10 +234,10 @@ export function ImportProvidersDialog({
       const rating = toNum(raw.rating);
       if (rating !== null && (rating < 0 || rating > 5)) errors.push("التقييم يجب أن يكون بين 0 و 5");
 
-      const imageUrls = norm(raw.image_urls)
-        .split(/[,\n]/).map((u) => u.trim()).filter(Boolean);
+      const imageUrls = splitLinks(raw.image_urls);
+      const videos = toMedia(raw.video_urls);
 
-      const p: ParsedRow = { rowNumber, raw, errors, imageUrls };
+      const p: ParsedProvider = { rowNumber, raw, errors, imageUrls };
       if (errors.length === 0 && cityId && subId) {
         p.payload = {
           name: norm(raw.name),
@@ -152,17 +257,91 @@ export function ImportProvidersDialog({
           snapchat: norm(raw.snapchat) || null,
           address: norm(raw.address) || null,
           map_url: norm(raw.map_url) || null,
+          logo_url: norm(raw.logo_url) || null,
+          videos,
           rating,
           is_featured: toBool(raw.is_featured),
           featured_until: norm(raw.featured_until) || null,
           sort_order: toNum(raw.sort_order) ?? 0,
-          active: true,
+          active: norm(raw.active) ? toBool(raw.active) : true,
         };
       }
       return p;
     });
 
     setParsed(out);
+
+    // --- Children sheets (packages / services / branches) ---
+    const childList: ParsedChild[] = [];
+
+    const pushChildren = (
+      rows: RawRow[],
+      kind: "package" | "service" | "branch",
+      buildPayload: (raw: RawRow) => Record<string, unknown>
+    ) => {
+      rows.forEach((rawIn, idx) => {
+        const raw = remapRow(rawIn);
+        const rowNumber = idx + 2;
+        const errors: string[] = [];
+        const providerName = norm(raw.name && kind === "branch" ? "" : "") || "";
+        // For children the provider's name comes from a dedicated column labeled "اسم المزود"
+        // Our remap collapses that into `name` — but `name` here is also the child name.
+        // So we look for the original two columns explicitly:
+        const rawProviderName = norm(rawIn["اسم المزود"] ?? rawIn["provider_name"] ?? "");
+        const rawProviderCity = norm(rawIn["مدينة المزود"] ?? rawIn["provider_city"] ?? "");
+        const childName = norm(
+          rawIn[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
+          rawIn["name"] ?? ""
+        );
+
+        if (!rawProviderName) errors.push('العمود "اسم المزود" مطلوب');
+        if (!rawProviderCity) errors.push('العمود "مدينة المزود" مطلوب');
+        if (!childName) errors.push(`العمود "${kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"}" مطلوب`);
+
+        // Skip fully-empty rows silently
+        if (!rawProviderName && !rawProviderCity && !childName) return;
+
+        const child: ParsedChild = {
+          rowNumber, kind,
+          provider_name: rawProviderName,
+          provider_city: rawProviderCity,
+          errors,
+        };
+        if (errors.length === 0) {
+          child.payload = { ...buildPayload(raw), name: childName };
+        }
+        // stash raw for provider matching
+        // @ts-expect-error attach
+        child._providerName = rawProviderName;
+        // @ts-expect-error attach
+        child._providerCity = rawProviderCity;
+        childList.push(child);
+        void providerName;
+      });
+    };
+
+    pushChildren(readSheet(wb, ["الباقات", "packages"]), "package", (raw) => ({
+      description: norm(raw.description) || null,
+      price: norm(raw.price) || null,
+      sort_order: toNum(raw.sort_order) ?? 0,
+      images: toMedia(raw.image_urls),
+      videos: toMedia(raw.video_urls),
+    }));
+    pushChildren(readSheet(wb, ["الخدمات", "services"]), "service", (raw) => ({
+      description: norm(raw.description) || null,
+      price: norm(raw.price) || null,
+      sort_order: toNum(raw.sort_order) ?? 0,
+      images: toMedia(raw.image_urls),
+      videos: toMedia(raw.video_urls),
+    }));
+    pushChildren(readSheet(wb, ["الفروع", "branches"]), "branch", (raw) => ({
+      address: norm(raw.address) || null,
+      map_url: norm(raw.map_url) || null,
+      phone: normalizeSaudiPhone(raw.phone),
+      sort_order: toNum(raw.sort_order) ?? 0,
+    }));
+
+    setChildren(childList);
   }
 
   async function doImport() {
@@ -170,45 +349,76 @@ export function ImportProvidersDialog({
     const valid = parsed.filter((r) => r.payload);
     if (valid.length === 0) return;
     setImporting(true);
-    let ok = 0, fail = 0;
+    let ok = 0, fail = 0, childOk = 0, childFail = 0;
+
+    // provider_name+city → provider_id (for child linking)
+    const providerIdBy = new Map<string, string>();
+
     for (const r of valid) {
       const { data, error } = await supabase.from("providers").insert(r.payload!).select("id").single();
       if (error || !data) { fail++; continue; }
+      const cityName = cities.find((c) => c.id === r.payload!.city_id)?.name_ar ?? "";
+      providerIdBy.set(`${r.payload!.name}::${cityName}`, data.id);
       if (r.imageUrls.length > 0) {
         const imgRows = r.imageUrls.map((url, i) => ({ provider_id: data.id, image_url: url, sort_order: i }));
         await supabase.from("provider_images").insert(imgRows);
       }
       ok++;
     }
+
+    // Import children by matching provider name + city
+    for (const c of children) {
+      if (!c.payload) { childFail++; continue; }
+      const key = `${c.provider_name}::${c.provider_city}`;
+      let providerId = providerIdBy.get(key);
+      if (!providerId) {
+        // Try to find existing provider in DB
+        const cityId = cityByName.get(c.provider_city);
+        if (cityId) {
+          const { data } = await supabase.from("providers")
+            .select("id").eq("name", c.provider_name).eq("city_id", cityId).maybeSingle();
+          if (data?.id) { providerId = data.id; providerIdBy.set(key, providerId); }
+        }
+      }
+      if (!providerId) { childFail++; continue; }
+      const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
+      const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from(table) as any).insert(row);
+      if (error) childFail++; else childOk++;
+    }
+
     setImporting(false);
-    setResult({ ok, fail });
-    if (ok > 0) onDone();
+    setResult({ ok, fail, childOk, childFail });
+    if (ok > 0 || childOk > 0) onDone();
   }
 
   const validCount = parsed?.filter((r) => r.payload).length ?? 0;
   const errorCount = parsed?.filter((r) => r.errors.length > 0).length ?? 0;
+  const childValid = children.filter((c) => c.payload).length;
+  const childErr = children.filter((c) => c.errors.length > 0).length;
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, padding: 16 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, padding: 22, maxWidth: 900, width: "100%", maxHeight: "88vh", overflow: "auto" }} dir="rtl">
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, padding: 22, maxWidth: 960, width: "100%", maxHeight: "88vh", overflow: "auto" }} dir="rtl">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <h3 style={{ margin: 0, fontSize: 18 }}>📥 رفع مقدمي خدمة من Excel</h3>
+          <h3 style={{ margin: 0, fontSize: 18 }}>📥 رفع البيانات من ملف Excel</h3>
           <button onClick={onClose} style={{ border: "none", background: "transparent", fontSize: 24, cursor: "pointer" }}>×</button>
         </div>
 
         <div style={{ background: "#f9f7ef", border: "1px solid #e6e0c8", borderRadius: 10, padding: 14, marginBottom: 14, fontSize: 13, lineHeight: 1.9 }}>
           <strong>الخطوات:</strong>
           <ol style={{ margin: "6px 0 0", paddingInlineStart: 20 }}>
-            <li>نزّلي القالب الفارغ واعبئيه (ورقة باسم <code>providers</code>).</li>
-            <li>تأكدي أن أسماء المدن والتصنيفات مطابقة لما في النظام.</li>
-            <li>ارفعي الملف وراجعي المعاينة قبل التأكيد.</li>
+            <li>حمّل القالب العربي واعبّي البيانات (الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع).</li>
+            <li>تأكد أن أسماء المدن والتصنيفات مطابقة لما في النظام.</li>
+            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
+            <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
           </ol>
           <a
-            href="https://docs.google.com/spreadsheets/d/e/2PACX/pub?output=xlsx"
-            onClick={(e) => { e.preventDefault(); window.open("/providers_template.xlsx", "_blank"); }}
+            href="/providers_template.xlsx"
             style={{ display: "inline-block", marginTop: 8, color: "#660000", fontWeight: 700, textDecoration: "underline" }}
           >
-            ⬇️ تنزيل القالب الفارغ (providers_template.xlsx)
+            ⬇️ تحميل القالب العربي (providers_template.xlsx)
           </a>
         </div>
 
@@ -222,18 +432,25 @@ export function ImportProvidersDialog({
 
         {parsed && (
           <>
-            <div style={{ display: "flex", gap: 16, marginBottom: 12, fontSize: 14, fontWeight: 700 }}>
-              <span style={{ color: "#16a34a" }}>✅ صالح: {validCount}</span>
-              <span style={{ color: "#dc2626" }}>❌ به أخطاء: {errorCount}</span>
+            <div style={{ display: "flex", gap: 16, marginBottom: 8, fontSize: 14, fontWeight: 700, flexWrap: "wrap" }}>
+              <span style={{ color: "#16a34a" }}>✅ مزودون صالحون: {validCount}</span>
+              <span style={{ color: "#dc2626" }}>❌ مزودون بأخطاء: {errorCount}</span>
               <span style={{ color: "#666" }}>المجموع: {parsed.length}</span>
             </div>
+            {children.length > 0 && (
+              <div style={{ display: "flex", gap: 16, marginBottom: 12, fontSize: 13, fontWeight: 700, flexWrap: "wrap", color: "#555" }}>
+                <span>📦 عناصر تابعة (باقات/خدمات/فروع): {children.length}</span>
+                <span style={{ color: "#16a34a" }}>✅ صالحة: {childValid}</span>
+                <span style={{ color: "#dc2626" }}>❌ بأخطاء: {childErr}</span>
+              </div>
+            )}
 
-            <div style={{ maxHeight: 360, overflow: "auto", border: "1px solid #eee", borderRadius: 8 }}>
+            <div style={{ maxHeight: 320, overflow: "auto", border: "1px solid #eee", borderRadius: 8 }}>
               <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
                 <thead style={{ background: "#f5f3eb", position: "sticky", top: 0 }}>
                   <tr>
                     <th style={th}>#</th><th style={th}>الحالة</th><th style={th}>الاسم</th>
-                    <th style={th}>المدينة</th><th style={th}>التصنيف</th><th style={th}>الفرعي</th><th style={th}>واتساب</th><th style={th}>اتصال</th>
+                    <th style={th}>المدينة</th><th style={th}>التصنيف</th><th style={th}>الفرعي</th><th style={th}>واتساب</th>
                     <th style={th}>الأخطاء</th>
                   </tr>
                 </thead>
@@ -247,7 +464,6 @@ export function ImportProvidersDialog({
                       <td style={td}>{norm(r.raw.category)}</td>
                       <td style={td}>{norm(r.raw.subcategory)}{norm(r.raw.tertiary) ? ` › ${norm(r.raw.tertiary)}` : ""}</td>
                       <td style={{ ...td, direction: "ltr" }}>{normalizeSaudiPhone(r.raw.whatsapp) ?? "—"}</td>
-                      <td style={{ ...td, direction: "ltr" }}>{normalizeSaudiPhone(r.raw.contact_phone) ?? "—"}</td>
                       <td style={{ ...td, color: "#b91c1c" }}>{r.errors.join("؛ ")}</td>
                     </tr>
                   ))}
@@ -256,8 +472,9 @@ export function ImportProvidersDialog({
             </div>
 
             {result && (
-              <div style={{ marginTop: 12, padding: 12, background: result.fail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تم الاستيراد — نجح: {result.ok} · فشل: {result.fail}
+              <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
+                تم الاستيراد — المزودون: نجح {result.ok} · فشل {result.fail}
+                {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
               </div>
             )}
 
@@ -268,7 +485,7 @@ export function ImportProvidersDialog({
                 disabled={importing || validCount === 0}
                 style={{ ...btnPrimary, opacity: importing || validCount === 0 ? 0.5 : 1 }}
               >
-                {importing ? "جارٍ الاستيراد..." : `استيراد ${validCount} صف`}
+                {importing ? "جارٍ الاستيراد..." : `استيراد ${validCount} مزود${childValid ? ` + ${childValid} عنصر تابع` : ""}`}
               </button>
             </div>
           </>
