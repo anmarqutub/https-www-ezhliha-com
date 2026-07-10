@@ -1462,6 +1462,7 @@ type ProvRow = {
   rating: number | null; is_featured: boolean; featured_until: string | null;
   sort_order: number; active: boolean;
   logo_url: string | null; video_url: string | null; video_thumbnail_url: string | null;
+  show_packages: boolean; show_services: boolean; show_branches: boolean;
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
@@ -1547,6 +1548,9 @@ function ProvidersTab() {
       logo_url: editing.logo_url ?? null,
       video_url: editing.video_url ?? null,
       video_thumbnail_url: editing.video_thumbnail_url ?? null,
+      show_packages: editing.show_packages ?? true,
+      show_services: editing.show_services ?? true,
+      show_branches: editing.show_branches ?? true,
     };
     if (editing.id) {
       const before = rows.find((r) => r.id === editing.id);
@@ -1862,6 +1866,9 @@ function ProvidersTab() {
               <input type="datetime-local" value={editing.featured_until ? editing.featured_until.slice(0, 16) : ""} onChange={(e) => setEditing({ ...editing, featured_until: e.target.value || null })} />
             </Field>
             <Field label="مفعّل"><input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الباقات"><input type="checkbox" checked={editing.show_packages ?? true} onChange={(e) => setEditing({ ...editing, show_packages: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الخدمات"><input type="checkbox" checked={editing.show_services ?? true} onChange={(e) => setEditing({ ...editing, show_services: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الفروع"><input type="checkbox" checked={editing.show_branches ?? true} onChange={(e) => setEditing({ ...editing, show_branches: e.target.checked })} /></Field>
           </div>
 
           {editing.id && (

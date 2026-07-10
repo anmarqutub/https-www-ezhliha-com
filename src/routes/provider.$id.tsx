@@ -23,6 +23,7 @@ type Provider = {
   contact_phone: string | null;
   logo_url: string | null;
   video_thumbnail_url: string | null;
+  show_packages: boolean; show_services: boolean; show_branches: boolean;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
@@ -30,7 +31,7 @@ type Package = { id: string; name: string; description: string | null; price: st
 type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
 type Branch = { id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 type SiteText = { key: string; value: string };
-type OfferTab = "packages" | "services" | "branches";
+type OfferTab = "overview" | "packages" | "services" | "branches";
 
 function ProviderPage() {
   const { id } = Route.useParams();
@@ -44,7 +45,7 @@ function ProviderPage() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
-  const [activeTab, setActiveTab] = useState<OfferTab>("packages");
+  const [activeTab, setActiveTab] = useState<OfferTab>("overview");
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [cityName, setCityName] = useState<string>("");
   const [subName, setSubName] = useState<string>("");
@@ -239,76 +240,90 @@ function ProviderPage() {
               {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
             </div>
 
-            {(packages.length > 0 || services.length > 0 || branches.length > 0) && (
-              <div className="pv-inline-tabs">
-                <div className="pv-tabs">
-                  {packages.length > 0 && (
-                    <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
-                      {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
+            {(() => {
+              const showPkg = provider.show_packages !== false && packages.length > 0;
+              const showSrv = provider.show_services !== false && services.length > 0;
+              const showBr  = provider.show_branches !== false && branches.length > 0;
+              return (
+                <div className="pv-inline-tabs">
+                  <div className="pv-tabs">
+                    <button type="button" className={`pv-tab ${activeTab === "overview" ? "on" : ""}`} onClick={() => setActiveTab("overview")}>
+                      {siteTexts["provider.tabs.overview"] || "الرئيسية"}
                     </button>
+                    {showPkg && (
+                      <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
+                        {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
+                      </button>
+                    )}
+                    {showSrv && (
+                      <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
+                        {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
+                      </button>
+                    )}
+                    {showBr && (
+                      <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
+                        {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
+                      </button>
+                    )}
+                  </div>
+
+                  {activeTab === "overview" && (
+                    <div className="pv-inline-overview">
+                      {provider.description
+                        ? <p className="pv-desc">{provider.description}</p>
+                        : <p className="pv-empty-imgs">لا يوجد وصف بعد.</p>}
+                    </div>
                   )}
-                  {services.length > 0 && (
-                    <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
-                      {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
-                    </button>
+                  {activeTab === "packages" && showPkg && (
+                    <div className="pv-inline-list">
+                      {packages.map((pkg) => (
+                        <article className="pv-package" key={pkg.id}>
+                          {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
+                          <div>
+                            <h3>{pkg.name}</h3>
+                            {pkg.price && <strong>{pkg.price}</strong>}
+                            {pkg.description && <p>{pkg.description}</p>}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
                   )}
-                  {branches.length > 0 && (
-                    <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
-                      {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
-                    </button>
+                  {activeTab === "services" && showSrv && (
+                    <div className="pv-inline-list">
+                      {services.map((sv) => (
+                        <article className="pv-package" key={sv.id}>
+                          {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
+                          <div>
+                            <h3>{sv.name}</h3>
+                            {sv.price && <strong>{sv.price}</strong>}
+                            {sv.description && <p>{sv.description}</p>}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                  {activeTab === "branches" && showBr && (
+                    <div className="pv-branch-list">
+                      {branches.map((br) => (
+                        <article className="pv-branch" key={br.id}>
+                          <div className="pv-branch-body">
+                            <h3>📍 {br.name}</h3>
+                            {br.address && <p>{br.address}</p>}
+                            {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
+                          </div>
+                          {br.map_url && (
+                            <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
+                              🗺️ الموقع
+                            </a>
+                          )}
+                        </article>
+                      ))}
+                    </div>
                   )}
                 </div>
+              );
+            })()}
 
-                {activeTab === "packages" && packages.length > 0 && (
-                  <div className="pv-inline-list">
-                    {packages.map((pkg) => (
-                      <article className="pv-package" key={pkg.id}>
-                        {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                        <div>
-                          <h3>{pkg.name}</h3>
-                          {pkg.price && <strong>{pkg.price}</strong>}
-                          {pkg.description && <p>{pkg.description}</p>}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                )}
-                {activeTab === "services" && services.length > 0 && (
-                  <div className="pv-inline-list">
-                    {services.map((sv) => (
-                      <article className="pv-package" key={sv.id}>
-                        {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                        <div>
-                          <h3>{sv.name}</h3>
-                          {sv.price && <strong>{sv.price}</strong>}
-                          {sv.description && <p>{sv.description}</p>}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                )}
-                {activeTab === "branches" && branches.length > 0 && (
-                  <div className="pv-branch-list">
-                    {branches.map((br) => (
-                      <article className="pv-branch" key={br.id}>
-                        <div className="pv-branch-body">
-                          <h3>📍 {br.name}</h3>
-                          {br.address && <p>{br.address}</p>}
-                          {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
-                        </div>
-                        {br.map_url && (
-                          <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
-                            🗺️ الموقع
-                          </a>
-                        )}
-                      </article>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {provider.description && <p className="pv-desc">{provider.description}</p>}
             {(provider.price_from || provider.price_to) && (
               <div className="pv-price">
                 {provider.price_from && <span>من {provider.price_from} ر.س</span>}
