@@ -1866,6 +1866,9 @@ function ProvidersTab() {
               <input type="datetime-local" value={editing.featured_until ? editing.featured_until.slice(0, 16) : ""} onChange={(e) => setEditing({ ...editing, featured_until: e.target.value || null })} />
             </Field>
             <Field label="مفعّل"><input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الباقات"><input type="checkbox" checked={editing.show_packages ?? true} onChange={(e) => setEditing({ ...editing, show_packages: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الخدمات"><input type="checkbox" checked={editing.show_services ?? true} onChange={(e) => setEditing({ ...editing, show_services: e.target.checked })} /></Field>
+            <Field label="إظهار قسم الفروع"><input type="checkbox" checked={editing.show_branches ?? true} onChange={(e) => setEditing({ ...editing, show_branches: e.target.checked })} /></Field>
           </div>
 
           {editing.id && (
