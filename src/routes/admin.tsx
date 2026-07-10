@@ -1946,6 +1946,91 @@ function ProvidersTab() {
               </div>
             </div>
           )}
+
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <h4 style={{ fontWeight: 700 }}>الخدمات</h4>
+                <button type="button" className="adm-btn-sm" onClick={() => setEditingService({ sort_order: editingServices.length })}>+ إضافة خدمة</button>
+              </div>
+              {editingServices.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت خدمات لهذا المزود.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editingServices.map((row) => (
+                    <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
+                      <div>
+                        <strong>{row.name}</strong>
+                        {row.price && <span style={{ color: "#6B1F1F", fontWeight: 700, marginInlineStart: 8 }}>{row.price}</span>}
+                        {row.description && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>{row.description}</div>}
+                      </div>
+                      <div>
+                        <button type="button" className="adm-btn-sm" onClick={() => setEditingService(row)}>تعديل</button>
+                        <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => deleteService(row)}>حذف</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {editingService && (
+            <div style={{ marginTop: 14, padding: 14, borderRadius: 12, background: "#FAF6F2", border: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingService.id ? "تعديل خدمة" : "إضافة خدمة"}</h4>
+              <div className="adm-grid2">
+                <Field label="اسم الخدمة"><input value={editingService.name ?? ""} onChange={(e) => setEditingService({ ...editingService, name: e.target.value })} /></Field>
+                <Field label="السعر"><input value={editingService.price ?? ""} onChange={(e) => setEditingService({ ...editingService, price: e.target.value })} placeholder="مثال: 150 ر.س" /></Field>
+                <Field label="رابط صورة الخدمة"><input value={editingService.image_url ?? ""} onChange={(e) => setEditingService({ ...editingService, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
+              </div>
+              <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" className="adm-btn-secondary" onClick={() => setEditingService(null)}>إلغاء</button>
+                <button type="button" className="adm-btn-primary" onClick={saveService}>حفظ الخدمة</button>
+              </div>
+            </div>
+          )}
+
+          {editing.id && (
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #E8DADA" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <h4 style={{ fontWeight: 700 }}>الفروع</h4>
+                <button type="button" className="adm-btn-sm" onClick={() => setEditingBranch({ sort_order: editingBranches.length })}>+ إضافة فرع</button>
+              </div>
+              {editingBranches.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت فروع لهذا المزود.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {editingBranches.map((row) => (
+                    <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
+                      <div>
+                        <strong>{row.name}</strong>
+                        {row.address && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>📍 {row.address}</div>}
+                        {row.phone && <div style={{ direction: "ltr", fontSize: 12, color: "#5A4A4A" }}>{row.phone}</div>}
+                      </div>
+                      <div>
+                        <button type="button" className="adm-btn-sm" onClick={() => setEditingBranch(row)}>تعديل</button>
+                        <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => deleteBranch(row)}>حذف</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {editingBranch && (
+            <div style={{ marginTop: 14, padding: 14, borderRadius: 12, background: "#FAF6F2", border: "1px solid #E8DADA" }}>
+              <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingBranch.id ? "تعديل فرع" : "إضافة فرع"}</h4>
+              <div className="adm-grid2">
+                <Field label="اسم الفرع"><input value={editingBranch.name ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, name: e.target.value })} placeholder="مثال: فرع العليا" /></Field>
+                <Field label="رقم الهاتف"><input value={editingBranch.phone ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, phone: e.target.value })} dir="ltr" placeholder="05xxxxxxxx" /></Field>
+                <Field label="العنوان"><input value={editingBranch.address ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, address: e.target.value })} /></Field>
+                <Field label="رابط الخريطة"><input value={editingBranch.map_url ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, map_url: e.target.value })} dir="ltr" placeholder="https://maps..." /></Field>
+                <Field label="الترتيب"><input type="number" value={editingBranch.sort_order ?? 0} onChange={(e) => setEditingBranch({ ...editingBranch, sort_order: +e.target.value })} /></Field>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" className="adm-btn-secondary" onClick={() => setEditingBranch(null)}>إلغاء</button>
+                <button type="button" className="adm-btn-primary" onClick={saveBranch}>حفظ الفرع</button>
+              </div>
+            </div>
+          )}
+
           {!editing.id && <p style={{ marginTop: 12, fontSize: 13, color: "#5A4A4A" }}>احفظي أولاً ثم سترين خيار رفع الصور.</p>}
         </Modal>
       )}
