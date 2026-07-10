@@ -59,6 +59,7 @@ function Home() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [branchCities, setBranchCities] = useState<{ provider_id: string; city_id: string | null }[]>([]);
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -75,7 +76,7 @@ function Home() {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -88,6 +89,7 @@ function Home() {
         supabase.from("provider_images").select("*").order("sort_order"),
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
+        supabase.from("branches").select("provider_id,city_id"),
       ]);
       const allCities = (cRes.data ?? []) as City[];
       const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
@@ -100,6 +102,7 @@ function Home() {
       setProviders((pRes.data ?? []) as Provider[]);
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
+      setBranchCities((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]);
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
     })();
@@ -124,6 +127,24 @@ function Home() {
     return m;
   }, [images]);
 
+  const providerCityIds = useMemo(() => {
+    const m = new Map<string, Set<string>>();
+    providers.forEach((p) => {
+      const s = new Set<string>();
+      if (p.city_id) s.add(p.city_id);
+      m.set(p.id, s);
+    });
+    branchCities.forEach((b) => {
+      if (!b.city_id) return;
+      const s = m.get(b.provider_id);
+      if (s) s.add(b.city_id);
+    });
+    return m;
+  }, [providers, branchCities]);
+
+  const matchesCity = (p: Provider) =>
+    !selectedCity || (providerCityIds.get(p.id)?.has(selectedCity) ?? false);
+
   const visibleSubs = selectedCategory
     ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
@@ -137,13 +158,13 @@ function Home() {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
     providers.forEach((p) => {
-      if (selectedCity && p.city_id !== selectedCity) return;
+      if (!matchesCity(p)) return;
       const cat = subToCat.get(p.subcategory_id);
       if (!cat) return;
       m.set(cat, (m.get(cat) ?? 0) + 1);
     });
     return m;
-  }, [providers, subcategories, selectedCity]);
+  }, [providers, subcategories, selectedCity, providerCityIds]);
 
   const subMatches = (providerSubId: string, selSub: string) => {
     if (providerSubId === selSub) return true;
@@ -152,7 +173,7 @@ function Home() {
   };
 
   const categoryProviders = providers.filter((p) => {
-    if (selectedCity && p.city_id !== selectedCity) return false;
+    if (!matchesCity(p)) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
     if (selectedCategory) {
@@ -298,7 +319,7 @@ function Home() {
           (() => {
             const q = quickSearch.trim().toLowerCase();
             const results = providers.filter((p) => {
-              if (selectedCity && p.city_id !== selectedCity) return false;
+              if (!matchesCity(p)) return false;
               const sub = subcategories.find((s) => s.id === p.subcategory_id);
               const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
               return (
