@@ -1486,7 +1486,105 @@ function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
   return s;
 }
 
+function toMediaArray(v: unknown): MediaItem[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((x): MediaItem | null => {
+      if (typeof x === "string") return { url: x };
+      if (x && typeof x === "object" && typeof (x as { url?: unknown }).url === "string") {
+        const it = x as { url: string; thumbnail_url?: unknown };
+        return { url: it.url, thumbnail_url: typeof it.thumbnail_url === "string" ? it.thumbnail_url : null };
+      }
+      return null;
+    })
+    .filter((x): x is MediaItem => !!x)
+    .slice(0, 5);
+}
+
+function MediaListEditor({
+  kind, items, onChange, upload, max = 5,
+}: {
+  kind: "video" | "image";
+  items: MediaItem[];
+  onChange: (next: MediaItem[]) => void;
+  upload: (file: File) => Promise<string | null>;
+  max?: number;
+}) {
+  const [urlDraft, setUrlDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+  const addUrl = () => {
+    const u = urlDraft.trim();
+    if (!u) return;
+    if (items.length >= max) { alert(`الحد الأقصى ${max}`); return; }
+    onChange([...items, { url: u }]);
+    setUrlDraft("");
+  };
+  const addFile = async (f: File) => {
+    if (items.length >= max) { alert(`الحد الأقصى ${max}`); return; }
+    setBusy(true);
+    const url = await upload(f);
+    setBusy(false);
+    if (url) onChange([...items, { url }]);
+  };
+  const removeAt = (i: number) => onChange(items.filter((_, k) => k !== i));
+  const setThumbAt = (i: number, url: string) =>
+    onChange(items.map((it, k) => (k === i ? { ...it, thumbnail_url: url || null } : it)));
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <input
+          value={urlDraft}
+          onChange={(e) => setUrlDraft(e.target.value)}
+          dir="ltr"
+          placeholder={kind === "video" ? "رابط الفيديو (يوتيوب / تيك توك / إنستقرام / mp4)" : "رابط الصورة https://..."}
+          style={{ flex: 1, minWidth: 220 }}
+        />
+        <button type="button" className="adm-btn-sm" onClick={addUrl} disabled={items.length >= max}>+ إضافة رابط</button>
+        <label className="adm-btn-sm" style={{ cursor: "pointer", opacity: busy || items.length >= max ? 0.6 : 1 }}>
+          {busy ? "جارٍ الرفع..." : (kind === "video" ? "رفع فيديو" : "رفع صورة")}
+          <input
+            type="file"
+            accept={kind === "video" ? "video/*" : "image/*"}
+            style={{ display: "none" }}
+            disabled={busy || items.length >= max}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) addFile(f); e.target.value = ""; }}
+          />
+        </label>
+        <span style={{ fontSize: 12, color: "#5A4A4A", alignSelf: "center" }}>{items.length}/{max}</span>
+      </div>
+      {items.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8 }}>
+          {items.map((it, i) => (
+            <div key={i} style={{ border: "1px solid #E8DADA", borderRadius: 10, padding: 8, background: "#fff", display: "flex", flexDirection: "column", gap: 6 }}>
+              {kind === "image" ? (
+                <img src={it.url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 6 }} />
+              ) : (
+                <div style={{ width: "100%", height: 100, borderRadius: 6, background: it.thumbnail_url ? `url(${it.thumbnail_url}) center/cover` : "#F2E6E6", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B1F1F", fontSize: 12, fontWeight: 700 }}>
+                  {it.thumbnail_url ? "▶" : "فيديو"}
+                </div>
+              )}
+              <a href={it.url} target="_blank" rel="noopener noreferrer" dir="ltr" style={{ fontSize: 11, color: "#660000", textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.url}</a>
+              {kind === "video" && (
+                <input
+                  value={it.thumbnail_url ?? ""}
+                  onChange={(e) => setThumbAt(i, e.target.value)}
+                  placeholder="رابط صورة غلاف (اختياري)"
+                  dir="ltr"
+                  style={{ fontSize: 12 }}
+                />
+              )}
+              <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => removeAt(i)}>حذف</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProvidersTab() {
+
   const [rows, setRows] = useState<ProvRow[]>([]);
   const [cities, setCities] = useState<CityRow[]>([]);
   const [subs, setSubs] = useState<SubRow[]>([]);
