@@ -23,6 +23,7 @@ type Provider = {
   contact_phone: string | null;
   logo_url: string | null;
   video_thumbnail_url: string | null;
+  show_packages: boolean; show_services: boolean; show_branches: boolean;
 };
 type Image = { id: string; image_url: string; sort_order: number };
 type Review = { id: string; rating: number; comment: string | null; created_at: string; reviewer_name: string; is_mine: boolean };
@@ -30,7 +31,7 @@ type Package = { id: string; name: string; description: string | null; price: st
 type Service = { id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
 type Branch = { id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 type SiteText = { key: string; value: string };
-type OfferTab = "packages" | "services" | "branches";
+type OfferTab = "overview" | "packages" | "services" | "branches";
 
 function ProviderPage() {
   const { id } = Route.useParams();
