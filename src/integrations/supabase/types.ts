@@ -410,6 +410,7 @@ export type Database = {
           active: boolean
           address: string | null
           city_id: string
+          contact_phone: string | null
           created_at: string
           description: string | null
           featured_until: string | null
@@ -439,6 +440,7 @@ export type Database = {
           active?: boolean
           address?: string | null
           city_id: string
+          contact_phone?: string | null
           created_at?: string
           description?: string | null
           featured_until?: string | null
@@ -468,6 +470,7 @@ export type Database = {
           active?: boolean
           address?: string | null
           city_id?: string
+          contact_phone?: string | null
           created_at?: string
           description?: string | null
           featured_until?: string | null
