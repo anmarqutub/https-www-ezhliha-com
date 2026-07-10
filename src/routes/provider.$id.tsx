@@ -624,6 +624,16 @@ const css = `
   .pv-package h3 { font-size:16px; font-weight:900; margin:0 0 4px; }
   .pv-package strong { display:block; color:#660000; margin-bottom:5px; }
   .pv-package p { margin:0; color:#333; line-height:1.7; font-size:13px; }
+  .pv-tabs { display:flex; gap:8px; margin-bottom:16px; border-bottom:2px solid #e6e4d7; padding-bottom:0; flex-wrap:wrap; }
+  .pv-tab { background:none; border:none; padding:10px 18px; font-family:inherit; font-size:15px; font-weight:700; color:#5a4a4a; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .15s; }
+  .pv-tab:hover { color:#660000; }
+  .pv-tab.on { color:#660000; border-bottom-color:#660000; }
+  .pv-branch-list { display:flex; flex-direction:column; gap:10px; }
+  .pv-branch { border:1px solid #e8e6d7; border-radius:12px; padding:14px; background:#fffdf8; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .pv-branch h3 { font-size:16px; font-weight:900; margin:0 0 4px; }
+  .pv-branch p { margin:0 0 4px; color:#333; font-size:13px; }
+  .pv-branch-phone { color:#660000; font-weight:700; text-decoration:none; font-size:13px; }
+  .pv-branch-map { background:#660000; color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13px; white-space:nowrap; }
   .pv-reviews { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-reviews h2 { font-size:20px; font-weight:800; margin-bottom:16px; }
   .pv-review-form { background:#e6e4d7; padding:14px; border-radius:12px; margin-bottom:18px; display:flex; flex-direction:column; gap:10px; }
