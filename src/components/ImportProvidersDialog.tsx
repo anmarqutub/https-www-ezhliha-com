@@ -350,6 +350,7 @@ export function ImportProvidersDialog({
       map_url: norm(raw.map_url) || null,
       phone: normalizeSaudiPhone(raw.phone),
       sort_order: toNum(raw.sort_order) ?? 0,
+      _branch_city: norm(raw.city) || null,
     }));
 
     setChildren(childList);
