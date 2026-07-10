@@ -2317,6 +2317,8 @@ const ENTITY_LABEL: Record<string, string> = {
   provider: "مقدم خدمة",
   banner: "بنر",
   review: "تقييم",
+  package: "باقة",
+  site_text: "عبارة موقع",
   purchase_code: "كود اشتراك",
   purchase_codes: "أكواد اشتراك",
 };
@@ -2324,9 +2326,10 @@ const ENTITY_LABEL: Record<string, string> = {
 const FIELD_LABEL: Record<string, string> = {
   name: "الاسم", name_ar: "الاسم", name_en: "الاسم (EN)", title: "العنوان",
   description: "الوصف", slug: "المعرّف", address: "العنوان",
-  whatsapp: "واتساب", instagram: "إنستغرام", tiktok: "تيكتوك",
+  whatsapp: "واتساب", contact_phone: "رقم الاتصال", instagram: "إنستغرام", tiktok: "تيكتوك",
   twitter: "تويتر", snapchat: "سناب شات", image_url: "الصورة", icon: "الأيقونة",
-  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى",
+  link_url: "الرابط", price_from: "السعر من", price_to: "السعر إلى", price: "السعر النصي",
+  people_from: "تكفي من", people_to: "تكفي إلى", logo_url: "اللوقو", video_thumbnail_url: "واجهة الفيديو",
   rating: "التقييم", sort_order: "الترتيب", active: "مفعّل",
   is_featured: "مميّز", featured_until: "تمييز حتى",
   city_id: "المدينة", subcategory_id: "التصنيف الفرعي",
