@@ -1597,7 +1597,7 @@ function ProvidersTab() {
     const { error } = await supabase.storage.from("provider-images").upload(path, file);
     if (error) { alert("خطأ رفع: " + error.message); return; }
     const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
-    await supabase.from("providers").update({ [field]: pub.publicUrl }).eq("id", editing.id);
+    await supabase.from("providers").update({ [field]: pub.publicUrl } as never).eq("id", editing.id);
     setEditing({ ...editing, [field]: pub.publicUrl });
     logActivity("upload_image", "provider", editing.id, { field, name: editing.name });
     reload();
