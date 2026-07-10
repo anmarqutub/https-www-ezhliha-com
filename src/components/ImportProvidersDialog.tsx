@@ -350,7 +350,6 @@ export function ImportProvidersDialog({
       map_url: norm(raw.map_url) || null,
       phone: normalizeSaudiPhone(raw.phone),
       sort_order: toNum(raw.sort_order) ?? 0,
-      _branch_city: norm(raw.city) || null,
     }));
 
     setChildren(childList);
@@ -395,11 +394,6 @@ export function ImportProvidersDialog({
       if (!providerId) { childFail++; continue; }
       const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
       const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
-      if (c.kind === "branch") {
-        const branchCityName = (row._branch_city as string | null) || c.provider_city;
-        row.city_id = cityByName.get(branchCityName) ?? null;
-        delete row._branch_city;
-      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase.from(table) as any).insert(row);
       if (error) childFail++; else childOk++;

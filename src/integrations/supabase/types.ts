@@ -83,7 +83,6 @@ export type Database = {
       branches: {
         Row: {
           address: string | null
-          city_id: string | null
           created_at: string
           id: string
           map_url: string | null
@@ -95,7 +94,6 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          city_id?: string | null
           created_at?: string
           id?: string
           map_url?: string | null
@@ -107,7 +105,6 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          city_id?: string | null
           created_at?: string
           id?: string
           map_url?: string | null
@@ -118,13 +115,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "branches_city_id_fkey"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "cities"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "branches_provider_id_fkey"
             columns: ["provider_id"]

@@ -73,11 +73,9 @@ function Home() {
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
 
-  const [branches, setBranches] = useState<{ provider_id: string; city_id: string | null }[]>([]);
-
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -90,12 +88,12 @@ function Home() {
         supabase.from("provider_images").select("*").order("sort_order"),
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
-        supabase.from("branches").select("provider_id,city_id"),
       ]);
       const allCities = (cRes.data ?? []) as City[];
       const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
       const citiesData = allCities.filter((c) => allowedIds.includes(c.id));
       setCities(citiesData);
+      // Default to "All cities" (empty selection)
       setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
@@ -103,7 +101,6 @@ function Home() {
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
-      setBranches(((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]).filter((b) => !!b.city_id));
       setLoading(false);
     })();
   }, []);
@@ -127,24 +124,6 @@ function Home() {
     return m;
   }, [images]);
 
-  // Provider → set of city ids where the provider is available (main city + all branch cities)
-  const cityIdsByProvider = useMemo(() => {
-    const m = new Map<string, Set<string>>();
-    providers.forEach((p) => m.set(p.id, new Set([p.city_id])));
-    branches.forEach((b) => {
-      if (!b.city_id) return;
-      const s = m.get(b.provider_id);
-      if (s) s.add(b.city_id);
-    });
-    return m;
-  }, [providers, branches]);
-
-  const matchesCity = (p: Provider) => {
-    if (!selectedCity) return true;
-    const s = cityIdsByProvider.get(p.id);
-    return !!s && s.has(selectedCity);
-  };
-
   const visibleSubs = selectedCategory
     ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
@@ -158,14 +137,13 @@ function Home() {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
     providers.forEach((p) => {
-      if (!matchesCity(p)) return;
+      if (selectedCity && p.city_id !== selectedCity) return;
       const cat = subToCat.get(p.subcategory_id);
       if (!cat) return;
       m.set(cat, (m.get(cat) ?? 0) + 1);
     });
     return m;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providers, subcategories, selectedCity, cityIdsByProvider]);
+  }, [providers, subcategories, selectedCity]);
 
   const subMatches = (providerSubId: string, selSub: string) => {
     if (providerSubId === selSub) return true;
@@ -174,7 +152,7 @@ function Home() {
   };
 
   const categoryProviders = providers.filter((p) => {
-    if (!matchesCity(p)) return false;
+    if (selectedCity && p.city_id !== selectedCity) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
     if (selectedCategory) {
@@ -189,7 +167,6 @@ function Home() {
     }
     return true;
   });
-
 
   const featured = categoryProviders.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
@@ -321,7 +298,7 @@ function Home() {
           (() => {
             const q = quickSearch.trim().toLowerCase();
             const results = providers.filter((p) => {
-              if (!matchesCity(p)) return false;
+              if (selectedCity && p.city_id !== selectedCity) return false;
               const sub = subcategories.find((s) => s.id === p.subcategory_id);
               const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
               return (
