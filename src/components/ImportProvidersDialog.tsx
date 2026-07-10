@@ -55,7 +55,9 @@ type ParsedChild = {
 const HEADER_MAP: Record<string, string> = {
   // providers
   "اسم المزود": "name",
+  "اسم المزود *": "name",
   "المدينة": "city",
+  "المدينة *": "city",
   "مدينة المزود": "provider_city",
   "التصنيف الرئيسي": "category",
   "التصنيف الفرعي": "subcategory",
@@ -82,6 +84,7 @@ const HEADER_MAP: Record<string, string> = {
   "تيك توك": "tiktok",
   "تيكتوك": "tiktok",
   "تويتر (x)": "twitter",
+  "تويتر (X)": "twitter",
   "تويتر": "twitter",
   "سناب شات": "snapchat",
   "سناب": "snapchat",
@@ -99,14 +102,20 @@ const HEADER_MAP: Record<string, string> = {
   "الترتيب": "sort_order",
   "نشط؟": "active",
   "نشط": "active",
-  // packages / services
-  "اسم الباقة": "name",
+  // child rows
+  "اسم الباقة": "child_name",
+  "اسم الباقة *": "child_name",
   "وصف الباقة": "description",
-  "اسم الخدمة": "name",
+  "اسم الخدمة": "child_name",
+  "اسم الخدمة *": "child_name",
   "وصف الخدمة": "description",
-  // branches
-  "اسم الفرع": "name",
+  "اسم الفرع": "child_name",
+  "اسم الفرع *": "child_name",
+  "اسم العنصر": "child_name",
+  "اسم العنصر *": "child_name",
   "رقم الجوال": "phone",
+  "نوع الصف": "row_type",
+  "نوع الصف *": "row_type",
 };
 
 function normalizeHeader(h: string): string {
