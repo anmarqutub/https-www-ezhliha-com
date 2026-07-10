@@ -408,12 +408,23 @@ function ProviderPage() {
           </section>
         </div>
 
-        {provider.video_url && (
-          <section className="pv-video-section">
-            <h2>فيديو تعريفي</h2>
-            <VideoEmbed url={provider.video_url} thumbnailUrl={provider.video_thumbnail_url} />
-          </section>
-        )}
+        {(() => {
+          const vids: MediaItem[] = [];
+          if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
+          (provider.videos ?? []).forEach((v) => vids.push(v));
+          if (!vids.length) return null;
+          return (
+            <section className="pv-video-section">
+              <h2>فيديو تعريفي</h2>
+              <div className="pv-video-list">
+                {vids.map((v, i) => (
+                  <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
+                ))}
+              </div>
+            </section>
+          );
+        })()}
+
 
 
 
