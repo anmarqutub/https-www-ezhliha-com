@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { waLink } from "./index";
 import logoUrl from "@/assets/logo.jpg";
+import defaultProviderUrl from "@/assets/default-provider.jpg";
 
 export const Route = createFileRoute("/favorites")({
   component: FavoritesPage,
@@ -55,7 +56,7 @@ function FavoritesPage() {
   };
 
   const firstImg = (pid: string) => images.find((i) => i.provider_id === pid)?.image_url
-    ?? "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600";
+    ?? defaultProviderUrl;
 
   return (
     <div dir="rtl" className="fav-root">
@@ -91,7 +92,7 @@ function FavoritesPage() {
                       </div>
                     </Link>
                     <div className="fav-foot">
-                      {wa && <a className="fav-wa" href={wa} target="_blank" rel="noopener noreferrer">📱 واتساب</a>}
+                      {wa && <a className="fav-wa" href={wa} target="_blank" rel="noopener noreferrer">للمزيد من التفاصيل</a>}
                       <button className="fav-remove" onClick={() => removeFav(p.id)}>إزالة</button>
                     </div>
                   </article>
@@ -125,7 +126,8 @@ const css = `
   .fav-meta { font-size:12px; color:#555; margin-bottom:8px; display:flex; gap:6px; flex-wrap:wrap; }
   .fav-body p { font-size:13px; color:#555; line-height:1.6; }
   .fav-foot { padding:0 14px 14px; display:flex; gap:8px; }
-  .fav-wa { flex:1; background:#25D366; color:#fff; padding:9px; border-radius:8px; text-align:center; text-decoration:none; font-weight:700; font-size:13px; }
+  .fav-wa { flex:1; background:transparent; color:#660000; padding:9px; border-radius:0; text-align:center; text-decoration:none; font-weight:800; font-size:13px; }
+  .fav-wa:hover { text-decoration:underline; text-underline-offset:4px; }
   .fav-remove { background:transparent; color:#a01919; border:1px solid #f5d5d5; border-radius:8px; padding:9px 14px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; }
   .fav-remove:hover { background:#fdf0f0; }
 `;
