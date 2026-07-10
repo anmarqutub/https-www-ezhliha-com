@@ -340,33 +340,39 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          images: Json
           name: string
           price: string | null
           provider_id: string
           sort_order: number
           updated_at: string
+          videos: Json
         }
         Insert: {
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json
           name: string
           price?: string | null
           provider_id: string
           sort_order?: number
           updated_at?: string
+          videos?: Json
         }
         Update: {
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json
           name?: string
           price?: string | null
           provider_id?: string
           sort_order?: number
           updated_at?: string
+          videos?: Json
         }
         Relationships: [
           {
@@ -481,6 +487,7 @@ export type Database = {
           updated_at: string
           video_thumbnail_url: string | null
           video_url: string | null
+          videos: Json
           whatsapp: string | null
         }
         Insert: {
@@ -514,6 +521,7 @@ export type Database = {
           updated_at?: string
           video_thumbnail_url?: string | null
           video_url?: string | null
+          videos?: Json
           whatsapp?: string | null
         }
         Update: {
@@ -547,6 +555,7 @@ export type Database = {
           updated_at?: string
           video_thumbnail_url?: string | null
           video_url?: string | null
+          videos?: Json
           whatsapp?: string | null
         }
         Relationships: [
@@ -641,33 +650,39 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          images: Json
           name: string
           price: string | null
           provider_id: string
           sort_order: number
           updated_at: string
+          videos: Json
         }
         Insert: {
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json
           name: string
           price?: string | null
           provider_id: string
           sort_order?: number
           updated_at?: string
+          videos?: Json
         }
         Update: {
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json
           name?: string
           price?: string | null
           provider_id?: string
           sort_order?: number
           updated_at?: string
+          videos?: Json
         }
         Relationships: [
           {
