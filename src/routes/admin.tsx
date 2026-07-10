@@ -1465,6 +1465,8 @@ type ProvRow = {
 };
 type ImgRow = { id: string; provider_id: string; image_url: string; sort_order: number };
 type PackageRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type ServiceRow = { id: string; provider_id: string; name: string; description: string | null; price: string | null; image_url: string | null; sort_order: number };
+type BranchRow = { id: string; provider_id: string; name: string; address: string | null; map_url: string | null; phone: string | null; sort_order: number };
 
 function normalizeSaudiPhoneInput(v: string | null | undefined): string | null {
   let s = String(v ?? "")
