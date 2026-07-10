@@ -216,9 +216,6 @@ function ProviderPage() {
                 ))}
               </div>
             )}
-            {images.length === 0 && (
-              <p className="pv-empty-imgs">لم تُضف صور بعد</p>
-            )}
           </section>
 
           <section className="pv-info">
