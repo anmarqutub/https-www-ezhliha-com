@@ -2217,6 +2217,12 @@ function ProvidersTab() {
               <h4 style={{ marginBottom: 10, fontWeight: 800 }}>{editingBranch.id ? "تعديل فرع" : "إضافة فرع"}</h4>
               <div className="adm-grid2">
                 <Field label="اسم الفرع"><input value={editingBranch.name ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, name: e.target.value })} placeholder="مثال: فرع العليا" /></Field>
+                <Field label="المدينة">
+                  <select value={editingBranch.city_id ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, city_id: e.target.value || null })}>
+                    <option value="">— اختر المدينة —</option>
+                    {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+                  </select>
+                </Field>
                 <Field label="رقم الهاتف"><input value={editingBranch.phone ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, phone: e.target.value })} dir="ltr" placeholder="05xxxxxxxx" /></Field>
                 <Field label="العنوان"><input value={editingBranch.address ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, address: e.target.value })} /></Field>
                 <Field label="رابط الخريطة"><input value={editingBranch.map_url ?? ""} onChange={(e) => setEditingBranch({ ...editingBranch, map_url: e.target.value })} dir="ltr" placeholder="https://maps..." /></Field>
