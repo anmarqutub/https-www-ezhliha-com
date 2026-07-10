@@ -150,6 +150,15 @@ function ProviderPage() {
               ) : (
                 <div className="pv-cover pv-cover-empty" />
               )}
+              <button
+                type="button"
+                className={`pv-fav-icon ${isFav ? "active" : ""}`}
+                disabled={favLoading}
+                onClick={toggleFav}
+                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+              >
+                {isFav ? "♥" : "♡"}
+              </button>
               {images.length > 1 && (
                 <>
                   <button
@@ -168,6 +177,7 @@ function ProviderPage() {
                 </>
               )}
             </div>
+
             {images.length > 1 && (
               <div className="pv-thumbs">
                 {images.map((im, i) => (
@@ -221,9 +231,8 @@ function ProviderPage() {
                   🗺️ الموقع على الخريطة
                 </a>
               )}
-              <button className={`pv-btn-fav ${isFav ? "active" : ""}`} disabled={favLoading} onClick={toggleFav}>
-                {isFav ? "♥ في المفضلة" : "♡ أضف للمفضلة"}
-              </button>
+
+
             </div>
 
             {(ig || tk || tw || sc) && (
@@ -334,6 +343,10 @@ const css = `
   .pv-back { display:inline-block; color:#660000; text-decoration:none; font-weight:700; margin-bottom:14px; }
   .pv-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; background:#fff; padding:24px; border-radius:18px; border:1px solid #d8d4c0; }
   @media(max-width:860px){ .pv-grid{ grid-template-columns:1fr; } }
+  .pv-fav-icon { position:absolute; bottom:10px; right:10px; width:40px; height:40px; border-radius:50%; border:none; background:#fff; color:#660000; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.18); line-height:1; padding:0; transition:transform 0.15s; z-index:2; }
+  .pv-fav-icon:hover { transform:scale(1.08); }
+  .pv-fav-icon.active { background:#660000; color:#fff; }
+
 
   .pv-cover-wrap { position:relative; }
   .pv-cover { width:100%; aspect-ratio:4/3; background-size:cover; background-position:center; background-color:#e6e4d7; border-radius:14px; }
