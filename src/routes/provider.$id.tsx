@@ -736,4 +736,10 @@ const css = `
   .pv-review-del { background:transparent; color:#a01919; border:1px solid #f5d5d5; border-radius:6px; padding:3px 8px; font-size:11px; cursor:pointer; margin-right:auto; }
   .pv-review-item p { color:#222; line-height:1.7; margin:4px 0; }
   .pv-review-item small { color:#888; font-size:11px; }
+  .pv-video-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; }
+  .pv-offer-media { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+  .pv-offer-imgs { display:flex; gap:6px; flex-wrap:wrap; }
+  .pv-offer-imgs a { width:64px; height:64px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e8e6d7; }
+  .pv-offer-vids { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:8px; }
+
 `;
