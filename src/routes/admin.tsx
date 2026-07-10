@@ -2098,12 +2098,22 @@ function SiteTextsTab() {
                     {savingKey === r.key ? "جارٍ الحفظ..." : "حفظ"}
                   </button>
                 </div>
-                <textarea
-                  value={r.value}
-                  onChange={(e) => updateRow(r.key, e.target.value)}
-                  rows={r.value.length > 90 ? 4 : 2}
-                  style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
-                />
+                {r.key === "site.font_family" ? (
+                  <select
+                    value={r.value}
+                    onChange={(e) => updateRow(r.key, e.target.value)}
+                    style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: `"${r.value}", inherit`, fontSize: 15 }}
+                  >
+                    {FONT_OPTIONS.map((f) => <option key={f} value={f} style={{ fontFamily: `"${f}", sans-serif` }}>{f}</option>)}
+                  </select>
+                ) : (
+                  <textarea
+                    value={r.value}
+                    onChange={(e) => updateRow(r.key, e.target.value)}
+                    rows={r.value.length > 90 ? 4 : 2}
+                    style={{ width: "100%", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit", resize: "vertical" }}
+                  />
+                )}
               </div>
             ))}
           </div>
