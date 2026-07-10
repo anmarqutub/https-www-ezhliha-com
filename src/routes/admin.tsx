@@ -1999,7 +1999,18 @@ function ProvidersTab() {
               <div className="adm-grid2">
                 <Field label="اسم الخدمة"><input value={editingService.name ?? ""} onChange={(e) => setEditingService({ ...editingService, name: e.target.value })} /></Field>
                 <Field label="السعر"><input value={editingService.price ?? ""} onChange={(e) => setEditingService({ ...editingService, price: e.target.value })} placeholder="مثال: 150 ر.س" /></Field>
-                <Field label="رابط صورة الخدمة"><input value={editingService.image_url ?? ""} onChange={(e) => setEditingService({ ...editingService, image_url: e.target.value })} dir="ltr" /></Field>
+                <Field label="صورة الخدمة">
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    {editingService.image_url && <img src={editingService.image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                      const f = e.target.files?.[0]; if (!f) return;
+                      const url = await uploadOfferImage(f, "service");
+                      if (url) setEditingService({ ...editingService, image_url: url });
+                      e.target.value = "";
+                    }} />
+                    {editingService.image_url && <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditingService({ ...editingService, image_url: null })}>حذف</button>}
+                  </div>
+                </Field>
                 <Field label="الترتيب"><input type="number" value={editingService.sort_order ?? 0} onChange={(e) => setEditingService({ ...editingService, sort_order: +e.target.value })} /></Field>
               </div>
               <Field label="تفاصيل الخدمة"><textarea rows={3} value={editingService.description ?? ""} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} /></Field>
