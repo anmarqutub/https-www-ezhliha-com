@@ -43,7 +43,7 @@ type Provider = {
 type ProviderImage = { id: string; provider_id: string; image_url: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
 
-export const WA_MESSAGE = "السلام عليكم .. جيتك من موقع إزهليها";
+export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
