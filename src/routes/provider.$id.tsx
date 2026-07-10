@@ -72,22 +72,23 @@ function ProviderPage() {
       supabase.rpc("get_provider_reviews", { p_provider_id: id }),
     ]);
     if (p.data) {
-      setProvider(p.data as Provider);
+      setProvider(p.data as unknown as Provider);
       const [c, s, pkg, srv, br, txt] = await Promise.all([
         supabase.from("cities").select("name_ar").eq("id", p.data.city_id).maybeSingle(),
         supabase.from("subcategories").select("name_ar").eq("id", p.data.subcategory_id).maybeSingle(),
-        supabase.from("packages").select("id,name,description,price,image_url,sort_order").eq("provider_id", id).order("sort_order"),
-        supabase.from("services").select("id,name,description,price,image_url,sort_order").eq("provider_id", id).order("sort_order"),
+        supabase.from("packages").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
+        supabase.from("services").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("branches").select("id,name,address,map_url,phone,sort_order").eq("provider_id", id).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
       ]);
       setCityName(c.data?.name_ar ?? "");
       setSubName(s.data?.name_ar ?? "");
-      setPackages((pkg.data ?? []) as Package[]);
-      setServices((srv.data ?? []) as Service[]);
+      setPackages((pkg.data ?? []) as unknown as Package[]);
+      setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
       setSiteTexts(Object.fromEntries(((txt.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
     }
+
     setImages((imgs.data ?? []) as Image[]);
     setReviews(((r.data ?? []) as unknown) as Review[]);
     setLoading(false);
