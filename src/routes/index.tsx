@@ -91,10 +91,7 @@ function Home() {
         supabase.from("site_texts").select("key,value"),
         supabase.from("branches").select("provider_id,city_id"),
       ]);
-      const allCities = (cRes.data ?? []) as City[];
-      const allowedIds = ["b231524b-96f9-4fab-a193-8e8cb2f9c510", "e49fe907-ae37-405e-ab06-5f022006124a"];
-      const citiesData = allCities.filter((c) => allowedIds.includes(c.id));
-      setCities(citiesData);
+      setCities((cRes.data ?? []) as City[]);
       // Default to "All cities" (empty selection)
       setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
