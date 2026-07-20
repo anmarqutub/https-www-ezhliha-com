@@ -23,11 +23,12 @@ async function isAdmin(supabase: any, userId: string): Promise<boolean> {
   return !!data;
 }
 
-// Device identity is keyed on client IP so the same physical device (any
-// browser, any tab) counts as ONE device. sessionId from the client is only
-// a fallback when the IP is unavailable (rare — local dev, missing headers).
-function deviceKey(ip: string | null, fallbackSid: string): string {
-  return ip ? `ip:${ip}` : `sid:${fallbackSid}`;
+// Device identity is keyed on the browser-persistent sessionId (stored in
+// localStorage on the client). IP is NOT part of the identity — public IPs
+// rotate (Wi‑Fi ↔ cellular, DHCP, carrier NAT) and would otherwise sign the
+// user out and burn through the device limit on every network change.
+function deviceKey(_ip: string | null, sid: string): string {
+  return `sid:${sid}`;
 }
 
 // Claim this device. Returns the device's status:
@@ -63,14 +64,13 @@ export const claimSession = createServerFn({ method: "POST" })
       return { status: existing.approved ? ("approved" as const) : ("pending" as const) };
     }
 
-    // Count currently approved devices (only IP-keyed — legacy per-browser
-    // rows from the old scheme are ignored so users aren't locked out).
+    // Count currently approved devices for this user (sid-keyed).
     const { count } = await supabaseAdmin
       .from("user_devices")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .eq("approved", true)
-      .like("device_sid", "ip:%");
+      .like("device_sid", "sid:%");
 
     const autoApprove = (count ?? 0) < MAX_AUTO_DEVICES;
 
