@@ -23,11 +23,12 @@ async function isAdmin(supabase: any, userId: string): Promise<boolean> {
   return !!data;
 }
 
-// Device identity is keyed on client IP so the same physical device (any
-// browser, any tab) counts as ONE device. sessionId from the client is only
-// a fallback when the IP is unavailable (rare — local dev, missing headers).
-function deviceKey(ip: string | null, fallbackSid: string): string {
-  return ip ? `ip:${ip}` : `sid:${fallbackSid}`;
+// Device identity is keyed on the browser-persistent sessionId (stored in
+// localStorage on the client). IP is NOT part of the identity — public IPs
+// rotate (Wi‑Fi ↔ cellular, DHCP, carrier NAT) and would otherwise sign the
+// user out and burn through the device limit on every network change.
+function deviceKey(_ip: string | null, sid: string): string {
+  return `sid:${sid}`;
 }
 
 // Claim this device. Returns the device's status:
