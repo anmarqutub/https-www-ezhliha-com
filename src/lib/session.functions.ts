@@ -64,14 +64,13 @@ export const claimSession = createServerFn({ method: "POST" })
       return { status: existing.approved ? ("approved" as const) : ("pending" as const) };
     }
 
-    // Count currently approved devices (only IP-keyed — legacy per-browser
-    // rows from the old scheme are ignored so users aren't locked out).
+    // Count currently approved devices for this user (sid-keyed).
     const { count } = await supabaseAdmin
       .from("user_devices")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .eq("approved", true)
-      .like("device_sid", "ip:%");
+      .like("device_sid", "sid:%");
 
     const autoApprove = (count ?? 0) < MAX_AUTO_DEVICES;
 
