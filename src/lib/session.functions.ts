@@ -86,7 +86,10 @@ export const claimSession = createServerFn({ method: "POST" })
     return { status: autoApprove ? ("approved" as const) : ("pending" as const) };
   });
 
-// Check whether this device is still approved.
+// Check whether this device is still approved. If no device row exists for
+// this sid yet (first load of an existing signed-in session, or legacy
+// ip:-keyed rows from before we switched to sid), auto-claim / migrate so
+// users aren't kicked out with a spurious "revoked" toast.
 export const verifySession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ sessionId: z.string().min(8) }).parse(d))
@@ -97,7 +100,10 @@ export const verifySession = createServerFn({ method: "POST" })
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const ip = getClientIp() || null;
+    const ua = getRequestHeader("user-agent") ?? null;
     const key = deviceKey(ip, data.sessionId);
+    const now = new Date().toISOString();
+
     const { data: dev } = await supabaseAdmin
       .from("user_devices")
       .select("id, approved")
@@ -105,15 +111,61 @@ export const verifySession = createServerFn({ method: "POST" })
       .eq("device_sid", key)
       .maybeSingle();
 
-    if (dev?.approved) {
-      // Bump last_seen for the device
+    if (dev) {
+      if (dev.approved) {
+        await supabaseAdmin
+          .from("user_devices")
+          .update({ last_seen_at: now })
+          .eq("id", dev.id);
+        return { valid: true, admin: false, status: "approved" as const };
+      }
+      return { valid: false, admin: false, status: "pending" as const };
+    }
+
+    // Migrate a legacy ip:-keyed row if one exists, preserving approval.
+    const { data: legacy } = await supabaseAdmin
+      .from("user_devices")
+      .select("id, approved")
+      .eq("user_id", userId)
+      .like("device_sid", "ip:%")
+      .order("last_seen_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (legacy) {
       await supabaseAdmin
         .from("user_devices")
-        .update({ last_seen_at: new Date().toISOString() })
-        .eq("id", dev.id);
-      return { valid: true, admin: false, status: "approved" as const };
+        .update({ device_sid: key, last_seen_at: now, user_agent: ua, ip })
+        .eq("id", legacy.id);
+      return {
+        valid: !!legacy.approved,
+        admin: false,
+        status: legacy.approved ? ("approved" as const) : ("pending" as const),
+      };
     }
-    return { valid: false, admin: false, status: dev ? ("pending" as const) : ("revoked" as const) };
+
+    // No prior record — auto-claim under the device limit.
+    const { count } = await supabaseAdmin
+      .from("user_devices")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("approved", true)
+      .like("device_sid", "sid:%");
+
+    const autoApprove = (count ?? 0) < MAX_AUTO_DEVICES;
+    await supabaseAdmin.from("user_devices").insert({
+      user_id: userId,
+      device_sid: key,
+      user_agent: ua,
+      ip,
+      approved: autoApprove,
+      approved_at: autoApprove ? now : null,
+    });
+    return {
+      valid: autoApprove,
+      admin: false,
+      status: autoApprove ? ("approved" as const) : ("pending" as const),
+    };
   });
 
 // Heartbeat — last_seen_at on profile, IP tracking, suspension check.
