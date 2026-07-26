@@ -144,29 +144,13 @@ export const verifySession = createServerFn({ method: "POST" })
       };
     }
 
-    // No prior record — auto-claim under the device limit.
-    const { count } = await supabaseAdmin
-      .from("user_devices")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("approved", true)
-      .like("device_sid", "sid:%");
-
-    const autoApprove = (count ?? 0) < MAX_AUTO_DEVICES;
-    await supabaseAdmin.from("user_devices").insert({
-      user_id: userId,
-      device_sid: key,
-      user_agent: ua,
-      ip,
-      approved: autoApprove,
-      approved_at: autoApprove ? now : null,
-    });
-    return {
-      valid: autoApprove,
-      admin: false,
-      status: autoApprove ? ("approved" as const) : ("pending" as const),
-    };
+    // No prior record for this sid and no legacy row to migrate.
+    // Do NOT auto-claim here — that would silently undo an admin "delete
+    // device" action on the next 20s poll. New devices are claimed via
+    // claimSession on SIGNED_IN only.
+    return { valid: false, admin: false, status: "revoked" as const };
   });
+
 
 // Heartbeat — last_seen_at on profile, IP tracking, suspension check.
 export const heartbeat = createServerFn({ method: "POST" })
