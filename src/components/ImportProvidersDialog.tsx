@@ -198,8 +198,14 @@ export function ImportProvidersDialog({
 
   function findSub(catId: string, subName: string, tertiaryName: string): { id?: string; error?: string } {
     const primaryMatches = subs.filter((s) => s.category_id === catId && (s.parent_id === null) && s.name_ar.trim() === subName.trim());
-    if (primaryMatches.length === 0) return { error: `التصنيف الفرعي "${subName}" غير موجود` };
+    if (primaryMatches.length === 0) {
+      // تسامح: لو كتب المستخدم تصنيفًا ثانويًا داخل عمود التصنيف الفرعي
+      const asTertiary = subs.find((s) => s.category_id === catId && s.parent_id !== null && s.name_ar.trim() === subName.trim());
+      if (asTertiary && !tertiaryName) return { id: asTertiary.id };
+      return { error: `التصنيف الفرعي "${subName}" غير موجود` };
+    }
     const primary = primaryMatches[0];
+
     if (!tertiaryName) return { id: primary.id };
     const tertiary = subs.find((s) => s.parent_id === primary.id && s.name_ar.trim() === tertiaryName.trim());
     if (!tertiary) return { error: `التصنيف الثانوي "${tertiaryName}" غير موجود تحت "${subName}"` };
