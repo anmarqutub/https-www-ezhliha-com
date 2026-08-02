@@ -344,15 +344,13 @@ export function ImportProvidersDialog({
         const raw = remapRow(rawIn);
         const rowNumber = idx + 2;
         const errors: string[] = [];
-        const providerName = norm(raw.name && kind === "branch" ? "" : "") || "";
-        // For children the provider's name comes from a dedicated column labeled "اسم المزود"
-        // Our remap collapses that into `name` — but `name` here is also the child name.
-        // So we look for the original two columns explicitly:
-        // New template uses a single "المزود *" column shaped "الاسم — المدينة".
-        // Old template used separate "اسم المزود" + "مدينة المزود" columns. Support both.
-        const combined = norm(rawIn["المزود *"] ?? rawIn["المزود"] ?? "");
-        let rawProviderName = norm(rawIn["اسم المزود"] ?? rawIn["provider_name"] ?? "");
-        let rawProviderCity = norm(rawIn["مدينة المزود"] ?? rawIn["provider_city"] ?? "");
+        const providerName = "";
+        const plain = stripStarRow(rawIn);
+        // New template uses a single "المزود" column shaped "الاسم — المدينة".
+        // Multi-sheet template uses "اسم المزود" + "مدينة المزود". Support both.
+        const combined = norm(plain["المزود"] ?? "");
+        let rawProviderName = norm(plain["اسم المزود"] ?? plain["provider_name"] ?? "");
+        let rawProviderCity = norm(plain["مدينة المزود"] ?? plain["provider_city"] ?? "");
         if (combined && (!rawProviderName || !rawProviderCity)) {
           const parts = combined.split(/\s*[—–-]\s*/);
           if (parts.length >= 2) {
@@ -361,10 +359,10 @@ export function ImportProvidersDialog({
           }
         }
         const childName = norm(
-          rawIn[kind === "package" ? "اسم الباقة *" : kind === "service" ? "اسم الخدمة *" : "اسم الفرع *"] ??
-          rawIn[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
-          rawIn["name"] ?? ""
+          plain[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
+          plain["اسم العنصر"] ?? plain["name"] ?? ""
         );
+
 
         if (!rawProviderName) errors.push('العمود "اسم المزود" مطلوب');
         if (!rawProviderCity) errors.push('العمود "مدينة المزود" مطلوب');
