@@ -119,10 +119,17 @@ const HEADER_MAP: Record<string, string> = {
 };
 
 function normalizeHeader(h: string): string {
-  const s = String(h ?? "").trim();
+  // strip trailing required-marker (*, ٭, ★) and collapse whitespace
+  const s = String(h ?? "")
+    .replace(/[\u200f\u200e]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[\s*٭★]+$/g, "")
+    .trim();
   const key = HEADER_MAP[s] ?? HEADER_MAP[s.toLowerCase()] ?? s;
   return key;
 }
+
 
 function remapRow(raw: RawRow): RawRow {
   const out: RawRow = {};
