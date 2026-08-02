@@ -118,17 +118,31 @@ const HEADER_MAP: Record<string, string> = {
   "نوع الصف *": "row_type",
 };
 
-function normalizeHeader(h: string): string {
-  // strip trailing required-marker (*, ٭, ★) and collapse whitespace
-  const s = String(h ?? "")
+function stripStar(h: string): string {
+  return String(h ?? "")
     .replace(/[\u200f\u200e]/g, "")
     .replace(/\s+/g, " ")
     .trim()
     .replace(/[\s*٭★]+$/g, "")
     .trim();
+}
+
+function stripStarRow(raw: RawRow): RawRow {
+  const out: RawRow = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const nk = stripStar(k);
+    if (out[nk] === undefined || out[nk] === "" || out[nk] === null) out[nk] = v;
+  }
+  return out;
+}
+
+function normalizeHeader(h: string): string {
+  // strip trailing required-marker (*, ٭, ★) and collapse whitespace
+  const s = stripStar(h);
   const key = HEADER_MAP[s] ?? HEADER_MAP[s.toLowerCase()] ?? s;
   return key;
 }
+
 
 
 function remapRow(raw: RawRow): RawRow {
