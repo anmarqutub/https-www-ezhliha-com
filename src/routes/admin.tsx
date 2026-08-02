@@ -1869,15 +1869,15 @@ function ProvidersTab() {
             style={{ marginRight: "auto" }}
             onClick={() => setShowImport(true)}
           >
-            ➕ إضافة مزود
+            📥 رفع من Excel
           </button>
           <button
             className="adm-btn-primary"
-            onClick={() => exportProvidersCsv(filtered, cities, subs, cats, images)}
-            disabled={filtered.length === 0}
+            onClick={() => { void downloadTemplate(); }}
           >
             📊 تصدير Excel ({filtered.length})
           </button>
+
         </div>
         {showImport && (
           <ImportProvidersDialog
