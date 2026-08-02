@@ -1605,7 +1605,12 @@ function ProvidersTab() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
+  const [filterSub, setFilterSub] = useState<string>("all");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [showImport, setShowImport] = useState(false);
+  useEffect(() => { setPage(1); }, [filterCity, filterCat, filterSub, search]);
+
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -1756,8 +1761,17 @@ function ProvidersTab() {
       const sub = subs.find((s) => s.id === r.subcategory_id);
       if (!sub || sub.category_id !== filterCat) return false;
     }
+    if (filterSub !== "all" && r.subcategory_id !== filterSub) return false;
+    const q = search.trim().toLowerCase();
+    if (q && !(r.name ?? "").toLowerCase().includes(q)) return false;
     return true;
   });
+
+  const PAGE_SIZE = 50;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
 
   const editingImages = editing?.id ? images.filter((i) => i.provider_id === editing.id) : [];
   const editingPackages = editing?.id ? packages.filter((p) => p.provider_id === editing.id) : [];
@@ -1866,6 +1880,26 @@ function ProvidersTab() {
             <option value="all">كل التصنيفات</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
           </select>
+          <select value={filterSub} onChange={(e) => setFilterSub(e.target.value)} className="adm-select">
+            <option value="all">كل التصنيفات الفرعية</option>
+            {subs
+              .filter((s) => filterCat === "all" || s.category_id === filterCat)
+              .map((s) => {
+                const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;
+                return (
+                  <option key={s.id} value={s.id}>
+                    {parentSub ? `${parentSub.name_ar} → ${s.name_ar}` : s.name_ar}
+                  </option>
+                );
+              })}
+          </select>
+          <input
+            className="adm-select"
+            style={{ minWidth: 200 }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔍 بحث بالاسم..."
+          />
           <button
             className="adm-btn-primary"
             style={{ marginRight: "auto" }}
@@ -1894,14 +1928,16 @@ function ProvidersTab() {
           <div className="adm-table-wrap">
             <table className="adm-table">
               <thead><tr>
+                <th style={{ width: 48 }}>#</th>
                 <th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
                 <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
               </tr></thead>
               <tbody>
-                {filtered.map((r) => {
+                {pageRows.map((r, idx) => {
                   const sub = subs.find((s) => s.id === r.subcategory_id);
                   return (
                     <tr key={r.id}>
+                      <td style={{ color: "#8A7A7A", fontSize: 13 }}>{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
                       <td><strong>{r.name}</strong></td>
                       <td>{cities.find((c) => c.id === r.city_id)?.name_ar ?? "—"}</td>
                       <td>{sub?.name_ar ?? "—"}</td>
@@ -1923,10 +1959,38 @@ function ProvidersTab() {
                     </tr>
                   );
                 })}
+                {pageRows.length === 0 && (
+                  <tr><td colSpan={12} className="adm-empty">لا توجد نتائج</td></tr>
+                )}
               </tbody>
             </table>
           </div>
         )}
+        {!loading && filtered.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: "#8A7A7A" }}>
+              عرض {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} من {filtered.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button
+                className="adm-btn-sm"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage(safePage + 1)}
+              >
+                ‹ التالي
+              </button>
+              <span style={{ fontSize: 13 }}>صفحة {safePage} من {totalPages}</span>
+              <button
+                className="adm-btn-sm"
+                disabled={safePage <= 1}
+                onClick={() => setPage(safePage - 1)}
+              >
+                السابق ›
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {editing && (
