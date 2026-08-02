@@ -109,7 +109,7 @@ export async function buildTemplateWorkbook(): Promise<Blob> {
   for (let r = 0; r < maxLen; r++) {
     lists.addRow(cols.map((c) => c[r] ?? null));
   }
-  const range = (i: number, len: number) => `_قوائم!$${colLetter(i)}$1:$${colLetter(i)}$${Math.max(len, 1)}`;
+  const range = (i: number, len: number) => `'_قوائم'!$${colLetter(i)}$1:$${colLetter(i)}$${Math.max(len, 1)}`;
   const R_CITY = range(1, cityNames.length);
   const R_CAT = range(2, catNames.length);
   const R_SUB = range(3, subPrimary.length);
