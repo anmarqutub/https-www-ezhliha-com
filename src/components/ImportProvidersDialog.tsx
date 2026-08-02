@@ -506,7 +506,7 @@ export function ImportProvidersDialog({
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, padding: 16 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, padding: 22, maxWidth: 960, width: "100%", maxHeight: "88vh", overflow: "auto" }} dir="rtl">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <h3 style={{ margin: 0, fontSize: 18 }}>📥 رفع البيانات من ملف Excel</h3>
+          <h3 style={{ margin: 0, fontSize: 18 }}>📥 إضافة مزود</h3>
           <button onClick={onClose} style={{ border: "none", background: "transparent", fontSize: 24, cursor: "pointer" }}>×</button>
         </div>
 
@@ -516,7 +516,7 @@ export function ImportProvidersDialog({
             <li>حمّل القالب — ينزل <b>معبّأ بالبيانات الموجودة حاليًا في الموقع</b>.</li>
             <li>القالب متعدد الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع.</li>
             <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
-            <li>الرفع <b>لا يحذف</b> شيئًا: الجديد يُضاف، والمطابق (نفس الاسم + المدينة) يُحدَّث.</li>
+            <li>الإضافة <b>لا تحذف</b> شيئًا: الجديد يُضاف، والمطابق (نفس الاسم + المدينة) يُحدَّث.</li>
           </ol>
           <div style={{ marginTop: 10 }}>
             <button
@@ -534,7 +534,7 @@ export function ImportProvidersDialog({
               }}
             >
               <span style={{ fontSize: 17 }}>📄</span>
-              {downloading ? "جارٍ تجهيز الملف..." : "تحميل القالب معبّأ بالبيانات الحالية"}
+              {downloading ? "جارٍ التحضير..." : "تحميل"}
             </button>
           </div>
         </div>
@@ -548,7 +548,7 @@ export function ImportProvidersDialog({
           }}
         >
           <span style={{ fontSize: 30 }}>📎</span>
-          <span style={{ fontWeight: 700, fontSize: 14 }}>اضغط هنا لاختيار ملف Excel ورفعه</span>
+          <span style={{ fontWeight: 700, fontSize: 14 }}>📎 اضغط لإضافة ملف Excel</span>
           <span style={{ fontSize: 12, color: "#8a6b6b" }}>الصيغ المدعومة: xlsx · xls · csv</span>
           {fileName && <span style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>📗 {fileName}</span>}
           <input
@@ -603,7 +603,7 @@ export function ImportProvidersDialog({
 
             {result && (
               <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تم الاستيراد — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
+                تمت الإضافة — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
                 {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
               </div>
             )}
@@ -615,7 +615,7 @@ export function ImportProvidersDialog({
                 disabled={importing || validCount === 0}
                 style={{ ...btnPrimary, opacity: importing || validCount === 0 ? 0.5 : 1 }}
               >
-                {importing ? "جارٍ الاستيراد..." : `استيراد ${validCount} مزود${childValid ? ` + ${childValid} عنصر تابع` : ""}`}
+                {importing ? "جارٍ الإضافة..." : `إضافة ${validCount} مزود${childValid ? ` + ${childValid} عنصر تابع` : ""}`}
               </button>
             </div>
           </>

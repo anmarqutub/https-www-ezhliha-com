@@ -1869,7 +1869,7 @@ function ProvidersTab() {
             style={{ marginRight: "auto" }}
             onClick={() => setShowImport(true)}
           >
-            📥 رفع من Excel
+            ➕ إضافة مزود
           </button>
           <button
             className="adm-btn-primary"
