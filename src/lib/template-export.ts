@@ -24,9 +24,11 @@ function listValidation(ws: ExcelJS.Worksheet, colLetter: string, formula: strin
   for (let r = 2; r <= rows; r++) {
     ws.getCell(`${colLetter}${r}`).dataValidation = {
       type: "list", allowBlank: true, formulae: [formula], showErrorMessage: false,
+      showInputMessage: true, promptTitle: "اختر من القائمة", prompt: "اضغط السهم لاختيار القيمة",
     };
   }
 }
+
 
 function colLetter(i: number) {
   let s = "", n = i;
