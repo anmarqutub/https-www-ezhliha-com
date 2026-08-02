@@ -1541,8 +1541,9 @@ function MediaListEditor({
           style={{ flex: 1, minWidth: 220 }}
         />
         <button type="button" className="adm-btn-sm" onClick={addUrl} disabled={items.length >= max}>+ إضافة رابط</button>
-        <label className="adm-btn-sm" style={{ cursor: "pointer", opacity: busy || items.length >= max ? 0.6 : 1 }}>
-          {busy ? "جارٍ الرفع..." : (kind === "video" ? "رفع فيديو" : "رفع صورة")}
+        <label className="adm-btn-sm" style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, opacity: busy || items.length >= max ? 0.6 : 1 }}>
+          <span style={{ fontSize: 15 }}>📎</span>{busy ? "جارٍ الرفع..." : (kind === "video" ? "اضغط لرفع فيديو" : "اضغط لرفع صورة")}
+
           <input
             type="file"
             accept={kind === "video" ? "video/*" : "image/*"}
