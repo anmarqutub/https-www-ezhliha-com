@@ -1928,14 +1928,16 @@ function ProvidersTab() {
           <div className="adm-table-wrap">
             <table className="adm-table">
               <thead><tr>
+                <th style={{ width: 48 }}>#</th>
                 <th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
                 <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
               </tr></thead>
               <tbody>
-                {filtered.map((r) => {
+                {pageRows.map((r, idx) => {
                   const sub = subs.find((s) => s.id === r.subcategory_id);
                   return (
                     <tr key={r.id}>
+                      <td style={{ color: "#8A7A7A", fontSize: 13 }}>{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
                       <td><strong>{r.name}</strong></td>
                       <td>{cities.find((c) => c.id === r.city_id)?.name_ar ?? "—"}</td>
                       <td>{sub?.name_ar ?? "—"}</td>
@@ -1957,10 +1959,38 @@ function ProvidersTab() {
                     </tr>
                   );
                 })}
+                {pageRows.length === 0 && (
+                  <tr><td colSpan={12} className="adm-empty">لا توجد نتائج</td></tr>
+                )}
               </tbody>
             </table>
           </div>
         )}
+        {!loading && filtered.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: "#8A7A7A" }}>
+              عرض {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} من {filtered.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button
+                className="adm-btn-sm"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage(safePage + 1)}
+              >
+                ‹ التالي
+              </button>
+              <span style={{ fontSize: 13 }}>صفحة {safePage} من {totalPages}</span>
+              <button
+                className="adm-btn-sm"
+                disabled={safePage <= 1}
+                onClick={() => setPage(safePage - 1)}
+              >
+                السابق ›
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {editing && (
