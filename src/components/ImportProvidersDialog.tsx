@@ -419,21 +419,44 @@ export function ImportProvidersDialog({
     const valid = parsed.filter((r) => r.payload);
     if (valid.length === 0) return;
     setImporting(true);
-    let ok = 0, fail = 0, childOk = 0, childFail = 0;
+    let ok = 0, fail = 0, updated = 0, childOk = 0, childFail = 0;
 
     // provider_name+city → provider_id (for child linking)
     const providerIdBy = new Map<string, string>();
 
     for (const r of valid) {
-      const { data, error } = await supabase.from("providers").insert(r.payload!).select("id").single();
-      if (error || !data) { fail++; continue; }
-      const cityName = cities.find((c) => c.id === r.payload!.city_id)?.name_ar ?? "";
-      providerIdBy.set(`${r.payload!.name}::${cityName}`, data.id);
-      if (r.imageUrls.length > 0) {
-        const imgRows = r.imageUrls.map((url, i) => ({ provider_id: data.id, image_url: url, sort_order: i }));
-        await supabase.from("provider_images").insert(imgRows);
+      const payload = r.payload!;
+      const cityName = cities.find((c) => c.id === payload.city_id)?.name_ar ?? "";
+      // Never wipe existing data: update the matching provider (same name + city), else insert.
+      const { data: existing } = await supabase.from("providers")
+        .select("id").eq("name", payload.name).eq("city_id", payload.city_id).maybeSingle();
+
+      let providerId: string | null = null;
+      if (existing?.id) {
+        const { error } = await supabase.from("providers").update(payload).eq("id", existing.id);
+        if (error) { fail++; continue; }
+        providerId = existing.id;
+        updated++;
+      } else {
+        const { data, error } = await supabase.from("providers").insert(payload).select("id").single();
+        if (error || !data) { fail++; continue; }
+        providerId = data.id;
+        ok++;
       }
-      ok++;
+
+      providerIdBy.set(`${payload.name}::${cityName}`, providerId);
+
+      if (r.imageUrls.length > 0) {
+        const { data: existingImgs } = await supabase.from("provider_images")
+          .select("image_url").eq("provider_id", providerId);
+        const have = new Set((existingImgs ?? []).map((i) => i.image_url));
+        const fresh = r.imageUrls.filter((u) => !have.has(u));
+        if (fresh.length > 0) {
+          const base = existingImgs?.length ?? 0;
+          await supabase.from("provider_images")
+            .insert(fresh.map((url, i) => ({ provider_id: providerId!, image_url: url, sort_order: base + i })));
+        }
+      }
     }
 
     // Import children by matching provider name + city
@@ -453,15 +476,22 @@ export function ImportProvidersDialog({
       if (!providerId) { childFail++; continue; }
       const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
       const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
+      // Update the matching child (same provider + same name) instead of duplicating it.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from(table) as any).insert(row);
+      const { data: exist } = await (supabase.from(table) as any)
+        .select("id").eq("provider_id", providerId).eq("name", row.name).maybeSingle();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = exist?.id
+        ? await (supabase.from(table) as any).update(row).eq("id", exist.id)
+        : await (supabase.from(table) as any).insert(row);
       if (error) childFail++; else childOk++;
     }
 
     setImporting(false);
-    setResult({ ok, fail, childOk, childFail });
-    if (ok > 0 || childOk > 0) onDone();
+    setResult({ ok, fail, updated, childOk, childFail });
+    if (ok > 0 || updated > 0 || childOk > 0) onDone();
   }
+
 
   const validCount = parsed?.filter((r) => r.payload).length ?? 0;
   const errorCount = parsed?.filter((r) => r.errors.length > 0).length ?? 0;
