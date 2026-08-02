@@ -603,7 +603,7 @@ export function ImportProvidersDialog({
 
             {result && (
               <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تم الاستيراد — المزودون: نجح {result.ok} · فشل {result.fail}
+                تم الاستيراد — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
                 {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
               </div>
             )}
