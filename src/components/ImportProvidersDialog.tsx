@@ -615,7 +615,7 @@ export function ImportProvidersDialog({
                 disabled={importing || validCount === 0}
                 style={{ ...btnPrimary, opacity: importing || validCount === 0 ? 0.5 : 1 }}
               >
-                {importing ? "جارٍ الاستيراد..." : `استيراد ${validCount} مزود${childValid ? ` + ${childValid} عنصر تابع` : ""}`}
+                {importing ? "جارٍ الإضافة..." : `إضافة ${validCount} مزود${childValid ? ` + ${childValid} عنصر تابع` : ""}`}
               </button>
             </div>
           </>
