@@ -548,7 +548,7 @@ export function ImportProvidersDialog({
           }}
         >
           <span style={{ fontSize: 30 }}>📎</span>
-          <span style={{ fontWeight: 700, fontSize: 14 }}>اضغط هنا لاختيار ملف Excel ورفعه</span>
+          <span style={{ fontWeight: 700, fontSize: 14 }}>📎 اضغط لإضافة ملف Excel</span>
           <span style={{ fontSize: 12, color: "#8a6b6b" }}>الصيغ المدعومة: xlsx · xls · csv</span>
           {fileName && <span style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>📗 {fileName}</span>}
           <input
