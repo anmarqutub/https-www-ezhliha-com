@@ -1605,7 +1605,12 @@ function ProvidersTab() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
+  const [filterSub, setFilterSub] = useState<string>("all");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [showImport, setShowImport] = useState(false);
+  useEffect(() => { setPage(1); }, [filterCity, filterCat, filterSub, search]);
+
 
   const reload = useCallback(async () => {
     setLoading(true);
