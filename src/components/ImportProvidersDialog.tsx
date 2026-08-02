@@ -1,6 +1,8 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "@/integrations/supabase/client";
+import { downloadTemplate } from "@/lib/template-export";
+
 
 type City = { id: string; name_ar: string };
 type Category = { id: string; name_ar: string };
@@ -118,17 +120,31 @@ const HEADER_MAP: Record<string, string> = {
   "نوع الصف *": "row_type",
 };
 
-function normalizeHeader(h: string): string {
-  // strip trailing required-marker (*, ٭, ★) and collapse whitespace
-  const s = String(h ?? "")
+function stripStar(h: string): string {
+  return String(h ?? "")
     .replace(/[\u200f\u200e]/g, "")
     .replace(/\s+/g, " ")
     .trim()
     .replace(/[\s*٭★]+$/g, "")
     .trim();
+}
+
+function stripStarRow(raw: RawRow): RawRow {
+  const out: RawRow = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const nk = stripStar(k);
+    if (out[nk] === undefined || out[nk] === "" || out[nk] === null) out[nk] = v;
+  }
+  return out;
+}
+
+function normalizeHeader(h: string): string {
+  // strip trailing required-marker (*, ٭, ★) and collapse whitespace
+  const s = stripStar(h);
   const key = HEADER_MAP[s] ?? HEADER_MAP[s.toLowerCase()] ?? s;
   return key;
 }
+
 
 
 function remapRow(raw: RawRow): RawRow {
@@ -191,7 +207,9 @@ export function ImportProvidersDialog({
   const [children, setChildren] = useState<ParsedChild[]>([]);
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ ok: number; fail: number; childOk: number; childFail: number } | null>(null);
+  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; childOk: number; childFail: number } | null>(null);
+  const [downloading, setDownloading] = useState(false);
+
 
   const cityByName = new Map(cities.map((c) => [c.name_ar.trim(), c.id]));
   const catByName = new Map(cats.map((c) => [c.name_ar.trim(), c.id]));
@@ -330,15 +348,13 @@ export function ImportProvidersDialog({
         const raw = remapRow(rawIn);
         const rowNumber = idx + 2;
         const errors: string[] = [];
-        const providerName = norm(raw.name && kind === "branch" ? "" : "") || "";
-        // For children the provider's name comes from a dedicated column labeled "اسم المزود"
-        // Our remap collapses that into `name` — but `name` here is also the child name.
-        // So we look for the original two columns explicitly:
-        // New template uses a single "المزود *" column shaped "الاسم — المدينة".
-        // Old template used separate "اسم المزود" + "مدينة المزود" columns. Support both.
-        const combined = norm(rawIn["المزود *"] ?? rawIn["المزود"] ?? "");
-        let rawProviderName = norm(rawIn["اسم المزود"] ?? rawIn["provider_name"] ?? "");
-        let rawProviderCity = norm(rawIn["مدينة المزود"] ?? rawIn["provider_city"] ?? "");
+        const providerName = "";
+        const plain = stripStarRow(rawIn);
+        // New template uses a single "المزود" column shaped "الاسم — المدينة".
+        // Multi-sheet template uses "اسم المزود" + "مدينة المزود". Support both.
+        const combined = norm(plain["المزود"] ?? "");
+        let rawProviderName = norm(plain["اسم المزود"] ?? plain["provider_name"] ?? "");
+        let rawProviderCity = norm(plain["مدينة المزود"] ?? plain["provider_city"] ?? "");
         if (combined && (!rawProviderName || !rawProviderCity)) {
           const parts = combined.split(/\s*[—–-]\s*/);
           if (parts.length >= 2) {
@@ -347,10 +363,10 @@ export function ImportProvidersDialog({
           }
         }
         const childName = norm(
-          rawIn[kind === "package" ? "اسم الباقة *" : kind === "service" ? "اسم الخدمة *" : "اسم الفرع *"] ??
-          rawIn[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
-          rawIn["name"] ?? ""
+          plain[kind === "package" ? "اسم الباقة" : kind === "service" ? "اسم الخدمة" : "اسم الفرع"] ??
+          plain["اسم العنصر"] ?? plain["name"] ?? ""
         );
+
 
         if (!rawProviderName) errors.push('العمود "اسم المزود" مطلوب');
         if (!rawProviderCity) errors.push('العمود "مدينة المزود" مطلوب');
@@ -407,21 +423,44 @@ export function ImportProvidersDialog({
     const valid = parsed.filter((r) => r.payload);
     if (valid.length === 0) return;
     setImporting(true);
-    let ok = 0, fail = 0, childOk = 0, childFail = 0;
+    let ok = 0, fail = 0, updated = 0, childOk = 0, childFail = 0;
 
     // provider_name+city → provider_id (for child linking)
     const providerIdBy = new Map<string, string>();
 
     for (const r of valid) {
-      const { data, error } = await supabase.from("providers").insert(r.payload!).select("id").single();
-      if (error || !data) { fail++; continue; }
-      const cityName = cities.find((c) => c.id === r.payload!.city_id)?.name_ar ?? "";
-      providerIdBy.set(`${r.payload!.name}::${cityName}`, data.id);
-      if (r.imageUrls.length > 0) {
-        const imgRows = r.imageUrls.map((url, i) => ({ provider_id: data.id, image_url: url, sort_order: i }));
-        await supabase.from("provider_images").insert(imgRows);
+      const payload = r.payload!;
+      const cityName = cities.find((c) => c.id === payload.city_id)?.name_ar ?? "";
+      // Never wipe existing data: update the matching provider (same name + city), else insert.
+      const { data: existing } = await supabase.from("providers")
+        .select("id").eq("name", payload.name).eq("city_id", payload.city_id).maybeSingle();
+
+      let providerId: string | null = null;
+      if (existing?.id) {
+        const { error } = await supabase.from("providers").update(payload).eq("id", existing.id);
+        if (error) { fail++; continue; }
+        providerId = existing.id;
+        updated++;
+      } else {
+        const { data, error } = await supabase.from("providers").insert(payload).select("id").single();
+        if (error || !data) { fail++; continue; }
+        providerId = data.id;
+        ok++;
       }
-      ok++;
+
+      providerIdBy.set(`${payload.name}::${cityName}`, providerId);
+
+      if (r.imageUrls.length > 0) {
+        const { data: existingImgs } = await supabase.from("provider_images")
+          .select("image_url").eq("provider_id", providerId);
+        const have = new Set((existingImgs ?? []).map((i) => i.image_url));
+        const fresh = r.imageUrls.filter((u) => !have.has(u));
+        if (fresh.length > 0) {
+          const base = existingImgs?.length ?? 0;
+          await supabase.from("provider_images")
+            .insert(fresh.map((url, i) => ({ provider_id: providerId!, image_url: url, sort_order: base + i })));
+        }
+      }
     }
 
     // Import children by matching provider name + city
@@ -441,15 +480,22 @@ export function ImportProvidersDialog({
       if (!providerId) { childFail++; continue; }
       const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
       const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
+      // Update the matching child (same provider + same name) instead of duplicating it.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from(table) as any).insert(row);
+      const { data: exist } = await (supabase.from(table) as any)
+        .select("id").eq("provider_id", providerId).eq("name", row.name).maybeSingle();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = exist?.id
+        ? await (supabase.from(table) as any).update(row).eq("id", exist.id)
+        : await (supabase.from(table) as any).insert(row);
       if (error) childFail++; else childOk++;
     }
 
     setImporting(false);
-    setResult({ ok, fail, childOk, childFail });
-    if (ok > 0 || childOk > 0) onDone();
+    setResult({ ok, fail, updated, childOk, childFail });
+    if (ok > 0 || updated > 0 || childOk > 0) onDone();
   }
+
 
   const validCount = parsed?.filter((r) => r.payload).length ?? 0;
   const errorCount = parsed?.filter((r) => r.errors.length > 0).length ?? 0;
@@ -467,34 +513,52 @@ export function ImportProvidersDialog({
         <div style={{ background: "#f9f7ef", border: "1px solid #e6e0c8", borderRadius: 10, padding: 14, marginBottom: 14, fontSize: 13, lineHeight: 1.9 }}>
           <strong>الخطوات:</strong>
           <ol style={{ margin: "6px 0 0", paddingInlineStart: 20 }}>
-            <li>حمّل القالب العربي واعبّي البيانات.</li>
-            <li>القالب الموحّد يستخدم <b>ورقة واحدة</b> فيها عمود «نوع الصف» (مزود / باقة / خدمة / فرع).</li>
-            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + المدينة).</li>
-            <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
+            <li>حمّل القالب — ينزل <b>معبّأ بالبيانات الموجودة حاليًا في الموقع</b>.</li>
+            <li>القالب متعدد الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع.</li>
+            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
+            <li>الرفع <b>لا يحذف</b> شيئًا: الجديد يُضاف، والمطابق (نفس الاسم + المدينة) يُحدَّث.</li>
           </ol>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8 }}>
-            <a
-              href="/ezhliha_import_template_v4_single.xlsx"
-              style={{ color: "#660000", fontWeight: 700, textDecoration: "underline" }}
+          <div style={{ marginTop: 10 }}>
+            <button
+              type="button"
+              onClick={async () => {
+                setDownloading(true);
+                try { await downloadTemplate(); } finally { setDownloading(false); }
+              }}
+              disabled={downloading}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px",
+                background: "#660000", color: "#fff", border: "none", borderRadius: 10,
+                fontWeight: 700, fontSize: 13, cursor: downloading ? "wait" : "pointer",
+                opacity: downloading ? 0.7 : 1,
+              }}
             >
-              ⬇️ تحميل القالب الموحّد (ورقة واحدة)
-            </a>
-            <a
-              href="/ezhliha_import_template_v2.xlsx"
-              style={{ color: "#888", fontWeight: 600, textDecoration: "underline", fontSize: 12 }}
-            >
-              (القالب القديم متعدد الأوراق)
-            </a>
+              <span style={{ fontSize: 17 }}>📄</span>
+              {downloading ? "جارٍ تجهيز الملف..." : "تحميل القالب معبّأ بالبيانات الحالية"}
+            </button>
           </div>
         </div>
 
-        <input
-          type="file"
-          accept=".xlsx,.xls,.csv"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
-          style={{ marginBottom: 14 }}
-        />
-        {fileName && <span style={{ marginInlineStart: 10, fontSize: 13, color: "#555" }}>{fileName}</span>}
+        <label
+          style={{
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            gap: 6, padding: "22px 14px", border: "2px dashed #C47A7A", borderRadius: 12,
+            background: "#FAF6F2", cursor: "pointer", color: "#6B1F1F", textAlign: "center",
+            marginBottom: 14,
+          }}
+        >
+          <span style={{ fontSize: 30 }}>📎</span>
+          <span style={{ fontWeight: 700, fontSize: 14 }}>اضغط هنا لاختيار ملف Excel ورفعه</span>
+          <span style={{ fontSize: 12, color: "#8a6b6b" }}>الصيغ المدعومة: xlsx · xls · csv</span>
+          {fileName && <span style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>📗 {fileName}</span>}
+          <input
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            style={{ display: "none" }}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+          />
+        </label>
+
 
         {parsed && (
           <>
@@ -539,7 +603,7 @@ export function ImportProvidersDialog({
 
             {result && (
               <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تم الاستيراد — المزودون: نجح {result.ok} · فشل {result.fail}
+                تم الاستيراد — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
                 {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
               </div>
             )}
