@@ -208,6 +208,8 @@ export function ImportProvidersDialog({
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<{ ok: number; fail: number; updated: number; childOk: number; childFail: number } | null>(null);
+  const [downloading, setDownloading] = useState(false);
+
 
   const cityByName = new Map(cities.map((c) => [c.name_ar.trim(), c.id]));
   const catByName = new Map(cats.map((c) => [c.name_ar.trim(), c.id]));
