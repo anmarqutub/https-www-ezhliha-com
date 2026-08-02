@@ -509,34 +509,52 @@ export function ImportProvidersDialog({
         <div style={{ background: "#f9f7ef", border: "1px solid #e6e0c8", borderRadius: 10, padding: 14, marginBottom: 14, fontSize: 13, lineHeight: 1.9 }}>
           <strong>الخطوات:</strong>
           <ol style={{ margin: "6px 0 0", paddingInlineStart: 20 }}>
-            <li>حمّل القالب العربي واعبّي البيانات.</li>
-            <li>القالب الموحّد يستخدم <b>ورقة واحدة</b> فيها عمود «نوع الصف» (مزود / باقة / خدمة / فرع).</li>
-            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + المدينة).</li>
-            <li>ارفع الملف وراجع المعاينة قبل التأكيد.</li>
+            <li>حمّل القالب — ينزل <b>معبّأ بالبيانات الموجودة حاليًا في الموقع</b>.</li>
+            <li>القالب متعدد الأوراق: مقدمو الخدمة · الباقات · الخدمات · الفروع.</li>
+            <li>الباقات/الخدمات/الفروع تُربَط بالمزود عبر (اسم المزود + مدينة المزود).</li>
+            <li>الرفع <b>لا يحذف</b> شيئًا: الجديد يُضاف، والمطابق (نفس الاسم + المدينة) يُحدَّث.</li>
           </ol>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8 }}>
-            <a
-              href="/ezhliha_import_template_v4_single.xlsx"
-              style={{ color: "#660000", fontWeight: 700, textDecoration: "underline" }}
+          <div style={{ marginTop: 10 }}>
+            <button
+              type="button"
+              onClick={async () => {
+                setDownloading(true);
+                try { await downloadTemplate(); } finally { setDownloading(false); }
+              }}
+              disabled={downloading}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px",
+                background: "#660000", color: "#fff", border: "none", borderRadius: 10,
+                fontWeight: 700, fontSize: 13, cursor: downloading ? "wait" : "pointer",
+                opacity: downloading ? 0.7 : 1,
+              }}
             >
-              ⬇️ تحميل القالب الموحّد (ورقة واحدة)
-            </a>
-            <a
-              href="/ezhliha_import_template_v2.xlsx"
-              style={{ color: "#888", fontWeight: 600, textDecoration: "underline", fontSize: 12 }}
-            >
-              (القالب القديم متعدد الأوراق)
-            </a>
+              <span style={{ fontSize: 17 }}>📄</span>
+              {downloading ? "جارٍ تجهيز الملف..." : "تحميل القالب معبّأ بالبيانات الحالية"}
+            </button>
           </div>
         </div>
 
-        <input
-          type="file"
-          accept=".xlsx,.xls,.csv"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
-          style={{ marginBottom: 14 }}
-        />
-        {fileName && <span style={{ marginInlineStart: 10, fontSize: 13, color: "#555" }}>{fileName}</span>}
+        <label
+          style={{
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            gap: 6, padding: "22px 14px", border: "2px dashed #C47A7A", borderRadius: 12,
+            background: "#FAF6F2", cursor: "pointer", color: "#6B1F1F", textAlign: "center",
+            marginBottom: 14,
+          }}
+        >
+          <span style={{ fontSize: 30 }}>📎</span>
+          <span style={{ fontWeight: 700, fontSize: 14 }}>اضغط هنا لاختيار ملف Excel ورفعه</span>
+          <span style={{ fontSize: 12, color: "#8a6b6b" }}>الصيغ المدعومة: xlsx · xls · csv</span>
+          {fileName && <span style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>📗 {fileName}</span>}
+          <input
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            style={{ display: "none" }}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+          />
+        </label>
+
 
         {parsed && (
           <>
