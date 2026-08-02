@@ -205,7 +205,7 @@ export function ImportProvidersDialog({
   const [children, setChildren] = useState<ParsedChild[]>([]);
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ ok: number; fail: number; childOk: number; childFail: number } | null>(null);
+  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; childOk: number; childFail: number } | null>(null);
 
   const cityByName = new Map(cities.map((c) => [c.name_ar.trim(), c.id]));
   const catByName = new Map(cats.map((c) => [c.name_ar.trim(), c.id]));
