@@ -1756,8 +1756,17 @@ function ProvidersTab() {
       const sub = subs.find((s) => s.id === r.subcategory_id);
       if (!sub || sub.category_id !== filterCat) return false;
     }
+    if (filterSub !== "all" && r.subcategory_id !== filterSub) return false;
+    const q = search.trim().toLowerCase();
+    if (q && !(r.name ?? "").toLowerCase().includes(q)) return false;
     return true;
   });
+
+  const PAGE_SIZE = 50;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
 
   const editingImages = editing?.id ? images.filter((i) => i.provider_id === editing.id) : [];
   const editingPackages = editing?.id ? packages.filter((p) => p.provider_id === editing.id) : [];
