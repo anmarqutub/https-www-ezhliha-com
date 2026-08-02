@@ -2152,12 +2152,16 @@ function ProvidersTab() {
                 <Field label="صورة الخدمة">
                   <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                     {editingService.image_url && <img src={editingService.image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
-                    <input type="file" accept="image/*" onChange={async (e) => {
-                      const f = e.target.files?.[0]; if (!f) return;
-                      const url = await uploadOfferImage(f, "service");
-                      if (url) setEditingService({ ...editingService, image_url: url });
-                      e.target.value = "";
-                    }} />
+                    <label className="adm-btn-sm" style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 16 }}>📎</span> اضغط لرفع صورة
+                      <input type="file" accept="image/*" style={{ display: "none" }} onChange={async (e) => {
+                        const f = e.target.files?.[0]; if (!f) return;
+                        const url = await uploadOfferImage(f, "service");
+                        if (url) setEditingService({ ...editingService, image_url: url });
+                        e.target.value = "";
+                      }} />
+                    </label>
+
                     {editingService.image_url && <button type="button" className="adm-btn-sm adm-btn-danger" onClick={() => setEditingService({ ...editingService, image_url: null })}>حذف</button>}
                   </div>
                 </Field>
