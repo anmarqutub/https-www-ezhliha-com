@@ -1,6 +1,8 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "@/integrations/supabase/client";
+import { downloadTemplate } from "@/lib/template-export";
+
 
 type City = { id: string; name_ar: string };
 type Category = { id: string; name_ar: string };
