@@ -1880,6 +1880,26 @@ function ProvidersTab() {
             <option value="all">كل التصنيفات</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
           </select>
+          <select value={filterSub} onChange={(e) => setFilterSub(e.target.value)} className="adm-select">
+            <option value="all">كل التصنيفات الفرعية</option>
+            {subs
+              .filter((s) => filterCat === "all" || s.category_id === filterCat)
+              .map((s) => {
+                const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;
+                return (
+                  <option key={s.id} value={s.id}>
+                    {parentSub ? `${parentSub.name_ar} → ${s.name_ar}` : s.name_ar}
+                  </option>
+                );
+              })}
+          </select>
+          <input
+            className="adm-select"
+            style={{ minWidth: 200 }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔍 بحث بالاسم..."
+          />
           <button
             className="adm-btn-primary"
             style={{ marginRight: "auto" }}
