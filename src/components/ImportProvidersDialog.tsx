@@ -506,7 +506,7 @@ export function ImportProvidersDialog({
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, padding: 16 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, padding: 22, maxWidth: 960, width: "100%", maxHeight: "88vh", overflow: "auto" }} dir="rtl">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <h3 style={{ margin: 0, fontSize: 18 }}>📥 رفع البيانات من ملف Excel</h3>
+          <h3 style={{ margin: 0, fontSize: 18 }}>📥 إضافة مزود</h3>
           <button onClick={onClose} style={{ border: "none", background: "transparent", fontSize: 24, cursor: "pointer" }}>×</button>
         </div>
 
