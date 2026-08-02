@@ -8,6 +8,8 @@ import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders
 
 import { supabase } from "@/integrations/supabase/client";
 import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
+import { downloadTemplate } from "@/lib/template-export";
+
 import { parseDevice, parseBrowser, lookupIp, formatGeo, type GeoInfo } from "@/lib/device-info";
 import logoUrl from "@/assets/logo.jpg";
 
