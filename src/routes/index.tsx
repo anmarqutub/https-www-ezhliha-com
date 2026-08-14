@@ -853,7 +853,7 @@ function AuthGate() {
 }
 
 const css = `
-  .ez-root { --bg:#F7F3EA; --surface:#FFFDF8; --brand:#7A1414; --brand-dark:#5A0D0D; --ink:#241C1A; --muted:#7A6A64; --line:#E3DBC9;
+  .ez-root { --bg:#F7F3EA; --surface:#FFFDF8; --brand:#660000; --brand-dark:#4D0000; --ink:#241C1A; --muted:#7A6A64; --line:#E3DBC9;
     min-height:100vh; background:var(--bg); font-family:Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; }
   .ez-root * { box-sizing:border-box; }
   .ez-logo-text { font-family:'Rakkas','Reem Kufi Fun',Tajawal,serif; font-weight:400; letter-spacing:1px; }
