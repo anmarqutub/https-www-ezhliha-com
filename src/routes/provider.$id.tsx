@@ -674,7 +674,21 @@ function ProviderPage() {
 
 
 
+      {galleryOpen && images.length > 0 && (
+        <div className="pv-modal-overlay" onClick={() => setGalleryOpen(false)}>
+          <div className="pv-lightbox" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="pv-quote-close" onClick={() => setGalleryOpen(false)} aria-label="إغلاق">×</button>
+            <div className="pv-lightbox-grid">
+              {images.map((im) => (
+                <img key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {callOpen && callUrl && (
+
         <div className="pv-modal-overlay" onClick={() => setCallOpen(false)}>
           <div className="pv-modal" onClick={(e) => e.stopPropagation()}>
             <button type="button" className="pv-modal-close" onClick={() => setCallOpen(false)} aria-label="إغلاق">×</button>
