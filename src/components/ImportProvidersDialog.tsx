@@ -645,8 +645,8 @@ export function ImportProvidersDialog({
 
             {result && (
               <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تمت الإضافة — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
-                {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
+                تمت الإضافة — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · بدون تغيير {result.skipped} · فشل {result.fail}
+                {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · بدون تغيير {result.childSkipped} · فشل {result.childFail}</>}
               </div>
             )}
 
