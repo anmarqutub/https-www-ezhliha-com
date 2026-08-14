@@ -57,6 +57,12 @@ function ProviderPage() {
   const [copiedShare, setCopiedShare] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [qDate, setQDate] = useState("");
+  const [qCity, setQCity] = useState("");
+  const [qGuests, setQGuests] = useState("");
+  const [qBudget, setQBudget] = useState("");
+  const [qNotes, setQNotes] = useState("");
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [myRating, setMyRating] = useState(5);
@@ -209,6 +215,30 @@ function ProviderPage() {
       // user cancelled share
     }
   };
+
+  const submitQuote = (e: React.FormEvent) => {
+    e.preventDefault();
+    const fmtDate = (v: string) => {
+      if (!v) return "";
+      const [y, m, d] = v.split("-");
+      return `${d}/${m}/${y}`;
+    };
+    const lines = [
+      "مرحبا .. جايتك من موقع ازهليها",
+      "",
+      `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
+      `- تاريخ المناسبة : ${fmtDate(qDate) || "-"}`,
+      `- المدينة: ${qCity || cityName || "-"}`,
+      `- عدد الضيوف: ${qGuests || "-"}`,
+      `- الميزانية التقريبية: ${qBudget || "-"}`,
+      `- الوصف: ${qNotes || "-"}`,
+    ];
+    const url = waLink(provider.whatsapp, lines.join("\n"));
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    setQuoteOpen(false);
+  };
+
+
 
   return (
     <div dir="rtl" className="pv-root">
@@ -396,6 +426,12 @@ function ProviderPage() {
             {provider.address && <div className="pv-addr">📌 {provider.address}</div>}
 
             <div className="pv-actions">
+              {provider.whatsapp && (
+                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
+                  <SendIcon />
+                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                </button>
+              )}
               {waUrl && (
                 <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
@@ -554,6 +590,57 @@ function ProviderPage() {
           </section>
         )}
       </main>
+
+      {quoteOpen && (
+        <div className="pv-modal-overlay" onClick={() => setQuoteOpen(false)}>
+          <form className="pv-quote" onClick={(e) => e.stopPropagation()} onSubmit={submitQuote}>
+            <div className="pv-quote-head">
+              <span className="pv-quote-tag">طلب مخصص</span>
+              <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
+            </div>
+            <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
+            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبينه.</p>
+
+            <div className="pv-quote-grid">
+              <label className="pv-quote-field">
+                <span>تاريخ المناسبة</span>
+                <input type="date" value={qDate} onChange={(e) => setQDate(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>المدينة</span>
+                <input type="text" placeholder="مثال: جدة" value={qCity} onChange={(e) => setQCity(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>عدد الضيوف</span>
+                <input type="number" min={1} placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>الميزانية التقريبية</span>
+                <select value={qBudget} onChange={(e) => setQBudget(e.target.value)}>
+                  <option value="">اختاري النطاق</option>
+                  <option value="أقل من 5,000 ر.س">أقل من 5,000 ر.س</option>
+                  <option value="5,000 - 10,000 ر.س">5,000 - 10,000 ر.س</option>
+                  <option value="10,000 - 25,000 ر.س">10,000 - 25,000 ر.س</option>
+                  <option value="25,000 - 50,000 ر.س">25,000 - 50,000 ر.س</option>
+                  <option value="أكثر من 50,000 ر.س">أكثر من 50,000 ر.س</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="pv-quote-field">
+              <span>ما التفاصيل المهمة لك؟</span>
+              <textarea rows={4} placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
+            </label>
+
+            <div className="pv-quote-actions">
+              <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
+              <button type="submit" className="pv-btn-quote"><SendIcon /><span>جهّزي الطلب</span></button>
+            </div>
+          </form>
+        </div>
+      )}
+
+
 
       {callOpen && callUrl && (
         <div className="pv-modal-overlay" onClick={() => setCallOpen(false)}>
@@ -735,7 +822,28 @@ function PlayIcon() {
   return <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72c0 .78.86 1.25 1.52.82l10.78-6.86a.98.98 0 000-1.64L9.52 4.32A.98.98 0 008 5.14z" /></svg>;
 }
 
+function SendIcon() {
+  return <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>;
+}
+
 const css = `
+  .pv-btn-quote { background:#660000; color:#fff; border:none; padding:14px; border-radius:12px; font-family:inherit; font-size:15px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 18px rgba(102,0,0,0.25); }
+  .pv-btn-quote:hover { background:#4d0000; }
+  .pv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; font-family:Tajawal, system-ui, sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.28); text-align:right; }
+  .pv-quote-head { display:flex; align-items:center; justify-content:space-between; }
+  .pv-quote-tag { color:#660000; font-size:13px; font-weight:700; }
+  .pv-quote-close { background:none; border:none; font-size:24px; line-height:1; cursor:pointer; color:#6b5b55; }
+  .pv-quote-title { margin:10px 0 4px; font-size:24px; font-weight:900; color:#241C1A; }
+  .pv-quote-sub { margin:0 0 16px; color:#7A6A64; font-size:14px; }
+  .pv-quote-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .pv-quote-field { display:block; }
+  .pv-quote-field > span { display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:#241C1A; }
+  .pv-quote-field input, .pv-quote-field select, .pv-quote-field textarea { width:100%; padding:11px 12px; border:1px solid #E3DBC9; border-radius:10px; font-family:inherit; font-size:14px; background:#fff; color:#241C1A; }
+  .pv-quote-field input:focus, .pv-quote-field select:focus, .pv-quote-field textarea:focus { outline:none; border-color:#660000; }
+  .pv-quote-actions { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:18px; }
+  .pv-quote-cancel { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#241C1A; cursor:pointer; }
+  .pv-quote-actions .pv-btn-quote { padding:12px 22px; box-shadow:none; }
+  @media (max-width:640px) { .pv-quote-grid { grid-template-columns:1fr; } }
   .pv-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
   .pv-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:50; }
   .pv-brand img { height:54px; }
