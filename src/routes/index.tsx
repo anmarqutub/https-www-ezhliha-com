@@ -4,6 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
+import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
+import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
+import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
+import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -62,6 +66,18 @@ type SiteText = { key: string; value: string };
 export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
+
+const REF_IMAGES = [catCateringAsset.url, catVenueAsset.url, catPhotoAsset.url, catBeautyAsset.url];
+
+function fallbackCategoryImage(name: string, index: number) {
+  const n = name || "";
+  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCateringAsset.url;
+  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catVenueAsset.url;
+  if (/تصوير|فيديو|كامي/.test(n)) return catPhotoAsset.url;
+  if (/تجميل|شعر|مكياج|عناي/.test(n)) return catBeautyAsset.url;
+  return REF_IMAGES[index % REF_IMAGES.length];
+}
+
 
 function Home() {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
@@ -230,6 +246,12 @@ function Home() {
   const scrollToResults = () => {
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const scrollRail = (dir: number) => {
+    const el = document.getElementById("ez-cat-rail");
+    if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
+  };
+
 
   const resetAll = () => {
     setSelectedCategory(null);
@@ -433,8 +455,16 @@ function Home() {
 
       {/* ── CATEGORIES ── */}
       <section className="ez-sec" id="ez-categories">
-        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
-        <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
+        <div className="ez-cats-head">
+          <div>
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
+            <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
+          </div>
+          <div className="ez-rail-nav">
+            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}>→</button>
+            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}>←</button>
+          </div>
+        </div>
 
         {loading ? (
           <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
@@ -443,9 +473,10 @@ function Home() {
             {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
           </p>
         ) : (
-          <div className="ez-cat-grid">
+          <div className="ez-cat-rail" id="ez-cat-rail">
             {categories.map((c, i) => {
               const count = providersCountByCat.get(c.id) ?? 0;
+              const img = c.image_url || fallbackCategoryImage(c.name_ar, i);
               return (
                 <button
                   key={c.id}
@@ -459,14 +490,9 @@ function Home() {
                   }}
                 >
                   <div className="ez-cat-media">
-                    {c.image_url ? (
-                      <img src={c.image_url} alt={c.name_ar} loading="lazy" />
-                    ) : (
-                      <span className="ez-cat-emoji">{c.icon ?? "✿"}</span>
-                    )}
+                    <img src={img} alt={c.name_ar} loading="lazy" />
                     <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <div className="ez-cat-info">
+                    <span className="ez-cat-go">↖</span>
                     <span className="ez-cat-name">{c.name_ar}</span>
                     <span className="ez-cat-count">
                       {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
@@ -478,6 +504,7 @@ function Home() {
           </div>
         )}
       </section>
+
 
       {/* ── SHOWCASE ── */}
       {!loading && showcase.length > 0 && (
@@ -913,18 +940,24 @@ const css = `
   .ez-step-card p { color:var(--muted); font-size:13px; line-height:1.8; margin:0; }
 
   /* CATEGORIES */
-  .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:18px; margin-top:28px; }
-  .ez-cat-card { position:relative; background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden; cursor:pointer; text-align:start; font-family:inherit; padding:0; transition:transform .25s, box-shadow .25s, border-color .25s; }
+  .ez-cats-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
+  .ez-rail-nav { display:flex; gap:10px; }
+  .ez-rail-btn { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; cursor:pointer; transition:all .2s; }
+  .ez-rail-btn:hover { background:var(--brand); color:#FFFDF8; border-color:var(--brand); }
+  .ez-cat-rail { display:flex; gap:14px; margin-top:26px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; scrollbar-width:none; }
+  .ez-cat-rail::-webkit-scrollbar { display:none; }
+  .ez-cat-card { position:relative; flex:0 0 calc(25% - 11px); min-width:250px; scroll-snap-align:start; background:var(--surface); border:1px solid var(--line); border-radius:4px; overflow:hidden; cursor:pointer; text-align:start; font-family:inherit; padding:0; transition:transform .25s, box-shadow .25s, border-color .25s; }
   .ez-cat-card:hover { transform:translateY(-4px); box-shadow:0 18px 36px rgba(122,20,20,.14); border-color:var(--brand); }
   .ez-cat-card.active { border-color:var(--brand); box-shadow:0 10px 26px rgba(122,20,20,.14); }
-  .ez-cat-media { position:relative; height:170px; background:#EFE7DA; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .ez-cat-media { position:relative; height:150px; background:#EFE7DA; overflow:hidden; }
   .ez-cat-media img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
+  .ez-cat-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(20,12,10,.72), rgba(20,12,10,.05) 60%); }
   .ez-cat-card:hover .ez-cat-media img { transform:scale(1.06); }
-  .ez-cat-emoji { font-size:46px; color:var(--brand); }
-  .ez-cat-num { position:absolute; top:12px; inset-inline-end:12px; background:rgba(255,253,248,.9); color:var(--brand); font-size:11px; font-weight:800; padding:3px 9px; border-radius:50px; }
-  .ez-cat-info { padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
-  .ez-cat-name { font-size:16px; font-weight:800; color:var(--ink); }
-  .ez-cat-count { font-size:12px; color:var(--muted); }
+  .ez-cat-num { position:absolute; top:12px; inset-inline-start:12px; z-index:2; color:rgba(255,253,248,.85); font-size:11px; font-weight:700; }
+  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,253,248,.22); border:1px solid rgba(255,253,248,.45); color:#FFFDF8; font-size:14px; display:flex; align-items:center; justify-content:center; }
+  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:800; color:#FFFDF8; }
+  .ez-cat-count { position:absolute; bottom:10px; inset-inline-start:14px; z-index:2; font-size:11px; color:rgba(255,253,248,.75); }
+
 
   /* RESULTS HEAD */
   .ez-results-head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:18px; }
@@ -1036,8 +1069,8 @@ const css = `
     .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
     .ez-console-field:first-child { border-top:none; }
     .ez-steps-cards { grid-template-columns:1fr; }
-    .ez-cat-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
-    .ez-cat-media { height:120px; }
+    .ez-cat-card { flex:0 0 78%; min-width:0; }
+    .ez-cat-media { height:130px; }
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
