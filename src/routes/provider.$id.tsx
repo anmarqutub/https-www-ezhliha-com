@@ -591,6 +591,57 @@ function ProviderPage() {
         )}
       </main>
 
+      {quoteOpen && (
+        <div className="pv-modal-overlay" onClick={() => setQuoteOpen(false)}>
+          <form className="pv-quote" onClick={(e) => e.stopPropagation()} onSubmit={submitQuote}>
+            <div className="pv-quote-head">
+              <span className="pv-quote-tag">طلب مخصص</span>
+              <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
+            </div>
+            <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
+            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبينه.</p>
+
+            <div className="pv-quote-grid">
+              <label className="pv-quote-field">
+                <span>تاريخ المناسبة</span>
+                <input type="date" value={qDate} onChange={(e) => setQDate(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>المدينة</span>
+                <input type="text" placeholder="مثال: جدة" value={qCity} onChange={(e) => setQCity(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>عدد الضيوف</span>
+                <input type="number" min={1} placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
+              </label>
+              <label className="pv-quote-field">
+                <span>الميزانية التقريبية</span>
+                <select value={qBudget} onChange={(e) => setQBudget(e.target.value)}>
+                  <option value="">اختاري النطاق</option>
+                  <option value="أقل من 5,000 ر.س">أقل من 5,000 ر.س</option>
+                  <option value="5,000 - 10,000 ر.س">5,000 - 10,000 ر.س</option>
+                  <option value="10,000 - 25,000 ر.س">10,000 - 25,000 ر.س</option>
+                  <option value="25,000 - 50,000 ر.س">25,000 - 50,000 ر.س</option>
+                  <option value="أكثر من 50,000 ر.س">أكثر من 50,000 ر.س</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="pv-quote-field">
+              <span>ما التفاصيل المهمة لك؟</span>
+              <textarea rows={4} placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
+            </label>
+
+            <div className="pv-quote-actions">
+              <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
+              <button type="submit" className="pv-btn-quote"><SendIcon /><span>جهّزي الطلب</span></button>
+            </div>
+          </form>
+        </div>
+      )}
+
+
+
       {callOpen && callUrl && (
         <div className="pv-modal-overlay" onClick={() => setCallOpen(false)}>
           <div className="pv-modal" onClick={(e) => e.stopPropagation()}>
