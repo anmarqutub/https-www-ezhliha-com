@@ -1115,19 +1115,18 @@ const css = `
 
   @media (max-width: 1024px) {
     .ez-nav-menu { display:none; }
-    .ez-hero-grid { grid-template-columns:1fr; gap:32px; }
-    .ez-hero-title { font-size:42px; }
+    .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
+    .ez-hero-media { max-width:none; }
     .ez-steps-wrap { grid-template-columns:1fr; }
-    .ez-console { grid-template-columns:1fr 1fr; }
+    .ez-console { grid-template-columns:1fr 1fr; margin-inline:16px; }
     .ez-console-btn { grid-column:1 / -1; padding:14px; }
   }
   @media (max-width: 640px) {
     .ez-nav { padding:8px 16px; }
     .ez-brand-logo { height:52px; }
-    .ez-hero { padding:32px 16px 0; }
-    .ez-hero-title { font-size:32px; letter-spacing:-1px; }
+    .ez-hero-grid { padding:24px 16px 44px; }
     .ez-hero-frame { display:none; }
-    .ez-hero-banner img, .ez-hero-banner-empty { height:260px; }
+
     .ez-h2 { font-size:26px; }
     .ez-sec, .ez-steps-wrap { padding:44px 16px; }
     .ez-console { grid-template-columns:1fr; }
