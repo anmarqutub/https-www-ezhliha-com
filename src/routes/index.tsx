@@ -683,30 +683,55 @@ function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="ez-footer">
-        <div className="ez-footer-top">
+      <footer className="ez-footer" id="ez-contact">
+        <div className="ez-footer-grid">
           <div className="ez-footer-brand">
             <img src={logoUrl} alt="إزهليها" />
-            <p>{txt("footer.tagline", "دليلك الأول لتجهيز مناسباتك من أفخم مزودين الخدمات في المملكة 🤍")}</p>
+            <p>{txt("footer.tagline", "كل اللي تحتاجينه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍")}</p>
           </div>
-          <div className="ez-footer-actions">
-            <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-            <a className="ez-footer-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
-            {user && <Link to="/favorites" className="ez-footer-link">{txt("nav.favorites", "المفضلة")}</Link>}
-            <a
-              className="ez-footer-wa"
-              href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="تواصل معنا عبر واتساب"
-            >
-              <WhatsAppIcon size={18} />
-              <span>{txt("footer.contact", "تواصل معنا")}</span>
-            </a>
+
+          <div className="ez-footer-col">
+            <h3>{txt("footer.explore", "استكشفي")}</h3>
+            <div className="ez-footer-links">
+              <button type="button" onClick={() => { resetAll(); scrollToResults(); }}>{txt("footer.all", "كل مقدمي الخدمة")}</button>
+              {categories.slice(0, 3).map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => { setSelectedCategory(c.id); setSelectedSub("all"); scrollToResults(); }}
+                >
+                  {c.name_ar}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="ez-footer-col">
+            <h3>{txt("footer.contact.title", "تواصلي معنا")}</h3>
+            <div className="ez-footer-links">
+              <a
+                className="ez-footer-wa"
+                href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WhatsAppIcon size={16} />
+                <span>{txt("footer.contact", "واتساب إزهليها")}</span>
+              </a>
+              <span>✉️ {txt("footer.email", "hello@ezhliha.com")}</span>
+              <span>📍 {txt("footer.location", "المملكة العربية السعودية")}</span>
+              <button type="button" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
+              <a href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+              {user && <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>}
+            </div>
           </div>
         </div>
-        <p className="ez-footer-copy">{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</p>
+        <div className="ez-footer-bar">
+          <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
+          <span>{txt("footer.motto", "صُممت لتجعل قرار المناسبة أسهل.")}</span>
+        </div>
       </footer>
+
 
       {aboutOpen && (
         <div className="ez-about-overlay" onClick={() => setAboutOpen(false)}>
