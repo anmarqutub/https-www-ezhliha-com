@@ -664,7 +664,10 @@ function ProviderPage() {
               </label>
               <label className="pv-quote-field">
                 <span>المدينة</span>
-                <input type="text" placeholder="مثال: جدة" value={qCity} onChange={(e) => setQCity(e.target.value)} />
+                <select value={qCity} onChange={(e) => setQCity(e.target.value)}>
+                  <option value="">{cityName ? `${cityName} (الافتراضية)` : "اختر المدينة"}</option>
+                  {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
+                </select>
               </label>
               <label className="pv-quote-field">
                 <span>عدد الضيوف</span>
