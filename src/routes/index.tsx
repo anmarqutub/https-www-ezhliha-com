@@ -231,6 +231,12 @@ function Home() {
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const scrollRail = (dir: number) => {
+    const el = document.getElementById("ez-cat-rail");
+    if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
+  };
+
+
   const resetAll = () => {
     setSelectedCategory(null);
     setSelectedSub("all");
