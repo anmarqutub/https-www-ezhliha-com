@@ -57,6 +57,12 @@ function ProviderPage() {
   const [copiedShare, setCopiedShare] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [qDate, setQDate] = useState("");
+  const [qCity, setQCity] = useState("");
+  const [qGuests, setQGuests] = useState("");
+  const [qBudget, setQBudget] = useState("");
+  const [qNotes, setQNotes] = useState("");
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [myRating, setMyRating] = useState(5);
