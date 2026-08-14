@@ -74,6 +74,7 @@ function ProviderPage() {
   const [activeTab, setActiveTab] = useState<OfferTab>("overview");
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [cityName, setCityName] = useState<string>("");
+  const [allCities, setAllCities] = useState<Array<{ id: string; name_ar: string }>>([]);
   const [subName, setSubName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
