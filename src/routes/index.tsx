@@ -885,7 +885,11 @@ function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
     observer.observe(node);
     return () => { observer.disconnect(); window.cancelAnimationFrame(raf); };
   }, [value]);
-  return <span dir="ltr" style={{ display: "inline-block", unicodeBidi: "isolate" }}>{suffix}{current.toLocaleString("en-US")}</span>;
+  return (
+    <span ref={ref} dir="ltr" style={{ display: "inline-block", unicodeBidi: "isolate" }}>
+      {suffix}{current.toLocaleString("en-US")}
+    </span>
+  );
 }
 
 
