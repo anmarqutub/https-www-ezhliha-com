@@ -207,7 +207,7 @@ export function ImportProvidersDialog({
   const [children, setChildren] = useState<ParsedChild[]>([]);
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; childOk: number; childFail: number } | null>(null);
+  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; skipped: number; childOk: number; childFail: number; childSkipped: number } | null>(null);
   const [downloading, setDownloading] = useState(false);
 
 
@@ -418,29 +418,59 @@ export function ImportProvidersDialog({
     setChildren(childList);
   }
 
+  // Build the subset of fields that actually differ from what's already stored.
+  // Empty/null incoming values never overwrite existing data.
+  function diffPayload(
+    incoming: Record<string, unknown>,
+    existing: Record<string, unknown> | null | undefined
+  ): Record<string, unknown> {
+    if (!existing) return incoming;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(incoming)) {
+      const isEmpty = v === null || v === "" || (Array.isArray(v) && v.length === 0);
+      const cur = existing[k];
+      if (isEmpty) continue; // keep what's already there
+      if (JSON.stringify(cur ?? null) === JSON.stringify(v ?? null)) continue; // identical → skip
+      out[k] = v;
+    }
+    return out;
+  }
+
   async function doImport() {
     if (!parsed) return;
     const valid = parsed.filter((r) => r.payload);
     if (valid.length === 0) return;
     setImporting(true);
-    let ok = 0, fail = 0, updated = 0, childOk = 0, childFail = 0;
+    let ok = 0, fail = 0, updated = 0, skipped = 0, childOk = 0, childFail = 0, childSkipped = 0;
 
     // provider_name+city → provider_id (for child linking)
     const providerIdBy = new Map<string, string>();
+    const seenProviders = new Set<string>();
+    const seenChildren = new Set<string>();
 
     for (const r of valid) {
       const payload = r.payload!;
       const cityName = cities.find((c) => c.id === payload.city_id)?.name_ar ?? "";
+      const dedupKey = `${payload.name}::${payload.city_id}`;
+      if (seenProviders.has(dedupKey)) { skipped++; continue; } // duplicate row inside the file
+      seenProviders.add(dedupKey);
+
       // Never wipe existing data: update the matching provider (same name + city), else insert.
       const { data: existing } = await supabase.from("providers")
-        .select("id").eq("name", payload.name).eq("city_id", payload.city_id).maybeSingle();
+        .select("*").eq("name", payload.name).eq("city_id", payload.city_id).maybeSingle();
 
       let providerId: string | null = null;
       if (existing?.id) {
-        const { error } = await supabase.from("providers").update(payload).eq("id", existing.id);
-        if (error) { fail++; continue; }
         providerId = existing.id;
-        updated++;
+        const changes = diffPayload(payload as Record<string, unknown>, existing as Record<string, unknown>);
+        if (Object.keys(changes).length === 0) {
+          skipped++; // identical row already in the site → leave it as is
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { error } = await supabase.from("providers").update(changes as any).eq("id", existing.id);
+          if (error) { fail++; continue; }
+          updated++;
+        }
       } else {
         const { data, error } = await supabase.from("providers").insert(payload).select("id").single();
         if (error || !data) { fail++; continue; }
@@ -480,19 +510,31 @@ export function ImportProvidersDialog({
       if (!providerId) { childFail++; continue; }
       const table = c.kind === "package" ? "packages" : c.kind === "service" ? "services" : "branches";
       const row = { ...c.payload, provider_id: providerId } as { name: string; provider_id: string; [k: string]: unknown };
+
+      const cKey = `${c.kind}::${providerId}::${row.name}`;
+      if (seenChildren.has(cKey)) { childSkipped++; continue; } // duplicate row inside the file
+      seenChildren.add(cKey);
+
       // Update the matching child (same provider + same name) instead of duplicating it.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: exist } = await (supabase.from(table) as any)
-        .select("id").eq("provider_id", providerId).eq("name", row.name).maybeSingle();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = exist?.id
-        ? await (supabase.from(table) as any).update(row).eq("id", exist.id)
-        : await (supabase.from(table) as any).insert(row);
-      if (error) childFail++; else childOk++;
+        .select("*").eq("provider_id", providerId).eq("name", row.name).maybeSingle();
+      if (exist?.id) {
+        const changes = diffPayload(row, exist);
+        delete changes.provider_id;
+        if (Object.keys(changes).length === 0) { childSkipped++; continue; }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase.from(table) as any).update(changes).eq("id", exist.id);
+        if (error) childFail++; else childOk++;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase.from(table) as any).insert(row);
+        if (error) childFail++; else childOk++;
+      }
     }
 
     setImporting(false);
-    setResult({ ok, fail, updated, childOk, childFail });
+    setResult({ ok, fail, updated, skipped, childOk, childFail, childSkipped });
     if (ok > 0 || updated > 0 || childOk > 0) onDone();
   }
 
@@ -603,8 +645,8 @@ export function ImportProvidersDialog({
 
             {result && (
               <div style={{ marginTop: 12, padding: 12, background: result.fail || result.childFail ? "#fef3c7" : "#dcfce7", borderRadius: 8, fontWeight: 700 }}>
-                تمت الإضافة — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · فشل {result.fail}
-                {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · فشل {result.childFail}</>}
+                تمت الإضافة — المزودون: أُضيف {result.ok} · حُدِّث {result.updated} · بدون تغيير {result.skipped} · فشل {result.fail}
+                {children.length > 0 && <> · العناصر التابعة: نجح {result.childOk} · بدون تغيير {result.childSkipped} · فشل {result.childFail}</>}
               </div>
             )}
 
