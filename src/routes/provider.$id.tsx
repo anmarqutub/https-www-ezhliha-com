@@ -88,7 +88,7 @@ function ProviderPage() {
   const [qDate, setQDate] = useState("");
   const [qCity, setQCity] = useState("");
   const [qGuests, setQGuests] = useState("");
-  const [qBudget, setQBudget] = useState("");
+  
   const [qNotes, setQNotes] = useState("");
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -263,11 +263,11 @@ function ProviderPage() {
       "مرحبا .. جايتك من موقع ازهليها",
       "",
       `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
-      `- تاريخ المناسبة : ${fmtDate(qDate) || "-"}`,
-      `- المدينة: ${qCity || cityName || "-"}`,
-      `- عدد الضيوف: ${qGuests || "-"}`,
-      `- الميزانية التقريبية: ${qBudget || "-"}`,
-      `- الوصف: ${qNotes || "-"}`,
+      "",
+      `• تاريخ المناسبة: ${fmtDate(qDate)}`,
+      `• المدينة: ${qCity || cityName || "-"}`,
+      `• عدد الضيوف: ${qGuests}`,
+      `• الوصف: ${qNotes}`,
     ];
     const url = waLink(provider.whatsapp, lines.join("\n"));
     if (url) window.open(url, "_blank", "noopener,noreferrer");
@@ -667,36 +667,26 @@ function ProviderPage() {
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
                 <span>تاريخ المناسبة</span>
-                <input type="date" value={qDate} onChange={(e) => setQDate(e.target.value)} />
+                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} />
               </label>
               <label className="pv-quote-field">
                 <span>المدينة</span>
-                <select value={qCity} onChange={(e) => setQCity(e.target.value)}>
-                  <option value="">{cityName ? `${cityName} (الافتراضية)` : "اختر المدينة"}</option>
+                <select required value={qCity} onChange={(e) => setQCity(e.target.value)}>
+                  <option value="">المدن</option>
                   {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
                 </select>
               </label>
               <label className="pv-quote-field">
                 <span>عدد الضيوف</span>
-                <input type="number" min={1} placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
-              </label>
-              <label className="pv-quote-field">
-                <span>الميزانية التقريبية</span>
-                <select value={qBudget} onChange={(e) => setQBudget(e.target.value)}>
-                  <option value="">اختر النطاق</option>
-                  <option value="أقل من 5,000 ر.س">أقل من 5,000 ر.س</option>
-                  <option value="5,000 - 10,000 ر.س">5,000 - 10,000 ر.س</option>
-                  <option value="10,000 - 25,000 ر.س">10,000 - 25,000 ر.س</option>
-                  <option value="25,000 - 50,000 ر.س">25,000 - 50,000 ر.س</option>
-                  <option value="أكثر من 50,000 ر.س">أكثر من 50,000 ر.س</option>
-                </select>
+                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
               </label>
             </div>
 
             <label className="pv-quote-field">
               <span>ما التفاصيل المهمة لك؟</span>
-              <textarea rows={4} placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
+              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
             </label>
+
 
             <div className="pv-quote-actions">
               <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
