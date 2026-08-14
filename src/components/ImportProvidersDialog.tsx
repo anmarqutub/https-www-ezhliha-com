@@ -207,7 +207,7 @@ export function ImportProvidersDialog({
   const [children, setChildren] = useState<ParsedChild[]>([]);
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; childOk: number; childFail: number } | null>(null);
+  const [result, setResult] = useState<{ ok: number; fail: number; updated: number; skipped: number; childOk: number; childFail: number; childSkipped: number } | null>(null);
   const [downloading, setDownloading] = useState(false);
 
 
