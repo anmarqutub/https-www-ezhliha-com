@@ -5,6 +5,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
+import refHall from "@/assets/provider-hall.jpg.asset.json";
+import refBeauty from "@/assets/provider-beauty.jpg.asset.json";
+import refBuffet from "@/assets/provider-buffet.jpg.asset.json";
+import refFlowers from "@/assets/provider-flowers.jpg.asset.json";
+import refPhoto from "@/assets/provider-photo.jpg.asset.json";
+import refLamia from "@/assets/provider-lamia.jpg.asset.json";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
