@@ -433,8 +433,16 @@ function Home() {
 
       {/* ── CATEGORIES ── */}
       <section className="ez-sec" id="ez-categories">
-        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
-        <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
+        <div className="ez-cats-head">
+          <div>
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
+            <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
+          </div>
+          <div className="ez-rail-nav">
+            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}>→</button>
+            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}>←</button>
+          </div>
+        </div>
 
         {loading ? (
           <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
@@ -443,9 +451,10 @@ function Home() {
             {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
           </p>
         ) : (
-          <div className="ez-cat-grid">
+          <div className="ez-cat-rail" id="ez-cat-rail">
             {categories.map((c, i) => {
               const count = providersCountByCat.get(c.id) ?? 0;
+              const img = c.image_url || fallbackCategoryImage(c.name_ar, i);
               return (
                 <button
                   key={c.id}
@@ -459,14 +468,9 @@ function Home() {
                   }}
                 >
                   <div className="ez-cat-media">
-                    {c.image_url ? (
-                      <img src={c.image_url} alt={c.name_ar} loading="lazy" />
-                    ) : (
-                      <span className="ez-cat-emoji">{c.icon ?? "✿"}</span>
-                    )}
+                    <img src={img} alt={c.name_ar} loading="lazy" />
                     <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <div className="ez-cat-info">
+                    <span className="ez-cat-go">↖</span>
                     <span className="ez-cat-name">{c.name_ar}</span>
                     <span className="ez-cat-count">
                       {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
@@ -478,6 +482,7 @@ function Home() {
           </div>
         )}
       </section>
+
 
       {/* ── SHOWCASE ── */}
       {!loading && showcase.length > 0 && (
