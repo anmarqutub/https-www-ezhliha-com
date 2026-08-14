@@ -822,7 +822,28 @@ function PlayIcon() {
   return <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72c0 .78.86 1.25 1.52.82l10.78-6.86a.98.98 0 000-1.64L9.52 4.32A.98.98 0 008 5.14z" /></svg>;
 }
 
+function SendIcon() {
+  return <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>;
+}
+
 const css = `
+  .pv-btn-quote { background:#660000; color:#fff; border:none; padding:14px; border-radius:12px; font-family:inherit; font-size:15px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 18px rgba(102,0,0,0.25); }
+  .pv-btn-quote:hover { background:#4d0000; }
+  .pv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; font-family:Tajawal, system-ui, sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.28); text-align:right; }
+  .pv-quote-head { display:flex; align-items:center; justify-content:space-between; }
+  .pv-quote-tag { color:#660000; font-size:13px; font-weight:700; }
+  .pv-quote-close { background:none; border:none; font-size:24px; line-height:1; cursor:pointer; color:#6b5b55; }
+  .pv-quote-title { margin:10px 0 4px; font-size:24px; font-weight:900; color:#241C1A; }
+  .pv-quote-sub { margin:0 0 16px; color:#7A6A64; font-size:14px; }
+  .pv-quote-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .pv-quote-field { display:block; }
+  .pv-quote-field > span { display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:#241C1A; }
+  .pv-quote-field input, .pv-quote-field select, .pv-quote-field textarea { width:100%; padding:11px 12px; border:1px solid #E3DBC9; border-radius:10px; font-family:inherit; font-size:14px; background:#fff; color:#241C1A; }
+  .pv-quote-field input:focus, .pv-quote-field select:focus, .pv-quote-field textarea:focus { outline:none; border-color:#660000; }
+  .pv-quote-actions { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:18px; }
+  .pv-quote-cancel { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#241C1A; cursor:pointer; }
+  .pv-quote-actions .pv-btn-quote { padding:12px 22px; box-shadow:none; }
+  @media (max-width:640px) { .pv-quote-grid { grid-template-columns:1fr; } }
   .pv-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
   .pv-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:50; }
   .pv-brand img { height:54px; }
