@@ -62,9 +62,9 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               <WhatsAppIcon size={16} />
               <span>{txt("footer.contact", "واتساب إزهليها")}</span>
             </a>
-            <span>✉️ {txt("footer.email", "hello@ezhliha.com")}</span>
-            <span>📍 {txt("footer.location", "المملكة العربية السعودية")}</span>
-            <Link to="/" hash="ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
+            <Link to="/" hash="ez-faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+
           </div>
         </div>
       </div>
@@ -84,6 +84,7 @@ const footerCss = `
   .ez-footer-brand p { color:rgba(255,255,255,.72); font-size:13.5px; line-height:1.95; margin:16px 0 0; }
   .ez-footer-col h3 { font-size:14px; font-weight:700; margin:0; color:#fff; }
   .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:rgba(255,255,255,.7); }
+  .ez-footer-links > * { display:inline-flex; align-items:center; gap:8px; text-align:start; }
   .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:rgba(255,255,255,.7); text-decoration:none; font-family:inherit; font-size:13.5px; }
   .ez-footer-links a:hover, .ez-footer-links button:hover { color:#fff; }
   .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; }

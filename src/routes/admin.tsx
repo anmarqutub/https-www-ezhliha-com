@@ -2484,8 +2484,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "footer.tagline", label: "الفوتر — الوصف", value: "كل اللي تحتاجه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍", updated_at: "" },
   { key: "footer.explore", label: "الفوتر — عنوان استكشف", value: "استكشف", updated_at: "" },
   { key: "footer.contact.title", label: "الفوتر — عنوان تواصل معنا", value: "تواصل معنا", updated_at: "" },
-  { key: "footer.email", label: "الفوتر — الإيميل", value: "hello@ezhliha.com", updated_at: "" },
-  { key: "footer.location", label: "الفوتر — الموقع", value: "المملكة العربية السعودية", updated_at: "" },
+  { key: "footer.email", label: "الفوتر — الإيميل", value: "admin@ezhliha.com", updated_at: "" },
   { key: "footer.motto", label: "الفوتر — العبارة السفلية", value: "صُممت لتجعل قرار المناسبة أسهل.", updated_at: "" },
   { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Tajawal", updated_at: "" },
 ];

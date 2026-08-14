@@ -60,6 +60,17 @@ type Branch = { id: string; name: string; address: string | null; map_url: strin
 type SiteText = { key: string; value: string };
 type OfferTab = "overview" | "packages" | "services" | "branches";
 
+// رسائل تحقق بالعربية للحقول الإلزامية
+function arValidity(message: string) {
+  return {
+    onInvalid: (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      e.currentTarget.setCustomValidity(message),
+    onInput: (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      e.currentTarget.setCustomValidity(""),
+  } as const;
+}
+
+
 function ProviderPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
@@ -666,26 +677,27 @@ function ProviderPage() {
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
-                <span>تاريخ المناسبة</span>
-                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} />
+                <span>تاريخ المناسبة <b className="pv-req">*</b></span>
+                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("الرجاء اختيار تاريخ المناسبة")} />
               </label>
               <label className="pv-quote-field">
-                <span>المدينة</span>
-                <select required value={qCity} onChange={(e) => setQCity(e.target.value)}>
+                <span>المدينة <b className="pv-req">*</b></span>
+                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("الرجاء اختيار المدينة")}>
                   <option value="">المدن</option>
                   {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
                 </select>
               </label>
               <label className="pv-quote-field">
-                <span>عدد الضيوف</span>
-                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
+                <span>عدد الضيوف <b className="pv-req">*</b></span>
+                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("الرجاء إدخال عدد الضيوف")} />
               </label>
             </div>
 
             <label className="pv-quote-field">
-              <span>ما التفاصيل المهمة لك؟</span>
-              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
+              <span>ما التفاصيل المهمة لك؟ <b className="pv-req">*</b></span>
+              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("الرجاء كتابة تفاصيل طلبك")} />
             </label>
+
 
 
             <div className="pv-quote-actions">
@@ -910,6 +922,8 @@ const css = `
   .pv-quote-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
   .pv-quote-field { display:block; }
   .pv-quote-field > span { display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:#241C1A; }
+  .pv-req { color:#D12B2B; font-weight:800; }
+
   .pv-quote-field input, .pv-quote-field select, .pv-quote-field textarea { width:100%; padding:11px 12px; border:1px solid #E3DBC9; border-radius:10px; font-family:inherit; font-size:14px; background:#fff; color:#241C1A; }
   .pv-quote-field input:focus, .pv-quote-field select:focus, .pv-quote-field textarea:focus { outline:none; border-color:#660000; }
   .pv-quote-actions { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:18px; }
