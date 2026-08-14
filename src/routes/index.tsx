@@ -1069,8 +1069,8 @@ const css = `
     .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
     .ez-console-field:first-child { border-top:none; }
     .ez-steps-cards { grid-template-columns:1fr; }
-    .ez-cat-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
-    .ez-cat-media { height:120px; }
+    .ez-cat-card { flex:0 0 78%; min-width:0; }
+    .ez-cat-media { height:130px; }
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
