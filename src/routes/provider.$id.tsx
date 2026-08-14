@@ -243,84 +243,135 @@ function ProviderPage() {
   return (
     <div dir="rtl" className="pv-root">
       <style>{css}</style>
-      <header className="pv-nav">
+      <style>{css2}</style>
+      <header className="pv-top">
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
-        <div className="pv-nav-actions">
-          {user ? (
-            <>
-              <Link to="/favorites" className="pv-link">♥ المفضلة</Link>
-              {isAdmin && <Link to="/admin" className="pv-link">الأدمن</Link>}
-              <button className="pv-btn-out" onClick={() => signOut()}>خروج</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="pv-link">دخول</Link>
-              <Link to="/signup" className="pv-btn">تسجيل</Link>
-            </>
-          )}
+        <nav className="pv-topnav">
+          <a href="/#ez-results">مقدمي الخدمات</a>
+          <a href="/#ez-cities">المدن</a>
+          <Link to="/favorites">المفضلة</Link>
+          <a href="/#ez-contact">تواصل معنا</a>
+          <a href="/#ez-faq">الأسئلة الشائعة</a>
+          {isAdmin && <Link to="/admin">الأدمن</Link>}
+        </nav>
+        <div className="pv-top-side">
+          <Link to="/" className="pv-top-cta">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
+            <span>دوّري عن مزوّد</span>
+          </Link>
+          {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
       </header>
 
-      <main className="pv-main">
-        <Link to="/" className="pv-back">‹ رجوع</Link>
-
-        <div className="pv-grid">
-          <section className="pv-gallery">
-            <div className="pv-cover-wrap">
-              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+      <section className="pv-hero">
+        <button
+          type="button"
+          className="pv-hero-main"
+          style={{ backgroundImage: `url(${cover})` }}
+          onClick={() => setGalleryOpen(true)}
+          aria-label="عرض الصور"
+        />
+        <div className="pv-hero-side">
+          {[1, 2].map((k) => {
+            const im = images[(activeImg + k) % Math.max(images.length, 1)];
+            return (
               <button
+                key={k}
                 type="button"
-                className={`pv-fav-icon ${isFav ? "active" : ""}`}
-                disabled={favLoading}
-                onClick={toggleFav}
-                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              >
-                {isFav ? "♥" : "♡"}
-              </button>
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className="pv-arrow pv-arrow-prev"
-                    onClick={() => setActiveImg((i) => (i - 1 + images.length) % images.length)}
-                    aria-label="السابق"
-                  >‹</button>
-                  <button
-                    type="button"
-                    className="pv-arrow pv-arrow-next"
-                    onClick={() => setActiveImg((i) => (i + 1) % images.length)}
-                    aria-label="التالي"
-                  >›</button>
-                  <div className="pv-counter">{activeImg + 1} / {images.length}</div>
-                </>
-              )}
+                className="pv-hero-thumb"
+                style={{ backgroundImage: `url(${im?.image_url || defaultProviderUrl})` }}
+                onClick={() => setGalleryOpen(true)}
+                aria-label={`صورة ${k + 1}`}
+              />
+            );
+          })}
+        </div>
+        {images.length > 0 && (
+          <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
+            <span>شوفي الصور</span>
+          </button>
+        )}
+      </section>
+
+      <main className="pv-main">
+        <div className="pv-head-grid">
+          <div className="pv-head-info">
+            <div className="pv-crumbs">
+              <span className="pv-chip-new">جديد في أزهليها</span>
+              {subName && <span>{subName}</span>}
+              {cityName && <span className="pv-crumb-city">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                {cityName}
+              </span>}
+              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
             </div>
 
-            {images.length > 1 && (
-              <div className="pv-thumbs">
-                {images.map((im, i) => (
-                  <button
-                    key={im.id}
-                    className={`pv-thumb ${i === activeImg ? "active" : ""}`}
-                    onClick={() => setActiveImg(i)}
-                    style={{ backgroundImage: `url(${im.image_url})` }}
-                    aria-label={`صورة ${i + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="pv-info">
             <div className="pv-title-row">
               {provider.logo_url && <img src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
               <h1>{provider.name}</h1>
             </div>
-            <div className="pv-meta">
-              {cityName && <span>📍 {cityName}</span>}
-              {subName && <span>• {subName}</span>}
-              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
+            {provider.description && <p className="pv-lead">{provider.description}</p>}
+
+            <div className="pv-tiles">
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                <small>منطقة الخدمة</small>
+                <strong>{provider.address || cityName || "—"}</strong>
+              </div>
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2" /><path d="M2.5 19a6.5 6.5 0 0 1 13 0" /><path d="M17 11a3 3 0 1 0-1.6-5.5" /></svg>
+                <small>نطاق المناسبة</small>
+                <strong>
+                  {provider.people_from || provider.people_to
+                    ? `${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`
+                    : "حسب ترتيب المكان"}
+                </strong>
+              </div>
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 12l9 5 9-5" /></svg>
+                <small>طريقة الخدمة</small>
+                <strong>{subName || "حسب الطلب"}</strong>
+              </div>
             </div>
+          </div>
+
+          <aside className="pv-aside">
+            <div className="pv-aside-icons">
+              <button type="button" className="pv-icon-btn" onClick={shareProvider} aria-label="مشاركة"><ShareIcon /></button>
+              <button
+                type="button"
+                className={`pv-icon-btn ${isFav ? "on" : ""}`}
+                disabled={favLoading}
+                onClick={toggleFav}
+                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+              >{isFav ? "♥" : "♡"}</button>
+            </div>
+            <div className="pv-price-card">
+              <small>السعر التقريبي</small>
+              <div className="pv-price-value">
+                {provider.price_from
+                  ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
+                  : (provider.price || "السعر حسب التفاصيل")}
+              </div>
+              <p>يختلف السعر حسب العدد والتاريخ والتفاصيل المطلوبة.</p>
+              {provider.whatsapp && (
+                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
+                  <SendIcon />
+                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                </button>
+              )}
+              <div className="pv-price-note">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>
+                <span>الطلب ما يثبت الحجز إلا بعد موافقة مقدم الخدمة على التاريخ والتفاصيل.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="pv-body">
+          <section className="pv-info">
+
 
             {(() => {
               const showPkg = provider.show_packages !== false && packages.length > 0;
