@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
@@ -175,6 +176,11 @@ function ProviderPage() {
   };
 
   useEffect(() => { reload(); /* eslint-disable-next-line */ }, [id]);
+
+  useEffect(() => {
+    supabase.from("cities").select("id,name_ar").eq("active", true).order("sort_order")
+      .then(({ data }) => setAllCities((data ?? []) as Array<{ id: string; name_ar: string }>));
+  }, []);
 
   // Favorite check
   useEffect(() => {
