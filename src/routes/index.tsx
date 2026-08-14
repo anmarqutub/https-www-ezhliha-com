@@ -132,6 +132,19 @@ function Home() {
   }, []);
 
   const txt = (key: string, fallback: string) => siteTexts[key] || fallback;
+  const statNumber = (key: string, auto: number) => {
+    const raw = (siteTexts[key] ?? "").replace(/[^\d]/g, "");
+    return raw ? Number(raw) : auto;
+  };
+
+  // Scroll to hash target after data loads (links coming from inner pages)
+  useEffect(() => {
+    if (loading || typeof window === "undefined") return;
+    const id = window.location.hash.replace("#", "");
+    if (!id) return;
+    const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   // Banner rotator
   useEffect(() => {
