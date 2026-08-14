@@ -738,6 +738,8 @@ function ProviderPage() {
           </div>
         </div>
       )}
+
+      <SiteFooter texts={siteTexts} />
     </div>
   );
 }
