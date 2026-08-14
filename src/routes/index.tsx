@@ -371,14 +371,23 @@ function Home() {
                   {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
                 </div>
               )
+            ) : txt("home.hero.image", "") ? (
+              <div className="ez-hero-banner">
+                <img src={txt("home.hero.image", "")} alt={txt("home.hero.title", "إزهليها")} />
+                <div className="ez-hero-banner-cap">
+                  <strong>{txt("home.hero.title", "إزهليها")}</strong>
+                  <span>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</span>
+                </div>
+              </div>
             ) : (
               <div className="ez-hero-banner ez-hero-banner-empty">
                 <div>
-                  <h2 className="ez-logo-text">إزهليها</h2>
+                  <h2 className="ez-logo-text">{txt("home.hero.title", "إزهليها")}</h2>
                   <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</p>
                 </div>
               </div>
             )}
+
             {banners.length > 1 && (
               <>
                 <button
