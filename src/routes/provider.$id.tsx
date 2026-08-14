@@ -426,6 +426,12 @@ function ProviderPage() {
             {provider.address && <div className="pv-addr">📌 {provider.address}</div>}
 
             <div className="pv-actions">
+              {provider.whatsapp && (
+                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
+                  <SendIcon />
+                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                </button>
+              )}
               {waUrl && (
                 <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
