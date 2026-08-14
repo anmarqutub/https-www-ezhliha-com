@@ -185,8 +185,14 @@ function Home() {
     ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
     : [];
 
+  // في قائمة "نوع الخدمة" نعرض كل الأنواع إذا ما تم اختيار تصنيف
+  const consoleSubs = selectedCategory
+    ? visibleSubs
+    : subcategories.filter((s) => !s.parent_id);
+
   const visibleTertiaries =
     selectedSub !== "all" ? subcategories.filter((s) => s.parent_id === selectedSub) : [];
+
 
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
