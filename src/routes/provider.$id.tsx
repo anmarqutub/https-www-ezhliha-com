@@ -666,26 +666,27 @@ function ProviderPage() {
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
-                <span>تاريخ المناسبة</span>
-                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} />
+                <span>تاريخ المناسبة <b className="pv-req">*</b></span>
+                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("الرجاء اختيار تاريخ المناسبة")} />
               </label>
               <label className="pv-quote-field">
-                <span>المدينة</span>
-                <select required value={qCity} onChange={(e) => setQCity(e.target.value)}>
+                <span>المدينة <b className="pv-req">*</b></span>
+                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("الرجاء اختيار المدينة")}>
                   <option value="">المدن</option>
                   {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
                 </select>
               </label>
               <label className="pv-quote-field">
-                <span>عدد الضيوف</span>
-                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} />
+                <span>عدد الضيوف <b className="pv-req">*</b></span>
+                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("الرجاء إدخال عدد الضيوف")} />
               </label>
             </div>
 
             <label className="pv-quote-field">
-              <span>ما التفاصيل المهمة لك؟</span>
-              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} />
+              <span>ما التفاصيل المهمة لك؟ <b className="pv-req">*</b></span>
+              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("الرجاء كتابة تفاصيل طلبك")} />
             </label>
+
 
 
             <div className="pv-quote-actions">
