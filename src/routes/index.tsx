@@ -415,31 +415,31 @@ function Home() {
         </div>
 
         {filtersActive && (
-          <div className="ez-chips">
+          <div className="ez-fchips">
             {activeCategory && (
-              <button type="button" className="ez-chip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
+              <button type="button" className="ez-fchip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
                 {activeCategory.name_ar} ×
               </button>
             )}
             {selectedSub !== "all" && (
-              <button type="button" className="ez-chip" onClick={() => setSelectedSub("all")}>
+              <button type="button" className="ez-fchip" onClick={() => setSelectedSub("all")}>
                 {subcategories.find((s) => s.id === selectedSub)?.name_ar} ×
               </button>
             )}
             {selectedCity && (
-              <button type="button" className="ez-chip" onClick={() => setSelectedCity("")}>
+              <button type="button" className="ez-fchip" onClick={() => setSelectedCity("")}>
                 {cities.find((c) => c.id === selectedCity)?.name_ar} ×
               </button>
             )}
             {(quickSearch.trim() || search.trim()) && (
-              <button type="button" className="ez-chip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
+              <button type="button" className="ez-fchip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
                 «{quickSearch.trim() || search.trim()}» ×
               </button>
             )}
-            <button type="button" className="ez-chip ez-chip-clear" onClick={resetAll}>
+            <button type="button" className="ez-fchip ez-fchip-clear" onClick={resetAll}>
               {txt("console.reset", "مسح الفلاتر")}
             </button>
-            <span className="ez-chips-count">{results.length} نتيجة</span>
+            <span className="ez-fchips-count">{results.length} نتيجة</span>
           </div>
         )}
 
@@ -605,7 +605,7 @@ function Home() {
         </div>
 
         {visibleSubs.length > 0 && (
-          <div className="ez-chips">
+          <div className="ez-fchips">
             <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
             {visibleSubs.map((s) => (
               <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
@@ -1044,12 +1044,12 @@ const css = `
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
   .ez-console-btn { align-self:stretch; margin:10px; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-console-btn:hover { background:var(--brand-dark); }
-  .ez-chips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-  .ez-chip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
-  .ez-chip:hover { border-color:var(--brand); color:var(--brand); }
-  .ez-chip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
-  .ez-chip-clear:hover { background:var(--brand-dark); color:#fff; }
-  .ez-chips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
+  .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
+  .ez-fchip:hover { border-color:var(--brand); color:var(--brand); }
+  .ez-fchip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .ez-fchip-clear:hover { background:var(--brand-dark); color:#fff; }
+  .ez-fchips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
   .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:14px 16px; margin-top:34px; }
   .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 22px; }
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
@@ -1207,7 +1207,7 @@ const css = `
     .ez-h2 { font-size:26px; }
     .ez-sec, .ez-steps-wrap { padding:44px 16px; }
     .ez-console { grid-template-columns:1fr; }
-    .ez-chips { padding:0 16px; }
+    .ez-fchips { padding:0 16px; }
     .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
     .ez-console-field:first-child { border-top:none; }
     .ez-steps-cards { grid-template-columns:1fr; }
