@@ -605,7 +605,8 @@ function Home() {
         </div>
 
         {visibleSubs.length > 0 && (
-          <div className="ez-fchips">
+          <div className="ez-chips">
+
             <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
             {visibleSubs.map((s) => (
               <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
