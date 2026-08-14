@@ -2426,7 +2426,10 @@ function BannersTab() {
 type SiteTextRow = { key: string; value: string; label: string | null; updated_at: string };
 
 const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
+  { key: "home.hero.title", label: "عنوان صورة الواجهة", value: "إزهليها", updated_at: "" },
+  { key: "home.hero.image", label: "رابط صورة الواجهة (اتركه فارغاً للخلفية العنابية)", value: "", updated_at: "" },
   { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍", updated_at: "" },
+
   { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
   { key: "home.city.label", label: "عبارة اختر مدينتك", value: "📍 اختر مدينتك", updated_at: "" },
   { key: "home.city.all", label: "خيار كل المدن", value: "🌍 كل المدن", updated_at: "" },
