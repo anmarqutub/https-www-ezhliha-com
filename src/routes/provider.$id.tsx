@@ -263,11 +263,11 @@ function ProviderPage() {
       "مرحبا .. جايتك من موقع ازهليها",
       "",
       `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
-      `- تاريخ المناسبة : ${fmtDate(qDate) || "-"}`,
-      `- المدينة: ${qCity || cityName || "-"}`,
-      `- عدد الضيوف: ${qGuests || "-"}`,
-      `- الميزانية التقريبية: ${qBudget || "-"}`,
-      `- الوصف: ${qNotes || "-"}`,
+      "",
+      `• تاريخ المناسبة: ${fmtDate(qDate)}`,
+      `• المدينة: ${qCity || cityName || "-"}`,
+      `• عدد الضيوف: ${qGuests}`,
+      `• الوصف: ${qNotes}`,
     ];
     const url = waLink(provider.whatsapp, lines.join("\n"));
     if (url) window.open(url, "_blank", "noopener,noreferrer");
