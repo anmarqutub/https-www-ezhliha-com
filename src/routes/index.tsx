@@ -15,6 +15,18 @@ export const Route = createFileRoute("/")({
         content:
           "إزهليها — دليلك الأول لتجهيز مناسباتك بأفخم مزودين الخدمات في المملكة، بضغطة زر.",
       },
+      { property: "og:title", content: "إزهليها — دليلك لأحلى المناسبات" },
+      {
+        property: "og:description",
+        content: "دوّر على الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "إزهليها — دليلك لأحلى المناسبات" },
+      {
+        name: "twitter:description",
+        content: "دوّر على الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة.",
+      },
     ],
   }),
 });
@@ -64,9 +76,7 @@ function Home() {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
-
-
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -92,7 +102,6 @@ function Home() {
         supabase.from("branches").select("provider_id,city_id"),
       ]);
       setCities((cRes.data ?? []) as City[]);
-      // Default to "All cities" (empty selection)
       setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
@@ -147,9 +156,7 @@ function Home() {
     : [];
 
   const visibleTertiaries =
-    selectedSub !== "all"
-      ? subcategories.filter((s) => s.parent_id === selectedSub)
-      : [];
+    selectedSub !== "all" ? subcategories.filter((s) => s.parent_id === selectedSub) : [];
 
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
@@ -163,41 +170,85 @@ function Home() {
     return m;
   }, [providers, subcategories, selectedCity, providerCityIds]);
 
+  const providersCountByCity = useMemo(() => {
+    const m = new Map<string, number>();
+    providers.forEach((p) => {
+      providerCityIds.get(p.id)?.forEach((cid) => m.set(cid, (m.get(cid) ?? 0) + 1));
+    });
+    return m;
+  }, [providers, providerCityIds]);
+
   const subMatches = (providerSubId: string, selSub: string) => {
     if (providerSubId === selSub) return true;
     const ps = subcategories.find((s) => s.id === providerSubId);
     return !!ps && ps.parent_id === selSub;
   };
 
-  const categoryProviders = providers.filter((p) => {
+  const q = quickSearch.trim().toLowerCase();
+
+  const results = providers.filter((p) => {
     if (!matchesCity(p)) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
-    if (selectedCategory) {
-      const directCat = sub.category_id === selectedCategory;
-      if (!directCat) return false;
-    }
+    if (selectedCategory && sub.category_id !== selectedCategory) return false;
     if (selectedSub !== "all" && !subMatches(p.subcategory_id, selectedSub)) return false;
     if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      if (!p.name.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q))
-        return false;
+      const s = search.trim().toLowerCase();
+      if (!p.name.toLowerCase().includes(s) && !(p.description ?? "").toLowerCase().includes(s)) return false;
+    }
+    if (q) {
+      const cat = categories.find((c) => c.id === sub.category_id);
+      const hit =
+        p.name.toLowerCase().includes(q) ||
+        (p.description ?? "").toLowerCase().includes(q) ||
+        (sub.name_ar ?? "").toLowerCase().includes(q) ||
+        (cat?.name_ar ?? "").toLowerCase().includes(q);
+      if (!hit) return false;
     }
     return true;
   });
 
-  const featured = categoryProviders.filter(
+  const filtersActive = !!(q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim());
+
+  const featured = results.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
   );
-  const regular = categoryProviders.filter((p) => !featured.includes(p));
+  const regular = results.filter((p) => !featured.includes(p));
+
+  const homeFeatured = useMemo(
+    () =>
+      providers
+        .filter((p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date()))
+        .slice(0, 6),
+    [providers]
+  );
+  const showcase = homeFeatured.length > 0 ? homeFeatured : providers.slice(0, 6);
 
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
 
+  const scrollToResults = () => {
+    document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const resetAll = () => {
+    setSelectedCategory(null);
+    setSelectedSub("all");
+    setSelectedCity("");
+    setSearch("");
+    setQuickSearch("");
+  };
+
+  const faqs = [
+    { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف المزود وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
+    { q: txt("faq.q2", "هل الأسعار نهائية؟"), a: txt("faq.a2", "الأسعار تقريبية للاسترشاد، والسعر النهائي يتحدد مع مقدم الخدمة حسب تفاصيل مناسبتك.") },
+    { q: txt("faq.q3", "وين ألقى الخدمات اللي حفظتها؟"), a: txt("faq.a3", "من صفحة «المفضلة» في حسابك، وتبقى اختياراتك محفوظة دائماً.") },
+    { q: txt("faq.q4", "كيف أضيف مقدم خدمة للموقع؟"), a: txt("faq.a4", "تواصل معنا عبر الواتساب ونرتب لك إضافة ملفك بكل تفاصيله.") },
+  ];
+
   if (!authLoading && !user) {
     return <AuthGate />;
   }
-
 
   return (
     <div dir="rtl" className="ez-root">
@@ -207,6 +258,24 @@ function Home() {
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
+
+        <nav className="ez-nav-menu">
+          <button type="button" className="ez-nav-link" onClick={() => { resetAll(); scrollToResults(); }}>
+            {txt("nav.providers", "مقدمي الخدمات")}
+          </button>
+          <a className="ez-nav-link" href="#ez-cities">{txt("nav.cities", "المدن")}</a>
+          {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
+          <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+          <a
+            className="ez-nav-link"
+            href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {txt("nav.contact", "تواصل معنا")}
+          </a>
+        </nav>
+
         <div className="ez-nav-actions">
           {!user && (
             <>
@@ -217,233 +286,274 @@ function Home() {
           {user && (
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
+              <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
+                <span>🔍</span> {txt("nav.cta", "دوّر عن مزوّد")}
+              </button>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
           )}
         </div>
       </header>
 
-      {/* Hero banner — supports admin-managed ad banners */}
+      {/* ── HERO ── */}
       <section className="ez-hero">
-        <div className="ez-hero-wrap">
-          {currentBanner ? (
-            currentBanner.link_url ? (
-              <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
-                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
-              </a>
+        <div className="ez-hero-grid">
+          <div className="ez-hero-text">
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("hero.eyebrow", "دليل مناسبتك الأقرب لك")}</div>
+            <h1 className="ez-hero-title">
+              {txt("hero.title1", "كل اللي تحتاجه لمناسبتك،")}
+              <span className="ez-hero-title-accent">{txt("hero.title2", "بمكان واحد")}</span>
+            </h1>
+            <p className="ez-hero-desc">
+              {txt("hero.desc", "دوّر على الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
+            </p>
+            <ul className="ez-hero-checks">
+              <li><i>✓</i>{txt("hero.check1", "بحث سريع")}</li>
+              <li><i>✓</i>{txt("hero.check2", "تفاصيل واضحة")}</li>
+              <li><i>✓</i>{txt("hero.check3", "تواصل مباشر")}</li>
+            </ul>
+          </div>
+
+          <div className="ez-hero-media">
+            <span className="ez-hero-frame" aria-hidden="true" />
+            {currentBanner ? (
+              currentBanner.link_url ? (
+                <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
+                  <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                  {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+                </a>
+              ) : (
+                <div className="ez-hero-banner">
+                  <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                  {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+                </div>
+              )
             ) : (
-              <div className="ez-hero-banner">
-                <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-                {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
+              <div className="ez-hero-banner ez-hero-banner-empty">
+                <div>
+                  <h2 className="ez-logo-text">إزهليها</h2>
+                  <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</p>
+                </div>
               </div>
-            )
-          ) : (
-            <div className="ez-hero-inner">
-              <h1 className="ez-logo-text">إزهليها</h1>
-              <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</p>
-            </div>
-          )}
-          {banners.length > 1 && (
-            <>
-              <button
-                type="button"
-                className="ez-hero-arrow ez-hero-arrow-prev"
-                onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
-                aria-label="السابق"
-              >‹</button>
-              <button
-                type="button"
-                className="ez-hero-arrow ez-hero-arrow-next"
-                onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
-                aria-label="التالي"
-              >›</button>
-            </>
-          )}
+            )}
+            {banners.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="ez-hero-arrow ez-hero-arrow-prev"
+                  onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
+                  aria-label="السابق"
+                >‹</button>
+                <button
+                  type="button"
+                  className="ez-hero-arrow ez-hero-arrow-next"
+                  onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
+                  aria-label="التالي"
+                >›</button>
+                <div className="ez-hero-dots">
+                  {banners.map((_, i) => (
+                    <button key={i} onClick={() => setBannerIdx(i)} className={i === bannerIdx ? "active" : ""} aria-label={`بنر ${i + 1}`} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-        {banners.length > 1 && (
-          <div className="ez-hero-dots">
-            {banners.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setBannerIdx(i)}
-                className={i === bannerIdx ? "active" : ""}
-                aria-label={`بنر ${i + 1}`}
-              />
+
+        {/* Search console */}
+        <div className="ez-console">
+          <div className="ez-console-field">
+            <label>🏷️ {txt("console.category", "التصنيف")}</label>
+            <select
+              value={selectedCategory ?? ""}
+              onChange={(e) => { setSelectedCategory(e.target.value || null); setSelectedSub("all"); }}
+            >
+              <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+            </select>
+          </div>
+          <div className="ez-console-field">
+            <label>⚙️ {txt("console.sub", "نوع الخدمة")}</label>
+            <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)} disabled={!selectedCategory}>
+              <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
+              {visibleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
+              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>— {t.name_ar}</option>)}
+            </select>
+          </div>
+          <div className="ez-console-field">
+            <label>📍 {txt("console.city", "المدينة")}</label>
+            <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+              <option value="">{txt("home.city.all", "كل المدن")}</option>
+              {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+            </select>
+          </div>
+          <button type="button" className="ez-console-btn" onClick={scrollToResults}>
+            <span>🔍</span> {txt("console.cta", "دوّر الآن")}
+          </button>
+        </div>
+
+        <div className="ez-stat">
+          <span className="ez-stat-icon">🏛️</span>
+          <div>
+            <strong>{providers.length}+</strong>
+            <small>{txt("stat.providers", "مزود خدمة")}</small>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="ez-steps-sec">
+        <div className="ez-steps-wrap">
+          <div className="ez-steps-intro">
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("steps.eyebrow", "من البحث إلى الطلب")}</div>
+            <h2 className="ez-h2">{txt("steps.title", "اختر، قارن، وتواصل")}</h2>
+            <p className="ez-muted">{txt("steps.desc", "هذي بداية رحلتك: دوّر، اجمع خياراتك، وبعدها تواصل مباشرة مع مقدم الخدمة.")}</p>
+            <button type="button" className="ez-btn-primary" onClick={() => { resetAll(); scrollToResults(); }}>
+              {txt("steps.cta", "شوف الخيارات")} ←
+            </button>
+          </div>
+          <div className="ez-steps-cards">
+            {[
+              { n: "01", i: "🔍", t: txt("steps.1.title", "دوّر"), d: txt("steps.1.desc", "حدد الخدمة والمدينة وشوف التفاصيل.") },
+              { n: "02", i: "♥", t: txt("steps.2.title", "قارن واحفظ"), d: txt("steps.2.desc", "اجمع خياراتك في المفضلة وارجع لها بأي وقت.") },
+              { n: "03", i: "✦", t: txt("steps.3.title", "تواصل"), d: txt("steps.3.desc", "أرسل تفاصيل مناسبتك عبر الواتساب بضغطة.") },
+            ].map((s) => (
+              <div key={s.n} className="ez-step-card">
+                <div className="ez-step-card-top">
+                  <span className="ez-step-icon">{s.i}</span>
+                  <span className="ez-step-num">{s.n}</span>
+                </div>
+                <h3>{s.t}</h3>
+                <p>{s.d}</p>
+              </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CATEGORIES ── */}
+      <section className="ez-sec" id="ez-categories">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
+        <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
+
+        {loading ? (
+          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+        ) : categories.length === 0 ? (
+          <p className="ez-empty">
+            {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
+          </p>
+        ) : (
+          <div className="ez-cat-grid">
+            {categories.map((c, i) => {
+              const count = providersCountByCat.get(c.id) ?? 0;
+              return (
+                <button
+                  key={c.id}
+                  className={`ez-cat-card ${selectedCategory === c.id ? "active" : ""}`}
+                  onClick={() => {
+                    setSelectedCategory(c.id);
+                    setSelectedSub("all");
+                    setSearch("");
+                    setQuickSearch("");
+                    setTimeout(scrollToResults, 60);
+                  }}
+                >
+                  <div className="ez-cat-media">
+                    {c.image_url ? (
+                      <img src={c.image_url} alt={c.name_ar} loading="lazy" />
+                    ) : (
+                      <span className="ez-cat-emoji">{c.icon ?? "✿"}</span>
+                    )}
+                    <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="ez-cat-info">
+                    <span className="ez-cat-name">{c.name_ar}</span>
+                    <span className="ez-cat-count">
+                      {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </section>
 
-      <section className="ez-quick">
-        <div className="ez-search ez-search-big">
-          <span className="ez-search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder={txt("home.search.placeholder", "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...")}
-            value={quickSearch}
-            onChange={(e) => setQuickSearch(e.target.value)}
-          />
-          {quickSearch && (
-            <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>
-          )}
-        </div>
-      </section>
+      {/* ── SHOWCASE ── */}
+      {!loading && showcase.length > 0 && (
+        <section className="ez-sec ez-sec-alt">
+          <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("showcase.eyebrow", "اختيارات إزهليها")}</div>
+          <h2 className="ez-h2">{txt("showcase.title", "خيارات تستاهل تبدأ منها")}</h2>
+          <div className="ez-grid">
+            {showcase.map((p) => (
+              <ProviderCard
+                key={p.id}
+                provider={p}
+                city={cities.find((c) => c.id === p.city_id)}
+                sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                images={imgsByProvider.get(p.id) ?? []}
+                contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                featured={p.is_featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <section className="ez-step">
-        <label className="ez-step-label">{txt("home.city.label", "📍 اختر مدينتك")}</label>
-        <select
-          className="ez-select"
-          value={selectedCity}
-          onChange={(e) => {
-            setSelectedCity(e.target.value);
-            setSelectedCategory(null);
-            setSelectedSub("all");
-          }}
-        >
-          {cities.length === 0 && <option value="">{txt("home.city.empty", "ما فيه مدن لحد الحين")}</option>}
-          {cities.length > 0 && <option value="">{txt("home.city.all", "🌍 كل المدن")}</option>}
-          {cities.map((c) => (
-            <option key={c.id} value={c.id}>{c.name_ar}</option>
-          ))}
-        </select>
-      </section>
-
-      <main className="ez-main">
-        {loading ? (
-          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
-        ) : quickSearch.trim() ? (
-          (() => {
-            const q = quickSearch.trim().toLowerCase();
-            const results = providers.filter((p) => {
-              if (!matchesCity(p)) return false;
-              const sub = subcategories.find((s) => s.id === p.subcategory_id);
-              const cat = sub ? categories.find((c) => c.id === sub.category_id) : null;
-              return (
-                p.name.toLowerCase().includes(q) ||
-                (p.description ?? "").toLowerCase().includes(q) ||
-                (sub?.name_ar ?? "").toLowerCase().includes(q) ||
-                (cat?.name_ar ?? "").toLowerCase().includes(q)
-              );
-            });
-            return (
-              <>
-                <div className="ez-section-head">
-                  <h2 className="ez-section-title">{txt("home.search.results", "🔍 نتائج البحث")} ({results.length})</h2>
-                </div>
-                {results.length === 0 ? (
-                  <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
-                ) : (
-                  <div className="ez-grid">
-                    {results.map((p) => (
-                      <ProviderCard
-                        key={p.id}
-                        provider={p}
-                        city={cities.find((c) => c.id === p.city_id)}
-                        sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                        images={imgsByProvider.get(p.id) ?? []}
-                        contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            );
-          })()
-        ) : !selectedCategory ? (
-          <>
-            <div className="ez-section-head">
-              <h2 className="ez-section-title">{txt("home.categories.title", "✿ تصفّح على كيفك.. حسب التصنيف")}</h2>
-            </div>
-            {categories.length === 0 ? (
-              <p className="ez-empty">
-                {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
-              </p>
-            ) : (
-              <div className="ez-cat-grid">
-                {categories.map((c) => {
-                  const count = providersCountByCat.get(c.id) ?? 0;
-                  return (
-                    <button
-                      key={c.id}
-                      className="ez-cat-card"
-                      onClick={() => {
-                        setSelectedCategory(c.id);
-                        setSelectedSub("all");
-                        setSearch("");
-                      }}
-                    >
-                      <div className="ez-cat-card-head">
-                        <div className="ez-cat-name">{c.name_ar}</div>
-                        {c.image_url ? (
-                          <img src={c.image_url} alt="" className="ez-cat-img" />
-                        ) : (
-                          <div className="ez-cat-icon">{c.icon ?? "✿"}</div>
-                        )}
-                      </div>
-                      <div className="ez-cat-meta">
-                        {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً 🌟")}
-                        <span className="ez-cat-arrow">‹</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="ez-section-head">
-              <button className="ez-back" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); setSearch(""); }}>
-                {txt("home.category.back", "‹ رجوع للتصنيفات")}
-              </button>
-              <h2 className="ez-section-title">
-                {activeCategory?.icon} {activeCategory?.name_ar}
-              </h2>
-            </div>
-
+      {/* ── RESULTS ── */}
+      <section className="ez-sec" id="ez-results">
+        <div className="ez-results-head">
+          <div>
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("results.eyebrow", "مقدمي الخدمات")}</div>
+            <h2 className="ez-h2">
+              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "كل مقدمي الخدمات")}
+              <span className="ez-count">({results.length})</span>
+            </h2>
+          </div>
+          <div className="ez-results-tools">
             <div className="ez-search">
+              <span className="ez-search-icon">🔍</span>
               <input
                 type="text"
-                placeholder={txt("home.category.search_placeholder", "دوّر داخل هذا التصنيف...")}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                placeholder={txt("home.search.placeholder", "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...")}
+                value={quickSearch}
+                onChange={(e) => setQuickSearch(e.target.value)}
               />
+              {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>}
             </div>
-
-            {visibleSubs.length > 0 && (
-              <div className="ez-chips" style={{ marginBottom: 12 }}>
-                <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
-                {visibleSubs.map((s) => (
-                  <button
-                    key={s.id}
-                    className={selectedSub === s.id ? "active" : ""}
-                    onClick={() => setSelectedSub(s.id)}
-                  >
-                    {s.name_ar}
-                  </button>
-                ))}
-              </div>
+            {filtersActive && (
+              <button type="button" className="ez-btn-ghost" onClick={resetAll}>{txt("results.reset", "مسح الفلاتر")}</button>
             )}
+          </div>
+        </div>
 
-            {visibleTertiaries.length > 0 && (
-              <div className="ez-chips ez-chips-tertiary" style={{ marginBottom: 18 }}>
-                <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
-                {visibleTertiaries.map((t) => (
-                  <button
-                    key={t.id}
-                    className={selectedSub === t.id ? "active" : ""}
-                    onClick={() => setSelectedSub(t.id)}
-                  >
-                    {t.name_ar}
-                  </button>
-                ))}
-              </div>
-            )}
+        {visibleSubs.length > 0 && (
+          <div className="ez-chips">
+            <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
+            {visibleSubs.map((s) => (
+              <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
+            ))}
+          </div>
+        )}
 
+        {visibleTertiaries.length > 0 && (
+          <div className="ez-chips ez-chips-tertiary">
+            <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
+            {visibleTertiaries.map((t) => (
+              <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
+            ))}
+          </div>
+        )}
+
+        {loading ? (
+          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+        ) : results.length === 0 ? (
+          <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
+        ) : (
+          <>
             {featured.length > 0 && (
               <>
-                <h3 className="ez-sub-title">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
+                <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
                 <div className="ez-grid">
                   {featured.map((p) => (
                     <ProviderCard
@@ -461,7 +571,7 @@ function Home() {
             )}
             {regular.length > 0 && (
               <>
-                <h3 className="ez-sub-title">{txt("home.all_providers.title", "كل المقدمين")}</h3>
+                {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
                 <div className="ez-grid">
                   {regular.map((p) => (
                     <ProviderCard
@@ -476,30 +586,78 @@ function Home() {
                 </div>
               </>
             )}
-            {categoryProviders.length === 0 && (
-              <p className="ez-empty">{txt("home.category.empty", "ما فيه مقدمين بهذا التصنيف لحد الحين 🌷")}</p>
-            )}
           </>
         )}
-      </main>
+      </section>
 
+      {/* ── CITIES ── */}
+      {cities.length > 0 && (
+        <section className="ez-sec ez-sec-alt" id="ez-cities">
+          <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("cities.eyebrow", "قريبين منك")}</div>
+          <h2 className="ez-h2">{txt("cities.title", "دوّر حسب مدينتك")}</h2>
+          <div className="ez-city-chips">
+            <button
+              type="button"
+              className={!selectedCity ? "active" : ""}
+              onClick={() => { setSelectedCity(""); setTimeout(scrollToResults, 60); }}
+            >
+              {txt("home.city.all", "كل المدن")}
+            </button>
+            {cities.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={selectedCity === c.id ? "active" : ""}
+                onClick={() => { setSelectedCity(c.id); setTimeout(scrollToResults, 60); }}
+              >
+                {c.name_ar}
+                <small>{providersCountByCity.get(c.id) ?? 0}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── FAQ ── */}
+      <section className="ez-sec" id="ez-faq">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
+        <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
+        <p className="ez-muted">{txt("faq.desc", "إجابات سريعة قبل ما تبدأ البحث أو ترسل طلبك.")}</p>
+        <div className="ez-faq">
+          {faqs.map((f, i) => (
+            <div key={i} className={`ez-faq-item ${openFaq === i ? "open" : ""}`}>
+              <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                <span>{f.q}</span>
+                <i>{openFaq === i ? "−" : "+"}</i>
+              </button>
+              {openFaq === i && <p>{f.a}</p>}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
       <footer className="ez-footer">
-        <div className="ez-footer-actions">
-          <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-          
-          <a
-            className="ez-footer-wa"
-            href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="تواصل معنا عبر واتساب"
-            title={txt("footer.contact", "تواصل معنا")}
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-              <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
-            </svg>
-            <span>{txt("footer.contact", "تواصل معنا")}</span>
-          </a>
+        <div className="ez-footer-top">
+          <div className="ez-footer-brand">
+            <img src={logoUrl} alt="إزهليها" />
+            <p>{txt("footer.tagline", "دليلك الأول لتجهيز مناسباتك من أفخم مزودين الخدمات في المملكة 🤍")}</p>
+          </div>
+          <div className="ez-footer-actions">
+            <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
+            <a className="ez-footer-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+            {user && <Link to="/favorites" className="ez-footer-link">{txt("nav.favorites", "المفضلة")}</Link>}
+            <a
+              className="ez-footer-wa"
+              href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="تواصل معنا عبر واتساب"
+            >
+              <WhatsAppIcon size={18} />
+              <span>{txt("footer.contact", "تواصل معنا")}</span>
+            </a>
+          </div>
         </div>
         <p className="ez-footer-copy">{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</p>
       </footer>
@@ -528,10 +686,6 @@ function Home() {
 export function waLink(whatsapp: string | null | undefined, message = WA_MESSAGE) {
   let wa = (whatsapp ?? "").replace(/\D/g, "");
   if (!wa) return null;
-  // Saudi normalization:
-  // - 05XXXXXXXX (10 digits, leading 0) → 9665XXXXXXXX
-  // - 5XXXXXXXX  (9 digits, no leading 0, common when Excel drops the zero) → 9665XXXXXXXX
-  // - 9665XXXXXXXX (12 digits) → kept as-is
   if (wa.startsWith("00966")) wa = wa.slice(2);
   if (wa.length === 13 && wa.startsWith("9660")) wa = "966" + wa.slice(4);
   if (wa.length === 10 && wa.startsWith("05")) wa = "966" + wa.slice(1);
@@ -568,29 +722,30 @@ function ProviderCard({
           {featured && <span className="ez-badge">مميز</span>}
         </div>
         <div className="ez-card-body">
+          {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
             {provider.rating ? <span className="ez-rating">⭐ {provider.rating}</span> : null}
           </div>
-          <div className="ez-card-meta">
-            {city && <span>📍 {city.name_ar}</span>}
-            {sub && <span>• {sub.name_ar}</span>}
-          </div>
+          {city && <div className="ez-card-meta">📍 {city.name_ar}</div>}
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
-          {(provider.price_from || provider.price_to) && (
-            <div className="ez-price">
-              {provider.price_from && <span>من {provider.price_from} ر.س</span>}
-              {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
-            </div>
-          )}
-          {provider.price && <div className="ez-price">{provider.price}</div>}
+          <div className="ez-card-price">
+            <small>السعر التقريبي</small>
+            <strong>
+              {provider.price_from
+                ? `يبدأ من ${provider.price_from} ر.س`
+                : provider.price
+                  ? provider.price
+                  : "السعر حسب التفاصيل"}
+            </strong>
+          </div>
         </div>
       </Link>
       <div className="ez-card-foot">
         {waUrl ? (
-            <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
-              <span>{contactLabel}</span>
-              <WhatsAppIcon />
+          <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
+            <span>{contactLabel}</span>
+            <WhatsAppIcon />
           </a>
         ) : (
           <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
@@ -650,10 +805,10 @@ function AuthGate() {
   }, []);
   const t = (k: string, f: string) => texts[k] || f;
   return (
-    <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
+    <div dir="rtl" style={{ minHeight: "100vh", background: "#F7F3EA", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(102,0,0,0.12)" }}>
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
-        <h1 className="ez-logo-text" style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
+        <h1 style={{ color: "#660000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
           {t("auth_gate.description", "عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍")}
         </p>
@@ -670,138 +825,221 @@ function AuthGate() {
   );
 }
 
-
-
 const css = `
-  .ez-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
+  .ez-root { --bg:#F7F3EA; --surface:#FFFDF8; --brand:#7A1414; --brand-dark:#5A0D0D; --ink:#241C1A; --muted:#7A6A64; --line:#E3DBC9;
+    min-height:100vh; background:var(--bg); font-family:Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; }
+  .ez-root * { box-sizing:border-box; }
   .ez-logo-text { font-family:'Rakkas','Reem Kufi Fun',Tajawal,serif; font-weight:400; letter-spacing:1px; }
-  .ez-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; min-height:104px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:100; }
+
+  /* NAV */
+  .ez-nav { background:rgba(255,253,248,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:8px 32px; display:flex; align-items:center; justify-content:space-between; gap:18px; position:sticky; top:0; z-index:100; }
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
-  .ez-brand-logo { height:88px; width:auto; object-fit:contain; }
-  .ez-nav-actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .ez-nav-link { color:#000; text-decoration:none; font-size:14px; font-weight:600; }
-  .ez-nav-link:hover { color:#660000; }
-  .ez-nav-user { font-size:12px; color:#555; }
-  .ez-nav-btn { background:#660000; color:#fff; padding:9px 20px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:700; }
-  .ez-nav-btn:hover { background:#4a0000; }
-  .ez-nav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
-  .ez-nav-btn-out:hover { background:#660000; color:#fff; }
-  .ez-nav-contact { background:#660000; color:#fff !important; padding:8px 16px; border-radius:50px; font-weight:700; }
-  .ez-nav-contact:hover { background:#4a0000; color:#fff !important; }
-  .ez-nav-contact-disabled { background:#ccc; color:#fff; cursor:not-allowed; }
+  .ez-brand-logo { height:64px; width:auto; object-fit:contain; }
+  .ez-nav-menu { display:flex; align-items:center; gap:22px; }
+  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:14px; font-weight:600; background:none; border:none; cursor:pointer; font-family:inherit; padding:4px 0; position:relative; }
+  .ez-nav-link:hover { color:var(--brand); }
+  .ez-nav-actions { display:flex; align-items:center; gap:12px; }
+  .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:700; }
+  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:none; padding:10px 20px; border-radius:50px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; }
+  .ez-nav-cta:hover { background:var(--brand-dark); }
 
-  .ez-hero { max-width:1200px; margin:18px auto 0; padding:0 24px; }
-  .ez-hero-inner { background:linear-gradient(135deg, #660000 0%, #4a0000 100%); color:#e6e4d7; padding:50px 30px; text-align:center; border-radius:20px; }
-  .ez-hero-inner h1 { font-size:40px; font-weight:900; margin-bottom:10px; letter-spacing:1px; }
-  .ez-hero-inner p { font-size:15px; opacity:.92; max-width:600px; margin-inline:auto; }
-  .ez-hero-banner { display:block; position:relative; border-radius:20px; overflow:hidden; box-shadow:0 8px 30px rgba(102,0,0,0.15); }
-  .ez-hero-banner img { display:block; width:100%; height:auto; max-height:380px; object-fit:cover; }
-  .ez-hero-banner-cap { position:absolute; inset:auto 0 0 0; padding:16px 24px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff; font-size:18px; font-weight:800; }
-  .ez-hero-dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
-  .ez-hero-dots button { width:10px; height:10px; border-radius:50%; border:none; background:#d8d4c0; cursor:pointer; padding:0; }
-  .ez-hero-dots button.active { background:#660000; transform:scale(1.2); }
-  .ez-hero-wrap { position:relative; }
-  .ez-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:none; background:rgba(0,0,0,0.55); color:#fff; font-size:28px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; z-index:2; }
-  .ez-hero-arrow:hover { background:#660000; }
-  .ez-hero-arrow-prev { right:12px; }
-  .ez-hero-arrow-next { left:12px; }
+  /* SHARED */
+  .ez-eyebrow { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--brand); font-weight:600; letter-spacing:.5px; margin-bottom:14px; }
+  .ez-eyebrow-line { display:inline-block; width:44px; height:1px; background:var(--brand); opacity:.5; }
+  .ez-h2 { font-size:34px; font-weight:800; line-height:1.3; margin:0 0 10px; letter-spacing:-.5px; }
+  .ez-h3 { font-size:18px; font-weight:800; margin:26px 0 14px; }
+  .ez-muted { color:var(--muted); font-size:15px; line-height:1.9; max-width:560px; }
+  .ez-count { color:var(--muted); font-size:16px; font-weight:600; margin-inline-start:8px; }
+  .ez-btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:13px 26px; border-radius:8px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; margin-top:20px; transition:background .2s, transform .2s; }
+  .ez-btn-primary:hover { background:var(--brand-dark); transform:translateY(-2px); }
+  .ez-btn-ghost { background:transparent; border:1px solid var(--line); color:var(--brand); padding:10px 16px; border-radius:8px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  .ez-btn-ghost:hover { border-color:var(--brand); }
 
-  .ez-step { max-width:1200px; margin:20px auto 0; padding:0 24px; }
-  .ez-step-label { display:block; font-size:14px; color:#000; margin-bottom:8px; font-weight:700; }
-  .ez-select { width:100%; max-width:420px; background:#fff; border:1px solid #d8d4c0; border-radius:14px; padding:12px 18px; font-size:15px; font-family:inherit; color:#000; cursor:pointer; outline:none; }
-  .ez-select:focus { border-color:#660000; }
+  /* HERO */
+  .ez-hero { max-width:1240px; margin:0 auto; padding:56px 32px 0; }
+  .ez-hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .ez-hero-title { font-size:60px; line-height:1.15; font-weight:900; letter-spacing:-2px; margin:0 0 18px; }
+  .ez-hero-title-accent { display:block; color:var(--brand); }
+  .ez-hero-desc { color:var(--muted); font-size:16px; line-height:2; max-width:480px; margin:0 0 22px; }
+  .ez-hero-checks { list-style:none; display:flex; gap:22px; padding:0; margin:0; flex-wrap:wrap; }
+  .ez-hero-checks li { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  .ez-hero-checks i { width:22px; height:22px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:11px; color:var(--brand); }
+  .ez-hero-media { position:relative; }
+  .ez-hero-frame { position:absolute; top:-26px; inset-inline-start:-26px; width:220px; height:200px; border:1px solid var(--line); border-radius:4px; z-index:0; }
+  .ez-hero-banner { display:block; position:relative; border-radius:6px; overflow:hidden; box-shadow:0 26px 60px rgba(122,20,20,.16); z-index:1; }
+  .ez-hero-banner img { display:block; width:100%; height:390px; object-fit:cover; }
+  .ez-hero-banner-empty { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; height:390px; display:flex; align-items:center; justify-content:center; text-align:center; padding:32px; }
+  .ez-hero-banner-empty h2 { font-size:42px; margin-bottom:10px; }
+  .ez-hero-banner-empty p { opacity:.9; font-size:15px; max-width:420px; }
+  .ez-hero-banner-cap { position:absolute; inset:auto 0 0 0; padding:18px 22px; background:linear-gradient(transparent, rgba(0,0,0,.72)); color:#fff; font-size:17px; font-weight:700; }
+  .ez-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:none; background:rgba(36,28,26,.55); color:#fff; font-size:24px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
+  .ez-hero-arrow:hover { background:var(--brand); }
+  .ez-hero-arrow-prev { right:14px; }
+  .ez-hero-arrow-next { left:14px; }
+  .ez-hero-dots { position:absolute; bottom:14px; inset-inline-start:0; inset-inline-end:0; display:flex; gap:7px; justify-content:center; z-index:2; }
+  .ez-hero-dots button { width:8px; height:8px; border-radius:50%; border:none; background:rgba(255,255,255,.55); cursor:pointer; padding:0; }
+  .ez-hero-dots button.active { background:#fff; width:20px; border-radius:50px; }
 
-  .ez-main { max-width:1200px; margin:0 auto; padding:24px; }
-  .ez-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0 18px; flex-wrap:wrap; }
-  .ez-section-title { font-size:22px; font-weight:800; color:#000; }
-  .ez-sub-title { font-size:16px; font-weight:800; color:#000; margin:18px 0 12px; }
-  .ez-back { background:transparent; border:none; color:#660000; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:4px 0; }
-  .ez-empty { text-align:center; color:#555; padding:40px; font-size:15px; }
-  .ez-empty a { color:#660000; font-weight:700; }
-  .ez-search { background:#fff; border:1px solid #d8d4c0; border-radius:50px; padding:6px; margin-bottom:18px; max-width:520px; }
-  .ez-search input { width:100%; border:none; outline:none; padding:10px 18px; font-size:14px; font-family:inherit; border-radius:50px; background:transparent; color:#000; }
-  .ez-chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .ez-chips button { background:#fff; border:1px solid #d8d4c0; padding:7px 14px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:#000; transition:all .2s; }
-  .ez-chips button:hover { border-color:#660000; color:#660000; }
-  .ez-chips button.active { background:#660000; color:#fff; border-color:#660000; }
+  /* CONSOLE */
+  .ez-console { margin-top:44px; background:var(--surface); border:1px solid var(--line); border-radius:6px; box-shadow:0 14px 40px rgba(122,20,20,.07); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
+  .ez-console-field { padding:16px 22px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:6px; }
+  .ez-console-field:first-child { border-inline-start:none; }
+  .ez-console-field label { font-size:12px; color:var(--muted); font-weight:600; }
+  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:15px; font-weight:700; color:var(--ink); outline:none; cursor:pointer; }
+  .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
+  .ez-console-btn { align-self:stretch; margin:10px; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 30px; border-radius:6px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; }
+  .ez-console-btn:hover { background:var(--brand-dark); }
+  .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:34px 0 12px; }
+  .ez-stat-icon { width:38px; height:38px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .ez-stat strong { display:block; color:var(--brand); font-size:20px; font-weight:900; }
+  .ez-stat small { color:var(--muted); font-size:12px; }
 
-  .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-  .ez-cat-card { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:20px; cursor:pointer; text-align:right; font-family:inherit; transition:all .25s; min-height:140px; display:flex; flex-direction:column; gap:12px; box-shadow:0 2px 8px rgba(102,0,0,0.04); }
-  .ez-cat-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(102,0,0,0.18); border-color:#660000; }
-  .ez-cat-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .ez-cat-icon { font-size:30px; color:#660000; line-height:1; }
-  .ez-cat-card .ez-cat-name { font-size:17px; font-weight:800; color:#000; }
-  .ez-cat-meta { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#555; margin-top:auto; padding-top:8px; border-top:1px dashed #d8d4c0; }
-  .ez-cat-arrow { font-size:18px; color:#660000; font-weight:700; }
-  .ez-cat-img { width:50px; height:50px; border-radius:10px; object-fit:cover; flex-shrink:0; }
-  .ez-chips-tertiary { background:#fff; padding:8px 12px; border-radius:12px; align-items:center; border:1px solid #d8d4c0; }
-  .ez-tertiary-label { font-size:12px; color:#555; font-weight:700; margin-left:6px; }
+  /* SECTIONS */
+  .ez-sec { max-width:1240px; margin:0 auto; padding:64px 32px; }
+  .ez-sec-alt { background:#F2EDE1; max-width:none; }
+  .ez-sec-alt > * { max-width:1240px; margin-inline:auto; }
+  .ez-empty { text-align:center; color:var(--muted); padding:48px; font-size:15px; }
+  .ez-empty a { color:var(--brand); font-weight:700; }
 
-  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
-  .ez-card { background:#fff; border:1px solid #d8d4c0; border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(102,0,0,0.04); transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; }
-  .ez-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(102,0,0,0.15); }
-  .ez-card-featured { border:2px solid #660000; }
+  /* STEPS */
+  .ez-steps-sec { background:#F2EDE1; border-block:1px solid var(--line); }
+  .ez-steps-wrap { max-width:1240px; margin:0 auto; padding:64px 32px; display:grid; grid-template-columns:1fr 1.3fr; gap:48px; align-items:center; }
+  .ez-steps-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .ez-step-card { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:20px; }
+  .ez-step-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .ez-step-icon { width:34px; height:34px; border-radius:50%; background:#F7EFE9; color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .ez-step-num { color:var(--muted); font-size:12px; letter-spacing:1px; }
+  .ez-step-card h3 { font-size:17px; font-weight:800; margin:0 0 6px; }
+  .ez-step-card p { color:var(--muted); font-size:13px; line-height:1.8; margin:0; }
+
+  /* CATEGORIES */
+  .ez-cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:18px; margin-top:28px; }
+  .ez-cat-card { position:relative; background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden; cursor:pointer; text-align:start; font-family:inherit; padding:0; transition:transform .25s, box-shadow .25s, border-color .25s; }
+  .ez-cat-card:hover { transform:translateY(-4px); box-shadow:0 18px 36px rgba(122,20,20,.14); border-color:var(--brand); }
+  .ez-cat-card.active { border-color:var(--brand); box-shadow:0 10px 26px rgba(122,20,20,.14); }
+  .ez-cat-media { position:relative; height:170px; background:#EFE7DA; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .ez-cat-media img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
+  .ez-cat-card:hover .ez-cat-media img { transform:scale(1.06); }
+  .ez-cat-emoji { font-size:46px; color:var(--brand); }
+  .ez-cat-num { position:absolute; top:12px; inset-inline-end:12px; background:rgba(255,253,248,.9); color:var(--brand); font-size:11px; font-weight:800; padding:3px 9px; border-radius:50px; }
+  .ez-cat-info { padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
+  .ez-cat-name { font-size:16px; font-weight:800; color:var(--ink); }
+  .ez-cat-count { font-size:12px; color:var(--muted); }
+
+  /* RESULTS HEAD */
+  .ez-results-head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:18px; }
+  .ez-results-tools { display:flex; align-items:center; gap:10px; }
+  .ez-search { background:var(--surface); border:1px solid var(--line); border-radius:50px; display:flex; align-items:center; gap:6px; padding:4px 14px; min-width:320px; }
+  .ez-search input { flex:1; border:none; outline:none; padding:10px 6px; font-size:14px; font-family:inherit; background:transparent; color:var(--ink); }
+  .ez-search-icon { color:var(--brand); font-size:14px; }
+  .ez-search-clear { background:transparent; border:none; color:var(--brand); font-size:15px; cursor:pointer; padding:4px 8px; font-family:inherit; }
+  .ez-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .ez-chips button { background:var(--surface); border:1px solid var(--line); padding:8px 16px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:var(--ink); transition:all .2s; }
+  .ez-chips button:hover { border-color:var(--brand); color:var(--brand); }
+  .ez-chips button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .ez-chips-tertiary { background:var(--surface); padding:8px 12px; border-radius:8px; align-items:center; border:1px solid var(--line); }
+  .ez-tertiary-label { font-size:12px; color:var(--muted); font-weight:700; margin-left:6px; }
+
+  /* CITY CHIPS */
+  .ez-city-chips { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+  .ez-city-chips button { display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); padding:12px 22px; border-radius:50px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; color:var(--ink); transition:all .2s; }
+  .ez-city-chips button small { color:var(--muted); font-weight:600; font-size:11px; }
+  .ez-city-chips button:hover { border-color:var(--brand); color:var(--brand); }
+  .ez-city-chips button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .ez-city-chips button.active small { color:rgba(255,255,255,.75); }
+
+  /* CARDS */
+  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:20px; }
+  .ez-card { background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden; transition:transform .25s, box-shadow .25s; display:flex; flex-direction:column; }
+  .ez-card:hover { transform:translateY(-4px); box-shadow:0 20px 40px rgba(122,20,20,.13); }
+  .ez-card-featured { border-color:var(--brand); }
   .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
-  .ez-card-img { height:180px; background-size:cover; background-position:center; background-color:#e6e4d7; position:relative; }
-  .ez-badge { position:absolute; top:12px; right:12px; background:#660000; color:#fff; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:700; }
-  .ez-card-body { padding:16px; flex:1; display:flex; flex-direction:column; }
-  .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; }
-  .ez-card-head h3 { font-size:16px; font-weight:800; color:#000; }
-  .ez-rating { font-size:12px; color:#555; white-space:nowrap; }
-  .ez-card-meta { display:flex; gap:6px; font-size:12px; color:#555; margin-bottom:8px; flex-wrap:wrap; }
-  .ez-card-desc { font-size:13px; color:#555; line-height:1.6; margin-bottom:10px; flex:1; }
-  .ez-price { font-size:13px; color:#660000; font-weight:700; margin-bottom:12px; }
-  .ez-card-foot { padding:0 16px 16px; }
-  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; text-align:center; background:transparent; color:#660000; padding:10px 0; border-radius:0; text-decoration:none; font-size:14px; font-weight:800; border:none; cursor:pointer; font-family:inherit; }
-  .ez-wa-btn svg { color:#660000; flex-shrink:0; }
-  .ez-wa-btn:hover { color:#4a0000; text-decoration:underline; text-underline-offset:4px; }
-  .ez-wa-btn:disabled { background:#ccc; cursor:not-allowed; }
-  .ez-footer { text-align:center; padding:24px; color:#555; font-size:13px; border-top:1px solid #d8d4c0; margin-top:40px; background:#fff; }
-  .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px 18px; margin-bottom:16px; }
-  .ez-footer-link { color:#000; text-decoration:none; font-size:14px; font-weight:400; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 10px; border-radius:8px; }
-  .ez-footer-link:hover { color:#660000; background:#f5f3eb; }
-  .ez-footer-out { color:#660000; }
-  .ez-footer-user { font-size:12px; color:#888; }
-  .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; background:transparent; color:inherit; padding:4px 0; text-decoration:none; font-weight:400; font-size:14px; }
-  .ez-footer-wa svg { color:#660000; }
-  .ez-footer-wa:hover { color:#660000; }
-  .ez-footer-copy { font-size:11px; color:#777; margin:0; letter-spacing:.3px; }
-  .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
-  .ez-about-modal { background:#fff; max-width:560px; width:100%; border-radius:16px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:85vh; overflow-y:auto; border-top:4px solid #660000; }
-  .ez-about-close { position:absolute; top:10px; left:14px; background:transparent; border:none; font-size:28px; line-height:1; cursor:pointer; color:#666; padding:4px 10px; border-radius:8px; }
-  .ez-about-close:hover { background:#f5f3eb; color:#660000; }
-  .ez-about-title { color:#660000; font-size:22px; margin:0 0 16px; font-weight:800; text-align:center; }
-  .ez-about-text { color:#333; font-size:15px; line-height:1.9; margin:0 0 12px; }
+  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; }
+  .ez-badge { position:absolute; top:12px; inset-inline-end:12px; background:var(--brand); color:#fff; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:700; }
+  .ez-card-body { padding:18px; flex:1; display:flex; flex-direction:column; }
+  .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:700; margin-bottom:6px; }
+  .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
+  .ez-card-head h3 { font-size:18px; font-weight:800; color:var(--ink); margin:0; }
+  .ez-rating { font-size:12px; color:var(--muted); white-space:nowrap; }
+  .ez-card-meta { font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .ez-card-price small { color:var(--muted); font-size:11px; }
+  .ez-card-price strong { color:var(--brand); font-size:14px; font-weight:800; }
+  .ez-card-foot { padding:0 18px 16px; }
+  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; background:transparent; color:var(--brand); padding:10px 0; text-decoration:none; font-size:14px; font-weight:800; border:none; cursor:pointer; font-family:inherit; }
+  .ez-wa-btn:hover { color:var(--brand-dark); text-decoration:underline; text-underline-offset:4px; }
+  .ez-wa-btn:disabled { color:var(--muted); cursor:not-allowed; }
+
+  /* FAQ */
+  .ez-faq { margin-top:26px; border-top:1px solid var(--line); }
+  .ez-faq-item { border-bottom:1px solid var(--line); }
+  .ez-faq-item button { width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:20px 4px; font-family:inherit; font-size:16px; font-weight:700; color:var(--ink); cursor:pointer; text-align:start; }
+  .ez-faq-item i { font-style:normal; color:var(--brand); font-size:20px; }
+  .ez-faq-item p { color:var(--muted); font-size:14px; line-height:1.9; margin:0 4px 20px; max-width:760px; }
+  .ez-faq-item.open button { color:var(--brand); }
+
+  /* FOOTER */
+  .ez-footer { background:var(--surface); border-top:1px solid var(--line); padding:44px 32px 22px; }
+  .ez-footer-top { max-width:1240px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; }
+  .ez-footer-brand { display:flex; align-items:center; gap:14px; max-width:460px; }
+  .ez-footer-brand img { height:60px; width:auto; object-fit:contain; }
+  .ez-footer-brand p { color:var(--muted); font-size:13px; line-height:1.9; margin:0; }
+  .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; gap:18px; }
+  .ez-footer-link { color:var(--ink); text-decoration:none; font-size:14px; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 4px; }
+  .ez-footer-link:hover { color:var(--brand); }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:7px; color:var(--brand); text-decoration:none; font-weight:700; font-size:14px; border:1px solid var(--line); padding:9px 18px; border-radius:50px; }
+  .ez-footer-wa:hover { background:var(--brand); color:#fff; }
+  .ez-footer-copy { text-align:center; font-size:11px; color:var(--muted); margin:26px 0 0; letter-spacing:.3px; }
+
+  /* MODAL */
+  .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
+  .ez-about-modal { background:var(--surface); max-width:560px; width:100%; border-radius:10px; padding:28px 24px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.3); max-height:85vh; overflow-y:auto; border-top:4px solid var(--brand); }
+  .ez-about-close { position:absolute; top:10px; left:14px; background:transparent; border:none; font-size:28px; line-height:1; cursor:pointer; color:var(--muted); padding:4px 10px; border-radius:8px; }
+  .ez-about-title { color:var(--brand); font-size:22px; margin:0 0 16px; font-weight:800; text-align:center; }
+  .ez-about-text { color:var(--ink); font-size:15px; line-height:1.9; margin:0 0 12px; }
   @keyframes ezFade { from { opacity:0 } to { opacity:1 } }
 
-  .ez-quick { max-width:1200px; margin:18px auto 0; padding:0 24px; }
-  .ez-search-big { max-width:720px; margin:0 auto; display:flex; align-items:center; gap:6px; padding:6px 10px; box-shadow:0 4px 18px rgba(102,0,0,0.08); }
-  .ez-search-icon { font-size:16px; padding-inline-start:6px; color:#660000; }
-  .ez-search-big input { flex:1; }
-  .ez-search-clear { background:transparent; border:none; color:#660000; font-size:16px; cursor:pointer; padding:4px 10px; font-family:inherit; }
-
-  @media (max-width: 640px) {
-    .ez-brand-logo { height:64px; }
-    .ez-hero-inner h1 { font-size:30px; }
-    .ez-hero-inner { padding:36px 16px 28px; }
-    .ez-step, .ez-main, .ez-hero { padding-left:16px; padding-right:16px; }
-    .ez-cat-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
-    .ez-cat-card { padding:14px; min-height:120px; }
-    .ez-cat-card .ez-cat-name { font-size:14px; }
-    .ez-cat-icon { font-size:24px; }
-  }
-
+  /* ACCOUNT */
   .ez-acct { position:relative; }
-  .ez-acct-btn { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #d8d4c0; border-radius:50px; padding:4px 10px 4px 4px; cursor:pointer; font-family:inherit; }
-  .ez-acct-btn:hover { border-color:#660000; }
-  .ez-acct-avatar { width:34px; height:34px; border-radius:50%; background:#660000; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
+  .ez-acct-btn { display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:50px; padding:4px 10px 4px 4px; cursor:pointer; font-family:inherit; }
+  .ez-acct-btn:hover { border-color:var(--brand); }
+  .ez-acct-avatar { width:32px; height:32px; border-radius:50%; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
   .ez-acct-avatar.lg { width:44px; height:44px; font-size:18px; }
-  .ez-acct-caret { color:#660000; font-size:12px; }
-  .ez-acct-menu { position:absolute; top:calc(100% + 8px); inset-inline-end:0; background:#fff; border:1px solid #d8d4c0; border-radius:14px; box-shadow:0 12px 30px rgba(102,0,0,0.16); min-width:240px; padding:8px; z-index:200; }
-  .ez-acct-head { display:flex; align-items:center; gap:10px; padding:10px 8px; border-bottom:1px solid #f0ecd9; margin-bottom:6px; }
-  .ez-acct-title { font-weight:800; color:#000; font-size:14px; }
-  .ez-acct-email { font-size:12px; color:#666; word-break:break-all; }
-  .ez-acct-item { display:block; width:100%; text-align:right; padding:10px 12px; border-radius:8px; color:#000; text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; }
-  .ez-acct-item:hover { background:#f5f3eb; color:#660000; }
-  .ez-acct-out { color:#660000; }
+  .ez-acct-caret { color:var(--brand); font-size:12px; }
+  .ez-acct-menu { position:absolute; top:calc(100% + 8px); inset-inline-end:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 30px rgba(122,20,20,.16); min-width:240px; padding:8px; z-index:200; }
+  .ez-acct-head { display:flex; align-items:center; gap:10px; padding:10px 8px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+  .ez-acct-title { font-weight:800; font-size:14px; }
+  .ez-acct-email { font-size:12px; color:var(--muted); word-break:break-all; }
+  .ez-acct-item { display:block; width:100%; text-align:start; padding:10px 12px; border-radius:8px; color:var(--ink); text-decoration:none; font-size:14px; font-weight:700; background:transparent; border:none; cursor:pointer; font-family:inherit; }
+  .ez-acct-item:hover { background:#F2EDE1; color:var(--brand); }
+  .ez-acct-out { color:var(--brand); }
+
+  @media (max-width: 1024px) {
+    .ez-nav-menu { display:none; }
+    .ez-hero-grid { grid-template-columns:1fr; gap:32px; }
+    .ez-hero-title { font-size:42px; }
+    .ez-steps-wrap { grid-template-columns:1fr; }
+    .ez-console { grid-template-columns:1fr 1fr; }
+    .ez-console-btn { grid-column:1 / -1; padding:14px; }
+  }
+  @media (max-width: 640px) {
+    .ez-nav { padding:8px 16px; }
+    .ez-brand-logo { height:52px; }
+    .ez-hero { padding:32px 16px 0; }
+    .ez-hero-title { font-size:32px; letter-spacing:-1px; }
+    .ez-hero-frame { display:none; }
+    .ez-hero-banner img, .ez-hero-banner-empty { height:260px; }
+    .ez-h2 { font-size:26px; }
+    .ez-sec, .ez-steps-wrap { padding:44px 16px; }
+    .ez-console { grid-template-columns:1fr; }
+    .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
+    .ez-console-field:first-child { border-top:none; }
+    .ez-steps-cards { grid-template-columns:1fr; }
+    .ez-cat-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+    .ez-cat-media { height:120px; }
+    .ez-search { min-width:0; width:100%; }
+    .ez-results-tools { width:100%; }
+    .ez-footer-brand { max-width:none; }
+  }
 `;
