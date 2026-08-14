@@ -1044,6 +1044,12 @@ const css = `
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
   .ez-console-btn { align-self:stretch; margin:10px; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-console-btn:hover { background:var(--brand-dark); }
+  .ez-chips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .ez-chip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
+  .ez-chip:hover { border-color:var(--brand); color:var(--brand); }
+  .ez-chip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .ez-chip-clear:hover { background:var(--brand-dark); color:#fff; }
+  .ez-chips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
   .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:14px 16px; margin-top:34px; }
   .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 22px; }
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
@@ -1201,6 +1207,7 @@ const css = `
     .ez-h2 { font-size:26px; }
     .ez-sec, .ez-steps-wrap { padding:44px 16px; }
     .ez-console { grid-template-columns:1fr; }
+    .ez-chips { padding:0 16px; }
     .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
     .ez-console-field:first-child { border-top:none; }
     .ez-steps-cards { grid-template-columns:1fr; }
