@@ -922,6 +922,8 @@ const css = `
   .pv-quote-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
   .pv-quote-field { display:block; }
   .pv-quote-field > span { display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:#241C1A; }
+  .pv-req { color:#D12B2B; font-weight:800; }
+
   .pv-quote-field input, .pv-quote-field select, .pv-quote-field textarea { width:100%; padding:11px 12px; border:1px solid #E3DBC9; border-radius:10px; font-family:inherit; font-size:14px; background:#fff; color:#241C1A; }
   .pv-quote-field input:focus, .pv-quote-field select:focus, .pv-quote-field textarea:focus { outline:none; border-color:#660000; }
   .pv-quote-actions { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:18px; }

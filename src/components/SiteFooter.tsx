@@ -62,9 +62,9 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               <WhatsAppIcon size={16} />
               <span>{txt("footer.contact", "واتساب إزهليها")}</span>
             </a>
-            <span>✉️ {txt("footer.email", "hello@ezhliha.com")}</span>
-            <span>📍 {txt("footer.location", "المملكة العربية السعودية")}</span>
-            <Link to="/" hash="ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
+            <Link to="/" hash="ez-faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+
           </div>
         </div>
       </div>
