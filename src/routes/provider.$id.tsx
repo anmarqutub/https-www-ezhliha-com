@@ -56,6 +56,8 @@ function ProviderPage() {
   const [activeImg, setActiveImg] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [qDate, setQDate] = useState("");
