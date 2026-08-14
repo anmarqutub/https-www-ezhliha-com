@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
@@ -414,6 +414,37 @@ function Home() {
           </button>
         </div>
 
+        {filtersActive && (
+          <div className="ez-fchips">
+            {activeCategory && (
+              <button type="button" className="ez-fchip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
+                {activeCategory.name_ar} ×
+              </button>
+            )}
+            {selectedSub !== "all" && (
+              <button type="button" className="ez-fchip" onClick={() => setSelectedSub("all")}>
+                {subcategories.find((s) => s.id === selectedSub)?.name_ar} ×
+              </button>
+            )}
+            {selectedCity && (
+              <button type="button" className="ez-fchip" onClick={() => setSelectedCity("")}>
+                {cities.find((c) => c.id === selectedCity)?.name_ar} ×
+              </button>
+            )}
+            {(quickSearch.trim() || search.trim()) && (
+              <button type="button" className="ez-fchip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
+                «{quickSearch.trim() || search.trim()}» ×
+              </button>
+            )}
+            <button type="button" className="ez-fchip ez-fchip-clear" onClick={resetAll}>
+              {txt("console.reset", "مسح الفلاتر")}
+            </button>
+            <span className="ez-fchips-count">{results.length} نتيجة</span>
+          </div>
+        )}
+
+
+
       </section>
 
       {/* ── PLATFORM STATS ── */}
@@ -575,6 +606,7 @@ function Home() {
 
         {visibleSubs.length > 0 && (
           <div className="ez-chips">
+
             <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
             {visibleSubs.map((s) => (
               <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
@@ -683,30 +715,55 @@ function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="ez-footer">
-        <div className="ez-footer-top">
+      <footer className="ez-footer" id="ez-contact">
+        <div className="ez-footer-grid">
           <div className="ez-footer-brand">
             <img src={logoUrl} alt="إزهليها" />
-            <p>{txt("footer.tagline", "دليلك الأول لتجهيز مناسباتك من أفخم مزودين الخدمات في المملكة 🤍")}</p>
+            <p>{txt("footer.tagline", "كل اللي تحتاجينه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍")}</p>
           </div>
-          <div className="ez-footer-actions">
-            <button type="button" className="ez-footer-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-            <a className="ez-footer-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
-            {user && <Link to="/favorites" className="ez-footer-link">{txt("nav.favorites", "المفضلة")}</Link>}
-            <a
-              className="ez-footer-wa"
-              href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="تواصل معنا عبر واتساب"
-            >
-              <WhatsAppIcon size={18} />
-              <span>{txt("footer.contact", "تواصل معنا")}</span>
-            </a>
+
+          <div className="ez-footer-col">
+            <h3>{txt("footer.explore", "استكشفي")}</h3>
+            <div className="ez-footer-links">
+              <button type="button" onClick={() => { resetAll(); scrollToResults(); }}>{txt("footer.all", "كل مقدمي الخدمة")}</button>
+              {categories.slice(0, 3).map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => { setSelectedCategory(c.id); setSelectedSub("all"); scrollToResults(); }}
+                >
+                  {c.name_ar}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="ez-footer-col">
+            <h3>{txt("footer.contact.title", "تواصلي معنا")}</h3>
+            <div className="ez-footer-links">
+              <a
+                className="ez-footer-wa"
+                href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WhatsAppIcon size={16} />
+                <span>{txt("footer.contact", "واتساب إزهليها")}</span>
+              </a>
+              <span>✉️ {txt("footer.email", "hello@ezhliha.com")}</span>
+              <span>📍 {txt("footer.location", "المملكة العربية السعودية")}</span>
+              <button type="button" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
+              <a href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+              {user && <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>}
+            </div>
           </div>
         </div>
-        <p className="ez-footer-copy">{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</p>
+        <div className="ez-footer-bar">
+          <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
+          <span>{txt("footer.motto", "صُممت لتجعل قرار المناسبة أسهل.")}</span>
+        </div>
       </footer>
+
 
       {aboutOpen && (
         <div className="ez-about-overlay" onClick={() => setAboutOpen(false)}>
@@ -802,22 +859,35 @@ function ProviderCard({
 }
 
 function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const [current, setCurrent] = useState(0);
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const node = ref.current;
+    if (!node || typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setCurrent(value); return; }
     let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / 850, 1);
-      setCurrent(Math.round(value * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = window.requestAnimationFrame(tick);
-    };
-    raf = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(raf);
+    let started = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || started) return;
+        started = true;
+        const startedAt = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - startedAt) / 1400, 1);
+          setCurrent(Math.round(value * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) raf = window.requestAnimationFrame(tick);
+        };
+        raf = window.requestAnimationFrame(tick);
+        observer.disconnect();
+      },
+      { threshold: 0.45 }
+    );
+    observer.observe(node);
+    return () => { observer.disconnect(); window.cancelAnimationFrame(raf); };
   }, [value]);
-  return <>{current.toLocaleString("ar-SA")}{suffix}</>;
+  return <span ref={ref}>{current.toLocaleString("ar-SA")}{suffix}</span>;
 }
+
 
 function WhatsAppIcon({ size = 18 }: { size?: number }) {
 
@@ -975,6 +1045,12 @@ const css = `
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
   .ez-console-btn { align-self:stretch; margin:10px; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-console-btn:hover { background:var(--brand-dark); }
+  .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
+  .ez-fchip:hover { border-color:var(--brand); color:var(--brand); }
+  .ez-fchip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .ez-fchip-clear:hover { background:var(--brand-dark); color:#fff; }
+  .ez-fchips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
   .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:14px 16px; margin-top:34px; }
   .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 22px; }
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
@@ -1078,17 +1154,19 @@ const css = `
   .ez-faq-item.open button { color:var(--brand); }
 
   /* FOOTER */
-  .ez-footer { background:var(--surface); border-top:1px solid var(--line); padding:44px 32px 22px; }
-  .ez-footer-top { max-width:1240px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; }
-  .ez-footer-brand { display:flex; align-items:center; gap:14px; max-width:460px; }
-  .ez-footer-brand img { height:60px; width:auto; object-fit:contain; }
-  .ez-footer-brand p { color:var(--muted); font-size:13px; line-height:1.9; margin:0; }
-  .ez-footer-actions { display:flex; flex-wrap:wrap; align-items:center; gap:18px; }
-  .ez-footer-link { color:var(--ink); text-decoration:none; font-size:14px; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 4px; }
-  .ez-footer-link:hover { color:var(--brand); }
-  .ez-footer-wa { display:inline-flex; align-items:center; gap:7px; color:var(--brand); text-decoration:none; font-weight:700; font-size:14px; border:1px solid var(--line); padding:9px 18px; border-radius:50px; }
-  .ez-footer-wa:hover { background:var(--brand); color:#fff; }
-  .ez-footer-copy { text-align:center; font-size:11px; color:var(--muted); margin:26px 0 0; letter-spacing:.3px; }
+  .ez-footer { background:var(--brand); color:#fff; padding:0; }
+  .ez-footer-grid { max-width:1240px; margin:0 auto; padding:52px 32px 44px; display:grid; grid-template-columns:1.2fr .8fr .9fr; gap:36px; }
+  .ez-footer-brand { max-width:400px; }
+  .ez-footer-brand img { height:64px; width:auto; object-fit:contain; background:#fff; border-radius:8px; padding:6px 10px; }
+  .ez-footer-brand p { color:rgba(255,255,255,.72); font-size:13.5px; line-height:1.95; margin:16px 0 0; }
+  .ez-footer-col h3 { font-size:14px; font-weight:700; margin:0; color:#fff; }
+  .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:rgba(255,255,255,.7); }
+  .ez-footer-links a, .ez-footer-links button { color:rgba(255,255,255,.7); text-decoration:none; background:transparent; border:none; padding:0; cursor:pointer; font-family:inherit; font-size:13.5px; text-align:start; }
+  .ez-footer-links a:hover, .ez-footer-links button:hover { color:#fff; }
+  .ez-footer-wa { display:inline-flex !important; align-items:center; gap:8px; color:#fff !important; font-weight:700; border:1px solid rgba(255,255,255,.28); padding:9px 18px; border-radius:50px; }
+  .ez-footer-wa:hover { background:#fff; color:var(--brand) !important; }
+  .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; padding:18px 32px; font-size:11.5px; color:rgba(255,255,255,.55); }
+
 
   /* MODAL */
   .ez-about-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; animation:ezFade .2s ease; }
@@ -1130,6 +1208,7 @@ const css = `
     .ez-h2 { font-size:26px; }
     .ez-sec, .ez-steps-wrap { padding:44px 16px; }
     .ez-console { grid-template-columns:1fr; }
+    .ez-fchips { padding:0 16px; }
     .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
     .ez-console-field:first-child { border-top:none; }
     .ez-steps-cards { grid-template-columns:1fr; }
@@ -1138,5 +1217,7 @@ const css = `
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
+    .ez-footer-grid { grid-template-columns:1fr; padding:40px 16px 32px; gap:28px; }
+    .ez-footer-bar { padding:16px; }
   }
 `;
