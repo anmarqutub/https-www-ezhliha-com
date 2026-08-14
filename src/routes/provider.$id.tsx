@@ -88,7 +88,7 @@ function ProviderPage() {
   const [qDate, setQDate] = useState("");
   const [qCity, setQCity] = useState("");
   const [qGuests, setQGuests] = useState("");
-  const [qBudget, setQBudget] = useState("");
+  
   const [qNotes, setQNotes] = useState("");
 
   const [reviews, setReviews] = useState<Review[]>([]);
