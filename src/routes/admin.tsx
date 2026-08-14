@@ -2495,7 +2495,8 @@ const FONT_OPTIONS = [
 function SiteTextsTab() {
   const [rows, setRows] = useState<SiteTextRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -2504,41 +2505,45 @@ function SiteTextsTab() {
     const merged = SITE_TEXT_DEFAULTS.map((d) => byKey.get(d.key) ?? d);
     const extras = ((data ?? []) as SiteTextRow[]).filter((r) => !SITE_TEXT_DEFAULTS.some((d) => d.key === r.key));
     setRows([...merged, ...extras]);
+    setDirty(false);
     setLoading(false);
   }, []);
   useEffect(() => { reload(); }, [reload]);
 
   const updateRow = (key: string, value: string) => {
+    setDirty(true);
     setRows((prev) => prev.map((r) => r.key === key ? { ...r, value } : r));
   };
 
-  const save = async (row: SiteTextRow) => {
-    setSavingKey(row.key);
-    const payload = { key: row.key, label: row.label, value: row.value };
+  const saveAll = async () => {
+    setSaving(true);
+    const payload = rows.map((r) => ({ key: r.key, label: r.label, value: r.value }));
     const { error } = await supabase.from("site_texts").upsert(payload, { onConflict: "key" });
-    setSavingKey(null);
+    setSaving(false);
     if (error) { alert(error.message); return; }
-    logActivity("update", "site_text", row.key, { key: row.key, label: row.label });
-    reload();
+    logActivity("update", "site_text", "bulk", { count: payload.length });
+    await reload();
+    alert("تم حفظ جميع العبارات ✅");
   };
 
   return (
     <>
-      <h1 className="adm-title">عبارات الموقع</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <h1 className="adm-title">عبارات الموقع</h1>
+        <button className="adm-btn" disabled={saving || loading} onClick={saveAll}>
+          {saving ? "جارٍ الحفظ..." : dirty ? "حفظ جميع التغييرات" : "حفظ الكل"}
+        </button>
+      </div>
       <div className="adm-card">
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {rows.map((r) => (
               <div key={r.key} style={{ border: "1px solid #F0E5E5", borderRadius: 12, padding: 14, background: "#fff" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
-                  <div>
-                    <strong>{r.label ?? r.key}</strong>
-                    <div style={{ direction: "ltr", textAlign: "left", fontSize: 11, color: "#9A8A8A", marginTop: 3 }}>{r.key}</div>
-                  </div>
-                  <button className="adm-btn-sm" disabled={savingKey === r.key} onClick={() => save(r)}>
-                    {savingKey === r.key ? "جارٍ الحفظ..." : "حفظ"}
-                  </button>
+                <div style={{ marginBottom: 8 }}>
+                  <strong>{r.label ?? r.key}</strong>
+                  <div style={{ direction: "ltr", textAlign: "left", fontSize: 11, color: "#9A8A8A", marginTop: 3 }}>{r.key}</div>
                 </div>
+
                 {r.key === "site.font_family" ? (
                   <select
                     value={r.value}
