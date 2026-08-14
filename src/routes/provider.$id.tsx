@@ -56,6 +56,8 @@ function ProviderPage() {
   const [activeImg, setActiveImg] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [qDate, setQDate] = useState("");
@@ -243,84 +245,135 @@ function ProviderPage() {
   return (
     <div dir="rtl" className="pv-root">
       <style>{css}</style>
-      <header className="pv-nav">
+      <style>{css2}</style>
+      <header className="pv-top">
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
-        <div className="pv-nav-actions">
-          {user ? (
-            <>
-              <Link to="/favorites" className="pv-link">♥ المفضلة</Link>
-              {isAdmin && <Link to="/admin" className="pv-link">الأدمن</Link>}
-              <button className="pv-btn-out" onClick={() => signOut()}>خروج</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="pv-link">دخول</Link>
-              <Link to="/signup" className="pv-btn">تسجيل</Link>
-            </>
-          )}
+        <nav className="pv-topnav">
+          <a href="/#ez-results">مقدمي الخدمات</a>
+          <a href="/#ez-cities">المدن</a>
+          <Link to="/favorites">المفضلة</Link>
+          <a href="/#ez-contact">تواصل معنا</a>
+          <a href="/#ez-faq">الأسئلة الشائعة</a>
+          {isAdmin && <Link to="/admin">الأدمن</Link>}
+        </nav>
+        <div className="pv-top-side">
+          <Link to="/" className="pv-top-cta">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
+            <span>دوّري عن مزوّد</span>
+          </Link>
+          {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
       </header>
 
-      <main className="pv-main">
-        <Link to="/" className="pv-back">‹ رجوع</Link>
-
-        <div className="pv-grid">
-          <section className="pv-gallery">
-            <div className="pv-cover-wrap">
-              <div className="pv-cover" style={{ backgroundImage: `url(${cover})` }} />
+      <section className="pv-hero">
+        <button
+          type="button"
+          className="pv-hero-main"
+          style={{ backgroundImage: `url(${cover})` }}
+          onClick={() => setGalleryOpen(true)}
+          aria-label="عرض الصور"
+        />
+        <div className="pv-hero-side">
+          {[1, 2].map((k) => {
+            const im = images[(activeImg + k) % Math.max(images.length, 1)];
+            return (
               <button
+                key={k}
                 type="button"
-                className={`pv-fav-icon ${isFav ? "active" : ""}`}
-                disabled={favLoading}
-                onClick={toggleFav}
-                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              >
-                {isFav ? "♥" : "♡"}
-              </button>
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className="pv-arrow pv-arrow-prev"
-                    onClick={() => setActiveImg((i) => (i - 1 + images.length) % images.length)}
-                    aria-label="السابق"
-                  >‹</button>
-                  <button
-                    type="button"
-                    className="pv-arrow pv-arrow-next"
-                    onClick={() => setActiveImg((i) => (i + 1) % images.length)}
-                    aria-label="التالي"
-                  >›</button>
-                  <div className="pv-counter">{activeImg + 1} / {images.length}</div>
-                </>
-              )}
+                className="pv-hero-thumb"
+                style={{ backgroundImage: `url(${im?.image_url || defaultProviderUrl})` }}
+                onClick={() => setGalleryOpen(true)}
+                aria-label={`صورة ${k + 1}`}
+              />
+            );
+          })}
+        </div>
+        {images.length > 0 && (
+          <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
+            <span>شوفي الصور</span>
+          </button>
+        )}
+      </section>
+
+      <main className="pv-main">
+        <div className="pv-head-grid">
+          <div className="pv-head-info">
+            <div className="pv-crumbs">
+              <span className="pv-chip-new">جديد في أزهليها</span>
+              {subName && <span>{subName}</span>}
+              {cityName && <span className="pv-crumb-city">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                {cityName}
+              </span>}
+              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
             </div>
 
-            {images.length > 1 && (
-              <div className="pv-thumbs">
-                {images.map((im, i) => (
-                  <button
-                    key={im.id}
-                    className={`pv-thumb ${i === activeImg ? "active" : ""}`}
-                    onClick={() => setActiveImg(i)}
-                    style={{ backgroundImage: `url(${im.image_url})` }}
-                    aria-label={`صورة ${i + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="pv-info">
             <div className="pv-title-row">
               {provider.logo_url && <img src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
               <h1>{provider.name}</h1>
             </div>
-            <div className="pv-meta">
-              {cityName && <span>📍 {cityName}</span>}
-              {subName && <span>• {subName}</span>}
-              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
+            {provider.description && <p className="pv-lead">{provider.description}</p>}
+
+            <div className="pv-tiles">
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                <small>منطقة الخدمة</small>
+                <strong>{provider.address || cityName || "—"}</strong>
+              </div>
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2" /><path d="M2.5 19a6.5 6.5 0 0 1 13 0" /><path d="M17 11a3 3 0 1 0-1.6-5.5" /></svg>
+                <small>نطاق المناسبة</small>
+                <strong>
+                  {provider.people_from || provider.people_to
+                    ? `${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`
+                    : "حسب ترتيب المكان"}
+                </strong>
+              </div>
+              <div className="pv-tile">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 12l9 5 9-5" /></svg>
+                <small>طريقة الخدمة</small>
+                <strong>{subName || "حسب الطلب"}</strong>
+              </div>
             </div>
+          </div>
+
+          <aside className="pv-aside">
+            <div className="pv-aside-icons">
+              <button type="button" className="pv-icon-btn" onClick={shareProvider} aria-label="مشاركة"><ShareIcon /></button>
+              <button
+                type="button"
+                className={`pv-icon-btn ${isFav ? "on" : ""}`}
+                disabled={favLoading}
+                onClick={toggleFav}
+                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+              >{isFav ? "♥" : "♡"}</button>
+            </div>
+            <div className="pv-price-card">
+              <small>السعر التقريبي</small>
+              <div className="pv-price-value">
+                {provider.price_from
+                  ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
+                  : (provider.price || "السعر حسب التفاصيل")}
+              </div>
+              <p>يختلف السعر حسب العدد والتاريخ والتفاصيل المطلوبة.</p>
+              {provider.whatsapp && (
+                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
+                  <SendIcon />
+                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                </button>
+              )}
+              <div className="pv-price-note">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>
+                <span>الطلب ما يثبت الحجز إلا بعد موافقة مقدم الخدمة على التاريخ والتفاصيل.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="pv-body">
+          <section className="pv-info">
+
 
             {(() => {
               const showPkg = provider.show_packages !== false && packages.length > 0;
@@ -409,29 +462,8 @@ function ProviderPage() {
               );
             })()}
 
-            {(provider.price_from || provider.price_to) && (
-              <div className="pv-price">
-                {provider.price_from && <span>من {provider.price_from} ر.س</span>}
-                {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
-              </div>
-            )}
-            {provider.price && <div className="pv-price">{provider.price}</div>}
-            {(provider.people_from || provider.people_to) && (
-              <div className="pv-people">
-                👥 تكفي {provider.people_from ?? ""}
-                {provider.people_from && provider.people_to ? `–${provider.people_to}` : (provider.people_to ?? "")}
-                {" "}شخص
-              </div>
-            )}
-            {provider.address && <div className="pv-addr">📌 {provider.address}</div>}
-
             <div className="pv-actions">
-              {provider.whatsapp && (
-                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
-                  <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
-                </button>
-              )}
+
               {waUrl && (
                 <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
@@ -642,7 +674,21 @@ function ProviderPage() {
 
 
 
+      {galleryOpen && images.length > 0 && (
+        <div className="pv-modal-overlay" onClick={() => setGalleryOpen(false)}>
+          <div className="pv-lightbox" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="pv-quote-close" onClick={() => setGalleryOpen(false)} aria-label="إغلاق">×</button>
+            <div className="pv-lightbox-grid">
+              {images.map((im) => (
+                <img key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {callOpen && callUrl && (
+
         <div className="pv-modal-overlay" onClick={() => setCallOpen(false)}>
           <div className="pv-modal" onClick={(e) => e.stopPropagation()}>
             <button type="button" className="pv-modal-close" onClick={() => setCallOpen(false)} aria-label="إغلاق">×</button>
@@ -982,4 +1028,69 @@ const css = `
   .pv-modal-call:hover { background:#4d0000; }
   .pv-modal-copy { flex:1; background:#fff; color:#660000; padding:14px; border-radius:10px; font-weight:800; font-size:15px; border:2px solid #660000; cursor:pointer; font-family:inherit; }
   .pv-modal-copy:hover { background:#f5f2e5; }
+`;
+
+const css2 = `
+  .pv-root { background:#F7F3EA; }
+  .pv-top { position:sticky; top:0; z-index:60; background:#FFFDF8; border-bottom:1px solid #E3DBC9; height:64px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:0 28px; }
+  .pv-top .pv-brand img { height:38px; }
+  .pv-topnav { display:flex; align-items:center; gap:22px; }
+  .pv-topnav a { color:#241C1A; text-decoration:none; font-size:14px; font-weight:600; }
+  .pv-topnav a:hover { color:#660000; }
+  .pv-top-side { display:flex; align-items:center; gap:10px; }
+  .pv-top-cta { display:inline-flex; align-items:center; gap:8px; background:#660000; color:#fff; text-decoration:none; padding:9px 18px; border-radius:999px; font-size:13px; font-weight:700; }
+  .pv-top-cta:hover { background:#4d0000; }
+  .pv-top-out { background:none; border:1px solid #E3DBC9; color:#7A6A64; border-radius:999px; padding:7px 14px; font-family:inherit; font-size:12px; cursor:pointer; }
+
+  .pv-hero { position:relative; display:grid; grid-template-columns:1.9fr 1fr; gap:12px; padding:12px 28px 0; max-width:1440px; margin:0 auto; }
+  .pv-hero-main, .pv-hero-thumb { border:0; padding:0; cursor:pointer; background-size:cover; background-position:center; background-color:#EDE6D6; border-radius:6px; }
+  .pv-hero-main { height:520px; }
+  .pv-hero-side { display:grid; grid-template-rows:1fr 1fr; gap:12px; height:520px; }
+  .pv-hero-showall { position:absolute; bottom:18px; left:44px; display:inline-flex; align-items:center; gap:8px; background:#FFFDF8; color:#241C1A; border:1px solid #E3DBC9; border-radius:8px; padding:9px 16px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+
+  .pv-main { max-width:1440px; margin:0 auto; padding:26px 28px 60px; }
+  .pv-head-grid { display:grid; grid-template-columns:1fr 320px; gap:34px; align-items:start; }
+  .pv-crumbs { display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap; color:#7A6A64; font-size:12.5px; margin-bottom:10px; }
+  .pv-crumb-city { display:inline-flex; align-items:center; gap:4px; }
+  .pv-chip-new { background:#660000; color:#fff; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:700; }
+  .pv-head-info h1 { font-size:44px; font-weight:900; line-height:1.15; color:#241C1A; }
+  .pv-lead { margin:14px 0 22px; color:#5B4C46; font-size:15.5px; line-height:1.9; max-width:760px; }
+  .pv-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .pv-tile { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:8px; padding:14px 16px; position:relative; }
+  .pv-tile svg { color:#660000; position:absolute; top:14px; left:16px; }
+  .pv-tile small { display:block; color:#8A7A73; font-size:11.5px; margin-bottom:6px; }
+  .pv-tile strong { font-size:14.5px; font-weight:800; color:#241C1A; }
+
+  .pv-aside { display:flex; flex-direction:column; gap:12px; position:sticky; top:80px; }
+  .pv-aside-icons { display:flex; gap:8px; justify-content:flex-end; }
+  .pv-icon-btn { width:36px; height:36px; border-radius:8px; border:1px solid #E3DBC9; background:#FFFDF8; color:#660000; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .pv-icon-btn.on { background:#660000; color:#fff; border-color:#660000; }
+  .pv-price-card { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:10px; padding:20px; text-align:center; }
+  .pv-price-card > small { color:#8A7A73; font-size:12px; }
+  .pv-price-value { font-size:23px; font-weight:900; color:#660000; margin:8px 0 10px; }
+  .pv-price-card > p { color:#7A6A64; font-size:12.5px; line-height:1.8; margin-bottom:16px; }
+  .pv-price-card .pv-btn-quote { width:100%; border-radius:8px; }
+  .pv-price-note { display:flex; gap:8px; align-items:flex-start; text-align:right; color:#8A7A73; font-size:11.5px; line-height:1.7; margin-top:14px; }
+  .pv-price-note svg { flex:none; margin-top:3px; color:#660000; }
+
+  .pv-body { margin-top:34px; background:#FFFDF8; border:1px solid #E3DBC9; border-radius:12px; padding:24px; }
+  .pv-body .pv-info h1 { display:none; }
+  .pv-body .pv-title-row { display:none; }
+
+  .pv-lightbox { background:#FFFDF8; border-radius:14px; padding:22px; width:min(1000px,94vw); max-height:90vh; overflow:auto; }
+  .pv-lightbox-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .pv-lightbox-grid img { width:100%; height:200px; object-fit:cover; border-radius:8px; }
+
+  @media (max-width:900px) {
+    .pv-topnav { display:none; }
+    .pv-hero { grid-template-columns:1fr; padding:10px 14px 0; }
+    .pv-hero-main { height:260px; }
+    .pv-hero-side { grid-template-rows:1fr; grid-template-columns:1fr 1fr; height:130px; }
+    .pv-hero-showall { left:26px; bottom:10px; }
+    .pv-main { padding:20px 14px 50px; }
+    .pv-head-grid { grid-template-columns:1fr; gap:22px; }
+    .pv-head-info h1 { font-size:30px; }
+    .pv-tiles { grid-template-columns:1fr; }
+    .pv-aside { position:static; }
+  }
 `;
