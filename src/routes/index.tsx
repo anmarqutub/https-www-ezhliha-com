@@ -414,14 +414,33 @@ function Home() {
           </button>
         </div>
 
+      </section>
+
+      {/* ── PLATFORM STATS ── */}
+      <section className="ez-stats" aria-label="أرقام إزهليها">
         <div className="ez-stat">
           <span className="ez-stat-icon">🏛️</span>
           <div>
-            <strong>{providers.length}+</strong>
+            <strong><CountUp value={providers.length} suffix="+" /></strong>
             <small>{txt("stat.providers", "مزود خدمة")}</small>
           </div>
         </div>
+        <div className="ez-stat">
+          <span className="ez-stat-icon">📍</span>
+          <div>
+            <strong><CountUp value={cities.length} suffix="" /></strong>
+            <small>{txt("stat.cities", "مدينة")}</small>
+          </div>
+        </div>
+        <div className="ez-stat">
+          <span className="ez-stat-icon">🏷️</span>
+          <div>
+            <strong><CountUp value={categories.length} suffix="" /></strong>
+            <small>{txt("stat.categories", "تصنيف")}</small>
+          </div>
+        </div>
       </section>
+
 
       {/* ── HOW IT WORKS ── */}
       <section className="ez-steps-sec">
