@@ -1046,13 +1046,17 @@ const css = `
   .ez-hero-checks i { width:20px; height:20px; border-radius:50%; border:1px solid rgba(102,0,0,.2); background:rgba(102,0,0,.06); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:11px; color:var(--brand); }
   .ez-hero-media { position:relative; max-width:570px; width:100%; }
   .ez-hero-frame { position:absolute; top:-32px; inset-inline-start:-32px; width:38%; height:72%; border:1px solid rgba(102,0,0,.16); z-index:0; }
-  .ez-hero-banner { display:block; position:relative; overflow:hidden; box-shadow:0 28px 70px rgba(53,24,19,.16); z-index:1; }
+  .ez-hero-banner { display:block; position:relative; overflow:hidden; border-radius:14px; box-shadow:0 28px 70px rgba(53,24,19,.16); z-index:1; }
   .ez-hero-banner img { display:block; width:100%; aspect-ratio:16/10; height:auto; object-fit:cover; transition:transform .52s var(--ease-out); }
   .ez-hero-banner:hover img { transform:scale(1.035); }
-  .ez-hero-banner-empty { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; text-align:center; padding:32px; }
-  .ez-hero-banner-empty h2 { font-size:42px; margin-bottom:10px; }
-  .ez-hero-banner-empty p { opacity:.9; font-size:15px; max-width:420px; }
-  .ez-hero-banner-cap { position:absolute; inset:auto 0 0 0; padding:20px 22px; background:linear-gradient(transparent, rgba(0,0,0,.44)); color:#fff; font-size:16px; font-weight:500; }
+  .ez-hero-banner-empty { position:relative; background:radial-gradient(120% 120% at 20% 0%, rgba(255,255,255,.14), transparent 55%), linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; text-align:center; padding:32px; }
+  .ez-hero-banner-empty::after { content:""; position:absolute; inset:14px; border:1px solid rgba(255,255,255,.18); border-radius:10px; pointer-events:none; }
+  .ez-hero-banner-empty h2 { font-size:clamp(30px,4vw,44px); margin-bottom:12px; letter-spacing:-.02em; }
+  .ez-hero-banner-empty p { opacity:.88; font-size:14.5px; line-height:1.9; max-width:420px; margin:0 auto; }
+  .ez-hero-banner-cap { position:absolute; inset:auto 0 0 0; padding:22px; background:linear-gradient(transparent, rgba(43,10,10,.72)); color:#fff; display:grid; gap:4px; text-align:start; }
+  .ez-hero-banner-cap strong { font-size:19px; font-weight:600; }
+  .ez-hero-banner-cap span { font-size:13px; opacity:.85; line-height:1.8; }
+
   .ez-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:rgba(255,255,255,.14); backdrop-filter:blur(6px); color:#fff; font-size:22px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
   .ez-hero-arrow:hover { background:var(--brand); border-color:var(--brand); }
   .ez-hero-arrow-prev { right:14px; }
