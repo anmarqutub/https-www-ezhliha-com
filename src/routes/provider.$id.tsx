@@ -5,11 +5,34 @@ import { useAuth } from "@/hooks/use-auth";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
+import refHall from "@/assets/provider-hall.jpg.asset.json";
+import refBeauty from "@/assets/provider-beauty.jpg.asset.json";
+import refBuffet from "@/assets/provider-buffet.jpg.asset.json";
+import refFlowers from "@/assets/provider-flowers.jpg.asset.json";
+import refPhoto from "@/assets/provider-photo.jpg.asset.json";
+import refLamia from "@/assets/provider-lamia.jpg.asset.json";
 
 export const Route = createFileRoute("/provider/$id")({
   component: ProviderPage,
   head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — إزهليها" }] }),
 });
+
+const REF_HALL = [refHall.url, refFlowers.url, refBuffet.url];
+const REF_BEAUTY = [refBeauty.url, refFlowers.url, refPhoto.url];
+const REF_FOOD = [refBuffet.url, refLamia.url, refFlowers.url];
+const REF_PHOTO = [refPhoto.url, refFlowers.url, refHall.url];
+const REF_FLOWERS = [refFlowers.url, refHall.url, refBeauty.url];
+
+function pickRefImages(sub: string): string[] {
+  const s = (sub || "").trim();
+  if (/تجميل|مكياج|كوافير|عناية|شعر/.test(s)) return REF_BEAUTY;
+  if (/تصوير|فيديو|مصور/.test(s)) return REF_PHOTO;
+  if (/ضياف|بوفيه|طعام|حلوي|حلويات|قهوة|كيك|مطبخ/.test(s)) return REF_FOOD;
+  if (/ورد|زهور|تنسيق|ديكور/.test(s)) return REF_FLOWERS;
+  if (/قاعة|قاعات|استراحة|منتجع|فلل|مكان/.test(s)) return REF_HALL;
+  return REF_HALL;
+}
+
 
 type MediaItem = { url: string; thumbnail_url?: string | null };
 type Provider = {
@@ -194,7 +217,11 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url || defaultProviderUrl;
+  const refImages = pickRefImages(subName);
+  const heroImgs: string[] = [0, 1, 2].map(
+    (i) => images[(activeImg + i) % Math.max(images.length, 1)]?.image_url || refImages[i % refImages.length]
+  );
+  const cover = heroImgs[0];
   const waUrl = waLink(provider.whatsapp);
   const callUrl = phoneLink(provider.contact_phone);
   const ig = cleanHandle(provider.instagram);
@@ -274,19 +301,16 @@ function ProviderPage() {
           aria-label="عرض الصور"
         />
         <div className="pv-hero-side">
-          {[1, 2].map((k) => {
-            const im = images[(activeImg + k) % Math.max(images.length, 1)];
-            return (
-              <button
-                key={k}
-                type="button"
-                className="pv-hero-thumb"
-                style={{ backgroundImage: `url(${im?.image_url || defaultProviderUrl})` }}
-                onClick={() => setGalleryOpen(true)}
-                aria-label={`صورة ${k + 1}`}
-              />
-            );
-          })}
+          {[1, 2].map((k) => (
+            <button
+              key={k}
+              type="button"
+              className="pv-hero-thumb"
+              style={{ backgroundImage: `url(${heroImgs[k]})` }}
+              onClick={() => setGalleryOpen(true)}
+              aria-label={`صورة ${k + 1}`}
+            />
+          ))}
         </div>
         {images.length > 0 && (
           <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
