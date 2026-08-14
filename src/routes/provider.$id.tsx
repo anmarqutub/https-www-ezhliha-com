@@ -200,7 +200,11 @@ function ProviderPage() {
   if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
-  const cover = images[activeImg]?.image_url || defaultProviderUrl;
+  const refImages = pickRefImages(subName);
+  const heroImgs: string[] = [0, 1, 2].map(
+    (i) => images[(activeImg + i) % Math.max(images.length, 1)]?.image_url || refImages[i % refImages.length]
+  );
+  const cover = heroImgs[0];
   const waUrl = waLink(provider.whatsapp);
   const callUrl = phoneLink(provider.contact_phone);
   const ig = cleanHandle(provider.instagram);
