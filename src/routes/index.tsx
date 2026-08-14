@@ -414,6 +414,37 @@ function Home() {
           </button>
         </div>
 
+        {filtersActive && (
+          <div className="ez-chips">
+            {activeCategory && (
+              <button type="button" className="ez-chip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
+                {activeCategory.name_ar} ×
+              </button>
+            )}
+            {selectedSub !== "all" && (
+              <button type="button" className="ez-chip" onClick={() => setSelectedSub("all")}>
+                {subcategories.find((s) => s.id === selectedSub)?.name_ar} ×
+              </button>
+            )}
+            {selectedCity && (
+              <button type="button" className="ez-chip" onClick={() => setSelectedCity("")}>
+                {cities.find((c) => c.id === selectedCity)?.name_ar} ×
+              </button>
+            )}
+            {(quickSearch.trim() || search.trim()) && (
+              <button type="button" className="ez-chip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
+                «{quickSearch.trim() || search.trim()}» ×
+              </button>
+            )}
+            <button type="button" className="ez-chip ez-chip-clear" onClick={resetAll}>
+              {txt("console.reset", "مسح الفلاتر")}
+            </button>
+            <span className="ez-chips-count">{results.length} نتيجة</span>
+          </div>
+        )}
+
+
+
       </section>
 
       {/* ── PLATFORM STATS ── */}
