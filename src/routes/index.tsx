@@ -302,6 +302,7 @@ function Home() {
           <a className="ez-nav-link" href="#ez-cities">{txt("nav.cities", "المدن")}</a>
           {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
           <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+          <button type="button" className="ez-nav-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
           <a
             className="ez-nav-link"
             href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
