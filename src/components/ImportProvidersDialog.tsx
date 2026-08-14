@@ -466,7 +466,8 @@ export function ImportProvidersDialog({
         if (Object.keys(changes).length === 0) {
           skipped++; // identical row already in the site → leave it as is
         } else {
-          const { error } = await supabase.from("providers").update(changes).eq("id", existing.id);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { error } = await supabase.from("providers").update(changes as any).eq("id", existing.id);
           if (error) { fail++; continue; }
           updated++;
         }
