@@ -17,6 +17,23 @@ export const Route = createFileRoute("/provider/$id")({
   head: () => ({ meta: [{ title: "تفاصيل مقدم الخدمة — إزهليها" }] }),
 });
 
+const REF_HALL = [refHall.url, refFlowers.url, refBuffet.url];
+const REF_BEAUTY = [refBeauty.url, refFlowers.url, refPhoto.url];
+const REF_FOOD = [refBuffet.url, refLamia.url, refFlowers.url];
+const REF_PHOTO = [refPhoto.url, refFlowers.url, refHall.url];
+const REF_FLOWERS = [refFlowers.url, refHall.url, refBeauty.url];
+
+function pickRefImages(sub: string): string[] {
+  const s = (sub || "").trim();
+  if (/تجميل|مكياج|كوافير|عناية|شعر/.test(s)) return REF_BEAUTY;
+  if (/تصوير|فيديو|مصور/.test(s)) return REF_PHOTO;
+  if (/ضياف|بوفيه|طعام|حلوي|حلويات|قهوة|كيك|مطبخ/.test(s)) return REF_FOOD;
+  if (/ورد|زهور|تنسيق|ديكور/.test(s)) return REF_FLOWERS;
+  if (/قاعة|قاعات|استراحة|منتجع|فلل|مكان/.test(s)) return REF_HALL;
+  return REF_HALL;
+}
+
+
 type MediaItem = { url: string; thumbnail_url?: string | null };
 type Provider = {
   id: string; name: string; description: string | null;
