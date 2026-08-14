@@ -284,19 +284,16 @@ function ProviderPage() {
           aria-label="عرض الصور"
         />
         <div className="pv-hero-side">
-          {[1, 2].map((k) => {
-            const im = images[(activeImg + k) % Math.max(images.length, 1)];
-            return (
-              <button
-                key={k}
-                type="button"
-                className="pv-hero-thumb"
-                style={{ backgroundImage: `url(${im?.image_url || defaultProviderUrl})` }}
-                onClick={() => setGalleryOpen(true)}
-                aria-label={`صورة ${k + 1}`}
-              />
-            );
-          })}
+          {[1, 2].map((k) => (
+            <button
+              key={k}
+              type="button"
+              className="pv-hero-thumb"
+              style={{ backgroundImage: `url(${heroImgs[k]})` }}
+              onClick={() => setGalleryOpen(true)}
+              aria-label={`صورة ${k + 1}`}
+            />
+          ))}
         </div>
         {images.length > 0 && (
           <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
