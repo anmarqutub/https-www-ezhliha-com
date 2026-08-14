@@ -63,6 +63,18 @@ export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهل�
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
+const REF_IMAGES = [catCateringAsset.url, catVenueAsset.url, catPhotoAsset.url, catBeautyAsset.url];
+
+function fallbackCategoryImage(name: string, index: number) {
+  const n = name || "";
+  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCateringAsset.url;
+  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catVenueAsset.url;
+  if (/تصوير|فيديو|كامي/.test(n)) return catPhotoAsset.url;
+  if (/تجميل|شعر|مكياج|عناي/.test(n)) return catBeautyAsset.url;
+  return REF_IMAGES[index % REF_IMAGES.length];
+}
+
+
 function Home() {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [cities, setCities] = useState<City[]>([]);
