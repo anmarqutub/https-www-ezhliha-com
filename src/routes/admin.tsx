@@ -1999,13 +1999,13 @@ function ProvidersTab() {
             <Field label="الاسم *"><input value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></Field>
             <Field label="المدينة *">
               <select value={editing.city_id ?? ""} onChange={(e) => setEditing({ ...editing, city_id: e.target.value })}>
-                <option value="">اختاري...</option>
+                <option value="">اختر...</option>
                 {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
               </select>
             </Field>
             <Field label="التصنيف الفرعي *">
               <select value={editing.subcategory_id ?? ""} onChange={(e) => setEditing({ ...editing, subcategory_id: e.target.value })}>
-                <option value="">اختاري...</option>
+                <option value="">اختر...</option>
                 {editSubs.map((s) => {
                   const cat = cats.find((c) => c.id === s.category_id);
                   const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;

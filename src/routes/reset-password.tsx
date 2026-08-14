@@ -61,7 +61,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <AuthShell title="إعادة تعيين كلمة المرور" sub="اختاري كلمة مرور جديدة لحسابك">
+    <AuthShell title="إعادة تعيين كلمة المرور" sub="اختر كلمة مرور جديدة لحسابك">
       {done ? (
         <div className="auth-form" style={{ textAlign: "center", gap: 12 }}>
           <div style={{ fontSize: 40 }}>✅</div>

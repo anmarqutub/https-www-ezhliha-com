@@ -286,7 +286,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>دوّري عن مزوّد</span>
+            <span>دوّر عن مزوّد</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -315,7 +315,7 @@ function ProviderPage() {
         {images.length > 0 && (
           <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
-            <span>شوفي الصور</span>
+            <span>شاهد الصور</span>
           </button>
         )}
       </section>
@@ -384,7 +384,7 @@ function ProviderPage() {
               {provider.whatsapp && (
                 <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
                   <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                  <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
                 </button>
               )}
               <div className="pv-price-note">
@@ -655,7 +655,7 @@ function ProviderPage() {
               <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
             <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
-            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبينه.</p>
+            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبيه.</p>
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
@@ -673,7 +673,7 @@ function ProviderPage() {
               <label className="pv-quote-field">
                 <span>الميزانية التقريبية</span>
                 <select value={qBudget} onChange={(e) => setQBudget(e.target.value)}>
-                  <option value="">اختاري النطاق</option>
+                  <option value="">اختر النطاق</option>
                   <option value="أقل من 5,000 ر.س">أقل من 5,000 ر.س</option>
                   <option value="5,000 - 10,000 ر.س">5,000 - 10,000 ر.س</option>
                   <option value="10,000 - 25,000 ر.س">10,000 - 25,000 ر.س</option>
@@ -690,7 +690,7 @@ function ProviderPage() {
 
             <div className="pv-quote-actions">
               <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
-              <button type="submit" className="pv-btn-quote"><SendIcon /><span>جهّزي الطلب</span></button>
+              <button type="submit" className="pv-btn-quote"><SendIcon /><span>أرسل الطلب لمقدم الخدمة</span></button>
             </div>
           </form>
         </div>

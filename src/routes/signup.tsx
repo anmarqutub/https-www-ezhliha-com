@@ -101,7 +101,7 @@ function SignupPage() {
   }
 
   return (
-    <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة للتسجيل">
+    <AuthShell title="إنشاء حساب جديد" sub="تحتاج كود الشراء من متجر سلة للتسجيل">
       <form onSubmit={onSubmit} className="auth-form" noValidate>
         <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة" error={codeError}>
           <input required value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setServerErrors((s) => ({ ...s, code: "" })); }} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
@@ -131,7 +131,7 @@ function SignupPage() {
             value={city}
             onChange={(e) => { setCity(e.target.value); setServerErrors((s) => ({ ...s, city: "" })); }}
           >
-            <option value="">اختاري المدينة</option>
+            <option value="">اختر المدينة</option>
             {cities?.map((c) => (
               <option key={c.id} value={c.name_ar}>{c.name_ar}</option>
             ))}
