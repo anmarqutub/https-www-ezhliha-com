@@ -336,7 +336,7 @@ function Home() {
             </ul>
           </div>
 
-          <div className="ez-hero-media">
+          <div className="ez-hero-media ez-reveal ez-reveal-1">
             <span className="ez-hero-frame" aria-hidden="true" />
             {currentBanner ? (
               currentBanner.link_url ? (
