@@ -802,22 +802,35 @@ function ProviderCard({
 }
 
 function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const [current, setCurrent] = useState(0);
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const node = ref.current;
+    if (!node || typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setCurrent(value); return; }
     let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / 850, 1);
-      setCurrent(Math.round(value * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = window.requestAnimationFrame(tick);
-    };
-    raf = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(raf);
+    let started = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || started) return;
+        started = true;
+        const startedAt = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - startedAt) / 1400, 1);
+          setCurrent(Math.round(value * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) raf = window.requestAnimationFrame(tick);
+        };
+        raf = window.requestAnimationFrame(tick);
+        observer.disconnect();
+      },
+      { threshold: 0.45 }
+    );
+    observer.observe(node);
+    return () => { observer.disconnect(); window.cancelAnimationFrame(raf); };
   }, [value]);
-  return <>{current.toLocaleString("ar-SA")}{suffix}</>;
+  return <span ref={ref}>{current.toLocaleString("ar-SA")}{suffix}</span>;
 }
+
 
 function WhatsAppIcon({ size = 18 }: { size?: number }) {
 
