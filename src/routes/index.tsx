@@ -4,6 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
+import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
+import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
+import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
+import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Home,
