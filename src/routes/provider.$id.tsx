@@ -60,6 +60,17 @@ type Branch = { id: string; name: string; address: string | null; map_url: strin
 type SiteText = { key: string; value: string };
 type OfferTab = "overview" | "packages" | "services" | "branches";
 
+// رسائل تحقق بالعربية للحقول الإلزامية
+function arValidity(message: string) {
+  return {
+    onInvalid: (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      e.currentTarget.setCustomValidity(message),
+    onInput: (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      e.currentTarget.setCustomValidity(""),
+  } as const;
+}
+
+
 function ProviderPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
