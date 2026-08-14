@@ -853,34 +853,50 @@ function AuthGate() {
 }
 
 const css = `
-  .ez-root { --bg:#F7F3EA; --surface:#FFFDF8; --brand:#660000; --brand-dark:#4D0000; --ink:#241C1A; --muted:#7A6A64; --line:#E3DBC9;
-    min-height:100vh; background:var(--bg); font-family:Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; }
+  .ez-root { --bg:#F6F2E8; --surface:#FDFBF5; --brand:#660000; --brand-dark:#4D0000; --ink:#2A211C; --muted:#6E6259; --line:#DDD6C8; --sec:#E9E3D5; --gold:#C9A063;
+    --ease-out:cubic-bezier(.23,1,.32,1);
+    min-height:100vh; background:var(--bg);
+    background-image:radial-gradient(circle at 85% 6%, rgba(201,160,99,.22), transparent 24rem), linear-gradient(180deg,#FBF8F0,#F5F1E6);
+    font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; font-size:15px; line-height:1.78; }
   .ez-root * { box-sizing:border-box; }
+  .ez-root h1, .ez-root h2, .ez-root h3, .ez-root h4, .ez-root button, .ez-root nav { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
+  .ez-root ::selection { background:var(--brand); color:#FBF8F0; }
+  .ez-root button, .ez-root a { transition:transform .16s var(--ease-out), opacity .18s var(--ease-out), color .18s var(--ease-out), background-color .18s var(--ease-out), border-color .18s var(--ease-out); }
+  .ez-root button:active { transform:scale(.97); }
   .ez-logo-text { font-family:'Rakkas','Reem Kufi Fun',Tajawal,serif; font-weight:400; letter-spacing:1px; }
 
+  .ez-soft-grid { background-image:linear-gradient(rgba(102,0,0,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(102,0,0,.045) 1px, transparent 1px); background-size:32px 32px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ez-reveal { animation:ezRevealUp 650ms var(--ease-out) both; }
+    .ez-reveal-1 { animation-delay:80ms; }
+    .ez-reveal-2 { animation-delay:150ms; }
+  }
+  @keyframes ezRevealUp { from { opacity:0; transform:translateY(18px) } to { opacity:1; transform:translateY(0) } }
+
   /* NAV */
-  .ez-nav { background:rgba(255,253,248,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:8px 32px; display:flex; align-items:center; justify-content:space-between; gap:18px; position:sticky; top:0; z-index:100; }
+  .ez-nav { background:rgba(253,251,245,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:8px 32px; display:flex; align-items:center; justify-content:space-between; gap:18px; position:sticky; top:0; z-index:100; }
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
   .ez-brand-logo { height:64px; width:auto; object-fit:contain; }
   .ez-nav-menu { display:flex; align-items:center; gap:22px; }
-  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:14px; font-weight:600; background:none; border:none; cursor:pointer; font-family:inherit; padding:4px 0; position:relative; }
+  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:13.5px; font-weight:500; background:none; border:none; cursor:pointer; font-family:"Alexandria","Noto Sans Arabic",sans-serif; padding:4px 0; position:relative; }
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
-  .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:700; }
-  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:none; padding:10px 20px; border-radius:50px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; }
+  .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
+  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:none; padding:10px 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-nav-cta:hover { background:var(--brand-dark); }
 
   /* SHARED */
-  .ez-eyebrow { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--brand); font-weight:600; letter-spacing:.5px; margin-bottom:14px; }
-  .ez-eyebrow-line { display:inline-block; width:44px; height:1px; background:var(--brand); opacity:.5; }
-  .ez-h2 { font-size:34px; font-weight:800; line-height:1.3; margin:0 0 10px; letter-spacing:-.5px; }
-  .ez-h3 { font-size:18px; font-weight:800; margin:26px 0 14px; }
-  .ez-muted { color:var(--muted); font-size:15px; line-height:1.9; max-width:560px; }
+  .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Alexandria",sans-serif; }
+  .ez-eyebrow-line { display:inline-block; width:1.65rem; height:1px; background:linear-gradient(90deg, transparent, var(--brand)); }
+  .ez-h2 { font-size:32px; font-weight:600; line-height:1.4; margin:0 0 10px; letter-spacing:-.035em; }
+  .ez-h3 { font-size:17px; font-weight:600; margin:26px 0 14px; }
+  .ez-muted { color:var(--muted); font-size:13.5px; line-height:1.9; max-width:560px; }
   .ez-count { color:var(--muted); font-size:16px; font-weight:600; margin-inline-start:8px; }
-  .ez-btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:13px 26px; border-radius:8px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; margin-top:20px; transition:background .2s, transform .2s; }
+  .ez-btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:12px 24px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; margin-top:20px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-btn-primary:hover { background:var(--brand-dark); transform:translateY(-2px); }
-  .ez-btn-ghost { background:transparent; border:1px solid var(--line); color:var(--brand); padding:10px 16px; border-radius:8px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  .ez-btn-ghost { background:transparent; border:1px solid var(--line); color:var(--brand); padding:10px 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; }
   .ez-btn-ghost:hover { border-color:var(--brand); }
+
 
   /* HERO */
   .ez-hero { max-width:1240px; margin:0 auto; padding:56px 32px 0; }
