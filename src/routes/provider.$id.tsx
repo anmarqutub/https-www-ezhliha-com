@@ -216,6 +216,30 @@ function ProviderPage() {
     }
   };
 
+  const submitQuote = (e: React.FormEvent) => {
+    e.preventDefault();
+    const fmtDate = (v: string) => {
+      if (!v) return "";
+      const [y, m, d] = v.split("-");
+      return `${d}/${m}/${y}`;
+    };
+    const lines = [
+      "مرحبا .. جايتك من موقع ازهليها",
+      "",
+      `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
+      `- تاريخ المناسبة : ${fmtDate(qDate) || "-"}`,
+      `- المدينة: ${qCity || cityName || "-"}`,
+      `- عدد الضيوف: ${qGuests || "-"}`,
+      `- الميزانية التقريبية: ${qBudget || "-"}`,
+      `- الوصف: ${qNotes || "-"}`,
+    ];
+    const url = waLink(provider.whatsapp, lines.join("\n"));
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    setQuoteOpen(false);
+  };
+
+
+
   return (
     <div dir="rtl" className="pv-root">
       <style>{css}</style>
