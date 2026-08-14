@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import SiteFooter from "@/components/SiteFooter";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
@@ -131,6 +132,19 @@ function Home() {
   }, []);
 
   const txt = (key: string, fallback: string) => siteTexts[key] || fallback;
+  const statNumber = (key: string, auto: number) => {
+    const raw = (siteTexts[key] ?? "").replace(/[^\d]/g, "");
+    return raw ? Number(raw) : auto;
+  };
+
+  // Scroll to hash target after data loads (links coming from inner pages)
+  useEffect(() => {
+    if (loading || typeof window === "undefined") return;
+    const id = window.location.hash.replace("#", "");
+    if (!id) return;
+    const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   // Banner rotator
   useEffect(() => {
@@ -288,6 +302,7 @@ function Home() {
           <a className="ez-nav-link" href="#ez-cities">{txt("nav.cities", "المدن")}</a>
           {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
           <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
+          <button type="button" className="ez-nav-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
           <a
             className="ez-nav-link"
             href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
@@ -452,25 +467,62 @@ function Home() {
         <div className="ez-stat">
           <span className="ez-stat-icon">🏛️</span>
           <div>
-            <strong><CountUp value={providers.length} suffix="+" /></strong>
+            <strong><CountUp value={statNumber("stat.providers.value", providers.length)} suffix="+" /></strong>
             <small>{txt("stat.providers", "مزود خدمة")}</small>
           </div>
         </div>
         <div className="ez-stat">
           <span className="ez-stat-icon">📍</span>
           <div>
-            <strong><CountUp value={cities.length} suffix="" /></strong>
+            <strong><CountUp value={statNumber("stat.cities.value", cities.length)} /></strong>
             <small>{txt("stat.cities", "مدينة")}</small>
           </div>
         </div>
         <div className="ez-stat">
           <span className="ez-stat-icon">🏷️</span>
           <div>
-            <strong><CountUp value={categories.length} suffix="" /></strong>
+            <strong><CountUp value={statNumber("stat.categories.value", categories.length)} /></strong>
             <small>{txt("stat.categories", "تصنيف")}</small>
           </div>
         </div>
       </section>
+
+      {/* ── ADS / BANNERS ── */}
+      {banners.length > 0 && currentBanner && (
+        <section className="ez-ad-sec" aria-label="إعلان">
+          <div className="ez-ad">
+            <div className="ez-ad-media">
+              <img src={currentBanner.image_url} alt={currentBanner.title ?? "إعلان"} loading="lazy" />
+            </div>
+            <div className="ez-ad-body">
+              <div className="ez-ad-tags">
+                <span className="ez-ad-tag">{txt("ad.tag", "إعلان")}</span>
+                <span className="ez-ad-partner">🔖 {txt("ad.partner", "عرض شريك إزهليها")}</span>
+              </div>
+              <h2 className="ez-ad-title">{currentBanner.title || txt("ad.title", "مساحة إعلانية لشركائنا")}</h2>
+              <p className="ez-ad-desc">{txt("ad.desc", "مساحة إعلانية تتغير صورتها ونصها ورابطها حسب حملة العميل، من دون ما تزاحم رحلة التصفح.")}</p>
+              {currentBanner.link_url && (
+                <a className="ez-ad-cta" href={currentBanner.link_url} target="_blank" rel="noopener noreferrer">
+                  {txt("ad.cta", "شوف تفاصيل العرض")} ←
+                </a>
+              )}
+              {banners.length > 1 && (
+                <div className="ez-ad-dots">
+                  {banners.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={i === bannerIdx ? "active" : ""}
+                      onClick={() => setBannerIdx(i)}
+                      aria-label={`إعلان ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
 
       {/* ── HOW IT WORKS ── */}
@@ -715,54 +767,7 @@ function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="ez-footer" id="ez-contact">
-        <div className="ez-footer-grid">
-          <div className="ez-footer-brand">
-            <img src={logoUrl} alt="إزهليها" />
-            <p>{txt("footer.tagline", "كل اللي تحتاجينه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍")}</p>
-          </div>
-
-          <div className="ez-footer-col">
-            <h3>{txt("footer.explore", "استكشفي")}</h3>
-            <div className="ez-footer-links">
-              <button type="button" onClick={() => { resetAll(); scrollToResults(); }}>{txt("footer.all", "كل مقدمي الخدمة")}</button>
-              {categories.slice(0, 3).map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => { setSelectedCategory(c.id); setSelectedSub("all"); scrollToResults(); }}
-                >
-                  {c.name_ar}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="ez-footer-col">
-            <h3>{txt("footer.contact.title", "تواصلي معنا")}</h3>
-            <div className="ez-footer-links">
-              <a
-                className="ez-footer-wa"
-                href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsAppIcon size={16} />
-                <span>{txt("footer.contact", "واتساب إزهليها")}</span>
-              </a>
-              <span>✉️ {txt("footer.email", "hello@ezhliha.com")}</span>
-              <span>📍 {txt("footer.location", "المملكة العربية السعودية")}</span>
-              <button type="button" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-              <a href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
-              {user && <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>}
-            </div>
-          </div>
-        </div>
-        <div className="ez-footer-bar">
-          <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
-          <span>{txt("footer.motto", "صُممت لتجعل قرار المناسبة أسهل.")}</span>
-        </div>
-      </footer>
+      <SiteFooter texts={siteTexts} />
 
 
       {aboutOpen && (
@@ -885,7 +890,11 @@ function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
     observer.observe(node);
     return () => { observer.disconnect(); window.cancelAnimationFrame(raf); };
   }, [value]);
-  return <span ref={ref}>{current.toLocaleString("ar-SA")}{suffix}</span>;
+  return (
+    <span ref={ref} dir="ltr" style={{ display: "inline-block", unicodeBidi: "isolate" }}>
+      {suffix}{current.toLocaleString("en-US")}
+    </span>
+  );
 }
 
 
@@ -1056,6 +1065,20 @@ const css = `
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
   .ez-stat strong { display:block; color:var(--brand); font-size:21px; font-weight:600; letter-spacing:-.03em; }
   .ez-stat small { color:var(--muted); font-size:11.5px; }
+  .ez-ad-sec { padding:26px 32px 6px; }
+  .ez-ad { max-width:1240px; margin:0 auto; background:#fff; border:1px solid rgba(102,0,0,.10); border-radius:6px; display:grid; grid-template-columns:.9fr 1.1fr; overflow:hidden; }
+  .ez-ad-media { min-height:260px; background:#efeade; }
+  .ez-ad-media img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ez-ad-body { padding:34px 38px; display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+  .ez-ad-tags { display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--muted); }
+  .ez-ad-tag { background:rgba(102,0,0,.06); color:var(--brand); padding:3px 9px; border-radius:3px; font-weight:600; }
+  .ez-ad-title { font-size:29px; font-weight:800; line-height:1.5; margin:0; color:var(--ink, #2A211C); }
+  .ez-ad-desc { color:var(--muted); font-size:14px; line-height:1.9; margin:0; }
+  .ez-ad-cta { background:var(--brand); color:#fff; text-decoration:none; padding:13px 26px; border-radius:4px; font-weight:700; font-size:14px; }
+  .ez-ad-dots { display:flex; gap:6px; margin-top:4px; }
+  .ez-ad-dots button { width:7px; height:7px; border-radius:50%; border:0; background:rgba(102,0,0,.2); cursor:pointer; padding:0; }
+  .ez-ad-dots button.active { background:var(--brand); width:18px; border-radius:4px; }
+  @media (max-width: 860px) { .ez-ad { grid-template-columns:1fr; } .ez-ad-body { padding:24px 20px; } .ez-ad-title { font-size:22px; } .ez-ad-sec { padding:20px 16px 0; } }
 
 
   /* SECTIONS */

@@ -1999,13 +1999,13 @@ function ProvidersTab() {
             <Field label="الاسم *"><input value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></Field>
             <Field label="المدينة *">
               <select value={editing.city_id ?? ""} onChange={(e) => setEditing({ ...editing, city_id: e.target.value })}>
-                <option value="">اختاري...</option>
+                <option value="">اختر...</option>
                 {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
               </select>
             </Field>
             <Field label="التصنيف الفرعي *">
               <select value={editing.subcategory_id ?? ""} onChange={(e) => setEditing({ ...editing, subcategory_id: e.target.value })}>
-                <option value="">اختاري...</option>
+                <option value="">اختر...</option>
                 {editSubs.map((s) => {
                   const cat = cats.find((c) => c.id === s.category_id);
                   const parentSub = s.parent_id ? subs.find((x) => x.id === s.parent_id) : null;
@@ -2466,6 +2466,24 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "provider.tabs.packages", label: "تبويب — الباقات", value: "الباقات", updated_at: "" },
   { key: "provider.tabs.services", label: "تبويب — الخدمات", value: "الخدمات", updated_at: "" },
   { key: "provider.tabs.branches", label: "تبويب — الفروع", value: "الفروع", updated_at: "" },
+  { key: "stat.providers.value", label: "رقم عدد مقدمي الخدمة (اتركه فارغ للحساب التلقائي)", value: "500", updated_at: "" },
+  { key: "stat.cities.value", label: "رقم عدد المدن (اتركه فارغ للحساب التلقائي)", value: "", updated_at: "" },
+  { key: "stat.categories.value", label: "رقم عدد التصنيفات (اتركه فارغ للحساب التلقائي)", value: "", updated_at: "" },
+  { key: "stat.providers", label: "وصف رقم مقدمي الخدمة", value: "مزود خدمة", updated_at: "" },
+  { key: "stat.cities", label: "وصف رقم المدن", value: "مدينة", updated_at: "" },
+  { key: "stat.categories", label: "وصف رقم التصنيفات", value: "تصنيف", updated_at: "" },
+  { key: "ad.tag", label: "الإعلان — الوسم", value: "إعلان", updated_at: "" },
+  { key: "ad.partner", label: "الإعلان — عبارة الشريك", value: "عرض شريك إزهليها", updated_at: "" },
+  { key: "ad.title", label: "الإعلان — العنوان الافتراضي", value: "مساحة إعلانية لشركائنا", updated_at: "" },
+  { key: "ad.desc", label: "الإعلان — الوصف", value: "مساحة إعلانية تتغير صورتها ونصها ورابطها حسب حملة العميل، من دون ما تزاحم رحلة التصفح.", updated_at: "" },
+  { key: "ad.cta", label: "الإعلان — زر التفاصيل", value: "شوف تفاصيل العرض", updated_at: "" },
+  { key: "provider.quote.cta", label: "زر طلب التسعيرة", value: "اطلب تسعيرة", updated_at: "" },
+  { key: "footer.tagline", label: "الفوتر — الوصف", value: "كل اللي تحتاجه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍", updated_at: "" },
+  { key: "footer.explore", label: "الفوتر — عنوان استكشف", value: "استكشف", updated_at: "" },
+  { key: "footer.contact.title", label: "الفوتر — عنوان تواصل معنا", value: "تواصل معنا", updated_at: "" },
+  { key: "footer.email", label: "الفوتر — الإيميل", value: "hello@ezhliha.com", updated_at: "" },
+  { key: "footer.location", label: "الفوتر — الموقع", value: "المملكة العربية السعودية", updated_at: "" },
+  { key: "footer.motto", label: "الفوتر — العبارة السفلية", value: "صُممت لتجعل قرار المناسبة أسهل.", updated_at: "" },
   { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Tajawal", updated_at: "" },
 ];
 

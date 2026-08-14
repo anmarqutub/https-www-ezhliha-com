@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle } from "./index";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
@@ -74,6 +75,7 @@ function ProviderPage() {
   const [activeTab, setActiveTab] = useState<OfferTab>("overview");
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [cityName, setCityName] = useState<string>("");
+  const [allCities, setAllCities] = useState<Array<{ id: string; name_ar: string }>>([]);
   const [subName, setSubName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
@@ -174,6 +176,11 @@ function ProviderPage() {
   };
 
   useEffect(() => { reload(); /* eslint-disable-next-line */ }, [id]);
+
+  useEffect(() => {
+    supabase.from("cities").select("id,name_ar").eq("active", true).order("sort_order")
+      .then(({ data }) => setAllCities((data ?? []) as Array<{ id: string; name_ar: string }>));
+  }, []);
 
   // Favorite check
   useEffect(() => {
@@ -276,17 +283,17 @@ function ProviderPage() {
       <header className="pv-top">
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
-          <a href="/#ez-results">مقدمي الخدمات</a>
-          <a href="/#ez-cities">المدن</a>
+          <Link to="/" hash="ez-results">مقدمي الخدمات</Link>
+          <Link to="/" hash="ez-cities">المدن</Link>
           <Link to="/favorites">المفضلة</Link>
-          <a href="/#ez-contact">تواصل معنا</a>
-          <a href="/#ez-faq">الأسئلة الشائعة</a>
+          <Link to="/" hash="ez-contact">تواصل معنا</Link>
+          <Link to="/" hash="ez-faq">الأسئلة الشائعة</Link>
           {isAdmin && <Link to="/admin">الأدمن</Link>}
         </nav>
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>دوّري عن مزوّد</span>
+            <span>دوّر عن مزوّد</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -315,7 +322,7 @@ function ProviderPage() {
         {images.length > 0 && (
           <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
-            <span>شوفي الصور</span>
+            <span>شاهد الصور</span>
           </button>
         )}
       </section>
@@ -384,7 +391,7 @@ function ProviderPage() {
               {provider.whatsapp && (
                 <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
                   <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
+                  <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
                 </button>
               )}
               <div className="pv-price-note">
@@ -655,7 +662,7 @@ function ProviderPage() {
               <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
             <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
-            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبينه.</p>
+            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبيه.</p>
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
@@ -664,7 +671,10 @@ function ProviderPage() {
               </label>
               <label className="pv-quote-field">
                 <span>المدينة</span>
-                <input type="text" placeholder="مثال: جدة" value={qCity} onChange={(e) => setQCity(e.target.value)} />
+                <select value={qCity} onChange={(e) => setQCity(e.target.value)}>
+                  <option value="">{cityName ? `${cityName} (الافتراضية)` : "اختر المدينة"}</option>
+                  {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
+                </select>
               </label>
               <label className="pv-quote-field">
                 <span>عدد الضيوف</span>
@@ -673,7 +683,7 @@ function ProviderPage() {
               <label className="pv-quote-field">
                 <span>الميزانية التقريبية</span>
                 <select value={qBudget} onChange={(e) => setQBudget(e.target.value)}>
-                  <option value="">اختاري النطاق</option>
+                  <option value="">اختر النطاق</option>
                   <option value="أقل من 5,000 ر.س">أقل من 5,000 ر.س</option>
                   <option value="5,000 - 10,000 ر.س">5,000 - 10,000 ر.س</option>
                   <option value="10,000 - 25,000 ر.س">10,000 - 25,000 ر.س</option>
@@ -690,7 +700,7 @@ function ProviderPage() {
 
             <div className="pv-quote-actions">
               <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
-              <button type="submit" className="pv-btn-quote"><SendIcon /><span>جهّزي الطلب</span></button>
+              <button type="submit" className="pv-btn-quote"><SendIcon /><span>أرسل الطلب لمقدم الخدمة</span></button>
             </div>
           </form>
         </div>
@@ -738,6 +748,8 @@ function ProviderPage() {
           </div>
         </div>
       )}
+
+      <SiteFooter texts={siteTexts} />
     </div>
   );
 }

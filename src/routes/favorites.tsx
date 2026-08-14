@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import SiteFooter from "@/components/SiteFooter";
 import { waLink } from "./index";
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
@@ -63,6 +64,11 @@ function FavoritesPage() {
       <style>{css}</style>
       <header className="fav-nav">
         <Link to="/" className="fav-brand"><img src={logoUrl} alt="إزهليها" /></Link>
+        <nav className="fav-nav-menu">
+          <Link to="/" hash="ez-results" className="fav-link">مقدمي الخدمات</Link>
+          <Link to="/" hash="ez-cities" className="fav-link">المدن</Link>
+          <Link to="/" hash="ez-faq" className="fav-link">الأسئلة الشائعة</Link>
+        </nav>
         <div className="fav-nav-actions">
           {isAdmin && <Link to="/admin" className="fav-link">الأدمن</Link>}
           <span className="fav-user">{user?.email}</span>
@@ -101,6 +107,7 @@ function FavoritesPage() {
             </div>
           )}
       </main>
+      <SiteFooter />
     </div>
   );
 }
@@ -109,6 +116,7 @@ const css = `
   .fav-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
   .fav-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; }
   .fav-brand img { height:54px; }
+  .fav-nav-menu { display:flex; gap:16px; align-items:center; }
   .fav-nav-actions { display:flex; gap:12px; align-items:center; }
   .fav-link { color:#000; text-decoration:none; font-weight:600; font-size:14px; }
   .fav-user { font-size:12px; color:#555; }
