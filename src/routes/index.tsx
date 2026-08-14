@@ -1064,6 +1064,20 @@ const css = `
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
   .ez-stat strong { display:block; color:var(--brand); font-size:21px; font-weight:600; letter-spacing:-.03em; }
   .ez-stat small { color:var(--muted); font-size:11.5px; }
+  .ez-ad-sec { padding:26px 32px 6px; }
+  .ez-ad { max-width:1240px; margin:0 auto; background:#fff; border:1px solid rgba(102,0,0,.10); border-radius:6px; display:grid; grid-template-columns:.9fr 1.1fr; overflow:hidden; }
+  .ez-ad-media { min-height:260px; background:#efeade; }
+  .ez-ad-media img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ez-ad-body { padding:34px 38px; display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+  .ez-ad-tags { display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--muted); }
+  .ez-ad-tag { background:rgba(102,0,0,.06); color:var(--brand); padding:3px 9px; border-radius:3px; font-weight:600; }
+  .ez-ad-title { font-size:29px; font-weight:800; line-height:1.5; margin:0; color:var(--ink, #2A211C); }
+  .ez-ad-desc { color:var(--muted); font-size:14px; line-height:1.9; margin:0; }
+  .ez-ad-cta { background:var(--brand); color:#fff; text-decoration:none; padding:13px 26px; border-radius:4px; font-weight:700; font-size:14px; }
+  .ez-ad-dots { display:flex; gap:6px; margin-top:4px; }
+  .ez-ad-dots button { width:7px; height:7px; border-radius:50%; border:0; background:rgba(102,0,0,.2); cursor:pointer; padding:0; }
+  .ez-ad-dots button.active { background:var(--brand); width:18px; border-radius:4px; }
+  @media (max-width: 860px) { .ez-ad { grid-template-columns:1fr; } .ez-ad-body { padding:24px 20px; } .ez-ad-title { font-size:22px; } .ez-ad-sec { padding:20px 16px 0; } }
 
 
   /* SECTIONS */
