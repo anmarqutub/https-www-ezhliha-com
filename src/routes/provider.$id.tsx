@@ -460,29 +460,8 @@ function ProviderPage() {
               );
             })()}
 
-            {(provider.price_from || provider.price_to) && (
-              <div className="pv-price">
-                {provider.price_from && <span>من {provider.price_from} ر.س</span>}
-                {provider.price_to && <span> إلى {provider.price_to} ر.س</span>}
-              </div>
-            )}
-            {provider.price && <div className="pv-price">{provider.price}</div>}
-            {(provider.people_from || provider.people_to) && (
-              <div className="pv-people">
-                👥 تكفي {provider.people_from ?? ""}
-                {provider.people_from && provider.people_to ? `–${provider.people_to}` : (provider.people_to ?? "")}
-                {" "}شخص
-              </div>
-            )}
-            {provider.address && <div className="pv-addr">📌 {provider.address}</div>}
-
             <div className="pv-actions">
-              {provider.whatsapp && (
-                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
-                  <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
-                </button>
-              )}
+
               {waUrl && (
                 <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
                   <WhatsAppIcon />
