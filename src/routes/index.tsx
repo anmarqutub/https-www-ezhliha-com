@@ -320,7 +320,7 @@ function Home() {
       {/* ── HERO ── */}
       <section className="ez-hero">
         <div className="ez-hero-grid">
-          <div className="ez-hero-text">
+          <div className="ez-hero-text ez-reveal">
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("hero.eyebrow", "دليل مناسبتك الأقرب لك")}</div>
             <h1 className="ez-hero-title">
               {txt("hero.title1", "كل اللي تحتاجه لمناسبتك،")}
