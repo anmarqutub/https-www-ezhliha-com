@@ -276,11 +276,11 @@ function ProviderPage() {
       <header className="pv-top">
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
-          <a href="/#ez-results">مقدمي الخدمات</a>
-          <a href="/#ez-cities">المدن</a>
+          <Link to="/" hash="ez-results">مقدمي الخدمات</Link>
+          <Link to="/" hash="ez-cities">المدن</Link>
           <Link to="/favorites">المفضلة</Link>
-          <a href="/#ez-contact">تواصل معنا</a>
-          <a href="/#ez-faq">الأسئلة الشائعة</a>
+          <Link to="/" hash="ez-contact">تواصل معنا</Link>
+          <Link to="/" hash="ez-faq">الأسئلة الشائعة</Link>
           {isAdmin && <Link to="/admin">الأدمن</Link>}
         </nav>
         <div className="pv-top-side">
