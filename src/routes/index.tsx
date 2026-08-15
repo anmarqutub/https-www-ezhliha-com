@@ -1328,7 +1328,7 @@ const css = `
   .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:rgba(255,255,255,.7); }
   .ez-footer-links a, .ez-footer-links button { color:rgba(255,255,255,.7); text-decoration:none; background:transparent; border:none; padding:0; cursor:pointer; font-family:inherit; font-size:13.5px; text-align:start; }
   .ez-footer-links a:hover, .ez-footer-links button:hover { color:#fff; }
-  .ez-footer-wa { display:inline-flex !important; align-items:center; gap:8px; color:#fff !important; font-weight:700; border:1px solid rgba(255,255,255,.28); padding:9px 18px; border-radius:50px; }
+  .ez-footer-wa { display:inline-flex !important; align-items:center; gap:8px; color:#fff !important; font-weight:700; border:1px solid rgba(255,255,255,.28); padding:9px 18px; border-radius:6px; }
   .ez-footer-wa:hover { background:#fff; color:var(--brand) !important; }
   .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; padding:18px 32px; font-size:11.5px; color:rgba(255,255,255,.55); }
 

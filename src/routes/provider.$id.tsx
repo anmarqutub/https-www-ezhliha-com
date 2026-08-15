@@ -1067,8 +1067,8 @@ const css = `
   .pv-nav-actions { display:flex; gap:12px; align-items:center; }
   .pv-link { color:#000; text-decoration:none; font-size:14px; font-weight:600; }
   .pv-link:hover { color:#660000; }
-  .pv-btn { background:#660000; color:#fff; padding:8px 18px; border-radius:50px; text-decoration:none; font-size:13px; font-weight:700; }
-  .pv-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .pv-btn { background:#660000; color:#fff; padding:0 16px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; text-decoration:none; font-size:13px; font-weight:700; }
+  .pv-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:0 16px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
 
   .pv-main { max-width:1200px; margin:0 auto; padding:24px; }
   .pv-back { display:inline-block; color:#660000; text-decoration:none; font-weight:700; margin-bottom:14px; }
