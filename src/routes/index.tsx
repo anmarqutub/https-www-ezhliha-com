@@ -433,9 +433,9 @@ function Home() {
               {txt("hero.desc", "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
             </p>
             <ul className="ez-hero-checks">
-              <li><i>✓</i>{txt("hero.check1", "بحث سريع")}</li>
-              <li><i>✓</i>{txt("hero.check2", "تفاصيل واضحة")}</li>
-              <li><i>✓</i>{txt("hero.check3", "تواصل مباشر")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check1", "بحث سريع")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check2", "تفاصيل واضحة")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check3", "تواصل مباشر")}</li>
             </ul>
           </div>
 
