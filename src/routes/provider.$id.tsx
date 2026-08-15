@@ -304,7 +304,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>دوّر عن مزوّد</span>
+            <span>ابحث عن مزوّد</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
