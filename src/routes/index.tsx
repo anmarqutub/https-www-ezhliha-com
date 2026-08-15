@@ -954,6 +954,8 @@ function ProviderCard({
   images,
   featured,
   contactLabel,
+  isFav,
+  onToggleFav,
 }: {
   provider: Provider;
   city?: City;
@@ -961,16 +963,29 @@ function ProviderCard({
   images: ProviderImage[];
   featured?: boolean;
   contactLabel: string;
+  isFav?: boolean;
+  onToggleFav?: () => void;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
+      {onToggleFav && (
+        <button
+          type="button"
+          className={`ez-card-fav ${isFav ? "active" : ""}`}
+          aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+        >
+          {isFav ? "♥" : "♡"}
+        </button>
+      )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
           {featured && <span className="ez-badge">مميز</span>}
         </div>
+
         <div className="ez-card-body">
           {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
           <div className="ez-card-head">
