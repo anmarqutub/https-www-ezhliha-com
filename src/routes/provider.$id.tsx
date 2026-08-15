@@ -303,11 +303,13 @@ function ProviderPage() {
       <header className="pv-top">
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
-          <Link to="/" hash="ez-results">مقدمي الخدمات</Link>
+          <Link to="/">الرئيسية</Link>
+          <Link to="/providers">مقدمي الخدمات</Link>
+          <Link to="/cities">المدن</Link>
           
           <Link to="/favorites">المفضلة</Link>
           <Link to="/" hash="ez-contact">تواصل معنا</Link>
-          <Link to="/" hash="ez-faq">الأسئلة الشائعة</Link>
+          <Link to="/faq">الأسئلة الشائعة</Link>
           {isAdmin && <Link to="/admin">الأدمن</Link>}
         </nav>
         <div className="pv-top-side">
@@ -322,7 +324,7 @@ function ProviderPage() {
       <div className="pv-crumbbar">
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
-        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span><ChevronLeft size={13} /></span></>}
+        {subName && <><Link to="/providers">{subName}</Link><span><ChevronLeft size={13} /></span></>}
         <b>{provider.name}</b>
       </div>
 
