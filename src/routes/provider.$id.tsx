@@ -994,12 +994,12 @@ function PinIcon() {
 
 function SocialGlyph({ platform }: { platform: string }) {
   if (platform === "ig")
-    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
   if (platform === "sc")
-    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
   if (platform === "tk")
-    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
-  return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
+  return <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
 }
 
 function SocialTile({ platform, label, handle, href }: { platform: string; label: string; handle: string | null; href: string | null }) {
@@ -1019,7 +1019,7 @@ function SocialTile({ platform, label, handle, href }: { platform: string; label
 
 function WhatsAppIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
       <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" />
     </svg>
   );
@@ -1042,7 +1042,8 @@ function SendIcon() {
 }
 
 const css = `
-  .pv-btn-quote { background:#660000; color:#fff; border:none; padding:14px; border-radius:12px; font-family:inherit; font-size:15px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 18px rgba(102,0,0,0.25); }
+  .pv-btn-quote { background:#660000; color:#fff; border:none; min-height:40px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
+  .pv-btn-quote svg { width:16px; height:16px; }
   .pv-btn-quote:hover { background:#4d0000; }
   .pv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; font-family:Tajawal, system-ui, sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.28); text-align:right; }
   .pv-quote-head { display:flex; align-items:center; justify-content:space-between; }
@@ -1103,13 +1104,13 @@ const css = `
   .pv-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
   .pv-btn-wa { background:transparent; color:#660000; padding:10px 0; border-radius:0; text-align:center; text-decoration:none; font-weight:900; display:flex; align-items:center; justify-content:center; gap:8px; }
   .pv-btn-wa svg { color:#660000; }
-  .pv-btn-wa-solid { background:#660000; color:#fff; padding:14px; border-radius:12px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; font-size:15px; box-shadow:0 6px 18px rgba(102,0,0,0.25); }
+  .pv-btn-wa-solid { background:#660000; color:#fff; min-height:40px; padding:0 20px; border-radius:6px; text-align:center; text-decoration:none; font-weight:500; display:flex; align-items:center; justify-content:center; gap:8px; font-size:13px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .pv-btn-wa-solid:hover { filter:brightness(0.95); }
   .pv-btn-wa-solid svg { color:#fff; }
-  .pv-btn-call, .pv-btn-share { background:#f5f2e5; color:#660000; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid #d8d4c0; cursor:pointer; font-family:inherit; font-size:14px; }
+  .pv-btn-call, .pv-btn-share { background:#f5f2e5; color:#660000; min-height:40px; padding:0 16px; border-radius:6px; text-align:center; text-decoration:none; font-weight:500; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid #d8d4c0; cursor:pointer; font-family:inherit; font-size:13px; }
   .pv-btn-share { background:#fff; }
-  .pv-btn-map { background:#4285F4; color:#fff; padding:12px; border-radius:10px; text-align:center; text-decoration:none; font-weight:700; }
-  .pv-btn-fav { background:#fff; color:#660000; border:1.5px solid #660000; padding:12px; border-radius:10px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:700; }
+  .pv-btn-map { background:#4285F4; color:#fff; min-height:40px; padding:0 16px; border-radius:6px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-weight:500; font-size:13px; }
+  .pv-btn-fav { background:#fff; color:#660000; border:1px solid #660000; min-height:40px; padding:0 16px; border-radius:6px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:500; }
   .pv-btn-fav.active { background:#660000; color:#fff; }
 
   .pv-socials { display:flex; gap:10px; margin-top:6px; }
@@ -1134,7 +1135,7 @@ const css = `
   .pv-video-poster--empty { background:linear-gradient(135deg,#660000,#3d0000); min-height:280px; flex-direction:column; gap:14px; }
   .pv-video-poster--empty::before { display:none; }
   .pv-video-poster-label { position:relative; color:#fff; font-weight:800; font-size:18px; font-style:normal; }
-  .pv-video-link { display:inline-flex; align-items:center; gap:8px; background:#660000; color:#fff; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; }
+  .pv-video-link { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#660000; color:#fff; height:40px; padding:0 20px; border-radius:6px; text-decoration:none; font-weight:500; font-size:13px; }
   .pv-packages { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-packages h2 { font-size:20px; font-weight:800; margin-bottom:14px; }
   .pv-package-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
@@ -1163,7 +1164,7 @@ const css = `
   .pv-stars-input button { background:none; border:none; font-size:28px; color:#ccc; cursor:pointer; padding:0 2px; }
   .pv-stars-input button.on { color:#f0b400; }
   .pv-review-form textarea { width:100%; border:1px solid #d8d4c0; border-radius:8px; padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
-  .pv-btn-primary { background:#660000; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:700; align-self:flex-start; }
+  .pv-btn-primary { background:#660000; color:#fff; border:none; height:40px; padding:0 20px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; font-family:inherit; font-weight:700; align-self:flex-start; }
   .pv-review-list { display:flex; flex-direction:column; gap:14px; }
   .pv-review-item { border:1px solid #e8e6d7; border-radius:10px; padding:12px; }
   .pv-review-head { display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
@@ -1197,7 +1198,7 @@ const css = `
   .pv-modal-title { font-size:18px; font-weight:800; color:#000; margin:0 0 12px; }
   .pv-modal-phone { font-size:24px; font-weight:800; color:#660000; letter-spacing:1px; padding:14px; background:#f5f2e5; border-radius:12px; margin-bottom:18px; direction:ltr; }
   .pv-modal-actions { display:flex; gap:10px; }
-  .pv-modal-call { flex:1; background:#660000; color:#fff; padding:14px; border-radius:10px; text-decoration:none; font-weight:800; font-size:15px; }
+  .pv-modal-call { flex:1; background:#660000; color:#fff; min-height:40px; display:flex; align-items:center; justify-content:center; border-radius:6px; text-decoration:none; font-weight:500; font-size:13px; }
   .pv-modal-call:hover { background:#4d0000; }
   .pv-modal-copy { flex:1; background:#fff; color:#660000; padding:14px; border-radius:10px; font-weight:800; font-size:15px; border:2px solid #660000; cursor:pointer; font-family:inherit; }
   .pv-modal-copy:hover { background:#f5f2e5; }
@@ -1346,9 +1347,9 @@ const css3 = `
   .pv-pending { color:#B08A4A; font-size:12px; font-weight:700; }
   .pv-soc-title { margin:18px 0 10px; font-size:13.5px; font-weight:800; color:#241C1A; }
   .pv-soc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
-  .pv-soc-tile { border:1px solid #EFE7D8; border-radius:10px; padding:10px 12px; background:#FBF7EE; text-decoration:none; display:block; }
-  .pv-soc-tile small { display:block; color:#8A7A73; font-size:11.5px; margin-bottom:3px; }
-  .pv-soc-tile strong { font-size:13px; color:#241C1A; }
+  .pv-soc-tile { border:1px solid #EFE7D8; border-radius:6px; min-height:48px; padding:8px 12px; background:#FBF7EE; text-decoration:none; display:flex; }
+  .pv-soc-tile small { display:block; color:#8A7A73; font-size:10px; margin-bottom:2px; }
+  .pv-soc-tile strong { font-size:12px; font-weight:500; color:#241C1A; }
   .pv-soc-tile--off strong { color:#B0A49D; }
   .pv-share-row { margin-top:16px; }
 
@@ -1393,12 +1394,13 @@ const css3 = `
 
   /* ===== social tiles ===== */
   .pv-soc-tile { display:flex; align-items:center; gap:10px; }
-  .pv-soc-glyph { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
-  .pv-soc-glyph--ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
-  .pv-soc-glyph--sc { background:#FFFC00; color:#241C1A; }
-  .pv-soc-glyph--tk { background:#000; }
-  .pv-soc-glyph--tw { background:#000; }
-  .pv-soc-tile--off .pv-soc-glyph { filter:grayscale(1); opacity:.5; }
+  .pv-soc-glyph { width:16px; height:16px; display:flex; align-items:center; justify-content:center; color:#660000; flex:none; }
+  .pv-soc-glyph svg { width:16px; height:16px; }
+  
+  
+  
+  
+  .pv-soc-tile--off .pv-soc-glyph { opacity:.45; }
 
   /* ===== branches rail ===== */
   .pv-branch-wrap { position:relative; }
