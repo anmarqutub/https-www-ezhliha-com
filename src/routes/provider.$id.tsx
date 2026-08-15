@@ -1333,6 +1333,50 @@ const css3 = `
   .pv-sug-body strong { color:#660000; font-size:14px; font-weight:900; }
   .pv-sug-more { color:#660000; font-size:12.5px; font-weight:800; margin-top:6px; }
 
+  /* ===== hero carousel ===== */
+  .pv-hero { display:block; }
+  .pv-hero-carousel { position:relative; max-width:1440px; margin:0 auto; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:520px; border-radius:10px; }
+  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
+  .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
+  .pv-hero-prev { right:16px; }
+  .pv-hero-next { left:16px; }
+  .pv-hero-count { position:absolute; bottom:18px; right:50%; transform:translateX(50%); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 14px; font-size:12px; font-weight:700; }
+
+  /* ===== price bar ===== */
+  .pv-price-bar { background:#FFFDF8; border:1px solid #E3DBC9; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:14px; }
+  .pv-price-out small { display:block; color:#8A7A73; font-size:12px; margin-bottom:4px; }
+  .pv-price-out strong { color:#660000; font-size:20px; font-weight:900; }
+  .pv-price-cta { display:flex; align-items:stretch; gap:10px; }
+  .pv-sq-btn { width:52px; min-height:52px; border-radius:12px; border:1px solid #E3DBC9; background:#fff; color:#7A6A64; display:flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; }
+  .pv-sq-btn:hover { color:#660000; border-color:#660000; }
+  .pv-btn-quote--wide { flex:1; border-radius:12px; min-height:52px; }
+
+  /* ===== social tiles ===== */
+  .pv-soc-tile { display:flex; align-items:center; gap:10px; }
+  .pv-soc-glyph { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
+  .pv-soc-glyph--ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
+  .pv-soc-glyph--sc { background:#FFFC00; color:#241C1A; }
+  .pv-soc-glyph--tk { background:#000; }
+  .pv-soc-glyph--tw { background:#000; }
+  .pv-soc-tile--off .pv-soc-glyph { filter:grayscale(1); opacity:.5; }
+
+  /* ===== branches rail ===== */
+  .pv-branch-wrap { position:relative; }
+  .pv-branch-arrows { display:flex; gap:8px; justify-content:flex-start; margin-bottom:10px; }
+  .pv-branch-arrows button { width:34px; height:34px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:19px; line-height:1; cursor:pointer; }
+  .pv-branch-arrows button:hover { background:#660000; color:#fff; border-color:#660000; }
+  .pv-branch-rail { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; }
+  .pv-branch-rail .pv-branch { flex:0 0 260px; scroll-snap-align:start; flex-direction:column; align-items:flex-start; }
+  .pv-branch-rail--one .pv-branch { flex:1 1 auto; }
+
+  .pv-sug-more i { font-style:normal; margin-inline-start:6px; }
+
+  @media (max-width:900px) {
+    .pv-hero-carousel .pv-hero-main { height:280px; }
+    .pv-price-bar { position:sticky; bottom:0; }
+  }
+
   @media (max-width:900px) {
     .pv-secnav { margin:24px -14px 0; top:64px; }
     .pv-secnav-in { padding:0 14px; gap:18px; justify-content:flex-start; }
