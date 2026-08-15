@@ -423,22 +423,17 @@ function ProviderPage() {
         </div>
 
         {(() => {
-          const showPkg = provider.show_packages !== false && packages.length > 0;
-          const showSrv = provider.show_services !== false && services.length > 0;
-          const vids: MediaItem[] = [];
-          if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
-          (provider.videos ?? []).forEach((v) => vids.push(v));
-          const hasMedia = images.length > 0 || vids.length > 0;
           const items: Array<[string, string]> = [
             ["s-about", "نبذة"],
-            ...(showPkg ? [["s-packages", "الباقات"] as [string, string]] : []),
-            ...(showSrv ? [["s-services", "الخدمات"] as [string, string]] : []),
-            ...(hasMedia ? [["s-media", "صور وفيديو"] as [string, string]] : []),
+            ["s-packages", "الباقات"],
+            ["s-services", "الخدمات"],
+            ["s-media", "صور وفيديو"],
             ["s-reviews", "التقييمات"],
             ["s-contact", "التواصل والفروع"],
             ["s-before", "قبل الطلب"],
           ];
           return (
+
             <nav className="pv-secnav">
               <div className="pv-secnav-in">
                 {items.map(([id, label]) => (
