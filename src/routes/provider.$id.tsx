@@ -906,18 +906,8 @@ function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const ttEmbed = getTikTokEmbed(url);
-  const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
-  const isPortrait = !!ttEmbed || !!igEmbed;
 
-  if (ytId) {
-    return (
-      <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${ytId}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
@@ -925,42 +915,14 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </div>
     );
   }
-  if (igEmbed) {
-    if (thumbnailUrl) {
-      return (
-        <button
-          type="button"
-          className="pv-video-poster"
-          style={{ backgroundImage: `url(${thumbnailUrl})` }}
-          onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-          aria-label="عرض الملف الشخصي على إنستقرام"
-        >
-          <span><PlayIcon /></span>
-        </button>
-      );
-    }
-    return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={igEmbed} title="Instagram" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
-  if (ttEmbed) {
-    return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={ttEmbed} title="TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
-  // Fallback — رابط ما نقدر نضمنه
-  if (thumbnailUrl) {
+  if (poster) {
     return (
       <button
         type="button"
         className="pv-video-poster"
-        style={{ backgroundImage: `url(${thumbnailUrl})` }}
+        style={{ backgroundImage: `url(${poster})` }}
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label="عرض الفيديو"
+        aria-label="عرض المقطع في المصدر"
       >
         <span><PlayIcon /></span>
       </button>
@@ -971,13 +933,14 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       type="button"
       className="pv-video-poster pv-video-poster--empty"
       onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-      aria-label="عرض الفيديو"
+      aria-label="عرض المقطع في المصدر"
     >
       <span><PlayIcon /></span>
-      <em className="pv-video-poster-label">تشغيل الفيديو</em>
+      <em className="pv-video-poster-label">شاهد المقطع</em>
     </button>
   );
 }
+
 
 
 function CheckIcon() {
