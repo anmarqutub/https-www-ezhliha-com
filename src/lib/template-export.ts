@@ -241,8 +241,9 @@ export async function buildTemplateWorkbook(opts?: { providerIds?: string[] }): 
   return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
-export async function downloadTemplate() {
-  const blob = await buildTemplateWorkbook();
+export async function downloadTemplate(opts?: { providerIds?: string[] }) {
+  const blob = await buildTemplateWorkbook(opts);
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
