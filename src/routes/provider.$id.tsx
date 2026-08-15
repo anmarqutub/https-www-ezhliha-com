@@ -321,8 +321,8 @@ function ProviderPage() {
 
       <div className="pv-crumbbar">
         <Link to="/">الرئيسية</Link>
-        <span>›</span>
-        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span>›</span></>}
+        <span><ChevronLeft size={13} /></span>
+        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span><ChevronLeft size={13} /></span></>}
         <b>{provider.name}</b>
       </div>
 
@@ -339,9 +339,9 @@ function ProviderPage() {
           {images.length > 1 && (
             <>
               <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
-                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}>‹</button>
+                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
-                onClick={() => setActiveImg((n) => (n + 1) % images.length)}>›</button>
+                onClick={() => setActiveImg((n) => (n + 1) % images.length)}><ChevronLeft size={20} /></button>
               <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
             </>
           )}
@@ -365,7 +365,7 @@ function ProviderPage() {
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                 {cityName}
               </span>}
-              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
+              {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
             </div>
 
             <div className="pv-title-row">
@@ -385,7 +385,7 @@ function ProviderPage() {
                 disabled={favLoading}
                 onClick={toggleFav}
                 aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              >{isFav ? "♥" : "♡"}</button>
+              ><Heart size={16} fill={isFav ? "currentColor" : "none"} /></button>
             </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
@@ -702,8 +702,8 @@ function ProviderPage() {
                   <div className="pv-branch-wrap">
                     {list.length > 1 && (
                       <div className="pv-branch-arrows">
-                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق">‹</button>
-                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي">›</button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق"><ChevronRight size={16} /></button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي"><ChevronLeft size={16} /></button>
                       </div>
                     )}
                     <div className={`pv-branch-rail ${list.length > 1 ? "" : "pv-branch-rail--one"}`} ref={brRef}>
@@ -739,8 +739,8 @@ function ProviderPage() {
                 <h2>ممكن يعجبك بعد</h2>
               </div>
               <div className="pv-sug-arrows">
-                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: -320, behavior: "smooth" })} aria-label="السابق">‹</button>
-                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: 320, behavior: "smooth" })} aria-label="التالي">›</button>
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: -320, behavior: "smooth" })} aria-label="السابق"><ChevronRight size={16} /></button>
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: 320, behavior: "smooth" })} aria-label="التالي"><ChevronLeft size={16} /></button>
               </div>
             </div>
             <div className="pv-sug-rail" ref={sugRef}>
@@ -752,7 +752,7 @@ function ProviderPage() {
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
                     <small>السعر التقريبي</small>
                     <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
-                    <span className="pv-sug-more">اكتشف المزيد <i>←</i></span>
+                    <span className="pv-sug-more">اكتشف المزيد <i><ArrowLeft size={14} /></i></span>
                   </div>
                 </Link>
               ))}
@@ -842,7 +842,7 @@ function ProviderPage() {
                   } catch { /* noop */ }
                 }}
               >
-                {copiedPhone ? "✓ تم النسخ" : "نسخ الرقم"}
+                {copiedPhone ? <><Check size={14} /> تم النسخ</> : "نسخ الرقم"}
               </button>
             </div>
           </div>
