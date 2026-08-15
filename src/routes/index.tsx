@@ -1215,8 +1215,8 @@ const css = `
 
   /* CATEGORIES */
   .ez-cats-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-  .ez-rail-nav { display:flex; gap:10px; }
-  .ez-rail-btn { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; cursor:pointer; transition:all .2s; }
+  .ez-rail-nav { display:flex; gap:8px; }
+  .ez-rail-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(102,0,0,.15); background:var(--surface); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; }
   .ez-rail-btn:hover { background:var(--brand); color:#FFFDF8; border-color:var(--brand); }
   .ez-cat-rail { display:flex; gap:14px; margin-top:26px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; scrollbar-width:none; }
   .ez-cat-rail::-webkit-scrollbar { display:none; }
