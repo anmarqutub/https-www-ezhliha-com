@@ -26,7 +26,7 @@ import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
 import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  component: () => <HomePage view="home" />,
   head: () => ({
     meta: [
       { title: "إزهليها — دليلك لأحلى المناسبات" },
