@@ -1143,14 +1143,15 @@ const css = `
   .ez-hero-dots button.active { background:#fff; width:20px; border-radius:50px; }
 
   /* CONSOLE */
-  .ez-console { position:relative; z-index:20; max-width:1240px; margin:-28px auto 0; background:linear-gradient(180deg, rgba(253,251,245,.96), var(--sec)); border:1px solid var(--line); border-top:3px solid var(--brand); box-shadow:0 26px 64px rgba(53,24,19,.1); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
-  .ez-console-field { padding:14px 20px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:4px; }
+  .ez-console { position:relative; z-index:20; max-width:1240px; margin:-32px auto 0; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px; box-shadow:0 22px 50px rgba(53,24,19,.12); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
+  .ez-console-field { padding:8px 22px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:2px; }
   .ez-console-field:first-child { border-inline-start:none; }
-  .ez-console-field label { font-size:11.5px; color:var(--muted); font-weight:500; }
-  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--ink); outline:none; cursor:pointer; height:34px; }
+  .ez-console-field label { font-size:12px; color:var(--ink); font-weight:700; }
+  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--muted); outline:none; cursor:pointer; height:28px; }
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
-  .ez-console-btn { align-self:stretch; margin:10px; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
+  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 30px; border-radius:999px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; min-height:52px; }
   .ez-console-btn:hover { background:var(--brand-dark); }
+
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
   .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
   .ez-fchip:hover { border-color:var(--brand); color:var(--brand); }
