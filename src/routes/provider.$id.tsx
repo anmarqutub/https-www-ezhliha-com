@@ -366,27 +366,6 @@ function ProviderPage() {
             </div>
             {provider.description && <p className="pv-lead">{provider.description}</p>}
 
-            <div className="pv-tiles">
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                <small>منطقة الخدمة</small>
-                <strong>{provider.address || cityName || "—"}</strong>
-              </div>
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2" /><path d="M2.5 19a6.5 6.5 0 0 1 13 0" /><path d="M17 11a3 3 0 1 0-1.6-5.5" /></svg>
-                <small>نطاق المناسبة</small>
-                <strong>
-                  {provider.people_from || provider.people_to
-                    ? `${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`
-                    : "حسب ترتيب المكان"}
-                </strong>
-              </div>
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 12l9 5 9-5" /></svg>
-                <small>طريقة الخدمة</small>
-                <strong>{subName || "حسب الطلب"}</strong>
-              </div>
-            </div>
           </div>
 
           <aside className="pv-aside">
@@ -400,23 +379,31 @@ function ProviderPage() {
                 aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
               >{isFav ? "♥" : "♡"}</button>
             </div>
-            <div className="pv-price-card">
-              <small>السعر التقريبي</small>
-              <div className="pv-price-value">
-                {provider.price_from
-                  ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
-                  : (provider.price || "السعر حسب التفاصيل")}
+            <div className="pv-price-bar">
+              <div className="pv-price-out">
+                <small>السعر التقريبي</small>
+                <strong>
+                  {provider.price_from
+                    ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
+                    : (provider.price || "السعر حسب التفاصيل")}
+                </strong>
               </div>
-              <p>يختلف السعر حسب العدد والتاريخ والتفاصيل المطلوبة.</p>
-              {provider.whatsapp && (
-                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
-                  <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
-                </button>
-              )}
-              <div className="pv-price-note">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>
-                <span>الطلب ما يثبت الحجز إلا بعد موافقة مقدم الخدمة على التاريخ والتفاصيل.</span>
+              <div className="pv-price-cta">
+                {waUrl && (
+                  <a className="pv-sq-btn" href={waUrl} target="_blank" rel="noopener noreferrer" aria-label="مراسلة واتساب"><ChatIcon /></a>
+                )}
+                {callUrl && (
+                  <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
+                    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                    if (isMobile) window.location.href = callUrl; else setCallOpen(true);
+                  }}><PhoneIcon /></button>
+                )}
+                {provider.whatsapp && (
+                  <button type="button" className="pv-btn-quote pv-btn-quote--wide" onClick={() => setQuoteOpen(true)}>
+                    <SendIcon />
+                    <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
+                  </button>
+                )}
               </div>
             </div>
           </aside>
@@ -430,8 +417,8 @@ function ProviderPage() {
             ["s-media", "صور وفيديو"],
             ["s-reviews", "التقييمات"],
             ["s-contact", "التواصل والفروع"],
-            ["s-before", "قبل الطلب"],
           ];
+
           return (
 
             <nav className="pv-secnav">
