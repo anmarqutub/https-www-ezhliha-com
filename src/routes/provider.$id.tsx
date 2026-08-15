@@ -423,22 +423,17 @@ function ProviderPage() {
         </div>
 
         {(() => {
-          const showPkg = provider.show_packages !== false && packages.length > 0;
-          const showSrv = provider.show_services !== false && services.length > 0;
-          const vids: MediaItem[] = [];
-          if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
-          (provider.videos ?? []).forEach((v) => vids.push(v));
-          const hasMedia = images.length > 0 || vids.length > 0;
           const items: Array<[string, string]> = [
             ["s-about", "نبذة"],
-            ...(showPkg ? [["s-packages", "الباقات"] as [string, string]] : []),
-            ...(showSrv ? [["s-services", "الخدمات"] as [string, string]] : []),
-            ...(hasMedia ? [["s-media", "صور وفيديو"] as [string, string]] : []),
+            ["s-packages", "الباقات"],
+            ["s-services", "الخدمات"],
+            ["s-media", "صور وفيديو"],
             ["s-reviews", "التقييمات"],
             ["s-contact", "التواصل والفروع"],
             ["s-before", "قبل الطلب"],
           ];
           return (
+
             <nav className="pv-secnav">
               <div className="pv-secnav-in">
                 {items.map(([id, label]) => (
@@ -477,17 +472,17 @@ function ProviderPage() {
         </section>
 
         {/* الباقات */}
-        {provider.show_packages !== false && packages.length > 0 && (
-          <section className="pv-sec pv-sec--alt" id="s-packages">
-            <div className="pv-sec-grid">
-              <div className="pv-sec-head">
-                <span className="pv-eyebrow">الباقات والخدمات</span>
-                <h2>اختر باقة وعدّل عليها</h2>
-              </div>
-              <div className="pv-sec-body">
-                <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
-              </div>
+        <section className="pv-sec pv-sec--alt" id="s-packages">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">الباقات والخدمات</span>
+              <h2>اختر باقة وعدّل عليها</h2>
             </div>
+            <div className="pv-sec-body">
+              <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
+            </div>
+          </div>
+          {packages.length > 0 ? (
             <div className="pv-pkg-grid">
               {packages.map((pkg, i) => (
                 <article className="pv-pkg" key={pkg.id}>
@@ -507,17 +502,19 @@ function ProviderPage() {
                 </article>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="pv-empty">سيتم إضافة الباقات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
+          )}
+        </section>
 
         {/* الخدمات */}
-        {provider.show_services !== false && services.length > 0 && (
-          <section className="pv-sec" id="s-services">
-            <div className="pv-sec-grid">
-              <div className="pv-sec-head">
-                <span className="pv-eyebrow">وش تقدر تطلب؟</span>
-                <h2>خذ اللي يناسب مناسبتك</h2>
-              </div>
+        <section className="pv-sec" id="s-services">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">وش تقدر تطلب؟</span>
+              <h2>خذ اللي يناسب مناسبتك</h2>
+            </div>
+            {services.length > 0 ? (
               <div className="pv-srv-grid">
                 {services.map((sv) => (
                   <article className="pv-srv" key={sv.id}>
@@ -529,16 +526,17 @@ function ProviderPage() {
                   </article>
                 ))}
               </div>
-            </div>
-          </section>
-        )}
+            ) : (
+              <div className="pv-empty">سيتم إضافة الخدمات قريباً.</div>
+            )}
+          </div>
+        </section>
 
         {/* صور وفيديو */}
         {(() => {
           const vids: MediaItem[] = [];
           if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
           (provider.videos ?? []).forEach((v) => vids.push(v));
-          if (!images.length && !vids.length) return null;
           return (
             <section className="pv-sec pv-sec--dark" id="s-media">
               <div className="pv-sec-grid">
@@ -550,21 +548,26 @@ function ProviderPage() {
                   <p className="pv-sec-note pv-sec-note--light">اضغط على أي صورة لعرضها بالحجم الكامل.</p>
                 </div>
               </div>
-              {images.length > 0 && (
+              {images.length > 0 ? (
                 <div className="pv-media-grid">
                   {images.slice(0, 8).map((im) => (
                     <button key={im.id} type="button" className="pv-media-tile" style={{ backgroundImage: `url(${im.image_url})` }} onClick={() => setGalleryOpen(true)} aria-label="عرض الصورة" />
                   ))}
                 </div>
+              ) : (
+                <div className="pv-empty pv-empty--light">سيتم رفع الصور قريباً.</div>
               )}
-              {vids.length > 0 && (
+              {vids.length > 0 ? (
                 <div className="pv-video-list">
                   {vids.map((v, i) => <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />)}
                 </div>
+              ) : (
+                <div className="pv-empty pv-empty--light">سيتم رفع المقاطع قريباً.</div>
               )}
             </section>
           );
         })()}
+
 
         {/* التقييمات */}
         <section className="pv-sec pv-sec--alt" id="s-reviews">
@@ -1279,7 +1282,10 @@ const css3 = `
   .pv-crumbbar a { color:#8A7A73; text-decoration:none; }
   .pv-crumbbar a:hover { color:#660000; }
   .pv-crumbbar b { color:#241C1A; font-weight:700; }
+  .pv-empty { margin-top:22px; padding:26px; border:1px dashed #D9CFB8; border-radius:14px; background:#FFFDF8; color:#6B5B52; font-size:15px; font-weight:600; text-align:center; }
+  .pv-empty--light { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.25); color:#F2E9DC; }
   .pv-secnav { position:sticky; top:64px; z-index:40; background:#FFFDF8; border-top:1px solid #E3DBC9; border-bottom:1px solid #E3DBC9; margin:30px -28px 0; }
+
   .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-end; }
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
