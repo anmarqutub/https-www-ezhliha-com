@@ -472,17 +472,17 @@ function ProviderPage() {
         </section>
 
         {/* الباقات */}
-        {provider.show_packages !== false && packages.length > 0 && (
-          <section className="pv-sec pv-sec--alt" id="s-packages">
-            <div className="pv-sec-grid">
-              <div className="pv-sec-head">
-                <span className="pv-eyebrow">الباقات والخدمات</span>
-                <h2>اختر باقة وعدّل عليها</h2>
-              </div>
-              <div className="pv-sec-body">
-                <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
-              </div>
+        <section className="pv-sec pv-sec--alt" id="s-packages">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">الباقات والخدمات</span>
+              <h2>اختر باقة وعدّل عليها</h2>
             </div>
+            <div className="pv-sec-body">
+              <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
+            </div>
+          </div>
+          {packages.length > 0 ? (
             <div className="pv-pkg-grid">
               {packages.map((pkg, i) => (
                 <article className="pv-pkg" key={pkg.id}>
@@ -502,17 +502,19 @@ function ProviderPage() {
                 </article>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="pv-empty">سيتم إضافة الباقات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
+          )}
+        </section>
 
         {/* الخدمات */}
-        {provider.show_services !== false && services.length > 0 && (
-          <section className="pv-sec" id="s-services">
-            <div className="pv-sec-grid">
-              <div className="pv-sec-head">
-                <span className="pv-eyebrow">وش تقدر تطلب؟</span>
-                <h2>خذ اللي يناسب مناسبتك</h2>
-              </div>
+        <section className="pv-sec" id="s-services">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">وش تقدر تطلب؟</span>
+              <h2>خذ اللي يناسب مناسبتك</h2>
+            </div>
+            {services.length > 0 ? (
               <div className="pv-srv-grid">
                 {services.map((sv) => (
                   <article className="pv-srv" key={sv.id}>
@@ -524,16 +526,17 @@ function ProviderPage() {
                   </article>
                 ))}
               </div>
-            </div>
-          </section>
-        )}
+            ) : (
+              <div className="pv-empty">سيتم إضافة الخدمات قريباً.</div>
+            )}
+          </div>
+        </section>
 
         {/* صور وفيديو */}
         {(() => {
           const vids: MediaItem[] = [];
           if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
           (provider.videos ?? []).forEach((v) => vids.push(v));
-          if (!images.length && !vids.length) return null;
           return (
             <section className="pv-sec pv-sec--dark" id="s-media">
               <div className="pv-sec-grid">
@@ -545,21 +548,26 @@ function ProviderPage() {
                   <p className="pv-sec-note pv-sec-note--light">اضغط على أي صورة لعرضها بالحجم الكامل.</p>
                 </div>
               </div>
-              {images.length > 0 && (
+              {images.length > 0 ? (
                 <div className="pv-media-grid">
                   {images.slice(0, 8).map((im) => (
                     <button key={im.id} type="button" className="pv-media-tile" style={{ backgroundImage: `url(${im.image_url})` }} onClick={() => setGalleryOpen(true)} aria-label="عرض الصورة" />
                   ))}
                 </div>
+              ) : (
+                <div className="pv-empty pv-empty--light">سيتم رفع الصور قريباً.</div>
               )}
-              {vids.length > 0 && (
+              {vids.length > 0 ? (
                 <div className="pv-video-list">
                   {vids.map((v, i) => <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />)}
                 </div>
+              ) : (
+                <div className="pv-empty pv-empty--light">سيتم رفع المقاطع قريباً.</div>
               )}
             </section>
           );
         })()}
+
 
         {/* التقييمات */}
         <section className="pv-sec pv-sec--alt" id="s-reviews">
