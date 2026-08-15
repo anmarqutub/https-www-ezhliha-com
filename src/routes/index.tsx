@@ -1088,7 +1088,7 @@ const css = `
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
   .ez-brand-logo { height:64px; width:auto; object-fit:contain; }
   .ez-nav-menu { display:flex; align-items:center; gap:22px; }
-  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:13.5px; font-weight:500; background:none; border:none; cursor:pointer; font-family:"Alexandria","Noto Sans Arabic",sans-serif; padding:4px 0; position:relative; }
+  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:15px; font-weight:600; background:none; border:none; cursor:pointer; font-family:"Alexandria","Noto Sans Arabic",sans-serif; padding:4px 0; position:relative; }
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
