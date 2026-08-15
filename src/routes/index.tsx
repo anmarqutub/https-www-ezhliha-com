@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Heart,
   MapPin,
+  Menu,
   Search,
   Shapes,
   SlidersHorizontal,
@@ -104,6 +105,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
+    if (pendingFilters.cityId !== undefined) setSelectedCity(pendingFilters.cityId);
+    pendingFilters.categoryId = undefined;
+    pendingFilters.cityId = undefined;
+  }, []);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -396,6 +404,18 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     { q: txt("faq.q2", "هل الأسعار نهائية؟"), a: txt("faq.a2", "الأسعار تقريبية للاسترشاد، والسعر النهائي يتحدد مع مقدم الخدمة حسب تفاصيل مناسبتك.") },
     { q: txt("faq.q3", "وين ألقى الخدمات اللي حفظتها؟"), a: txt("faq.a3", "من صفحة «المفضلة» في حسابك، وتبقى اختياراتك محفوظة دائماً.") },
     { q: txt("faq.q4", "كيف أضيف مقدم خدمة للموقع؟"), a: txt("faq.a4", "تواصل معنا عبر الواتساب ونرتب لك إضافة ملفك بكل تفاصيله.") },
+  ];
+
+  type NavItem = { label: string; to?: string; href?: string; active?: boolean };
+  const navItems: NavItem[] = [
+    { label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
+    { label: txt("nav.providers", "مقدمي الخدمات"), to: "/providers", active: view === "providers" },
+    { label: txt("nav.categories", "التصنيفات"), to: "/categories", active: view === "categories" },
+    { label: txt("nav.cities", "المدن"), to: "/cities", active: view === "cities" },
+    ...(user ? [{ label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
+    { label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
+    { label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
+    { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
   ];
 
   if (!authLoading && !user) {
