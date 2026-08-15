@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowUpLeft,
   Building2,
   Check,
@@ -505,6 +506,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               </Link>
             </div>
           </aside>
+        </div>
+      )}
+
+      {view !== "home" && (
+        <div className="ez-backhome">
+          <Link to="/">
+            <ArrowLeft size={14} strokeWidth={2} />
+            {txt("nav.home", "الرئيسية")}
+          </Link>
         </div>
       )}
 
@@ -1502,6 +1512,10 @@ const css = `
 
   /* ── burger + mobile drawer ── */
   .ez-burger { display:none; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--line); background:#fff; border-radius:8px; color:var(--ink); cursor:pointer; }
+  .ez-backhome { max-width:1180px; margin:0 auto; padding:18px 24px 0; }
+  .ez-backhome a { display:inline-flex; align-items:center; gap:8px; color:var(--brand); font-size:12.5px; font-weight:600; text-decoration:none; }
+  .ez-backhome a:hover { color:var(--brand-dark); }
+  .ez-backhome svg { transform:scaleX(-1); }
   .ez-drawer-overlay { position:fixed; inset:0; background:rgba(20,12,10,.45); z-index:300; display:flex; justify-content:flex-start; }
   .ez-drawer { width:min(320px, 86vw); height:100%; background:#FDFBF5; display:flex; flex-direction:column; box-shadow:0 0 40px rgba(0,0,0,.2); animation:ezDrawerIn .22s ease; }
   @keyframes ezDrawerIn { from { transform:translateX(-100%); } to { transform:none; } }
