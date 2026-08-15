@@ -720,21 +720,8 @@ function ProviderPage() {
           </div>
         </section>
 
-        {/* قبل الطلب */}
-        <section className="pv-sec pv-sec--alt" id="s-before">
-          <div className="pv-before">
-            <div className="pv-sec-head">
-              <span className="pv-eyebrow">قبل لا ترسل الطلب</span>
-              <h2>هالمعلومات تخلي العرض أدق</h2>
-            </div>
-            <ul className="pv-before-list">
-              <li><CheckIcon />حدد التاريخ ووقت التقديم.</li>
-              <li><CheckIcon />اكتب العدد التقريبي للضيوف.</li>
-              <li><CheckIcon />اذكر أي طلبات أو احتياجات خاصة.</li>
-              <li><CheckIcon />السعر والموعد يتأكدون بعد موافقة مقدم الخدمة.</li>
-            </ul>
-          </div>
-        </section>
+
+
 
         {suggestions.length > 0 && (
           <section className="pv-sec" id="s-suggest">
