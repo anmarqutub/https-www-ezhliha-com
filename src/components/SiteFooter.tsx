@@ -43,7 +43,9 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
         <div className="ez-footer-col">
           <h3>{txt("footer.explore", "استكشف")}</h3>
           <div className="ez-footer-links">
+            <Link to="/">{txt("nav.home", "الرئيسية")}</Link>
             <Link to="/" hash="ez-results">{txt("footer.all", "كل مقدمي الخدمة")}</Link>
+
             <Link to="/" hash="ez-categories">{txt("nav.categories", "التصنيفات")}</Link>
             <Link to="/" hash="ez-cities">{txt("nav.cities", "المدن")}</Link>
             <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>
