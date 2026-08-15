@@ -2533,9 +2533,15 @@ function SiteTextsTab() {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <h1 className="adm-title">عبارات الموقع</h1>
-        <button className="adm-btn" disabled={saving || loading} onClick={saveAll}>
+        <button
+          className="adm-btn-primary"
+          disabled={saving || loading}
+          onClick={saveAll}
+          style={{ background: "#6B1226", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 800, fontSize: 15, cursor: saving ? "not-allowed" : "pointer", opacity: saving || loading ? 0.7 : 1 }}
+        >
           {saving ? "جارٍ الحفظ..." : dirty ? "حفظ جميع التغييرات" : "حفظ الكل"}
         </button>
+
       </div>
       <div className="adm-card">
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
