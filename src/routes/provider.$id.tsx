@@ -325,7 +325,8 @@ function ProviderPage() {
           <button
             type="button"
             className="pv-hero-main"
-            style={{ backgroundImage: `url(${cover})` }}
+            key={cover}
+            style={{ backgroundImage: `url(${cover})`, animation: "pvFadeSlide .6s ease" }}
             onClick={() => setGalleryOpen(true)}
             aria-label="عرض الصور"
           />
@@ -390,9 +391,6 @@ function ProviderPage() {
                 </strong>
               </div>
               <div className="pv-price-cta">
-                {waUrl && (
-                  <a className="pv-sq-btn" href={waUrl} target="_blank" rel="noopener noreferrer" aria-label="مراسلة واتساب"><ChatIcon /></a>
-                )}
                 {callUrl && (
                   <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
                     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
