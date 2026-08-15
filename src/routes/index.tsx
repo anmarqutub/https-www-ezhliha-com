@@ -1228,8 +1228,8 @@ const css = `
   .ez-cat-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(20,12,10,.72), rgba(20,12,10,.05) 60%); }
   .ez-cat-card:hover .ez-cat-media img { transform:scale(1.06); }
   .ez-cat-num { position:absolute; top:12px; inset-inline-start:12px; z-index:2; color:rgba(255,253,248,.85); font-size:11px; font-weight:700; }
-  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,253,248,.22); border:1px solid rgba(255,253,248,.45); color:#FFFDF8; font-size:14px; display:flex; align-items:center; justify-content:center; }
-  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:800; color:#FFFDF8; }
+  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.28); color:#fff; display:flex; align-items:center; justify-content:center; }
+  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:600; color:#FFFDF8; }
   .ez-cat-count { position:absolute; bottom:10px; inset-inline-start:14px; z-index:2; font-size:11px; color:rgba(255,253,248,.75); }
 
 
