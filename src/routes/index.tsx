@@ -1300,6 +1300,10 @@ const css = `
 
   .ez-card-body { padding:18px; flex:1; display:flex; flex-direction:column; }
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:500; margin-bottom:6px; }
+  .ez-card-toprow { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .ez-card-toprow .ez-card-kicker, .ez-card-toprow .ez-card-meta { margin-bottom:6px; }
+  .ez-card-more { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brand); white-space:nowrap; }
+
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
   .ez-card-head h3 { font-size:18px; font-weight:600; color:var(--ink); margin:0; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
