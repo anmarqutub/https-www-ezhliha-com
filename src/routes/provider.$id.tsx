@@ -305,7 +305,6 @@ function ProviderPage() {
         <nav className="pv-topnav">
           <Link to="/">الرئيسية</Link>
           <Link to="/providers">مقدمي الخدمات</Link>
-          <Link to="/cities">المدن</Link>
           
           <Link to="/favorites">المفضلة</Link>
           <Link to="/" hash="ez-contact">تواصل معنا</Link>
