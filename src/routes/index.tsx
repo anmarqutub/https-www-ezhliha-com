@@ -95,8 +95,14 @@ function fallbackCategoryImage(name: string, index: number) {
 }
 
 
-function Home() {
+export type EzView = "home" | "providers" | "categories" | "cities" | "faq" | "about";
+
+// فلاتر مؤقتة تنتقل بين الصفحات (من التصنيفات/المدن إلى صفحة مقدمي الخدمات)
+export const pendingFilters: { categoryId?: string | null; cityId?: string } = {};
+
+export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
