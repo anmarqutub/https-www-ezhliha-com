@@ -94,6 +94,7 @@ function ProviderPage() {
   const [callOpen, setCallOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const sugRef = useRef<HTMLDivElement>(null);
+  const brRef = useRef<HTMLDivElement>(null);
 
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
