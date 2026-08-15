@@ -707,7 +707,7 @@ function Home() {
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
               />
-              {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>}
+              {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح"><X size={14} /></button>}
             </div>
             {filtersActive && (
               <button type="button" className="ez-btn-ghost" onClick={resetAll}>{txt("results.reset", "مسح الفلاتر")}</button>
