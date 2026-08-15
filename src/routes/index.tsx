@@ -941,9 +941,9 @@ function ProviderCard({
           {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
-            {provider.rating ? <span className="ez-rating">⭐ {provider.rating}</span> : null}
+            {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {city && <div className="ez-card-meta">📍 {city.name_ar}</div>}
+          {city && <div className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</div>}
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
