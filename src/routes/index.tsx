@@ -477,13 +477,13 @@ function Home() {
                   className="ez-hero-arrow ez-hero-arrow-prev"
                   onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
                   aria-label="السابق"
-                >‹</button>
+                ><ChevronRight size={18} /></button>
                 <button
                   type="button"
                   className="ez-hero-arrow ez-hero-arrow-next"
                   onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
                   aria-label="التالي"
-                >›</button>
+                ><ChevronLeft size={18} /></button>
                 <div className="ez-hero-dots">
                   {banners.map((_, i) => (
                     <button key={i} onClick={() => setBannerIdx(i)} className={i === bannerIdx ? "active" : ""} aria-label={`بنر ${i + 1}`} />
@@ -497,7 +497,7 @@ function Home() {
         {/* Search console */}
         <div className="ez-console">
           <div className="ez-console-field">
-            <label>🏷️ {txt("console.category", "التصنيف")}</label>
+            <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
             <select
               value={selectedCategory ?? ""}
               onChange={(e) => { setSelectedCategory(e.target.value || null); setSelectedSub("all"); }}
@@ -507,7 +507,7 @@ function Home() {
             </select>
           </div>
           <div className="ez-console-field">
-            <label>⚙️ {txt("console.sub", "نوع الخدمة")}</label>
+            <label><SlidersHorizontal size={14} className="ez-fi" /> {txt("console.sub", "نوع الخدمة")}</label>
             <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
               <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
               {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
@@ -516,14 +516,14 @@ function Home() {
           </div>
 
           <div className="ez-console-field">
-            <label>📍 {txt("console.city", "المدينة")}</label>
+            <label><MapPin size={14} className="ez-fi" /> {txt("console.city", "المدينة")}</label>
             <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
               <option value="">{txt("home.city.all", "كل المدن")}</option>
               {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
             </select>
           </div>
           <button type="button" className="ez-console-btn" onClick={scrollToResults}>
-            <span>🔍</span> {txt("console.cta", "ابحث الآن")}
+            <Search size={16} /> {txt("console.cta", "ابحث الآن")}
           </button>
         </div>
 
