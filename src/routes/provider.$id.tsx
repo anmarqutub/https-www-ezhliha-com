@@ -873,6 +873,43 @@ function getInstagramEmbed(url: string) {
   return code ? `https://www.instagram.com/p/${code}/embed` : null;
 }
 
+function mediaSource(url: string): { key: string; label: string } {
+  if (/instagram\.com/i.test(url)) return { key: "ig", label: "إنستغرام" };
+  if (/tiktok\.com/i.test(url)) return { key: "tk", label: "تيك توك" };
+  if (/snapchat\.com/i.test(url)) return { key: "sc", label: "سناب شات" };
+  if (/(twitter|x)\.com/i.test(url)) return { key: "tw", label: "إكس" };
+  if (/(youtube\.com|youtu\.be)/i.test(url)) return { key: "yt", label: "يوتيوب" };
+  return { key: "web", label: "الرابط الأصلي" };
+}
+
+function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
+  const ytId = getYouTubeId(url);
+  const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
+  const img = poster || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const src = mediaSource(url);
+  return (
+    <figure className="pv-media-card">
+      <button
+        type="button"
+        className="pv-media-tile"
+        style={img ? { backgroundImage: `url(${img})` } : undefined}
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+        aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
+      >
+        {!img && isDirect && (
+          <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
+        )}
+        {isVideo && <span className="pv-media-play"><PlayIcon /></span>}
+      </button>
+      <figcaption className="pv-media-cap">
+        <span className="pv-media-src"><SocialGlyph platform={src.key} />{src.label}</span>
+        <span className="pv-media-hint">بالانتقال للرابط</span>
+      </figcaption>
+    </figure>
+  );
+}
+
+
 function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
   if (!images?.length && !videos?.length) return null;
   return (
