@@ -1117,9 +1117,10 @@ const css = `
   .ez-h3 { font-size:17px; font-weight:600; margin:26px 0 14px; }
   .ez-muted { color:var(--muted); font-size:13.5px; line-height:1.9; max-width:560px; }
   .ez-count { color:var(--muted); font-size:16px; font-weight:600; margin-inline-start:8px; }
-  .ez-btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:12px 24px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; margin-top:20px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
-  .ez-btn-primary:hover { background:var(--brand-dark); transform:translateY(-2px); }
-  .ez-btn-ghost { background:transparent; border:1px solid var(--line); color:var(--brand); padding:10px 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .ez-btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; height:40px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; margin-top:20px; }
+  .ez-btn-primary:hover { background:var(--brand-dark); }
+  .ez-btn-primary svg { width:16px; height:16px; }
+  .ez-btn-ghost { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:transparent; border:1px solid var(--line); color:var(--brand); height:36px; padding:0 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; }
   .ez-btn-ghost:hover { border-color:var(--brand); }
 
 
