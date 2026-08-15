@@ -407,34 +407,29 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       <style>{css}</style>
 
       <header className="ez-nav">
+        <button
+          type="button"
+          className="ez-burger"
+          aria-label={txt("nav.menu", "القائمة")}
+          onClick={() => setMenuOpen(true)}
+        >
+          <Menu size={22} />
+        </button>
+
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
 
         <nav className="ez-nav-menu">
-          <button
-            type="button"
-            className="ez-nav-link"
-            onClick={() => { resetAll(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          >
-            {txt("nav.home", "الرئيسية")}
-          </button>
-          <button type="button" className="ez-nav-link" onClick={() => { resetAll(); scrollToResults(); }}>
-            {txt("nav.providers", "مقدمي الخدمات")}
-          </button>
-
-          <button type="button" className="ez-nav-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-          <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
-          {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
-          <a
-            className="ez-nav-link"
-            href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {txt("nav.contact", "تواصل معنا")}
-          </a>
+          {navItems.map((it) =>
+            it.href ? (
+              <a key={it.label} className="ez-nav-link" href={it.href} target="_blank" rel="noopener noreferrer">{it.label}</a>
+            ) : (
+              <Link key={it.label} to={it.to!} className={`ez-nav-link ${it.active ? "active" : ""}`}>{it.label}</Link>
+            )
+          )}
         </nav>
+
 
 
         <div className="ez-nav-actions">
