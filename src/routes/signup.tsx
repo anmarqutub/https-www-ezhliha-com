@@ -178,7 +178,7 @@ function Field({ label, hint, error, children }: { label: string; hint?: string;
 }
 
 const shellStyle: React.CSSProperties = {
-  minHeight: "100vh",
+  minHeight: "78vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
