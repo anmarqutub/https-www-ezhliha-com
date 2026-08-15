@@ -1909,7 +1909,8 @@ function ProvidersTab() {
           </button>
           <button
             className="adm-btn-primary"
-            onClick={() => { void downloadTemplate(); }}
+            onClick={() => { void downloadTemplate({ providerIds: filtered.map((p) => p.id) }); }}
+
           >
             📊 تصدير Excel ({filtered.length})
           </button>

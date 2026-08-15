@@ -38,7 +38,7 @@ function colLetter(i: number) {
 
 const YN = (b: boolean) => (b ? "نعم" : "لا");
 
-export async function buildTemplateWorkbook(): Promise<Blob> {
+export async function buildTemplateWorkbook(opts?: { providerIds?: string[] }): Promise<Blob> {
   const [citiesR, catsR, subsR, provsR, pkgsR, svcsR, brsR, imgsR] = await Promise.all([
     supabase.from("cities").select("id,name_ar,active").order("sort_order"),
     supabase.from("categories").select("id,name_ar").order("sort_order"),
@@ -53,7 +53,11 @@ export async function buildTemplateWorkbook(): Promise<Blob> {
   const cities = citiesR.data ?? [];
   const cats = catsR.data ?? [];
   const subs = subsR.data ?? [];
-  const provs = provsR.data ?? [];
+  // When the admin exports from a filtered list, only those providers (and
+  // their packages/services/branches) belong in the workbook.
+  const only = opts?.providerIds ? new Set(opts.providerIds) : null;
+  const provs = (provsR.data ?? []).filter((p) => !only || only.has(p.id));
+
 
   const cityName = new Map(cities.map((c) => [c.id, c.name_ar]));
   const catName = new Map(cats.map((c) => [c.id, c.name_ar]));
@@ -237,8 +241,9 @@ export async function buildTemplateWorkbook(): Promise<Blob> {
   return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
-export async function downloadTemplate() {
-  const blob = await buildTemplateWorkbook();
+export async function downloadTemplate(opts?: { providerIds?: string[] }) {
+  const blob = await buildTemplateWorkbook(opts);
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

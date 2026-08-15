@@ -44,6 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const beatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickedRef = useRef(false);
+  // Self-claim is only allowed briefly after mount/sign-in, so an admin
+  // "delete device" later is never silently undone by the poller.
+  const claimGraceRef = useRef(Date.now() + 60000);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
@@ -114,7 +117,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (kickedRef.current) return;
       try {
         const sid = getOrCreateDeviceSid();
-        const res = await verify({ data: { sessionId: sid } });
+        let res = await verify({ data: { sessionId: sid } });
+        // "revoked" can simply mean the device row isn't there yet: the
+        // claimSession call from SIGNED_IN may still be in flight, or the
+        // session was hydrated without a SIGNED_IN event (cleared storage,
+        // new browser profile). Claim once, then re-verify before kicking.
+        if (
+          !res.valid && !res.admin &&
+          (res as { status?: string }).status === "revoked" &&
+          Date.now() < claimGraceRef.current
+        ) {
+          try {
+            const claimed = await claim({ data: { sessionId: sid } });
+            if (claimed?.status === "approved" || claimed?.status === "admin") {
+              res = await verify({ data: { sessionId: sid } });
+            } else if (claimed?.status === "pending") {
+              res = { valid: false, admin: false, status: "pending" } as typeof res;
+            }
+          } catch {
+            return; /* network blip — retry next tick */
+          }
+        }
         if (!res.valid && !res.admin) {
           kickedRef.current = true;
           stopPolling();
@@ -128,6 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         /* network blip — ignore */
       }
     };
+
     // immediate check, then every 20s
     tick();
     pollRef.current = setInterval(tick, 20000);
