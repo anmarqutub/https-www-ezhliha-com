@@ -622,8 +622,8 @@ function Home() {
             <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
           </div>
           <div className="ez-rail-nav">
-            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}>→</button>
-            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}>←</button>
+            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}><ChevronRight size={16} /></button>
+            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}><ChevronLeft size={16} /></button>
           </div>
         </div>
 
