@@ -934,39 +934,43 @@ function ProviderCard({
       )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-          {featured && <span className="ez-badge">مميز</span>}
+          <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
         </div>
 
         <div className="ez-card-body">
-          {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
+          <div className="ez-card-toprow">
+            {sub && <span className="ez-card-kicker">{sub.name_ar}</span>}
+            {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
+          </div>
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
             {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {city && <div className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</div>}
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
-            <small>السعر التقريبي</small>
-            <strong>
-              {provider.price_from
-                ? `يبدأ من ${provider.price_from} ر.س`
-                : provider.price
-                  ? provider.price
-                  : "السعر حسب التفاصيل"}
-            </strong>
+            <div>
+              <small>السعر التقريبي</small>
+              <strong>
+                {provider.price_from
+                  ? `يبدأ من ${provider.price_from} ر.س`
+                  : provider.price
+                    ? provider.price
+                    : "السعر حسب التفاصيل"}
+              </strong>
+            </div>
+            <span className="ez-card-more">اكتشف <ArrowUpLeft size={13} /></span>
           </div>
         </div>
       </Link>
-      <div className="ez-card-foot">
-        {waUrl ? (
+      {waUrl && (
+        <div className="ez-card-foot">
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
             <span>{contactLabel}</span>
             <WhatsAppIcon />
           </a>
-        ) : (
-          <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
-        )}
-      </div>
+        </div>
+      )}
+
     </article>
   );
 }
