@@ -1238,8 +1238,8 @@ const css = `
   .ez-results-tools { display:flex; align-items:center; gap:10px; }
   .ez-search { background:var(--surface); border:1px solid var(--line); border-radius:50px; display:flex; align-items:center; gap:6px; padding:4px 14px; min-width:320px; }
   .ez-search input { flex:1; border:none; outline:none; padding:10px 6px; font-size:14px; font-family:inherit; background:transparent; color:var(--ink); }
-  .ez-search-icon { color:var(--brand); font-size:14px; }
-  .ez-search-clear { background:transparent; border:none; color:var(--brand); font-size:15px; cursor:pointer; padding:4px 8px; font-family:inherit; }
+  .ez-search-icon { color:var(--brand); display:inline-flex; }
+  .ez-search-clear { background:transparent; border:none; color:var(--brand); cursor:pointer; padding:4px 8px; display:inline-flex; align-items:center; font-family:inherit; }
   .ez-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
   .ez-chips button { background:var(--surface); border:1px solid var(--line); padding:8px 16px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:var(--ink); transition:all .2s; }
   .ez-chips button:hover { border-color:var(--brand); color:var(--brand); }
