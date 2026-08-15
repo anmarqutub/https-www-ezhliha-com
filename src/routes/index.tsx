@@ -1091,18 +1091,16 @@ function ProviderCard({
           </div>
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
-            <div>
-              <small>السعر التقريبي</small>
-              <strong>
-                {provider.price_from
-                  ? `يبدأ من ${provider.price_from} ر.س`
-                  : provider.price
-                    ? provider.price
-                    : "السعر حسب التفاصيل"}
-              </strong>
-            </div>
-            <span className="ez-card-more">اكتشف <ArrowUpLeft size={13} /></span>
+            <small>السعر التقريبي</small>
+            <strong>
+              {provider.price_from
+                ? `يبدأ من ${provider.price_from} ر.س`
+                : provider.price
+                  ? provider.price
+                  : "السعر حسب التفاصيل"}
+            </strong>
           </div>
+
         </div>
       </Link>
       {waUrl && (
