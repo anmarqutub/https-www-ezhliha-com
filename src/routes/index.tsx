@@ -596,35 +596,8 @@ function Home() {
       )}
 
 
-      {/* ── HOW IT WORKS ── */}
-      <section className="ez-steps-sec">
-        <div className="ez-steps-wrap">
-          <div className="ez-steps-intro">
-            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("steps.eyebrow", "من البحث إلى الطلب")}</div>
-            <h2 className="ez-h2">{txt("steps.title", "اختر، قارن، وتواصل")}</h2>
-            <p className="ez-muted">{txt("steps.desc", "هذي بداية رحلتك: ابحث، اجمع خياراتك، وبعدها تواصل مباشرة مع مقدم الخدمة.")}</p>
-            <button type="button" className="ez-btn-primary" onClick={() => { resetAll(); scrollToResults(); }}>
-              {txt("steps.cta", "شوف الخيارات")} ←
-            </button>
-          </div>
-          <div className="ez-steps-cards">
-            {[
-              { n: "01", i: "🔍", t: txt("steps.1.title", "ابحث"), d: txt("steps.1.desc", "حدد الخدمة والمدينة وشوف التفاصيل.") },
-              { n: "02", i: "♥", t: txt("steps.2.title", "قارن واحفظ"), d: txt("steps.2.desc", "اجمع خياراتك في المفضلة وارجع لها بأي وقت.") },
-              { n: "03", i: "✦", t: txt("steps.3.title", "تواصل"), d: txt("steps.3.desc", "أرسل تفاصيل مناسبتك عبر الواتساب بضغطة.") },
-            ].map((s) => (
-              <div key={s.n} className="ez-step-card">
-                <div className="ez-step-card-top">
-                  <span className="ez-step-icon">{s.i}</span>
-                  <span className="ez-step-num">{s.n}</span>
-                </div>
-                <h3>{s.t}</h3>
-                <p>{s.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
+
 
       {/* ── CATEGORIES ── */}
       <section className="ez-sec" id="ez-categories">
