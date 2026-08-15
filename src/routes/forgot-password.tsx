@@ -62,7 +62,7 @@ function ForgotPasswordPage() {
             {submitting ? "..." : "إرسال رابط إعادة التعيين"}
           </button>
           <div className="auth-switch">
-            تذكرتِ كلمة المرور؟ <Link to="/login">تسجيل الدخول</Link>
+            تذكرت كلمة المرور؟ <Link to="/login">تسجيل الدخول</Link>
           </div>
         </form>
       )}

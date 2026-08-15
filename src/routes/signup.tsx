@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { createUser } from "@/lib/signup.functions";
 import logoUrl from "@/assets/logo.jpg";
+import SiteFooter from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -106,7 +107,7 @@ function SignupPage() {
         <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة" error={codeError}>
           <input required value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setServerErrors((s) => ({ ...s, code: "" })); }} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
-        <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك" error={nameError}>
+        <Field label="الاسم الكامل" hint="كما تود أن يظهر في حسابك" error={nameError}>
           <input required value={fullName} onChange={(e) => { setFullName(e.target.value); setServerErrors((s) => ({ ...s, full_name: "" })); }} placeholder="مثال: نورة عبدالله" />
         </Field>
         <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={emailError}>
