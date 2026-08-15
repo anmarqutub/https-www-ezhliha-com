@@ -493,7 +493,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   </Link>
                 )
               )}
-              {isAdmin && (
+              {user && isAdmin && (
                 <Link to="/admin" onClick={() => setMenuOpen(false)}>{txt("nav.admin", "لوحة الأدمن")}</Link>
               )}
             </nav>
@@ -1220,7 +1220,7 @@ const css = `
     --ease-out:cubic-bezier(.23,1,.32,1);
     min-height:100vh; background:var(--bg);
     background-image:radial-gradient(circle at 85% 6%, rgba(201,160,99,.22), transparent 24rem), linear-gradient(180deg,#FBF8F0,#F5F1E6);
-    font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; font-size:14.5px; line-height:1.78; }
+    font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; font-size:13.5px; line-height:1.75; }
   .ez-root * { box-sizing:border-box; }
   .ez-root h1, .ez-root h2, .ez-root h3, .ez-root h4, .ez-root button, .ez-root nav { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .ez-root ::selection { background:var(--brand); color:#FBF8F0; }
@@ -1241,7 +1241,7 @@ const css = `
   .ez-brand { text-decoration:none; display:flex; align-items:center; }
   .ez-brand-logo { height:64px; width:auto; object-fit:contain; }
   .ez-nav-menu { display:flex; align-items:center; gap:22px; }
-  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:15px; font-weight:600; background:none; border:none; cursor:pointer; font-family:"Alexandria","Noto Sans Arabic",sans-serif; padding:4px 0; position:relative; }
+  .ez-nav-link { color:var(--ink); text-decoration:none; font-size:13.5px; font-weight:600; background:none; border:none; cursor:pointer; font-family:"Alexandria","Noto Sans Arabic",sans-serif; padding:4px 0; position:relative; }
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
@@ -1509,13 +1509,13 @@ const css = `
   .ez-drawer-head img { height:46px; width:auto; }
   .ez-drawer-close { width:34px; height:34px; border:1px solid var(--line); background:#fff; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); }
   .ez-drawer-menu { flex:1; overflow-y:auto; padding:6px 0; }
-  .ez-drawer-menu a { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:15px; font-weight:600; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+  .ez-drawer-menu a { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; font-size:13.5px; font-weight:600; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
   .ez-drawer-menu a.active { color:var(--brand); }
   .ez-drawer-menu a small { color:var(--muted); font-size:12px; font-weight:500; }
   .ez-drawer-cta { margin:16px; background:var(--brand); color:#fff; border-radius:10px; padding:18px; text-align:center; }
   .ez-drawer-cta-ico { font-size:18px; }
-  .ez-drawer-cta p { margin:8px 0 14px; font-size:13.5px; line-height:1.8; color:rgba(255,255,255,.9); }
-  .ez-drawer-cta-btn { display:block; background:#FDFBF5; color:var(--brand); border-radius:6px; padding:11px; font-weight:600; font-size:14px; text-decoration:none; }
+  .ez-drawer-cta p { margin:8px 0 14px; font-size:12.5px; line-height:1.8; color:rgba(255,255,255,.9); }
+  .ez-drawer-cta-btn { display:block; background:#FDFBF5; color:var(--brand); border-radius:6px; padding:10px; font-weight:600; font-size:13px; text-decoration:none; }
 
   /* ── cities page ── */
   .ez-city-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; margin-top:22px; }
