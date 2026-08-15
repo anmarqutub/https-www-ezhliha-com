@@ -135,6 +135,31 @@ function Home() {
     })();
   }, []);
 
+  // المفضلة الخاصة بالمستخدم
+  useEffect(() => {
+    if (!user) { setFavIds(new Set()); return; }
+    supabase.from("favorites").select("provider_id").eq("user_id", user.id).then(({ data }) => {
+      setFavIds(new Set(((data ?? []) as { provider_id: string }[]).map((f) => f.provider_id)));
+    });
+  }, [user]);
+
+  const toggleFav = async (providerId: string) => {
+    if (!user) return;
+    const isFav = favIds.has(providerId);
+    setFavIds((prev) => {
+      const next = new Set(prev);
+      if (isFav) next.delete(providerId); else next.add(providerId);
+      return next;
+    });
+    if (isFav) {
+      await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
+    } else {
+      await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
+    }
+  };
+
+
+
   const txt = (key: string, fallback: string) => siteTexts[key] || fallback;
   const statNumber = (key: string, auto: number) => {
     const raw = (siteTexts[key] ?? "").replace(/[^\d]/g, "");
