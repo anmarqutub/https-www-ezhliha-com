@@ -330,7 +330,7 @@ function Home() {
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <span>🔍</span> {txt("nav.cta", "دوّر عن مزوّد")}
+                <span>🔍</span> {txt("nav.cta", "ابحث عن مقدم خدمة")}
               </button>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
@@ -1015,8 +1015,8 @@ const css = `
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
-  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:none; padding:10px 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.18); }
-  .ez-nav-cta:hover { background:var(--brand-dark); }
+  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:1px solid var(--brand-dark); padding:11px 22px; border-radius:8px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(102,0,0,.28); transition:background .2s, transform .2s; }
+  .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
 
   /* SHARED */
   .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Alexandria",sans-serif; }
