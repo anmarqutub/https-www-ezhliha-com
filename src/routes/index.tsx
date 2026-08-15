@@ -251,12 +251,31 @@ function Home() {
 
   const q = quickSearch.trim().toLowerCase();
 
-  const results = providers.filter((p) => {
+  const PRICE_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
+    { id: "all", label: txt("filter.price.all", "كل الأسعار"), min: 0, max: Infinity },
+    { id: "lt1000", label: txt("filter.price.1", "أقل من 1,000 ر.س"), min: 0, max: 1000 },
+    { id: "1000-3000", label: txt("filter.price.2", "1,000 – 3,000 ر.س"), min: 1000, max: 3000 },
+    { id: "3000-10000", label: txt("filter.price.3", "3,000 – 10,000 ر.س"), min: 3000, max: 10000 },
+    { id: "gt10000", label: txt("filter.price.4", "أكثر من 10,000 ر.س"), min: 10000, max: Infinity },
+  ];
+
+  const matchesPrice = (p: Provider) => {
+    if (priceRange === "all") return true;
+    const band = PRICE_BANDS.find((b) => b.id === priceRange);
+    if (!band) return true;
+    const val = p.price_from ?? p.price_to;
+    if (val == null) return false;
+    return val >= band.min && val < band.max;
+  };
+
+  // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
+  const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
     if (selectedCategory && sub.category_id !== selectedCategory) return false;
-    if (selectedSub !== "all" && !subMatches(p.subcategory_id, selectedSub)) return false;
+    if (!matchesPrice(p)) return false;
+    if (favOnly && !favIds.has(p.id)) return false;
     if (search.trim()) {
       const s = search.trim().toLowerCase();
       if (!p.name.toLowerCase().includes(s) && !(p.description ?? "").toLowerCase().includes(s)) return false;
@@ -273,7 +292,23 @@ function Home() {
     return true;
   });
 
-  const filtersActive = !!(q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim());
+  const results = baseResults.filter(
+    (p) => selectedSub === "all" || subMatches(p.subcategory_id, selectedSub)
+  );
+
+  // قائمة أنواع الخدمة الظاهرة في الشريط الجانبي مع عدد النتائج لكل نوع
+  const sidebarSubs = (selectedCategory
+    ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
+    : subcategories.filter((s) => !s.parent_id)
+  ).map((s) => ({
+    ...s,
+    count: baseResults.filter((p) => subMatches(p.subcategory_id, s.id)).length,
+  }));
+
+  const filtersActive = !!(
+    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" || favOnly
+  );
+
 
   const featured = results.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
