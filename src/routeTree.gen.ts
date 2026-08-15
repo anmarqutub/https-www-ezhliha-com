@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FavoritesRouteImport } from './routes/favorites'
@@ -29,6 +30,11 @@ const SignupRoute = SignupRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProvidersRoute = ProvidersRouteImport.update({
+  id: '/providers',
+  path: '/providers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/provider/$id': typeof ProviderIdRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/provider/$id': typeof ProviderIdRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/provider/$id': typeof ProviderIdRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/forgot-password'
     | '/login'
+    | '/providers'
     | '/reset-password'
     | '/signup'
     | '/provider/$id'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/forgot-password'
     | '/login'
+    | '/providers'
     | '/reset-password'
     | '/signup'
     | '/provider/$id'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/forgot-password'
     | '/login'
+    | '/providers'
     | '/reset-password'
     | '/signup'
     | '/provider/$id'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ProvidersRoute: typeof ProvidersRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   ProviderIdRoute: typeof ProviderIdRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/providers': {
+      id: '/providers'
+      path: '/providers'
+      fullPath: '/providers'
+      preLoaderRoute: typeof ProvidersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ProvidersRoute: ProvidersRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   ProviderIdRoute: ProviderIdRoute,
