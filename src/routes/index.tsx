@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpLeft,
@@ -103,6 +103,7 @@ export const pendingFilters: { categoryId?: string | null; cityId?: string } = {
 export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
