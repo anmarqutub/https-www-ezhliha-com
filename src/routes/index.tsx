@@ -100,6 +100,10 @@ function Home() {
   const [selectedSub, setSelectedSub] = useState<string | "all">("all");
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
+  const [priceRange, setPriceRange] = useState<string>("all");
+  const [favOnly, setFavOnly] = useState(false);
+  const [favIds, setFavIds] = useState<Set<string>>(new Set());
+
 
   useEffect(() => {
     (async () => {
