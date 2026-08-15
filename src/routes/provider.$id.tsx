@@ -94,6 +94,7 @@ function ProviderPage() {
   const [callOpen, setCallOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const sugRef = useRef<HTMLDivElement>(null);
+  const brRef = useRef<HTMLDivElement>(null);
 
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -297,7 +298,7 @@ function ProviderPage() {
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
           <Link to="/" hash="ez-results">مقدمي الخدمات</Link>
-          <Link to="/" hash="ez-cities">المدن</Link>
+          
           <Link to="/favorites">المفضلة</Link>
           <Link to="/" hash="ez-contact">تواصل معنا</Link>
           <Link to="/" hash="ez-faq">الأسئلة الشائعة</Link>
@@ -320,32 +321,32 @@ function ProviderPage() {
       </div>
 
       <section className="pv-hero">
-        <button
-          type="button"
-          className="pv-hero-main"
-          style={{ backgroundImage: `url(${cover})` }}
-          onClick={() => setGalleryOpen(true)}
-          aria-label="عرض الصور"
-        />
-        <div className="pv-hero-side">
-          {[1, 2].map((k) => (
-            <button
-              key={k}
-              type="button"
-              className="pv-hero-thumb"
-              style={{ backgroundImage: `url(${heroImgs[k]})` }}
-              onClick={() => setGalleryOpen(true)}
-              aria-label={`صورة ${k + 1}`}
-            />
-          ))}
+        <div className="pv-hero-carousel">
+          <button
+            type="button"
+            className="pv-hero-main"
+            style={{ backgroundImage: `url(${cover})` }}
+            onClick={() => setGalleryOpen(true)}
+            aria-label="عرض الصور"
+          />
+          {images.length > 1 && (
+            <>
+              <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
+                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}>‹</button>
+              <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
+                onClick={() => setActiveImg((n) => (n + 1) % images.length)}>›</button>
+              <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
+            </>
+          )}
+          {images.length > 0 && (
+            <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
+              <span>شاهد الصور</span>
+            </button>
+          )}
         </div>
-        {images.length > 0 && (
-          <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
-            <span>شاهد الصور</span>
-          </button>
-        )}
       </section>
+
 
       <main className="pv-main">
         <div className="pv-head-grid">
@@ -366,27 +367,6 @@ function ProviderPage() {
             </div>
             {provider.description && <p className="pv-lead">{provider.description}</p>}
 
-            <div className="pv-tiles">
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                <small>منطقة الخدمة</small>
-                <strong>{provider.address || cityName || "—"}</strong>
-              </div>
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2" /><path d="M2.5 19a6.5 6.5 0 0 1 13 0" /><path d="M17 11a3 3 0 1 0-1.6-5.5" /></svg>
-                <small>نطاق المناسبة</small>
-                <strong>
-                  {provider.people_from || provider.people_to
-                    ? `${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`
-                    : "حسب ترتيب المكان"}
-                </strong>
-              </div>
-              <div className="pv-tile">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 12l9 5 9-5" /></svg>
-                <small>طريقة الخدمة</small>
-                <strong>{subName || "حسب الطلب"}</strong>
-              </div>
-            </div>
           </div>
 
           <aside className="pv-aside">
@@ -400,23 +380,31 @@ function ProviderPage() {
                 aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
               >{isFav ? "♥" : "♡"}</button>
             </div>
-            <div className="pv-price-card">
-              <small>السعر التقريبي</small>
-              <div className="pv-price-value">
-                {provider.price_from
-                  ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
-                  : (provider.price || "السعر حسب التفاصيل")}
+            <div className="pv-price-bar">
+              <div className="pv-price-out">
+                <small>السعر التقريبي</small>
+                <strong>
+                  {provider.price_from
+                    ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
+                    : (provider.price || "السعر حسب التفاصيل")}
+                </strong>
               </div>
-              <p>يختلف السعر حسب العدد والتاريخ والتفاصيل المطلوبة.</p>
-              {provider.whatsapp && (
-                <button type="button" className="pv-btn-quote" onClick={() => setQuoteOpen(true)}>
-                  <SendIcon />
-                  <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
-                </button>
-              )}
-              <div className="pv-price-note">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>
-                <span>الطلب ما يثبت الحجز إلا بعد موافقة مقدم الخدمة على التاريخ والتفاصيل.</span>
+              <div className="pv-price-cta">
+                {waUrl && (
+                  <a className="pv-sq-btn" href={waUrl} target="_blank" rel="noopener noreferrer" aria-label="مراسلة واتساب"><ChatIcon /></a>
+                )}
+                {callUrl && (
+                  <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
+                    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                    if (isMobile) window.location.href = callUrl; else setCallOpen(true);
+                  }}><PhoneIcon /></button>
+                )}
+                {provider.whatsapp && (
+                  <button type="button" className="pv-btn-quote pv-btn-quote--wide" onClick={() => setQuoteOpen(true)}>
+                    <SendIcon />
+                    <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
+                  </button>
+                )}
               </div>
             </div>
           </aside>
@@ -430,8 +418,8 @@ function ProviderPage() {
             ["s-media", "صور وفيديو"],
             ["s-reviews", "التقييمات"],
             ["s-contact", "التواصل والفروع"],
-            ["s-before", "قبل الطلب"],
           ];
+
           return (
 
             <nav className="pv-secnav">
@@ -679,11 +667,12 @@ function ProviderPage() {
 
               <div className="pv-soc-title">حسابات التواصل</div>
               <div className="pv-soc-grid">
-                <SocialTile label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
-                <SocialTile label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
-                <SocialTile label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
-                <SocialTile label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
+                <SocialTile platform="ig" label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
+                <SocialTile platform="sc" label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
+                <SocialTile platform="tk" label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
+                <SocialTile platform="tw" label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
               </div>
+
 
               <div className="pv-share-row">
                 <button type="button" className="pv-btn-share" onClick={shareProvider}>
@@ -701,53 +690,42 @@ function ProviderPage() {
                 <span className="pv-card-ico"><PinIcon /></span>
               </div>
 
-              {provider.show_branches !== false && branches.length > 0 ? (
-                <div className="pv-branch-list">
-                  {branches.map((br) => (
-                    <article className="pv-branch" key={br.id}>
-                      <div className="pv-branch-body">
-                        <h3>{br.name}</h3>
-                        {br.address && <p>{br.address}</p>}
-                        {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">{br.phone}</a>}
+              {(() => {
+                const list = provider.show_branches !== false && branches.length > 0
+                  ? branches.map((br) => ({ id: br.id, name: br.name, address: br.address, phone: br.phone, map_url: br.map_url }))
+                  : [{ id: "main", name: "الفرع الرئيسي", address: provider.address || cityName || "يُحدّث من مقدم الخدمة", phone: null as string | null, map_url: provider.map_url }];
+                return (
+                  <div className="pv-branch-wrap">
+                    {list.length > 1 && (
+                      <div className="pv-branch-arrows">
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق">‹</button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي">›</button>
                       </div>
-                      {br.map_url && (
-                        <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <div className="pv-branch-list">
-                  <article className="pv-branch">
-                    <div className="pv-branch-body">
-                      <h3>الفرع الرئيسي</h3>
-                      <p>{provider.address || cityName || "يُحدّث من مقدم الخدمة"}</p>
-                    </div>
-                    {provider.map_url && (
-                      <a className="pv-branch-map" href={provider.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
                     )}
-                  </article>
-                </div>
-              )}
+                    <div className={`pv-branch-rail ${list.length > 1 ? "" : "pv-branch-rail--one"}`} ref={brRef}>
+                      {list.map((br) => (
+                        <article className="pv-branch" key={br.id}>
+                          <div className="pv-branch-body">
+                            <h3>{br.name}</h3>
+                            {br.address && <p>{br.address}</p>}
+                            {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">{br.phone}</a>}
+                          </div>
+                          {br.map_url && (
+                            <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
           </div>
         </section>
 
-        {/* قبل الطلب */}
-        <section className="pv-sec pv-sec--alt" id="s-before">
-          <div className="pv-before">
-            <div className="pv-sec-head">
-              <span className="pv-eyebrow">قبل لا ترسل الطلب</span>
-              <h2>هالمعلومات تخلي العرض أدق</h2>
-            </div>
-            <ul className="pv-before-list">
-              <li><CheckIcon />حدد التاريخ ووقت التقديم.</li>
-              <li><CheckIcon />اكتب العدد التقريبي للضيوف.</li>
-              <li><CheckIcon />اذكر أي طلبات أو احتياجات خاصة.</li>
-              <li><CheckIcon />السعر والموعد يتأكدون بعد موافقة مقدم الخدمة.</li>
-            </ul>
-          </div>
-        </section>
+
+
 
         {suggestions.length > 0 && (
           <section className="pv-sec" id="s-suggest">
@@ -770,11 +748,12 @@ function ProviderPage() {
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
                     <small>السعر التقريبي</small>
                     <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
-                    <span className="pv-sug-more">التفاصيل ↗</span>
+                    <span className="pv-sug-more">اكتشف المزيد <i>←</i></span>
                   </div>
                 </Link>
               ))}
             </div>
+
           </section>
         )}
 
@@ -927,18 +906,8 @@ function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const ttEmbed = getTikTokEmbed(url);
-  const igEmbed = getInstagramEmbed(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
-  const isPortrait = !!ttEmbed || !!igEmbed;
 
-  if (ytId) {
-    return (
-      <div className="pv-video-wrap">
-        <iframe src={`https://www.youtube.com/embed/${ytId}`} title="فيديو" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
@@ -946,42 +915,14 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </div>
     );
   }
-  if (igEmbed) {
-    if (thumbnailUrl) {
-      return (
-        <button
-          type="button"
-          className="pv-video-poster"
-          style={{ backgroundImage: `url(${thumbnailUrl})` }}
-          onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-          aria-label="عرض الملف الشخصي على إنستقرام"
-        >
-          <span><PlayIcon /></span>
-        </button>
-      );
-    }
-    return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={igEmbed} title="Instagram" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
-  if (ttEmbed) {
-    return (
-      <div className={`pv-video-wrap ${isPortrait ? "pv-video-wrap--tall" : ""}`}>
-        <iframe src={ttEmbed} title="TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
-      </div>
-    );
-  }
-  // Fallback — رابط ما نقدر نضمنه
-  if (thumbnailUrl) {
+  if (poster) {
     return (
       <button
         type="button"
         className="pv-video-poster"
-        style={{ backgroundImage: `url(${thumbnailUrl})` }}
+        style={{ backgroundImage: `url(${poster})` }}
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label="عرض الفيديو"
+        aria-label="عرض المقطع في المصدر"
       >
         <span><PlayIcon /></span>
       </button>
@@ -992,13 +933,14 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       type="button"
       className="pv-video-poster pv-video-poster--empty"
       onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-      aria-label="عرض الفيديو"
+      aria-label="عرض المقطع في المصدر"
     >
       <span><PlayIcon /></span>
-      <em className="pv-video-poster-label">تشغيل الفيديو</em>
+      <em className="pv-video-poster-label">شاهد المقطع</em>
     </button>
   );
 }
+
 
 
 function CheckIcon() {
@@ -1017,16 +959,30 @@ function PinIcon() {
   return <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>;
 }
 
-function SocialTile({ label, handle, href }: { label: string; handle: string | null; href: string | null }) {
+function SocialGlyph({ platform }: { platform: string }) {
+  if (platform === "ig")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
+  if (platform === "sc")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
+  if (platform === "tk")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
+  return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
+}
+
+function SocialTile({ platform, label, handle, href }: { platform: string; label: string; handle: string | null; href: string | null }) {
   const inner = (
     <>
-      <small>{label}</small>
-      <strong>{handle ? `@${handle}` : "غير مضاف"}</strong>
+      <span className={`pv-soc-glyph pv-soc-glyph--${platform}`}><SocialGlyph platform={platform} /></span>
+      <span className="pv-soc-txt">
+        <small>{label}</small>
+        <strong>{handle ? `@${handle}` : "غير مضاف"}</strong>
+      </span>
     </>
   );
   if (!href) return <div className="pv-soc-tile pv-soc-tile--off">{inner}</div>;
   return <a className="pv-soc-tile" href={href} target="_blank" rel="noopener noreferrer">{inner}</a>;
 }
+
 
 function WhatsAppIcon() {
   return (
@@ -1376,6 +1332,50 @@ const css3 = `
   .pv-sug-body small { color:#8A7A73; font-size:11.5px; margin-top:6px; }
   .pv-sug-body strong { color:#660000; font-size:14px; font-weight:900; }
   .pv-sug-more { color:#660000; font-size:12.5px; font-weight:800; margin-top:6px; }
+
+  /* ===== hero carousel ===== */
+  .pv-hero { display:block; }
+  .pv-hero-carousel { position:relative; max-width:1440px; margin:0 auto; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:520px; border-radius:10px; }
+  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
+  .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
+  .pv-hero-prev { right:16px; }
+  .pv-hero-next { left:16px; }
+  .pv-hero-count { position:absolute; bottom:18px; right:50%; transform:translateX(50%); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 14px; font-size:12px; font-weight:700; }
+
+  /* ===== price bar ===== */
+  .pv-price-bar { background:#FFFDF8; border:1px solid #E3DBC9; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:14px; }
+  .pv-price-out small { display:block; color:#8A7A73; font-size:12px; margin-bottom:4px; }
+  .pv-price-out strong { color:#660000; font-size:20px; font-weight:900; }
+  .pv-price-cta { display:flex; align-items:stretch; gap:10px; }
+  .pv-sq-btn { width:52px; min-height:52px; border-radius:12px; border:1px solid #E3DBC9; background:#fff; color:#7A6A64; display:flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; }
+  .pv-sq-btn:hover { color:#660000; border-color:#660000; }
+  .pv-btn-quote--wide { flex:1; border-radius:12px; min-height:52px; }
+
+  /* ===== social tiles ===== */
+  .pv-soc-tile { display:flex; align-items:center; gap:10px; }
+  .pv-soc-glyph { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
+  .pv-soc-glyph--ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
+  .pv-soc-glyph--sc { background:#FFFC00; color:#241C1A; }
+  .pv-soc-glyph--tk { background:#000; }
+  .pv-soc-glyph--tw { background:#000; }
+  .pv-soc-tile--off .pv-soc-glyph { filter:grayscale(1); opacity:.5; }
+
+  /* ===== branches rail ===== */
+  .pv-branch-wrap { position:relative; }
+  .pv-branch-arrows { display:flex; gap:8px; justify-content:flex-start; margin-bottom:10px; }
+  .pv-branch-arrows button { width:34px; height:34px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:19px; line-height:1; cursor:pointer; }
+  .pv-branch-arrows button:hover { background:#660000; color:#fff; border-color:#660000; }
+  .pv-branch-rail { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; }
+  .pv-branch-rail .pv-branch { flex:0 0 260px; scroll-snap-align:start; flex-direction:column; align-items:flex-start; }
+  .pv-branch-rail--one .pv-branch { flex:1 1 auto; }
+
+  .pv-sug-more i { font-style:normal; margin-inline-start:6px; }
+
+  @media (max-width:900px) {
+    .pv-hero-carousel .pv-hero-main { height:280px; }
+    .pv-price-bar { position:sticky; bottom:0; }
+  }
 
   @media (max-width:900px) {
     .pv-secnav { margin:24px -14px 0; top:64px; }
