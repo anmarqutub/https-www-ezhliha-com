@@ -343,7 +343,10 @@ function Home() {
     setSelectedCity("");
     setSearch("");
     setQuickSearch("");
+    setPriceRange("all");
+    setFavOnly(false);
   };
+
 
   const faqs = [
     { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف المزود وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
