@@ -82,7 +82,7 @@ const footerCss = `
   .ez-footer-brand { max-width:400px; }
   .ez-footer-brand img { height:64px; width:auto; object-fit:contain; background:#fff; border-radius:8px; padding:6px 10px; }
   .ez-footer-brand p { color:rgba(255,255,255,.72); font-size:13.5px; line-height:1.95; margin:16px 0 0; }
-  .ez-footer-col h3 { font-size:14px; font-weight:700; margin:0; color:#fff; }
+  .ez-footer-col h3 { font-size:14px; font-weight:500; margin:0; color:#fff; }
   .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:rgba(255,255,255,.7); }
   .ez-footer-links > * { display:inline-flex; align-items:center; gap:8px; text-align:start; }
   .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:rgba(255,255,255,.7); text-decoration:none; font-family:inherit; font-size:13.5px; }
