@@ -907,11 +907,18 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const [frameFailed, setFrameFailed] = useState(false);
 
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls playsInline preload="metadata" poster={poster ?? undefined} />
+        <video
+          src={poster ? url : `${url}#t=0.1`}
+          controls
+          playsInline
+          preload="metadata"
+          poster={poster ?? undefined}
+        />
       </div>
     );
   }
@@ -928,6 +935,27 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </button>
     );
   }
+  if (!frameFailed) {
+    // نحاول عرض أول لقطة من المقطع نفسه بدل الخلفية الساده
+    return (
+      <button
+        type="button"
+        className="pv-video-poster pv-video-poster--frame"
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+        aria-label="عرض المقطع في المصدر"
+      >
+        <video
+          src={`${url}#t=0.1`}
+          muted
+          playsInline
+          preload="metadata"
+          onError={() => setFrameFailed(true)}
+          aria-hidden="true"
+        />
+        <span><PlayIcon /></span>
+      </button>
+    );
+  }
   return (
     <button
       type="button"
@@ -940,6 +968,7 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
     </button>
   );
 }
+
 
 
 
@@ -1096,6 +1125,8 @@ const css = `
   .pv-video-poster { width:100%; aspect-ratio:16/9; border:0; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
   .pv-video-poster::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.38)); }
   .pv-video-poster span { position:relative; width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#fff; color:#660000; box-shadow:0 12px 30px rgba(0,0,0,0.22); }
+  .pv-video-poster--frame { background:#1c1210; }
+  .pv-video-poster--frame video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
   .pv-video-poster--empty { background:linear-gradient(135deg,#660000,#3d0000); min-height:280px; flex-direction:column; gap:14px; }
   .pv-video-poster--empty::before { display:none; }
   .pv-video-poster-label { position:relative; color:#fff; font-weight:800; font-size:18px; font-style:normal; }
