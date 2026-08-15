@@ -757,11 +757,12 @@ function ProviderPage() {
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
                     <small>السعر التقريبي</small>
                     <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
-                    <span className="pv-sug-more">التفاصيل ↗</span>
+                    <span className="pv-sug-more">اكتشف المزيد <i>←</i></span>
                   </div>
                 </Link>
               ))}
             </div>
+
           </section>
         )}
 
