@@ -907,11 +907,18 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
   const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const [frameFailed, setFrameFailed] = useState(false);
 
   if (isDirect) {
     return (
       <div className="pv-video-wrap">
-        <video src={url} controls playsInline preload="metadata" poster={poster ?? undefined} />
+        <video
+          src={poster ? url : `${url}#t=0.1`}
+          controls
+          playsInline
+          preload="metadata"
+          poster={poster ?? undefined}
+        />
       </div>
     );
   }
@@ -928,6 +935,27 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       </button>
     );
   }
+  if (!frameFailed) {
+    // نحاول عرض أول لقطة من المقطع نفسه بدل الخلفية الساده
+    return (
+      <button
+        type="button"
+        className="pv-video-poster pv-video-poster--frame"
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+        aria-label="عرض المقطع في المصدر"
+      >
+        <video
+          src={`${url}#t=0.1`}
+          muted
+          playsInline
+          preload="metadata"
+          onError={() => setFrameFailed(true)}
+          aria-hidden="true"
+        />
+        <span><PlayIcon /></span>
+      </button>
+    );
+  }
   return (
     <button
       type="button"
@@ -940,6 +968,7 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
     </button>
   );
 }
+
 
 
 
