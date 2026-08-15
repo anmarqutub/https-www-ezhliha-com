@@ -934,39 +934,43 @@ function ProviderCard({
       )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
-          {featured && <span className="ez-badge">مميز</span>}
+          <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
         </div>
 
         <div className="ez-card-body">
-          {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
+          <div className="ez-card-toprow">
+            {sub && <span className="ez-card-kicker">{sub.name_ar}</span>}
+            {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
+          </div>
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
             {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {city && <div className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</div>}
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
-            <small>السعر التقريبي</small>
-            <strong>
-              {provider.price_from
-                ? `يبدأ من ${provider.price_from} ر.س`
-                : provider.price
-                  ? provider.price
-                  : "السعر حسب التفاصيل"}
-            </strong>
+            <div>
+              <small>السعر التقريبي</small>
+              <strong>
+                {provider.price_from
+                  ? `يبدأ من ${provider.price_from} ر.س`
+                  : provider.price
+                    ? provider.price
+                    : "السعر حسب التفاصيل"}
+              </strong>
+            </div>
+            <span className="ez-card-more">اكتشف <ArrowUpLeft size={13} /></span>
           </div>
         </div>
       </Link>
-      <div className="ez-card-foot">
-        {waUrl ? (
+      {waUrl && (
+        <div className="ez-card-foot">
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
             <span>{contactLabel}</span>
             <WhatsAppIcon />
           </a>
-        ) : (
-          <button className="ez-wa-btn" disabled>ما فيه رقم تواصل</button>
-        )}
-      </div>
+        </div>
+      )}
+
     </article>
   );
 }
@@ -1296,13 +1300,19 @@ const css = `
 
   .ez-card-body { padding:18px; flex:1; display:flex; flex-direction:column; }
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:500; margin-bottom:6px; }
+  .ez-card-toprow { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .ez-card-toprow .ez-card-kicker, .ez-card-toprow .ez-card-meta { margin-bottom:6px; }
+  .ez-card-more { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brand); white-space:nowrap; }
+
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
   .ez-card-head h3 { font-size:18px; font-weight:600; color:var(--ink); margin:0; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
   .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .ez-card-price > div { display:grid; gap:2px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
+
   .ez-card-price strong { color:var(--brand); font-size:14px; font-weight:600; }
   .ez-card-foot { padding:0 18px 16px; }
   .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; background:transparent; color:var(--brand); padding:10px 0; text-decoration:none; font-size:14px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
