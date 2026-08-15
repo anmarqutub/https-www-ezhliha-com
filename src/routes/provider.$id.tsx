@@ -1255,8 +1255,10 @@ const css2 = `
   .pv-lightbox-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
   .pv-lightbox-grid img { width:100%; height:200px; object-fit:cover; border-radius:8px; }
 
-  @media (max-width:900px) {
+  @media (max-width:1024px) {
     .pv-topnav { display:none; }
+  }
+  @media (max-width:900px) {
     .pv-hero { grid-template-columns:1fr; padding:10px 14px 0; }
     .pv-hero-main { height:260px; }
     .pv-hero-side { grid-template-rows:1fr; grid-template-columns:1fr 1fr; height:130px; }
