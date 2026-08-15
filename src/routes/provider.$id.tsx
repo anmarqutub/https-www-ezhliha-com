@@ -345,12 +345,6 @@ function ProviderPage() {
               <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
             </>
           )}
-          {images.length > 0 && (
-            <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
-              <span>شاهد الصور</span>
-            </button>
-          )}
         </div>
       </section>
 
