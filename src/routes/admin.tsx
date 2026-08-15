@@ -2431,7 +2431,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "home.hero.image", label: "رابط صورة الواجهة (اتركه فارغاً للخلفية العنابية)", value: "", updated_at: "" },
   { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍", updated_at: "" },
 
-  { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "دوّر على مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
+  { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
   { key: "home.city.label", label: "عبارة اختر مدينتك", value: "📍 اختر مدينتك", updated_at: "" },
   { key: "home.city.all", label: "خيار كل المدن", value: "🌍 كل المدن", updated_at: "" },
   { key: "home.city.empty", label: "ما فيه مدن", value: "ما فيه مدن لحد الحين", updated_at: "" },
@@ -2440,7 +2440,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "home.category.count_suffix", label: "لاحقة عدد مقدمي الخدمة", value: "مقدم خدمة", updated_at: "" },
   { key: "home.category.coming_soon", label: "قريباً", value: "قريباً 🌟", updated_at: "" },
   { key: "home.category.back", label: "زر الرجوع للتصنيفات", value: "‹ رجوع للتصنيفات", updated_at: "" },
-  { key: "home.category.search_placeholder", label: "بحث داخل التصنيف", value: "دوّر داخل هذا التصنيف...", updated_at: "" },
+  { key: "home.category.search_placeholder", label: "بحث داخل التصنيف", value: "ابحث داخل هذا التصنيف...", updated_at: "" },
   { key: "home.subs.all", label: "كل التصنيفات الفرعية", value: "الكل", updated_at: "" },
   { key: "home.subs.tertiary_label", label: "عنوان التصنيفات الفرعية", value: "تصنيفات فرعية:", updated_at: "" },
   { key: "home.featured.title", label: "عنوان المميز", value: "⭐ نخبة مختارة لك", updated_at: "" },
