@@ -1092,7 +1092,7 @@ const css = `
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
-  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:1px solid var(--brand-dark); padding:11px 22px; border-radius:8px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(102,0,0,.28); transition:background .2s, transform .2s; }
+  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:1px solid var(--brand-dark); padding:9px 18px; border-radius:999px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 6px 16px rgba(102,0,0,.22); transition:background .2s, transform .2s; white-space:nowrap; }
   .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
 
   /* SHARED */
