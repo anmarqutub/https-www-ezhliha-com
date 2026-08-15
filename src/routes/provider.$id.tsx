@@ -297,7 +297,7 @@ function ProviderPage() {
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
           <Link to="/" hash="ez-results">مقدمي الخدمات</Link>
-          <Link to="/" hash="ez-cities">المدن</Link>
+          
           <Link to="/favorites">المفضلة</Link>
           <Link to="/" hash="ez-contact">تواصل معنا</Link>
           <Link to="/" hash="ez-faq">الأسئلة الشائعة</Link>
