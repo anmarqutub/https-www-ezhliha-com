@@ -65,10 +65,12 @@ function FavoritesPage() {
       <header className="fav-nav">
         <Link to="/" className="fav-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="fav-nav-menu">
-          <Link to="/" hash="ez-results" className="fav-link">مقدمي الخدمات</Link>
-          <Link to="/" hash="ez-cities" className="fav-link">المدن</Link>
-          <Link to="/" hash="ez-faq" className="fav-link">الأسئلة الشائعة</Link>
+          <Link to="/" className="fav-link">الرئيسية</Link>
+          <Link to="/providers" className="fav-link">مقدمي الخدمات</Link>
+          <Link to="/categories" className="fav-link">التصنيفات</Link>
+          <Link to="/faq" className="fav-link">الأسئلة الشائعة</Link>
         </nav>
+
         <div className="fav-nav-actions">
           {isAdmin && <Link to="/admin" className="fav-link">الأدمن</Link>}
           <span className="fav-user">{user?.email}</span>
