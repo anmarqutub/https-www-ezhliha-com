@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { createUser } from "@/lib/signup.functions";
 import logoUrl from "@/assets/logo.jpg";
+import SiteFooter from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -106,7 +107,7 @@ function SignupPage() {
         <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة" error={codeError}>
           <input required value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setServerErrors((s) => ({ ...s, code: "" })); }} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
-        <Field label="الاسم الكامل" hint="كما تودين أن يظهر في حسابك" error={nameError}>
+        <Field label="الاسم الكامل" hint="كما تود أن يظهر في حسابك" error={nameError}>
           <input required value={fullName} onChange={(e) => { setFullName(e.target.value); setServerErrors((s) => ({ ...s, full_name: "" })); }} placeholder="مثال: نورة عبدالله" />
         </Field>
         <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={emailError}>
@@ -149,16 +150,19 @@ function SignupPage() {
 
 export function AuthShell({ title, sub, children }: { title: string; sub: string; children: React.ReactNode }) {
   return (
-    <div dir="rtl" style={shellStyle}>
-      <style>{authCss}</style>
-      <div className="auth-card">
-        <Link to="/" className="auth-brand">
-          <img src={logoUrl} alt="إزهليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
-        </Link>
-        <h1 className="auth-title">{title}</h1>
-        <p className="auth-sub">{sub}</p>
-        {children}
+    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
+      <div style={shellStyle}>
+        <style>{authCss}</style>
+        <div className="auth-card">
+          <Link to="/" className="auth-brand">
+            <img src={logoUrl} alt="إزهليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
+          </Link>
+          <h1 className="auth-title">{title}</h1>
+          <p className="auth-sub">{sub}</p>
+          {children}
+        </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }
@@ -174,7 +178,7 @@ function Field({ label, hint, error, children }: { label: string; hint?: string;
 }
 
 const shellStyle: React.CSSProperties = {
-  minHeight: "100vh",
+  minHeight: "78vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
