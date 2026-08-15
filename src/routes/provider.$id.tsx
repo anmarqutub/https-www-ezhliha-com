@@ -413,256 +413,359 @@ function ProviderPage() {
           </aside>
         </div>
 
-        <div className="pv-body">
-          <section className="pv-info">
-
-
-            {(() => {
-              const showPkg = provider.show_packages !== false && packages.length > 0;
-              const showSrv = provider.show_services !== false && services.length > 0;
-              const showBr  = provider.show_branches !== false && branches.length > 0;
-              return (
-                <div className="pv-inline-tabs">
-                  <div className="pv-tabs">
-                    <button type="button" className={`pv-tab ${activeTab === "overview" ? "on" : ""}`} onClick={() => setActiveTab("overview")}>
-                      {siteTexts["provider.tabs.overview"] || "الرئيسية"}
-                    </button>
-                    {showPkg && (
-                      <button type="button" className={`pv-tab ${activeTab === "packages" ? "on" : ""}`} onClick={() => setActiveTab("packages")}>
-                        {siteTexts["provider.tabs.packages"] || "الباقات"} ({packages.length})
-                      </button>
-                    )}
-                    {showSrv && (
-                      <button type="button" className={`pv-tab ${activeTab === "services" ? "on" : ""}`} onClick={() => setActiveTab("services")}>
-                        {siteTexts["provider.tabs.services"] || "الخدمات"} ({services.length})
-                      </button>
-                    )}
-                    {showBr && (
-                      <button type="button" className={`pv-tab ${activeTab === "branches" ? "on" : ""}`} onClick={() => setActiveTab("branches")}>
-                        {siteTexts["provider.tabs.branches"] || "الفروع"} ({branches.length})
-                      </button>
-                    )}
-                  </div>
-
-                  {activeTab === "overview" && (
-                    <div className="pv-inline-overview">
-                      {provider.description
-                        ? <p className="pv-desc">{provider.description}</p>
-                        : <p className="pv-empty-imgs">لا يوجد وصف بعد.</p>}
-                    </div>
-                  )}
-                  {activeTab === "packages" && showPkg && (
-                    <div className="pv-inline-list">
-                      {packages.map((pkg) => (
-                        <article className="pv-package" key={pkg.id}>
-                          {pkg.image_url && <img src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                          <div style={{ flex: 1 }}>
-                            <h3>{pkg.name}</h3>
-                            {pkg.price && <strong>{pkg.price}</strong>}
-                            {pkg.description && <p>{pkg.description}</p>}
-                            <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                  {activeTab === "services" && showSrv && (
-                    <div className="pv-inline-list">
-                      {services.map((sv) => (
-                        <article className="pv-package" key={sv.id}>
-                          {sv.image_url && <img src={sv.image_url} alt={sv.name} loading="lazy" />}
-                          <div style={{ flex: 1 }}>
-                            <h3>{sv.name}</h3>
-                            {sv.price && <strong>{sv.price}</strong>}
-                            {sv.description && <p>{sv.description}</p>}
-                            <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  )}
-
-                  {activeTab === "branches" && showBr && (
-                    <div className="pv-branch-list">
-                      {branches.map((br) => (
-                        <article className="pv-branch" key={br.id}>
-                          <div className="pv-branch-body">
-                            <h3>📍 {br.name}</h3>
-                            {br.address && <p>{br.address}</p>}
-                            {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">☎ {br.phone}</a>}
-                          </div>
-                          {br.map_url && (
-                            <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">
-                              🗺️ الموقع
-                            </a>
-                          )}
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            <div className="pv-actions">
-
-              {waUrl && (
-                <a className="pv-btn-wa-solid" href={waUrl} target="_blank" rel="noopener noreferrer">
-                  <WhatsAppIcon />
-                  <span>{contactLabel || "للتواصل مع مقدم الخدمة"}</span>
-                </a>
-              )}
-              {provider.map_url && (
-                <a className="pv-btn-map" href={provider.map_url} target="_blank" rel="noopener noreferrer">
-                  🗺️ الموقع على الخريطة
-                </a>
-              )}
-              <button type="button" className="pv-btn-share" onClick={shareProvider}>
-                <ShareIcon />
-                <span>{copiedShare ? "تم نسخ الرابط" : "مشاركة"}</span>
-              </button>
-            </div>
-
-            {(callUrl || ig || tk || tw || sc) && (
-              <div className="pv-socials">
-                {callUrl && (
+        {(() => {
+          const showPkg = provider.show_packages !== false && packages.length > 0;
+          const showSrv = provider.show_services !== false && services.length > 0;
+          const vids: MediaItem[] = [];
+          if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
+          (provider.videos ?? []).forEach((v) => vids.push(v));
+          const hasMedia = images.length > 0 || vids.length > 0;
+          const items: Array<[string, string]> = [
+            ["s-about", "نبذة"],
+            ...(showPkg ? [["s-packages", "الباقات"] as [string, string]] : []),
+            ...(showSrv ? [["s-services", "الخدمات"] as [string, string]] : []),
+            ...(hasMedia ? [["s-media", "صور وفيديو"] as [string, string]] : []),
+            ["s-reviews", "التقييمات"],
+            ["s-contact", "التواصل والفروع"],
+            ["s-before", "قبل الطلب"],
+          ];
+          return (
+            <nav className="pv-secnav">
+              <div className="pv-secnav-in">
+                {items.map(([id, label]) => (
                   <button
+                    key={id}
                     type="button"
-                    className="pv-soc pv-soc-call"
-                    aria-label="اتصال مباشر"
-                    onClick={() => {
-                      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-                      if (isMobile) {
-                        window.location.href = callUrl;
-                      } else {
-                        setCallOpen(true);
-                      }
-                    }}
-                  >
-                    <PhoneIcon />
-                  </button>
-                )}
-                {ig && (
-                  <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-ig" aria-label="إنستقرام">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                      <path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.25.07 1.63.07 4.8s0 3.55-.07 4.8c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.25.06-1.63.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.72 3.72 0 01-1.38-.9 3.72 3.72 0 01-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.4 2.2 8.8 2.2 12 2.2M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 00-2.13 1.39A5.9 5.9 0 00.62 4.15C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.48 1.39 2.13.65.67 1.33 1.08 2.13 1.39.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 002.13-1.39 5.9 5.9 0 001.39-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 00-1.39-2.13A5.9 5.9 0 0019.86.62c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1018.16 12 6.16 6.16 0 0012 5.84zm0 10.16A4 4 0 1116 12a4 4 0 01-4 4zm6.4-11.85a1.44 1.44 0 11-1.44-1.44 1.44 1.44 0 011.44 1.44z"/>
-                    </svg>
-                  </a>
-                )}
-                {tk && (
-                  <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tk" aria-label="تيك توك">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005.8 20.1a6.34 6.34 0 0010.86-4.43V9a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.84-.43z"/>
-                    </svg>
-                  </a>
-                )}
-                {tw && (
-                  <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-tw" aria-label="X">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                  </a>
-                )}
-                {sc && (
-                  <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" className="pv-soc pv-soc-sc" aria-label="سناب شات">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                      <path d="M12.2 2c.4 0 3.6.1 5.3 3.2.5 1 .5 2.7.4 4.1v.2c0 .2 0 .4-.1.6.1.1.3.1.5.1.3 0 .7-.1 1.1-.3.2-.1.4-.1.5-.1.3 0 .6.1.7.3.2.3.1.7-.2 1-.1.1-.4.3-1.3.6-.1 0-.4.1-.5.4-.1.2 0 .5.2.9 0 0 1.2 2.6 3.6 3 .2 0 .4.2.4.5s-.4.5-.6.6c-.7.3-1.7.5-2.1.6-.2.1-.3.3-.4.7 0 .2-.1.4-.1.6-.1.1-.2.2-.4.2h-.1c-.2 0-.4-.1-.7-.1-.3-.1-.6-.1-1-.1-.2 0-.5 0-.7.1-.5.1-1 .5-1.5.8-.7.5-1.5 1.1-2.7 1.1h-.2c-1.2 0-2-.6-2.7-1.1-.5-.4-1-.7-1.5-.8-.2 0-.4-.1-.7-.1-.4 0-.8.1-1 .1-.3.1-.5.1-.6.1-.3 0-.4-.2-.4-.3 0-.2-.1-.4-.1-.6-.1-.4-.2-.6-.4-.7-.4-.1-1.4-.3-2.1-.6-.2-.1-.6-.3-.6-.6 0-.3.2-.5.4-.5C4.3 13.3 5.5 10.7 5.5 10.7c.2-.4.3-.7.2-.9-.1-.3-.4-.4-.5-.4-.9-.3-1.2-.5-1.3-.6-.3-.3-.4-.7-.2-1 .1-.2.4-.3.7-.3.1 0 .3 0 .5.1.4.2.8.3 1.1.3.2 0 .4 0 .5-.1v-.6-.3c-.1-1.4-.1-3.1.4-4.1C8.4 2.1 11.6 2 12 2h.2z"/>
-                    </svg>
-                  </a>
-                )}
+                    onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  >{label}</button>
+                ))}
               </div>
-            )}
-          </section>
-        </div>
+            </nav>
+          );
+        })()}
 
+        {/* نبذة */}
+        <section className="pv-sec" id="s-about">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">عن الخدمة</span>
+              <h2>{siteTexts["provider.about.title"] || `خدمة مرتبة على حسب مناسبتك`}</h2>
+            </div>
+            <div className="pv-sec-body">
+              <p>{provider.description || "يضاف وصف تفصيلي للخدمة بعد استلام بيانات مقدم الخدمة."}</p>
+              <div className="pv-chips">
+                {subName && <span>{subName}</span>}
+                {cityName && <span>خدمة في {cityName}</span>}
+                {(provider.people_from || provider.people_to) && (
+                  <span>
+                    {`مناسب لـ ${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`}
+                  </span>
+                )}
+                <span>قابل للتخصيص</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* الباقات */}
+        {provider.show_packages !== false && packages.length > 0 && (
+          <section className="pv-sec pv-sec--alt" id="s-packages">
+            <div className="pv-sec-grid">
+              <div className="pv-sec-head">
+                <span className="pv-eyebrow">الباقات والخدمات</span>
+                <h2>اختر باقة وعدّل عليها</h2>
+              </div>
+              <div className="pv-sec-body">
+                <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
+              </div>
+            </div>
+            <div className="pv-pkg-grid">
+              {packages.map((pkg, i) => (
+                <article className="pv-pkg" key={pkg.id}>
+                  {i === 0 && <span className="pv-pkg-badge">الأقرب للطلب الحالي</span>}
+                  {pkg.image_url && <img className="pv-pkg-img" src={pkg.image_url} alt={pkg.name} loading="lazy" />}
+                  <h3>{pkg.name}</h3>
+                  <strong className="pv-pkg-price">{pkg.price || "يُحدد حسب التفاصيل"}</strong>
+                  {pkg.description && (
+                    <ul className="pv-pkg-list">
+                      {pkg.description.split(/\n|،|·|-\s/).map((s) => s.trim()).filter(Boolean).slice(0, 5).map((line, k) => (
+                        <li key={k}><CheckIcon />{line}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
+                  <p className="pv-pkg-foot">تقدر تحدد هذه الباقة داخل طلب التسعيرة الأساسي.</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* الخدمات */}
+        {provider.show_services !== false && services.length > 0 && (
+          <section className="pv-sec" id="s-services">
+            <div className="pv-sec-grid">
+              <div className="pv-sec-head">
+                <span className="pv-eyebrow">وش تقدر تطلب؟</span>
+                <h2>خذ اللي يناسب مناسبتك</h2>
+              </div>
+              <div className="pv-srv-grid">
+                {services.map((sv) => (
+                  <article className="pv-srv" key={sv.id}>
+                    <span className="pv-srv-ico"><SparkIcon /></span>
+                    <h3>{sv.name}</h3>
+                    {sv.price && <strong>{sv.price}</strong>}
+                    {sv.description && <p>{sv.description}</p>}
+                    <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* صور وفيديو */}
         {(() => {
           const vids: MediaItem[] = [];
           if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
           (provider.videos ?? []).forEach((v) => vids.push(v));
-          if (!vids.length) return null;
+          if (!images.length && !vids.length) return null;
           return (
-            <section className="pv-video-section">
-              <h2>فيديو تعريفي</h2>
-              <div className="pv-video-list">
-                {vids.map((v, i) => (
-                  <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
-                ))}
+            <section className="pv-sec pv-sec--dark" id="s-media">
+              <div className="pv-sec-grid">
+                <div className="pv-sec-head">
+                  <span className="pv-eyebrow pv-eyebrow--light">من حسابات مقدم الخدمة</span>
+                  <h2>صور وفيديوهات {provider.name}</h2>
+                </div>
+                <div className="pv-sec-body">
+                  <p className="pv-sec-note pv-sec-note--light">اضغط على أي صورة لعرضها بالحجم الكامل.</p>
+                </div>
               </div>
+              {images.length > 0 && (
+                <div className="pv-media-grid">
+                  {images.slice(0, 8).map((im) => (
+                    <button key={im.id} type="button" className="pv-media-tile" style={{ backgroundImage: `url(${im.image_url})` }} onClick={() => setGalleryOpen(true)} aria-label="عرض الصورة" />
+                  ))}
+                </div>
+              )}
+              {vids.length > 0 && (
+                <div className="pv-video-list">
+                  {vids.map((v, i) => <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />)}
+                </div>
+              )}
             </section>
           );
         })()}
 
-
-
-
-
-
-
-        <section className="pv-reviews">
-          <h2>التقييمات والتعليقات</h2>
-
-          {user ? (
-            <form onSubmit={submitReview} className="pv-review-form">
-              <div className="pv-stars-input">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button type="button" key={n} className={n <= myRating ? "on" : ""} onClick={() => setMyRating(n)} aria-label={`${n} نجوم`}>
-                    ★
-                  </button>
-                ))}
+        {/* التقييمات */}
+        <section className="pv-sec pv-sec--alt" id="s-reviews">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">تقييمات العملاء</span>
+              <h2>وش قالوا العملاء؟</h2>
+              <p className="pv-sec-note">
+                {reviews.length === 0
+                  ? "ما فيه تقييمات منشورة للحين. أول تقييم بيظهر هنا بعد ما يرسله عميل مسجل."
+                  : `متوسط التقييم ${avgRating} من ٥ حسب ${reviews.length} تقييم.`}
+              </p>
+            </div>
+            <div className="pv-rev-cols">
+              <div className="pv-card">
+                {reviews.length === 0 ? (
+                  <div className="pv-rev-empty">
+                    <span className="pv-srv-ico"><ChatIcon /></span>
+                    <h3>كن أول من يقيّم {provider.name}</h3>
+                    <p>ما نعرض أي تقييم إلا من حساب عميل فعلي.</p>
+                  </div>
+                ) : (
+                  <div className="pv-review-list">
+                    {reviews.map((r) => (
+                      <div key={r.id} className="pv-review-item">
+                        <div className="pv-review-head">
+                          <strong>{r.reviewer_name || "مستخدم"}</strong>
+                          <span className="pv-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+                          {(isAdmin || r.is_mine) && (
+                            <button className="pv-review-del" onClick={() => deleteReview(r.id)}>حذف</button>
+                          )}
+                        </div>
+                        {r.comment && <p>{r.comment}</p>}
+                        <small>{new Date(r.created_at).toLocaleDateString("ar-SA")}</small>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <textarea
-                placeholder="اكتب تعليقك..."
-                rows={3}
-                value={myComment}
-                onChange={(e) => setMyComment(e.target.value)}
-              />
-              <button type="submit" className="pv-btn-primary" disabled={submitting}>
-                {submitting ? "..." : "أرسل التقييم"}
-              </button>
-            </form>
-          ) : (
-            <p className="pv-empty-imgs">
-              <Link to="/login">سجّل دخول</Link> لإضافة تقييم.
-            </p>
-          )}
 
-          <div className="pv-review-list">
-            {reviews.length === 0 && <p className="pv-empty-imgs">لا توجد تقييمات بعد.</p>}
-            {reviews.map((r) => (
-              <div key={r.id} className="pv-review-item">
-                <div className="pv-review-head">
-                  <strong>{r.reviewer_name || "مستخدم"}</strong>
-                  <span className="pv-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
-                  {(isAdmin || r.is_mine) && (
-                    <button className="pv-review-del" onClick={() => deleteReview(r.id)}>حذف</button>
-                  )}
+              <div className="pv-card">
+                <h3 className="pv-card-title">قيّم تجربتك</h3>
+                {user ? (
+                  <form onSubmit={submitReview} className="pv-rev-form">
+                    <div className="pv-stars-input">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button type="button" key={n} className={n <= myRating ? "on" : ""} onClick={() => setMyRating(n)} aria-label={`${n} نجوم`}>★</button>
+                      ))}
+                    </div>
+                    <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
+                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسل التقييم"}</button>
+                  </form>
+                ) : (
+                  <div className="pv-rev-form">
+                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّل دخولك وقيّم</Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* التواصل والفروع */}
+        <section className="pv-sec" id="s-contact">
+          <div className="pv-sec-grid">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">التواصل والفروع</span>
+              <h2>تواصل بالطريقة اللي تناسبك</h2>
+            </div>
+            <div className="pv-sec-body">
+              <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه بمكان واحد، عشان ما تضيع بين أكثر من صفحة.</p>
+            </div>
+          </div>
+
+          <div className="pv-contact-cols">
+            <div className="pv-card">
+              <div className="pv-card-top">
+                <div>
+                  <h3 className="pv-card-title">اتصال مباشر</h3>
+                  <span className="pv-card-sub">عادةً يرد خلال يوم عمل</span>
                 </div>
-                {r.comment && <p>{r.comment}</p>}
-                <small>{new Date(r.created_at).toLocaleDateString("ar-SA")}</small>
+                <span className="pv-card-ico"><PhoneIcon /></span>
               </div>
-            ))}
+
+              <div className="pv-contact-row">
+                <div>
+                  <small>رقم الاتصال</small>
+                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "الرقم غير مضاف"}</strong>
+                </div>
+                {callUrl ? (
+                  <button type="button" className="pv-contact-act" onClick={() => {
+                    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                    if (isMobile) window.location.href = callUrl; else setCallOpen(true);
+                  }}>اتصال</button>
+                ) : <span className="pv-pending">بانتظار البيانات</span>}
+              </div>
+
+              <div className="pv-contact-row">
+                <div>
+                  <small>واتساب</small>
+                  <strong dir="ltr">{provider.whatsapp || "رقم واتساب غير مضاف"}</strong>
+                </div>
+                {waUrl ? (
+                  <a className="pv-contact-act" href={waUrl} target="_blank" rel="noopener noreferrer">{contactLabel || "مراسلة"}</a>
+                ) : <span className="pv-pending">بانتظار البيانات</span>}
+              </div>
+
+              <div className="pv-soc-title">حسابات التواصل</div>
+              <div className="pv-soc-grid">
+                <SocialTile label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
+                <SocialTile label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
+                <SocialTile label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
+                <SocialTile label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
+              </div>
+
+              <div className="pv-share-row">
+                <button type="button" className="pv-btn-share" onClick={shareProvider}>
+                  <ShareIcon /><span>{copiedShare ? "تم نسخ الرابط" : "مشاركة الملف"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="pv-card">
+              <div className="pv-card-top">
+                <div>
+                  <h3 className="pv-card-title">الفروع ومناطق الخدمة</h3>
+                  <span className="pv-card-sub">اختر الفرع الأقرب لك قبل التواصل.</span>
+                </div>
+                <span className="pv-card-ico"><PinIcon /></span>
+              </div>
+
+              {provider.show_branches !== false && branches.length > 0 ? (
+                <div className="pv-branch-list">
+                  {branches.map((br) => (
+                    <article className="pv-branch" key={br.id}>
+                      <div className="pv-branch-body">
+                        <h3>{br.name}</h3>
+                        {br.address && <p>{br.address}</p>}
+                        {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">{br.phone}</a>}
+                      </div>
+                      {br.map_url && (
+                        <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="pv-branch-list">
+                  <article className="pv-branch">
+                    <div className="pv-branch-body">
+                      <h3>الفرع الرئيسي</h3>
+                      <p>{provider.address || cityName || "يُحدّث من مقدم الخدمة"}</p>
+                    </div>
+                    {provider.map_url && (
+                      <a className="pv-branch-map" href={provider.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
+                    )}
+                  </article>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* قبل الطلب */}
+        <section className="pv-sec pv-sec--alt" id="s-before">
+          <div className="pv-before">
+            <div className="pv-sec-head">
+              <span className="pv-eyebrow">قبل لا ترسل الطلب</span>
+              <h2>هالمعلومات تخلي العرض أدق</h2>
+            </div>
+            <ul className="pv-before-list">
+              <li><CheckIcon />حدد التاريخ ووقت التقديم.</li>
+              <li><CheckIcon />اكتب العدد التقريبي للضيوف.</li>
+              <li><CheckIcon />اذكر أي طلبات أو احتياجات خاصة.</li>
+              <li><CheckIcon />السعر والموعد يتأكدون بعد موافقة مقدم الخدمة.</li>
+            </ul>
           </div>
         </section>
 
         {suggestions.length > 0 && (
-          <section className="pv-suggest">
-            <h2>مقترحات لك</h2>
-            <div className="pv-suggest-grid">
+          <section className="pv-sec" id="s-suggest">
+            <div className="pv-sec-grid pv-sug-head">
+              <div className="pv-sec-head">
+                <span className="pv-eyebrow">{suggestions.length} اقتراحات قريبة</span>
+                <h2>ممكن يعجبك بعد</h2>
+              </div>
+              <div className="pv-sug-arrows">
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: -320, behavior: "smooth" })} aria-label="السابق">‹</button>
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: 320, behavior: "smooth" })} aria-label="التالي">›</button>
+              </div>
+            </div>
+            <div className="pv-sug-rail" ref={sugRef}>
               {suggestions.map((s) => (
-                <Link key={s.id} to="/provider/$id" params={{ id: s.id }} className="pv-suggest-card" onClick={() => window.scrollTo({ top: 0 })}>
-                  <div className="pv-suggest-img" style={{ backgroundImage: `url(${s.cover || s.logo_url || defaultProviderUrl})` }} />
-                  <div className="pv-suggest-body">
+                <Link key={s.id} to="/provider/$id" params={{ id: s.id }} className="pv-sug-card" onClick={() => window.scrollTo({ top: 0 })}>
+                  <div className="pv-sug-img" style={{ backgroundImage: `url(${s.cover || s.logo_url || defaultProviderUrl})` }} />
+                  <div className="pv-sug-body">
                     <h3>{s.name}</h3>
-                    {s.city_name && <span className="pv-suggest-city">📍 {s.city_name}</span>}
-                    {(s.price_from || s.price) && (
-                      <strong>{s.price_from ? `من ${s.price_from} ر.س` : s.price}</strong>
-                    )}
+                    {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
+                    <small>السعر التقريبي</small>
+                    <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
+                    <span className="pv-sug-more">التفاصيل ↗</span>
                   </div>
                 </Link>
               ))}
             </div>
           </section>
         )}
+
       </main>
 
       {quoteOpen && (
