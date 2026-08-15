@@ -1502,14 +1502,37 @@ const css = `
   .ez-acct-item:hover { background:#F2EDE1; color:var(--brand); }
   .ez-acct-out { color:var(--brand); }
 
+  /* ── burger + mobile drawer ── */
+  .ez-burger { display:none; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--line); background:#fff; border-radius:8px; color:var(--ink); cursor:pointer; }
+  .ez-drawer-overlay { position:fixed; inset:0; background:rgba(20,12,10,.45); z-index:300; display:flex; justify-content:flex-start; }
+  .ez-drawer { width:min(320px, 86vw); height:100%; background:#FDFBF5; display:flex; flex-direction:column; box-shadow:0 0 40px rgba(0,0,0,.2); animation:ezDrawerIn .22s ease; }
+  @keyframes ezDrawerIn { from { transform:translateX(-100%); } to { transform:none; } }
+  .ez-drawer-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--line); }
+  .ez-drawer-head img { height:46px; width:auto; }
+  .ez-drawer-close { width:34px; height:34px; border:1px solid var(--line); background:#fff; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); }
+  .ez-drawer-menu { flex:1; overflow-y:auto; padding:6px 0; }
+  .ez-drawer-menu a { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:15px; font-weight:600; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+  .ez-drawer-menu a.active { color:var(--brand); }
+  .ez-drawer-menu a small { color:var(--muted); font-size:12px; font-weight:500; }
+  .ez-drawer-cta { margin:16px; background:var(--brand); color:#fff; border-radius:10px; padding:18px; text-align:center; }
+  .ez-drawer-cta-ico { font-size:18px; }
+  .ez-drawer-cta p { margin:8px 0 14px; font-size:13.5px; line-height:1.8; color:rgba(255,255,255,.9); }
+  .ez-drawer-cta-btn { display:block; background:#FDFBF5; color:var(--brand); border-radius:6px; padding:11px; font-weight:600; font-size:14px; text-decoration:none; }
+
+  /* ── cities page ── */
+  .ez-city-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; margin-top:22px; }
+  .ez-city-card { display:flex; flex-direction:column; align-items:flex-start; gap:6px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; cursor:pointer; text-align:start; font-family:inherit; transition:border-color .2s, transform .2s; }
+  .ez-city-card:hover { border-color:var(--brand); transform:translateY(-2px); }
+  .ez-city-ico { color:var(--brand); }
+  .ez-city-name { font-size:15px; font-weight:600; color:var(--ink); }
+  .ez-city-count { font-size:12.5px; color:var(--muted); }
+  .ez-about-page { max-width:760px; margin-top:18px; display:grid; gap:14px; }
+  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); }
+
   @media (max-width: 1024px) {
-    .ez-nav { flex-wrap:wrap; padding-bottom:0; }
-    .ez-nav-menu {
-      order:3; width:100%; gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;
-      scrollbar-width:none; padding:6px 0 8px; border-top:1px solid var(--line); margin-top:6px;
-    }
-    .ez-nav-menu::-webkit-scrollbar { display:none; }
-    .ez-nav-link { white-space:nowrap; font-size:14px; }
+    .ez-burger { display:inline-flex; }
+    .ez-nav { flex-wrap:wrap; padding-bottom:8px; }
+    .ez-nav-menu { display:none; }
     .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
     .ez-hero-media { max-width:none; }
     .ez-console { grid-template-columns:repeat(3,1fr); margin-inline:16px; border-radius:22px; }
@@ -1517,9 +1540,7 @@ const css = `
   }
 
   @media (max-width: 640px) {
-    .ez-nav { padding:8px 16px 0; }
-    .ez-nav-menu { gap:14px; }
-    .ez-nav-link { font-size:13.5px; }
+    .ez-nav { padding:8px 16px; }
     .ez-brand-logo { height:52px; }
 
     .ez-hero-grid { padding:24px 16px 44px; }
