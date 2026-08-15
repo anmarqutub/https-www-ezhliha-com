@@ -1161,10 +1161,11 @@ const css = `
   .ez-console { position:relative; z-index:20; max-width:1240px; margin:-32px auto 0; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px; box-shadow:0 22px 50px rgba(53,24,19,.12); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
   .ez-console-field { padding:8px 22px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:2px; }
   .ez-console-field:first-child { border-inline-start:none; }
-  .ez-console-field label { font-size:12px; color:var(--ink); font-weight:700; }
-  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--muted); outline:none; cursor:pointer; height:28px; }
+  .ez-console-field label { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-weight:500; }
+  .ez-console-field label .ez-fi { color:var(--brand); }
+  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); outline:none; cursor:pointer; height:30px; }
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
-  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 30px; border-radius:999px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; min-height:52px; }
+  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 28px; border-radius:999px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; min-height:48px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-console-btn:hover { background:var(--brand-dark); }
 
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
