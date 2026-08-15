@@ -1282,7 +1282,10 @@ const css3 = `
   .pv-crumbbar a { color:#8A7A73; text-decoration:none; }
   .pv-crumbbar a:hover { color:#660000; }
   .pv-crumbbar b { color:#241C1A; font-weight:700; }
+  .pv-empty { margin-top:22px; padding:26px; border:1px dashed #D9CFB8; border-radius:14px; background:#FFFDF8; color:#6B5B52; font-size:15px; font-weight:600; text-align:center; }
+  .pv-empty--light { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.25); color:#F2E9DC; }
   .pv-secnav { position:sticky; top:64px; z-index:40; background:#FFFDF8; border-top:1px solid #E3DBC9; border-bottom:1px solid #E3DBC9; margin:30px -28px 0; }
+
   .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-end; }
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
