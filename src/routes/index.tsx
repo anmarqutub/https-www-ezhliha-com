@@ -1166,7 +1166,8 @@ const css = `
   .ez-console-field label .ez-fi { color:var(--brand); }
   .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); outline:none; cursor:pointer; height:30px; }
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
-  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 28px; border-radius:999px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; min-height:48px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
+  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; min-height:48px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
+  .ez-console-btn svg { width:16px; height:16px; }
   .ez-console-btn:hover { background:var(--brand-dark); }
 
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
