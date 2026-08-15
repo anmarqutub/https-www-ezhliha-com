@@ -823,33 +823,8 @@ function Home() {
       </section>
 
 
-      {/* ── CITIES ── */}
-      {cities.length > 0 && (
-        <section className="ez-sec ez-sec-alt" id="ez-cities">
-          <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("cities.eyebrow", "قريبين منك")}</div>
-          <h2 className="ez-h2">{txt("cities.title", "ابحث حسب مدينتك")}</h2>
-          <div className="ez-city-chips">
-            <button
-              type="button"
-              className={!selectedCity ? "active" : ""}
-              onClick={() => { setSelectedCity(""); setTimeout(scrollToResults, 60); }}
-            >
-              {txt("home.city.all", "كل المدن")}
-            </button>
-            {cities.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                className={selectedCity === c.id ? "active" : ""}
-                onClick={() => { setSelectedCity(c.id); setTimeout(scrollToResults, 60); }}
-              >
-                {c.name_ar}
-                <small>{providersCountByCity.get(c.id) ?? 0}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+
+
 
       {/* ── FAQ ── */}
       <section className="ez-sec" id="ez-faq">
