@@ -1374,12 +1374,22 @@ const css = `
     .ez-console-field select { font-size:12px; max-width:100%; }
     .ez-fchips { padding:0 16px; }
 
-    .ez-cat-card { flex:0 0 78%; min-width:0; }
+    .ez-cat-card { flex:0 0 82%; min-width:0; }
     .ez-cat-media { height:130px; }
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
     .ez-footer-grid { grid-template-columns:1fr; padding:40px 16px 32px; gap:28px; }
     .ez-footer-bar { padding:16px; }
+
+    /* unified with provider page */
+    .ez-nav-cta { height:40px; padding:0 14px; font-size:12.5px; border-radius:6px; }
+    .ez-nav-btn { height:40px; display:inline-flex; align-items:center; padding:0 14px; font-size:12.5px; border-radius:6px; }
+    .ez-console-btn { min-height:48px; border-radius:12px; }
+    .ez-wa-btn { min-height:48px; padding:0; font-size:14px; }
+    .ez-card-fav { inset-inline-start:10px; }
+    .ez-hero-copy, .ez-sec-head, .ez-card-body { text-align:right; }
+    .ez-card-head { flex-wrap:wrap; }
+    .ez-fchips, .ez-filters-bar { justify-content:flex-start; }
   }
 `;
