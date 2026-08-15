@@ -349,13 +349,34 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const currentBanner = banners[bannerIdx];
 
   const scrollToResults = () => {
+    if (view !== "providers") {
+      pendingFilters.categoryId = selectedCategory;
+      pendingFilters.cityId = selectedCity;
+      navigate({ to: "/providers" });
+      return;
+    }
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const goProviders = (patch: { categoryId?: string | null; cityId?: string }) => {
+    if (patch.categoryId !== undefined) {
+      pendingFilters.categoryId = patch.categoryId;
+      setSelectedCategory(patch.categoryId);
+      setSelectedSub("all");
+    }
+    if (patch.cityId !== undefined) {
+      pendingFilters.cityId = patch.cityId;
+      setSelectedCity(patch.cityId);
+    }
+    if (view !== "providers") navigate({ to: "/providers" });
+    else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
 
   const scrollRail = (dir: number) => {
     const el = document.getElementById("ez-cat-rail");
     if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
   };
+
 
 
   const resetAll = () => {
