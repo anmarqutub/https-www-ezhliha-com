@@ -523,36 +523,32 @@ function ProviderPage() {
           const vids: MediaItem[] = [];
           if (provider.video_url) vids.push({ url: provider.video_url, thumbnail_url: provider.video_thumbnail_url });
           (provider.videos ?? []).forEach((v) => vids.push(v));
+          const tiles = [
+            ...images.slice(0, 8).map((im) => ({ key: `i${im.id}`, url: im.image_url, poster: im.image_url, isVideo: false })),
+            ...vids.map((v, i) => ({ key: `v${i}`, url: v.url, poster: v.thumbnail_url ?? null, isVideo: true })),
+          ];
           return (
-            <section className="pv-sec pv-sec--dark" id="s-media">
+            <section className="pv-sec pv-sec--alt" id="s-media">
               <div className="pv-sec-grid">
                 <div className="pv-sec-head">
-                  <span className="pv-eyebrow pv-eyebrow--light">من حسابات مقدم الخدمة</span>
+                  <span className="pv-eyebrow">من حسابات المزوّد</span>
                   <h2>صور وفيديوهات {provider.name}</h2>
                 </div>
                 <div className="pv-sec-body">
-                  <p className="pv-sec-note pv-sec-note--light">اضغط على أي صورة لعرضها بالحجم الكامل.</p>
+                  <p className="pv-sec-note">اضغط على الصورة، وينفتح لك المصدر الأصلي عند إضافة الرابط الرسمي.</p>
                 </div>
               </div>
-              {images.length > 0 ? (
+              {tiles.length > 0 ? (
                 <div className="pv-media-grid">
-                  {images.slice(0, 8).map((im) => (
-                    <button key={im.id} type="button" className="pv-media-tile" style={{ backgroundImage: `url(${im.image_url})` }} onClick={() => setGalleryOpen(true)} aria-label="عرض الصورة" />
-                  ))}
+                  {tiles.map((t) => <MediaCard key={t.key} url={t.url} poster={t.poster} isVideo={t.isVideo} />)}
                 </div>
               ) : (
-                <div className="pv-empty pv-empty--light">سيتم رفع الصور قريباً.</div>
-              )}
-              {vids.length > 0 ? (
-                <div className="pv-video-list">
-                  {vids.map((v, i) => <VideoEmbed key={i} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />)}
-                </div>
-              ) : (
-                <div className="pv-empty pv-empty--light">سيتم رفع المقاطع قريباً.</div>
+                <div className="pv-empty">سيتم رفع الصور والمقاطع قريباً.</div>
               )}
             </section>
           );
         })()}
+
 
 
         {/* التقييمات */}
