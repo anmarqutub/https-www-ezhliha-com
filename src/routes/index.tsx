@@ -929,7 +929,7 @@ function ProviderCard({
           aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
         >
-          {isFav ? "♥" : "♡"}
+          <Heart size={15} fill={isFav ? "currentColor" : "none"} />
         </button>
       )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
