@@ -547,28 +547,16 @@ function Home() {
 
       {/* ── PLATFORM STATS ── */}
       <section className="ez-stats" aria-label="أرقام إزهليها">
-        <div className="ez-stat">
+        <div className="ez-stat ez-stat--solo">
           <span className="ez-stat-icon">🏛️</span>
           <div>
-            <strong><CountUp value={statNumber("stat.providers.value", providers.length)} suffix="+" /></strong>
-            <small>{txt("stat.providers", "مزود خدمة")}</small>
-          </div>
-        </div>
-        <div className="ez-stat">
-          <span className="ez-stat-icon">📍</span>
-          <div>
-            <strong><CountUp value={statNumber("stat.cities.value", cities.length)} /></strong>
-            <small>{txt("stat.cities", "مدينة")}</small>
-          </div>
-        </div>
-        <div className="ez-stat">
-          <span className="ez-stat-icon">🏷️</span>
-          <div>
-            <strong><CountUp value={statNumber("stat.categories.value", categories.length)} /></strong>
-            <small>{txt("stat.categories", "تصنيف")}</small>
+            <strong>
+              أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مزود خدمة")}
+            </strong>
           </div>
         </div>
       </section>
+
 
       {/* ── ADS / BANNERS ── */}
       {banners.length > 0 && currentBanner && (
