@@ -471,7 +471,45 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </div>
       </header>
 
+      {menuOpen && (
+        <div className="ez-drawer-overlay" onClick={() => setMenuOpen(false)}>
+          <aside className="ez-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="ez-drawer-head">
+              <img src={logoUrl} alt="إزهليها" />
+              <button type="button" className="ez-drawer-close" onClick={() => setMenuOpen(false)} aria-label="إغلاق">
+                <X size={18} />
+              </button>
+            </div>
+            <nav className="ez-drawer-menu">
+              {navItems.map((it) =>
+                it.href ? (
+                  <a key={it.label} href={it.href} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                    {it.label}
+                  </a>
+                ) : (
+                  <Link key={it.label} to={it.to!} className={it.active ? "active" : ""} onClick={() => setMenuOpen(false)}>
+                    {it.label}
+                    {it.to === "/favorites" && <small>{favIds.size}</small>}
+                  </Link>
+                )
+              )}
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setMenuOpen(false)}>{txt("nav.admin", "لوحة الأدمن")}</Link>
+              )}
+            </nav>
+            <div className="ez-drawer-cta">
+              <span className="ez-drawer-cta-ico">✨</span>
+              <p>{txt("drawer.cta.text", "حدد التصنيف والخدمة والمدينة، ونطلع لك الخيارات اللي تناسبك.")}</p>
+              <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
+                {txt("drawer.cta.btn", "ابدأ التصفح")}
+              </Link>
+            </div>
+          </aside>
+        </div>
+      )}
+
       {/* ── HERO ── */}
+      {(view === "home" || view === "providers") && (
       <section className="ez-hero">
         <div className="ez-hero-grid">
           <div className="ez-hero-text ez-reveal">
@@ -610,8 +648,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       </section>
+      )}
 
       {/* ── PLATFORM STATS ── */}
+      {view === "home" && (
       <section className="ez-stats" aria-label="أرقام إزهليها">
         <div className="ez-stat ez-stat--solo">
           <span className="ez-stat-icon"><Building2 size={16} /></span>
@@ -622,10 +662,11 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </div>
         </div>
       </section>
+      )}
 
 
       {/* ── ADS / BANNERS ── */}
-      {banners.length > 0 && currentBanner && (
+      {view === "home" && banners.length > 0 && currentBanner && (
         <section className="ez-ad-sec" aria-label="إعلان">
           <div className="ez-ad">
             <div className="ez-ad-media">
@@ -666,6 +707,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── CATEGORIES ── */}
+      {(view === "home" || view === "categories") && (
       <section className="ez-sec" id="ez-categories">
         <div className="ez-cats-head">
           <div>
@@ -716,10 +758,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </div>
         )}
       </section>
+      )}
+      )}
 
 
       {/* ── SHOWCASE ── */}
-      {!loading && showcase.length > 0 && (
+      {view === "home" && !loading && showcase.length > 0 && (
         <section className="ez-sec ez-sec-alt">
           <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("showcase.eyebrow", "اختيارات إزهليها")}</div>
           <h2 className="ez-h2">{txt("showcase.title", "خيارات تستاهل تبدأ منها")}</h2>
@@ -740,6 +784,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       )}
 
       {/* ── RESULTS ── */}
+      {view === "providers" && (
       <section className="ez-sec" id="ez-results">
         <div className="ez-results-head">
           <div>
@@ -893,6 +938,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── FAQ ── */}
+      {(view === "home" || view === "faq") && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
         <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
@@ -909,6 +955,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           ))}
         </div>
       </section>
+      )}
 
       {/* ── FOOTER ── */}
       <SiteFooter texts={siteTexts} />
