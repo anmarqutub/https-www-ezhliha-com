@@ -412,7 +412,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     { label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
     { label: txt("nav.providers", "مقدمي الخدمات"), to: "/providers", active: view === "providers" },
     { label: txt("nav.categories", "التصنيفات"), to: "/categories", active: view === "categories" },
-    { label: txt("nav.cities", "المدن"), to: "/cities", active: view === "cities" },
     ...(user ? [{ label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
     { label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
     { label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
