@@ -1158,10 +1158,10 @@ const css = `
   .ez-fchip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
   .ez-fchip-clear:hover { background:var(--brand-dark); color:#fff; }
   .ez-fchips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
-  .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:14px 16px; margin-top:34px; }
+  .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:22px 16px; margin-top:34px; }
   .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 22px; }
   .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
-  .ez-stat strong { display:block; color:var(--brand); font-size:21px; font-weight:600; letter-spacing:-.03em; }
+  .ez-stat strong { display:block; color:var(--brand); font-size:24px; font-weight:800; letter-spacing:-.02em; }
   .ez-stat small { color:var(--muted); font-size:11.5px; }
   .ez-ad-sec { padding:26px 32px 6px; }
   .ez-ad { max-width:1240px; margin:0 auto; background:#fff; border:1px solid rgba(102,0,0,.10); border-radius:6px; display:grid; grid-template-columns:.9fr 1.1fr; overflow:hidden; }
