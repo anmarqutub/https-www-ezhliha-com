@@ -44,10 +44,10 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
           <h3>{txt("footer.explore", "استكشف")}</h3>
           <div className="ez-footer-links">
             <Link to="/">{txt("nav.home", "الرئيسية")}</Link>
-            <Link to="/" hash="ez-results">{txt("footer.all", "كل مقدمي الخدمة")}</Link>
+            <Link to="/providers">{txt("footer.all", "كل مقدمي الخدمة")}</Link>
 
-            <Link to="/" hash="ez-categories">{txt("nav.categories", "التصنيفات")}</Link>
-            <Link to="/" hash="ez-cities">{txt("nav.cities", "المدن")}</Link>
+            <Link to="/categories">{txt("nav.categories", "التصنيفات")}</Link>
+            <Link to="/cities">{txt("nav.cities", "المدن")}</Link>
             <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>
           </div>
         </div>
@@ -64,8 +64,9 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               <WhatsAppIcon size={16} />
               <span>{txt("footer.contact", "واتساب إزهليها")}</span>
             </a>
+            <Link to="/about">{txt("footer.about", "من نحن")}</Link>
             <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
-            <Link to="/" hash="ez-faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <Link to="/faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
 
           </div>
         </div>

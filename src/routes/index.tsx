@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpLeft,
@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Heart,
   MapPin,
+  Menu,
   Search,
   Shapes,
   SlidersHorizontal,
@@ -26,7 +27,7 @@ import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
 import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  component: () => <HomePage view="home" />,
   head: () => ({
     meta: [
       { title: "إزهليها — دليلك لأحلى المناسبات" },
@@ -95,8 +96,22 @@ function fallbackCategoryImage(name: string, index: number) {
 }
 
 
-function Home() {
+export type EzView = "home" | "providers" | "categories" | "cities" | "faq" | "about";
+
+// فلاتر مؤقتة تنتقل بين الصفحات (من التصنيفات/المدن إلى صفحة مقدمي الخدمات)
+export const pendingFilters: { categoryId?: string | null; cityId?: string } = {};
+
+export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
+    if (pendingFilters.cityId !== undefined) setSelectedCity(pendingFilters.cityId);
+    pendingFilters.categoryId = undefined;
+    pendingFilters.cityId = undefined;
+  }, []);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -343,13 +358,34 @@ function Home() {
   const currentBanner = banners[bannerIdx];
 
   const scrollToResults = () => {
+    if (view !== "providers") {
+      pendingFilters.categoryId = selectedCategory;
+      pendingFilters.cityId = selectedCity;
+      navigate({ to: "/providers" });
+      return;
+    }
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const goProviders = (patch: { categoryId?: string | null; cityId?: string }) => {
+    if (patch.categoryId !== undefined) {
+      pendingFilters.categoryId = patch.categoryId;
+      setSelectedCategory(patch.categoryId);
+      setSelectedSub("all");
+    }
+    if (patch.cityId !== undefined) {
+      pendingFilters.cityId = patch.cityId;
+      setSelectedCity(patch.cityId);
+    }
+    if (view !== "providers") navigate({ to: "/providers" });
+    else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
 
   const scrollRail = (dir: number) => {
     const el = document.getElementById("ez-cat-rail");
     if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
   };
+
 
 
   const resetAll = () => {
@@ -370,6 +406,18 @@ function Home() {
     { q: txt("faq.q4", "كيف أضيف مقدم خدمة للموقع؟"), a: txt("faq.a4", "تواصل معنا عبر الواتساب ونرتب لك إضافة ملفك بكل تفاصيله.") },
   ];
 
+  type NavItem = { label: string; to?: string; href?: string; active?: boolean };
+  const navItems: NavItem[] = [
+    { label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
+    { label: txt("nav.providers", "مقدمي الخدمات"), to: "/providers", active: view === "providers" },
+    { label: txt("nav.categories", "التصنيفات"), to: "/categories", active: view === "categories" },
+    { label: txt("nav.cities", "المدن"), to: "/cities", active: view === "cities" },
+    ...(user ? [{ label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
+    { label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
+    { label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
+    { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
+  ];
+
   if (!authLoading && !user) {
     return <AuthGate />;
   }
@@ -379,34 +427,29 @@ function Home() {
       <style>{css}</style>
 
       <header className="ez-nav">
+        <button
+          type="button"
+          className="ez-burger"
+          aria-label={txt("nav.menu", "القائمة")}
+          onClick={() => setMenuOpen(true)}
+        >
+          <Menu size={22} />
+        </button>
+
         <Link to="/" className="ez-brand" aria-label="الرئيسية">
           <img src={logoUrl} alt="إزهليها" className="ez-brand-logo" />
         </Link>
 
         <nav className="ez-nav-menu">
-          <button
-            type="button"
-            className="ez-nav-link"
-            onClick={() => { resetAll(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          >
-            {txt("nav.home", "الرئيسية")}
-          </button>
-          <button type="button" className="ez-nav-link" onClick={() => { resetAll(); scrollToResults(); }}>
-            {txt("nav.providers", "مقدمي الخدمات")}
-          </button>
-
-          <button type="button" className="ez-nav-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
-          <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
-          {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
-          <a
-            className="ez-nav-link"
-            href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {txt("nav.contact", "تواصل معنا")}
-          </a>
+          {navItems.map((it) =>
+            it.href ? (
+              <a key={it.label} className="ez-nav-link" href={it.href} target="_blank" rel="noopener noreferrer">{it.label}</a>
+            ) : (
+              <Link key={it.label} to={it.to!} className={`ez-nav-link ${it.active ? "active" : ""}`}>{it.label}</Link>
+            )
+          )}
         </nav>
+
 
 
         <div className="ez-nav-actions">
@@ -428,7 +471,45 @@ function Home() {
         </div>
       </header>
 
+      {menuOpen && (
+        <div className="ez-drawer-overlay" onClick={() => setMenuOpen(false)}>
+          <aside className="ez-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="ez-drawer-head">
+              <img src={logoUrl} alt="إزهليها" />
+              <button type="button" className="ez-drawer-close" onClick={() => setMenuOpen(false)} aria-label="إغلاق">
+                <X size={18} />
+              </button>
+            </div>
+            <nav className="ez-drawer-menu">
+              {navItems.map((it) =>
+                it.href ? (
+                  <a key={it.label} href={it.href} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                    {it.label}
+                  </a>
+                ) : (
+                  <Link key={it.label} to={it.to!} className={it.active ? "active" : ""} onClick={() => setMenuOpen(false)}>
+                    {it.label}
+                    {it.to === "/favorites" && <small>{favIds.size}</small>}
+                  </Link>
+                )
+              )}
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setMenuOpen(false)}>{txt("nav.admin", "لوحة الأدمن")}</Link>
+              )}
+            </nav>
+            <div className="ez-drawer-cta">
+              <span className="ez-drawer-cta-ico">✨</span>
+              <p>{txt("drawer.cta.text", "حدد التصنيف والخدمة والمدينة، ونطلع لك الخيارات اللي تناسبك.")}</p>
+              <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
+                {txt("drawer.cta.btn", "ابدأ التصفح")}
+              </Link>
+            </div>
+          </aside>
+        </div>
+      )}
+
       {/* ── HERO ── */}
+      {(view === "home" || view === "providers") && (
       <section className="ez-hero">
         <div className="ez-hero-grid">
           <div className="ez-hero-text ez-reveal">
@@ -567,8 +648,10 @@ function Home() {
 
 
       </section>
+      )}
 
       {/* ── PLATFORM STATS ── */}
+      {view === "home" && (
       <section className="ez-stats" aria-label="أرقام إزهليها">
         <div className="ez-stat ez-stat--solo">
           <span className="ez-stat-icon"><Building2 size={16} /></span>
@@ -579,10 +662,11 @@ function Home() {
           </div>
         </div>
       </section>
+      )}
 
 
       {/* ── ADS / BANNERS ── */}
-      {banners.length > 0 && currentBanner && (
+      {view === "home" && banners.length > 0 && currentBanner && (
         <section className="ez-ad-sec" aria-label="إعلان">
           <div className="ez-ad">
             <div className="ez-ad-media">
@@ -623,6 +707,7 @@ function Home() {
 
 
       {/* ── CATEGORIES ── */}
+      {(view === "home" || view === "categories") && (
       <section className="ez-sec" id="ez-categories">
         <div className="ez-cats-head">
           <div>
@@ -651,11 +736,9 @@ function Home() {
                   key={c.id}
                   className={`ez-cat-card ${selectedCategory === c.id ? "active" : ""}`}
                   onClick={() => {
-                    setSelectedCategory(c.id);
-                    setSelectedSub("all");
                     setSearch("");
                     setQuickSearch("");
-                    setTimeout(scrollToResults, 60);
+                    goProviders({ categoryId: c.id });
                   }}
                 >
                   <div className="ez-cat-media">
@@ -673,10 +756,52 @@ function Home() {
           </div>
         )}
       </section>
+      )}
+
+      {/* ── CITIES ── */}
+      {view === "cities" && (
+      <section className="ez-sec" id="ez-cities">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("cities.eyebrow", "المدن")}</div>
+        <h2 className="ez-h2">{txt("cities.title", "اختر مدينتك")}</h2>
+        <p className="ez-muted">{txt("cities.desc", "اضغط على المدينة وبنعرض لك مقدمي الخدمات المتوفرين فيها.")}</p>
+        {loading ? (
+          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+        ) : cities.length === 0 ? (
+          <p className="ez-empty">{txt("cities.empty", "ما فيه مدن مضافة لحد الحين.")}</p>
+        ) : (
+          <div className="ez-city-grid">
+            {cities.map((c) => (
+              <button key={c.id} type="button" className="ez-city-card" onClick={() => goProviders({ cityId: c.id })}>
+                <span className="ez-city-ico"><MapPin size={16} /></span>
+                <span className="ez-city-name">{c.name_ar}</span>
+                <span className="ez-city-count">
+                  {(providersCountByCity.get(c.id) ?? 0) > 0
+                    ? `${providersCountByCity.get(c.id)} ${txt("home.category.count_suffix", "مقدم خدمة")}`
+                    : txt("home.category.coming_soon", "قريباً")}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+      )}
+
+      {/* ── ABOUT PAGE ── */}
+      {view === "about" && (
+      <section className="ez-sec" id="ez-about">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("footer.about", "من نحن")}</div>
+        <h2 className="ez-h2">{txt("home.about.title", "من نحن")}</h2>
+        <div className="ez-about-page">
+          <p>{txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}</p>
+          <p>{txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}</p>
+          <p>{txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}</p>
+        </div>
+      </section>
+      )}
 
 
       {/* ── SHOWCASE ── */}
-      {!loading && showcase.length > 0 && (
+      {view === "home" && !loading && showcase.length > 0 && (
         <section className="ez-sec ez-sec-alt">
           <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("showcase.eyebrow", "اختيارات إزهليها")}</div>
           <h2 className="ez-h2">{txt("showcase.title", "خيارات تستاهل تبدأ منها")}</h2>
@@ -697,6 +822,7 @@ function Home() {
       )}
 
       {/* ── RESULTS ── */}
+      {view === "providers" && (
       <section className="ez-sec" id="ez-results">
         <div className="ez-results-head">
           <div>
@@ -844,12 +970,11 @@ function Home() {
           </div>
         </div>
       </section>
-
-
-
+      )}
 
 
       {/* ── FAQ ── */}
+      {(view === "home" || view === "faq") && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
         <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
@@ -866,6 +991,7 @@ function Home() {
           ))}
         </div>
       </section>
+      )}
 
       {/* ── FOOTER ── */}
       <SiteFooter texts={siteTexts} />
@@ -1374,14 +1500,37 @@ const css = `
   .ez-acct-item:hover { background:#F2EDE1; color:var(--brand); }
   .ez-acct-out { color:var(--brand); }
 
+  /* ── burger + mobile drawer ── */
+  .ez-burger { display:none; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--line); background:#fff; border-radius:8px; color:var(--ink); cursor:pointer; }
+  .ez-drawer-overlay { position:fixed; inset:0; background:rgba(20,12,10,.45); z-index:300; display:flex; justify-content:flex-start; }
+  .ez-drawer { width:min(320px, 86vw); height:100%; background:#FDFBF5; display:flex; flex-direction:column; box-shadow:0 0 40px rgba(0,0,0,.2); animation:ezDrawerIn .22s ease; }
+  @keyframes ezDrawerIn { from { transform:translateX(-100%); } to { transform:none; } }
+  .ez-drawer-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--line); }
+  .ez-drawer-head img { height:46px; width:auto; }
+  .ez-drawer-close { width:34px; height:34px; border:1px solid var(--line); background:#fff; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); }
+  .ez-drawer-menu { flex:1; overflow-y:auto; padding:6px 0; }
+  .ez-drawer-menu a { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:15px; font-weight:600; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+  .ez-drawer-menu a.active { color:var(--brand); }
+  .ez-drawer-menu a small { color:var(--muted); font-size:12px; font-weight:500; }
+  .ez-drawer-cta { margin:16px; background:var(--brand); color:#fff; border-radius:10px; padding:18px; text-align:center; }
+  .ez-drawer-cta-ico { font-size:18px; }
+  .ez-drawer-cta p { margin:8px 0 14px; font-size:13.5px; line-height:1.8; color:rgba(255,255,255,.9); }
+  .ez-drawer-cta-btn { display:block; background:#FDFBF5; color:var(--brand); border-radius:6px; padding:11px; font-weight:600; font-size:14px; text-decoration:none; }
+
+  /* ── cities page ── */
+  .ez-city-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; margin-top:22px; }
+  .ez-city-card { display:flex; flex-direction:column; align-items:flex-start; gap:6px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; cursor:pointer; text-align:start; font-family:inherit; transition:border-color .2s, transform .2s; }
+  .ez-city-card:hover { border-color:var(--brand); transform:translateY(-2px); }
+  .ez-city-ico { color:var(--brand); }
+  .ez-city-name { font-size:15px; font-weight:600; color:var(--ink); }
+  .ez-city-count { font-size:12.5px; color:var(--muted); }
+  .ez-about-page { max-width:760px; margin-top:18px; display:grid; gap:14px; }
+  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); }
+
   @media (max-width: 1024px) {
-    .ez-nav { flex-wrap:wrap; padding-bottom:0; }
-    .ez-nav-menu {
-      order:3; width:100%; gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;
-      scrollbar-width:none; padding:6px 0 8px; border-top:1px solid var(--line); margin-top:6px;
-    }
-    .ez-nav-menu::-webkit-scrollbar { display:none; }
-    .ez-nav-link { white-space:nowrap; font-size:14px; }
+    .ez-burger { display:inline-flex; }
+    .ez-nav { flex-wrap:wrap; padding-bottom:8px; }
+    .ez-nav-menu { display:none; }
     .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
     .ez-hero-media { max-width:none; }
     .ez-console { grid-template-columns:repeat(3,1fr); margin-inline:16px; border-radius:22px; }
@@ -1389,9 +1538,7 @@ const css = `
   }
 
   @media (max-width: 640px) {
-    .ez-nav { padding:8px 16px 0; }
-    .ez-nav-menu { gap:14px; }
-    .ez-nav-link { font-size:13.5px; }
+    .ez-nav { padding:8px 16px; }
     .ez-brand-logo { height:52px; }
 
     .ez-hero-grid { padding:24px 16px 44px; }
