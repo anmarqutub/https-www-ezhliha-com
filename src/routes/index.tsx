@@ -563,7 +563,7 @@ function Home() {
       {/* ── PLATFORM STATS ── */}
       <section className="ez-stats" aria-label="أرقام إزهليها">
         <div className="ez-stat ez-stat--solo">
-          <span className="ez-stat-icon">🏛️</span>
+          <span className="ez-stat-icon"><Building2 size={16} /></span>
           <div>
             <strong>
               أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مزود خدمة")}
