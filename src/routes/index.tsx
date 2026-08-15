@@ -100,6 +100,10 @@ function Home() {
   const [selectedSub, setSelectedSub] = useState<string | "all">("all");
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
+  const [priceRange, setPriceRange] = useState<string>("all");
+  const [favOnly, setFavOnly] = useState(false);
+  const [favIds, setFavIds] = useState<Set<string>>(new Set());
+
 
   useEffect(() => {
     (async () => {
@@ -130,6 +134,31 @@ function Home() {
       setLoading(false);
     })();
   }, []);
+
+  // المفضلة الخاصة بالمستخدم
+  useEffect(() => {
+    if (!user) { setFavIds(new Set()); return; }
+    supabase.from("favorites").select("provider_id").eq("user_id", user.id).then(({ data }) => {
+      setFavIds(new Set(((data ?? []) as { provider_id: string }[]).map((f) => f.provider_id)));
+    });
+  }, [user]);
+
+  const toggleFav = async (providerId: string) => {
+    if (!user) return;
+    const isFav = favIds.has(providerId);
+    setFavIds((prev) => {
+      const next = new Set(prev);
+      if (isFav) next.delete(providerId); else next.add(providerId);
+      return next;
+    });
+    if (isFav) {
+      await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
+    } else {
+      await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
+    }
+  };
+
+
 
   const txt = (key: string, fallback: string) => siteTexts[key] || fallback;
   const statNumber = (key: string, auto: number) => {
@@ -222,12 +251,31 @@ function Home() {
 
   const q = quickSearch.trim().toLowerCase();
 
-  const results = providers.filter((p) => {
+  const PRICE_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
+    { id: "all", label: txt("filter.price.all", "كل الأسعار"), min: 0, max: Infinity },
+    { id: "lt1000", label: txt("filter.price.1", "أقل من 1,000 ر.س"), min: 0, max: 1000 },
+    { id: "1000-3000", label: txt("filter.price.2", "1,000 – 3,000 ر.س"), min: 1000, max: 3000 },
+    { id: "3000-10000", label: txt("filter.price.3", "3,000 – 10,000 ر.س"), min: 3000, max: 10000 },
+    { id: "gt10000", label: txt("filter.price.4", "أكثر من 10,000 ر.س"), min: 10000, max: Infinity },
+  ];
+
+  const matchesPrice = (p: Provider) => {
+    if (priceRange === "all") return true;
+    const band = PRICE_BANDS.find((b) => b.id === priceRange);
+    if (!band) return true;
+    const val = p.price_from ?? p.price_to;
+    if (val == null) return false;
+    return val >= band.min && val < band.max;
+  };
+
+  // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
+  const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
     const sub = subcategories.find((s) => s.id === p.subcategory_id);
     if (!sub) return false;
     if (selectedCategory && sub.category_id !== selectedCategory) return false;
-    if (selectedSub !== "all" && !subMatches(p.subcategory_id, selectedSub)) return false;
+    if (!matchesPrice(p)) return false;
+    if (favOnly && !favIds.has(p.id)) return false;
     if (search.trim()) {
       const s = search.trim().toLowerCase();
       if (!p.name.toLowerCase().includes(s) && !(p.description ?? "").toLowerCase().includes(s)) return false;
@@ -244,7 +292,23 @@ function Home() {
     return true;
   });
 
-  const filtersActive = !!(q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim());
+  const results = baseResults.filter(
+    (p) => selectedSub === "all" || subMatches(p.subcategory_id, selectedSub)
+  );
+
+  // قائمة أنواع الخدمة الظاهرة في الشريط الجانبي مع عدد النتائج لكل نوع
+  const sidebarSubs = (selectedCategory
+    ? subcategories.filter((s) => s.category_id === selectedCategory && !s.parent_id)
+    : subcategories.filter((s) => !s.parent_id)
+  ).map((s) => ({
+    ...s,
+    count: baseResults.filter((p) => subMatches(p.subcategory_id, s.id)).length,
+  }));
+
+  const filtersActive = !!(
+    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" || favOnly
+  );
+
 
   const featured = results.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
@@ -279,7 +343,10 @@ function Home() {
     setSelectedCity("");
     setSearch("");
     setQuickSearch("");
+    setPriceRange("all");
+    setFavOnly(false);
   };
+
 
   const faqs = [
     { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف المزود وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
@@ -672,69 +739,128 @@ function Home() {
           </div>
         </div>
 
-        {visibleSubs.length > 0 && (
-          <div className="ez-chips">
+        <div className="ez-results-layout">
+          <aside className="ez-fpanel">
+            <div className="ez-fpanel-head">
+              <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("filter.title", "رتّب اختياراتك")}</div>
+              <p>{txt("filter.desc", "حدد اللي يهمك أولاً، والنتائج تتحدث مباشرة.")}</p>
+            </div>
 
-            <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
-            {visibleSubs.map((s) => (
-              <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
-            ))}
-          </div>
-        )}
+            <div className="ez-fgroup">
+              <div className="ez-fgroup-head">
+                <h4>{txt("filter.service", "نوع الخدمة")}</h4>
+                {filtersActive && (
+                  <button type="button" className="ez-fclear" onClick={resetAll}>{txt("filter.clear", "مسح الكل")}</button>
+                )}
+              </div>
+              <ul className="ez-flist">
+                <li>
+                  <button type="button" className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>
+                    <span>{txt("filter.service.all", "كل الخدمات")}</span>
+                    <small>{baseResults.length}</small>
+                  </button>
+                </li>
+                {sidebarSubs.map((s) => (
+                  <li key={s.id}>
+                    <button type="button" className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>
+                      <span>{s.name_ar}</span>
+                      <small>{s.count}</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        {visibleTertiaries.length > 0 && (
-          <div className="ez-chips ez-chips-tertiary">
-            <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
-            {visibleTertiaries.map((t) => (
-              <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
-            ))}
-          </div>
-        )}
-
-        {loading ? (
-          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
-        ) : results.length === 0 ? (
-          <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
-        ) : (
-          <>
-            {featured.length > 0 && (
-              <>
-                <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
-                <div className="ez-grid">
-                  {featured.map((p) => (
-                    <ProviderCard
-                      key={p.id}
-                      provider={p}
-                      city={cities.find((c) => c.id === p.city_id)}
-                      sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                      images={imgsByProvider.get(p.id) ?? []}
-                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                      featured
-                    />
+            {visibleTertiaries.length > 0 && (
+              <div className="ez-fgroup">
+                <h4>{txt("home.subs.tertiary_label", "تصنيفات فرعية")}</h4>
+                <div className="ez-chips ez-chips-tertiary">
+                  {visibleTertiaries.map((t) => (
+                    <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
                   ))}
                 </div>
-              </>
+              </div>
             )}
-            {regular.length > 0 && (
+
+            <div className="ez-fgroup">
+              <h4>{txt("console.city", "المدينة")}</h4>
+              <select className="ez-fselect" value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+                <option value="">{txt("home.city.all", "كل المدن")}</option>
+                {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+              </select>
+            </div>
+
+            <div className="ez-fgroup">
+              <h4>{txt("filter.price", "السعر")}</h4>
+              <select className="ez-fselect" value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
+                {PRICE_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+              </select>
+            </div>
+
+            {user && (
+              <button
+                type="button"
+                className={`ez-ffav ${favOnly ? "active" : ""}`}
+                onClick={() => setFavOnly((v) => !v)}
+              >
+                <span>♡ {txt("filter.fav_only", "المفضلة فقط")}</span>
+                <small>{favIds.size}</small>
+              </button>
+            )}
+          </aside>
+
+          <div className="ez-results-main">
+            {loading ? (
+              <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+            ) : results.length === 0 ? (
+              <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
+            ) : (
               <>
-                {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
-                <div className="ez-grid">
-                  {regular.map((p) => (
-                    <ProviderCard
-                      key={p.id}
-                      provider={p}
-                      city={cities.find((c) => c.id === p.city_id)}
-                      sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                      images={imgsByProvider.get(p.id) ?? []}
-                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                    />
-                  ))}
-                </div>
+                {featured.length > 0 && (
+                  <>
+                    <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
+                    <div className="ez-grid">
+                      {featured.map((p) => (
+                        <ProviderCard
+                          key={p.id}
+                          provider={p}
+                          city={cities.find((c) => c.id === p.city_id)}
+                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          images={imgsByProvider.get(p.id) ?? []}
+                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          featured
+                          isFav={favIds.has(p.id)}
+                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+                {regular.length > 0 && (
+                  <>
+                    {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
+                    <div className="ez-grid">
+                      {regular.map((p) => (
+                        <ProviderCard
+                          key={p.id}
+                          provider={p}
+                          city={cities.find((c) => c.id === p.city_id)}
+                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          images={imgsByProvider.get(p.id) ?? []}
+                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          isFav={favIds.has(p.id)}
+                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </section>
+
 
       {/* ── CITIES ── */}
       {cities.length > 0 && (
@@ -828,6 +954,8 @@ function ProviderCard({
   images,
   featured,
   contactLabel,
+  isFav,
+  onToggleFav,
 }: {
   provider: Provider;
   city?: City;
@@ -835,16 +963,29 @@ function ProviderCard({
   images: ProviderImage[];
   featured?: boolean;
   contactLabel: string;
+  isFav?: boolean;
+  onToggleFav?: () => void;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
+      {onToggleFav && (
+        <button
+          type="button"
+          className={`ez-card-fav ${isFav ? "active" : ""}`}
+          aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+        >
+          {isFav ? "♥" : "♡"}
+        </button>
+      )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
           {featured && <span className="ez-badge">مميز</span>}
         </div>
+
         <div className="ez-card-body">
           {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
           <div className="ez-card-head">
@@ -1162,7 +1303,31 @@ const css = `
   .ez-city-chips button.active small { color:rgba(255,255,255,.75); }
 
   /* CARDS */
-  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:18px; }
+  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:18px; }
+  .ez-results-layout { display:grid; grid-template-columns:288px 1fr; gap:26px; align-items:start; }
+  .ez-fpanel { position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:18px; }
+  .ez-fpanel-head p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
+  .ez-fgroup h4 { margin:0 0 10px; font-size:15px; color:var(--ink); }
+  .ez-fgroup-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+  .ez-fgroup-head h4 { margin:0; }
+  .ez-fclear { background:none; border:none; color:var(--brand); font:inherit; font-size:13px; cursor:pointer; }
+  .ez-flist { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+  .ez-flist button { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; background:none; border:none; border-inline-start:3px solid transparent; padding:9px 10px; font:inherit; font-size:14px; color:var(--ink); cursor:pointer; border-radius:8px; transition:background .2s var(--ease-out); }
+  .ez-flist button:hover { background:rgba(102,0,0,.05); }
+  .ez-flist button.active { background:var(--sec); border-inline-start-color:var(--brand); font-weight:700; color:var(--brand); }
+  .ez-flist small { color:var(--muted); font-size:12px; }
+  .ez-fselect { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font:inherit; font-size:14px; color:var(--ink); }
+  .ez-ffav { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font:inherit; font-size:14px; cursor:pointer; color:var(--ink); }
+  .ez-ffav.active { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .ez-ffav small { opacity:.75; font-size:12px; }
+  .ez-card { position:relative; }
+  .ez-card-fav { position:absolute; top:10px; inset-inline-start:10px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  @media (max-width: 900px) {
+    .ez-results-layout { grid-template-columns:1fr; }
+    .ez-fpanel { position:static; }
+  }
+
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
   .ez-card::before { content:""; position:absolute; inset-inline-start:1.4rem; top:-1px; z-index:3; width:2.4rem; height:1px; background:var(--brand); }
   .ez-card::after { content:""; position:absolute; inset-inline-end:0; bottom:0; z-index:3; width:14px; height:14px; border-inline-end:1px solid rgba(102,0,0,.3); border-bottom:1px solid rgba(102,0,0,.3); }
