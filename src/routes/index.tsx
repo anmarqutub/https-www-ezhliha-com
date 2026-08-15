@@ -739,69 +739,128 @@ function Home() {
           </div>
         </div>
 
-        {visibleSubs.length > 0 && (
-          <div className="ez-chips">
+        <div className="ez-results-layout">
+          <aside className="ez-fpanel">
+            <div className="ez-fpanel-head">
+              <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("filter.title", "رتّب اختياراتك")}</div>
+              <p>{txt("filter.desc", "حدد اللي يهمك أولاً، والنتائج تتحدث مباشرة.")}</p>
+            </div>
 
-            <button className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>{txt("home.subs.all", "الكل")}</button>
-            {visibleSubs.map((s) => (
-              <button key={s.id} className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>{s.name_ar}</button>
-            ))}
-          </div>
-        )}
+            <div className="ez-fgroup">
+              <div className="ez-fgroup-head">
+                <h4>{txt("filter.service", "نوع الخدمة")}</h4>
+                {filtersActive && (
+                  <button type="button" className="ez-fclear" onClick={resetAll}>{txt("filter.clear", "مسح الكل")}</button>
+                )}
+              </div>
+              <ul className="ez-flist">
+                <li>
+                  <button type="button" className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>
+                    <span>{txt("filter.service.all", "كل الخدمات")}</span>
+                    <small>{baseResults.length}</small>
+                  </button>
+                </li>
+                {sidebarSubs.map((s) => (
+                  <li key={s.id}>
+                    <button type="button" className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>
+                      <span>{s.name_ar}</span>
+                      <small>{s.count}</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        {visibleTertiaries.length > 0 && (
-          <div className="ez-chips ez-chips-tertiary">
-            <span className="ez-tertiary-label">{txt("home.subs.tertiary_label", "تصنيفات فرعية:")}</span>
-            {visibleTertiaries.map((t) => (
-              <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
-            ))}
-          </div>
-        )}
-
-        {loading ? (
-          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
-        ) : results.length === 0 ? (
-          <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
-        ) : (
-          <>
-            {featured.length > 0 && (
-              <>
-                <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
-                <div className="ez-grid">
-                  {featured.map((p) => (
-                    <ProviderCard
-                      key={p.id}
-                      provider={p}
-                      city={cities.find((c) => c.id === p.city_id)}
-                      sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                      images={imgsByProvider.get(p.id) ?? []}
-                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                      featured
-                    />
+            {visibleTertiaries.length > 0 && (
+              <div className="ez-fgroup">
+                <h4>{txt("home.subs.tertiary_label", "تصنيفات فرعية")}</h4>
+                <div className="ez-chips ez-chips-tertiary">
+                  {visibleTertiaries.map((t) => (
+                    <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
                   ))}
                 </div>
-              </>
+              </div>
             )}
-            {regular.length > 0 && (
+
+            <div className="ez-fgroup">
+              <h4>{txt("console.city", "المدينة")}</h4>
+              <select className="ez-fselect" value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+                <option value="">{txt("home.city.all", "كل المدن")}</option>
+                {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+              </select>
+            </div>
+
+            <div className="ez-fgroup">
+              <h4>{txt("filter.price", "السعر")}</h4>
+              <select className="ez-fselect" value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
+                {PRICE_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+              </select>
+            </div>
+
+            {user && (
+              <button
+                type="button"
+                className={`ez-ffav ${favOnly ? "active" : ""}`}
+                onClick={() => setFavOnly((v) => !v)}
+              >
+                <span>♡ {txt("filter.fav_only", "المفضلة فقط")}</span>
+                <small>{favIds.size}</small>
+              </button>
+            )}
+          </aside>
+
+          <div className="ez-results-main">
+            {loading ? (
+              <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+            ) : results.length === 0 ? (
+              <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
+            ) : (
               <>
-                {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
-                <div className="ez-grid">
-                  {regular.map((p) => (
-                    <ProviderCard
-                      key={p.id}
-                      provider={p}
-                      city={cities.find((c) => c.id === p.city_id)}
-                      sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                      images={imgsByProvider.get(p.id) ?? []}
-                      contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                    />
-                  ))}
-                </div>
+                {featured.length > 0 && (
+                  <>
+                    <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
+                    <div className="ez-grid">
+                      {featured.map((p) => (
+                        <ProviderCard
+                          key={p.id}
+                          provider={p}
+                          city={cities.find((c) => c.id === p.city_id)}
+                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          images={imgsByProvider.get(p.id) ?? []}
+                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          featured
+                          isFav={favIds.has(p.id)}
+                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+                {regular.length > 0 && (
+                  <>
+                    {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
+                    <div className="ez-grid">
+                      {regular.map((p) => (
+                        <ProviderCard
+                          key={p.id}
+                          provider={p}
+                          city={cities.find((c) => c.id === p.city_id)}
+                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          images={imgsByProvider.get(p.id) ?? []}
+                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          isFav={favIds.has(p.id)}
+                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </section>
+
 
       {/* ── CITIES ── */}
       {cities.length > 0 && (
