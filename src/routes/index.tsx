@@ -384,9 +384,17 @@ function Home() {
         </Link>
 
         <nav className="ez-nav-menu">
+          <button
+            type="button"
+            className="ez-nav-link"
+            onClick={() => { resetAll(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          >
+            {txt("nav.home", "الرئيسية")}
+          </button>
           <button type="button" className="ez-nav-link" onClick={() => { resetAll(); scrollToResults(); }}>
             {txt("nav.providers", "مقدمي الخدمات")}
           </button>
+
           <button type="button" className="ez-nav-link" onClick={() => setAboutOpen(true)}>{txt("footer.about", "من نحن")}</button>
           <a className="ez-nav-link" href="#ez-faq">{txt("nav.faq", "الأسئلة الشائعة")}</a>
           {user && <Link to="/favorites" className="ez-nav-link">{txt("nav.favorites", "المفضلة")}</Link>}
