@@ -412,7 +412,7 @@ function Home() {
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <span>🔍</span> {txt("nav.cta", "ابحث عن مقدم خدمة")}
+                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "ابحث عن مقدم خدمة")}
               </button>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
