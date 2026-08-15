@@ -759,6 +759,46 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         )}
       </section>
       )}
+
+      {/* ── CITIES ── */}
+      {view === "cities" && (
+      <section className="ez-sec" id="ez-cities">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("cities.eyebrow", "المدن")}</div>
+        <h2 className="ez-h2">{txt("cities.title", "اختر مدينتك")}</h2>
+        <p className="ez-muted">{txt("cities.desc", "اضغط على المدينة وبنعرض لك مقدمي الخدمات المتوفرين فيها.")}</p>
+        {loading ? (
+          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+        ) : cities.length === 0 ? (
+          <p className="ez-empty">{txt("cities.empty", "ما فيه مدن مضافة لحد الحين.")}</p>
+        ) : (
+          <div className="ez-city-grid">
+            {cities.map((c) => (
+              <button key={c.id} type="button" className="ez-city-card" onClick={() => goProviders({ cityId: c.id })}>
+                <span className="ez-city-ico"><MapPin size={16} /></span>
+                <span className="ez-city-name">{c.name_ar}</span>
+                <span className="ez-city-count">
+                  {(providersCountByCity.get(c.id) ?? 0) > 0
+                    ? `${providersCountByCity.get(c.id)} ${txt("home.category.count_suffix", "مقدم خدمة")}`
+                    : txt("home.category.coming_soon", "قريباً")}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+      )}
+
+      {/* ── ABOUT PAGE ── */}
+      {view === "about" && (
+      <section className="ez-sec" id="ez-about">
+        <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("footer.about", "من نحن")}</div>
+        <h2 className="ez-h2">{txt("home.about.title", "من نحن")}</h2>
+        <div className="ez-about-page">
+          <p>{txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}</p>
+          <p>{txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}</p>
+          <p>{txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}</p>
+        </div>
+      </section>
       )}
 
 
@@ -932,9 +972,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </div>
         </div>
       </section>
-
-
-
+      )}
 
 
       {/* ── FAQ ── */}
