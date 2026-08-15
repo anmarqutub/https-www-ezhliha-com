@@ -996,16 +996,30 @@ function PinIcon() {
   return <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>;
 }
 
-function SocialTile({ label, handle, href }: { label: string; handle: string | null; href: string | null }) {
+function SocialGlyph({ platform }: { platform: string }) {
+  if (platform === "ig")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
+  if (platform === "sc")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
+  if (platform === "tk")
+    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
+  return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
+}
+
+function SocialTile({ platform, label, handle, href }: { platform: string; label: string; handle: string | null; href: string | null }) {
   const inner = (
     <>
-      <small>{label}</small>
-      <strong>{handle ? `@${handle}` : "غير مضاف"}</strong>
+      <span className={`pv-soc-glyph pv-soc-glyph--${platform}`}><SocialGlyph platform={platform} /></span>
+      <span className="pv-soc-txt">
+        <small>{label}</small>
+        <strong>{handle ? `@${handle}` : "غير مضاف"}</strong>
+      </span>
     </>
   );
   if (!href) return <div className="pv-soc-tile pv-soc-tile--off">{inner}</div>;
   return <a className="pv-soc-tile" href={href} target="_blank" rel="noopener noreferrer">{inner}</a>;
 }
+
 
 function WhatsAppIcon() {
   return (
