@@ -1428,4 +1428,33 @@ const css3 = `
     .pv-srv:nth-child(2) { border-top:1px solid #EFE7D8; }
     .pv-media-tile { height:190px; }
   }
+
+  /* ===== unified mobile alignment (matches home page) ===== */
+  @media (max-width:640px) {
+    .pv-top { padding:8px 16px; gap:10px; }
+    .pv-top .pv-brand img { height:52px; }
+    .pv-top-cta { height:40px; padding:0 14px; font-size:12.5px; border-radius:6px; }
+    .pv-top-out { padding:0 12px; height:40px; border-radius:6px; font-size:12.5px; }
+    .pv-crumbbar { padding:12px 16px 0; flex-wrap:wrap; justify-content:flex-start; text-align:right; }
+    .pv-hero { padding:10px 16px 0; }
+    .pv-main { padding:20px 16px 50px; }
+    .pv-secnav { margin:24px -16px 0; }
+    .pv-secnav-in { padding:0 16px; justify-content:flex-start; }
+    .pv-sec { margin:0 -16px; padding:40px 16px; }
+    .pv-head-info h1, .pv-head-grid h1 { font-size:24px; text-align:right; }
+    .pv-lead, .pv-sec-head p { text-align:right; }
+    .pv-crumbs { justify-content:flex-start; flex-wrap:wrap; }
+    .pv-aside-icons { justify-content:flex-start; }
+    .pv-price-bar { border-radius:14px; padding:14px 16px; }
+    .pv-price-cta { align-items:stretch; }
+    .pv-sq-btn { width:48px; min-height:48px; border-radius:8px; flex:0 0 auto; }
+    .pv-btn-quote--wide { min-height:48px; border-radius:8px; font-size:14px; }
+    .pv-quote { padding:20px 16px; text-align:right; }
+    .pv-quote-actions { flex-direction:row-reverse; justify-content:flex-end; }
+    .pv-quote-actions .pv-btn-quote, .pv-quote-actions .pv-quote-cancel { flex:1; min-height:48px; justify-content:center; }
+    .pv-soc-grid { justify-items:start; }
+    .pv-branch-rail .pv-branch { flex:0 0 82%; }
+    .pv-sug-rail .pv-sug-card { flex:0 0 82%; }
+    .pv-media-tile { height:190px; }
+  }
 `;
