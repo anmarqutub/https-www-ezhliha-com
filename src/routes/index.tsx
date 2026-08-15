@@ -1389,8 +1389,11 @@ const css = `
   }
 
   @media (max-width: 640px) {
-    .ez-nav { padding:8px 16px; }
+    .ez-nav { padding:8px 16px 0; }
+    .ez-nav-menu { gap:14px; }
+    .ez-nav-link { font-size:13.5px; }
     .ez-brand-logo { height:52px; }
+
     .ez-hero-grid { padding:24px 16px 44px; }
     .ez-hero-frame { display:none; }
 
