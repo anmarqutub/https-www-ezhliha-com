@@ -736,11 +736,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   key={c.id}
                   className={`ez-cat-card ${selectedCategory === c.id ? "active" : ""}`}
                   onClick={() => {
-                    setSelectedCategory(c.id);
-                    setSelectedSub("all");
                     setSearch("");
                     setQuickSearch("");
-                    setTimeout(scrollToResults, 60);
+                    goProviders({ categoryId: c.id });
                   }}
                 >
                   <div className="ez-cat-media">
