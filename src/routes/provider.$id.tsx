@@ -688,34 +688,36 @@ function ProviderPage() {
                 <span className="pv-card-ico"><PinIcon /></span>
               </div>
 
-              {provider.show_branches !== false && branches.length > 0 ? (
-                <div className="pv-branch-list">
-                  {branches.map((br) => (
-                    <article className="pv-branch" key={br.id}>
-                      <div className="pv-branch-body">
-                        <h3>{br.name}</h3>
-                        {br.address && <p>{br.address}</p>}
-                        {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">{br.phone}</a>}
+              {(() => {
+                const list = provider.show_branches !== false && branches.length > 0
+                  ? branches.map((br) => ({ id: br.id, name: br.name, address: br.address, phone: br.phone, map_url: br.map_url }))
+                  : [{ id: "main", name: "الفرع الرئيسي", address: provider.address || cityName || "يُحدّث من مقدم الخدمة", phone: null as string | null, map_url: provider.map_url }];
+                return (
+                  <div className="pv-branch-wrap">
+                    {list.length > 1 && (
+                      <div className="pv-branch-arrows">
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق">‹</button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي">›</button>
                       </div>
-                      {br.map_url && (
-                        <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <div className="pv-branch-list">
-                  <article className="pv-branch">
-                    <div className="pv-branch-body">
-                      <h3>الفرع الرئيسي</h3>
-                      <p>{provider.address || cityName || "يُحدّث من مقدم الخدمة"}</p>
-                    </div>
-                    {provider.map_url && (
-                      <a className="pv-branch-map" href={provider.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
                     )}
-                  </article>
-                </div>
-              )}
+                    <div className={`pv-branch-rail ${list.length > 1 ? "" : "pv-branch-rail--one"}`} ref={brRef}>
+                      {list.map((br) => (
+                        <article className="pv-branch" key={br.id}>
+                          <div className="pv-branch-body">
+                            <h3>{br.name}</h3>
+                            {br.address && <p>{br.address}</p>}
+                            {br.phone && <a className="pv-branch-phone" href={`tel:${br.phone}`} dir="ltr">{br.phone}</a>}
+                          </div>
+                          {br.map_url && (
+                            <a className="pv-branch-map" href={br.map_url} target="_blank" rel="noopener noreferrer">الخريطة</a>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
           </div>
         </section>
