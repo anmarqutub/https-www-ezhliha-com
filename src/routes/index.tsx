@@ -1113,7 +1113,7 @@ const css = `
   /* SHARED */
   .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Alexandria",sans-serif; }
   .ez-eyebrow-line { display:inline-block; width:1.65rem; height:1px; background:linear-gradient(90deg, transparent, var(--brand)); }
-  .ez-h2 { font-size:32px; font-weight:600; line-height:1.4; margin:0 0 10px; letter-spacing:-.035em; }
+  .ez-h2 { font-size:30px; font-weight:600; line-height:1.4; margin:0 0 10px; letter-spacing:-.035em; }
   .ez-h3 { font-size:17px; font-weight:600; margin:26px 0 14px; }
   .ez-muted { color:var(--muted); font-size:13.5px; line-height:1.9; max-width:560px; }
   .ez-count { color:var(--muted); font-size:16px; font-weight:600; margin-inline-start:8px; }
