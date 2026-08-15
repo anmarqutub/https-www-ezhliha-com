@@ -700,7 +700,7 @@ function Home() {
           </div>
           <div className="ez-results-tools">
             <div className="ez-search">
-              <span className="ez-search-icon">🔍</span>
+              <span className="ez-search-icon"><Search size={15} /></span>
               <input
                 type="text"
                 placeholder={txt("home.search.placeholder", "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...")}
