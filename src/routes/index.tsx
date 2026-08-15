@@ -1091,18 +1091,16 @@ function ProviderCard({
           </div>
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
-            <div>
-              <small>السعر التقريبي</small>
-              <strong>
-                {provider.price_from
-                  ? `يبدأ من ${provider.price_from} ر.س`
-                  : provider.price
-                    ? provider.price
-                    : "السعر حسب التفاصيل"}
-              </strong>
-            </div>
-            <span className="ez-card-more">اكتشف <ArrowUpLeft size={13} /></span>
+            <small>السعر التقريبي</small>
+            <strong>
+              {provider.price_from
+                ? `يبدأ من ${provider.price_from} ر.س`
+                : provider.price
+                  ? provider.price
+                  : "السعر حسب التفاصيل"}
+            </strong>
           </div>
+
         </div>
       </Link>
       {waUrl && (
@@ -1452,9 +1450,9 @@ const css = `
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
   .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .ez-card-price > div { display:grid; gap:2px; }
+  .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:grid; gap:3px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
+
 
   .ez-card-price strong { color:var(--brand); font-size:14px; font-weight:600; }
   .ez-card-foot { padding:0 18px 16px; }
