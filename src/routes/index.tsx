@@ -1,5 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowUpLeft,
+  Building2,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  MapPin,
+  Search,
+  Shapes,
+  SlidersHorizontal,
+  Star,
+  X,
+} from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
@@ -397,7 +412,7 @@ function Home() {
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <span>🔍</span> {txt("nav.cta", "ابحث عن مقدم خدمة")}
+                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "ابحث عن مقدم خدمة")}
               </button>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
@@ -418,9 +433,9 @@ function Home() {
               {txt("hero.desc", "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
             </p>
             <ul className="ez-hero-checks">
-              <li><i>✓</i>{txt("hero.check1", "بحث سريع")}</li>
-              <li><i>✓</i>{txt("hero.check2", "تفاصيل واضحة")}</li>
-              <li><i>✓</i>{txt("hero.check3", "تواصل مباشر")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check1", "بحث سريع")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check2", "تفاصيل واضحة")}</li>
+              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check3", "تواصل مباشر")}</li>
             </ul>
           </div>
 
@@ -462,13 +477,13 @@ function Home() {
                   className="ez-hero-arrow ez-hero-arrow-prev"
                   onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
                   aria-label="السابق"
-                >‹</button>
+                ><ChevronRight size={18} /></button>
                 <button
                   type="button"
                   className="ez-hero-arrow ez-hero-arrow-next"
                   onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
                   aria-label="التالي"
-                >›</button>
+                ><ChevronLeft size={18} /></button>
                 <div className="ez-hero-dots">
                   {banners.map((_, i) => (
                     <button key={i} onClick={() => setBannerIdx(i)} className={i === bannerIdx ? "active" : ""} aria-label={`بنر ${i + 1}`} />
@@ -482,7 +497,7 @@ function Home() {
         {/* Search console */}
         <div className="ez-console">
           <div className="ez-console-field">
-            <label>🏷️ {txt("console.category", "التصنيف")}</label>
+            <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
             <select
               value={selectedCategory ?? ""}
               onChange={(e) => { setSelectedCategory(e.target.value || null); setSelectedSub("all"); }}
@@ -492,7 +507,7 @@ function Home() {
             </select>
           </div>
           <div className="ez-console-field">
-            <label>⚙️ {txt("console.sub", "نوع الخدمة")}</label>
+            <label><SlidersHorizontal size={14} className="ez-fi" /> {txt("console.sub", "نوع الخدمة")}</label>
             <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
               <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
               {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
@@ -501,14 +516,14 @@ function Home() {
           </div>
 
           <div className="ez-console-field">
-            <label>📍 {txt("console.city", "المدينة")}</label>
+            <label><MapPin size={14} className="ez-fi" /> {txt("console.city", "المدينة")}</label>
             <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
               <option value="">{txt("home.city.all", "كل المدن")}</option>
               {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
             </select>
           </div>
           <button type="button" className="ez-console-btn" onClick={scrollToResults}>
-            <span>🔍</span> {txt("console.cta", "ابحث الآن")}
+            <Search size={16} /> {txt("console.cta", "ابحث الآن")}
           </button>
         </div>
 
@@ -548,7 +563,7 @@ function Home() {
       {/* ── PLATFORM STATS ── */}
       <section className="ez-stats" aria-label="أرقام إزهليها">
         <div className="ez-stat ez-stat--solo">
-          <span className="ez-stat-icon">🏛️</span>
+          <span className="ez-stat-icon"><Building2 size={16} /></span>
           <div>
             <strong>
               أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مزود خدمة")}
@@ -607,8 +622,8 @@ function Home() {
             <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
           </div>
           <div className="ez-rail-nav">
-            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}>→</button>
-            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}>←</button>
+            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}><ChevronRight size={16} /></button>
+            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}><ChevronLeft size={16} /></button>
           </div>
         </div>
 
@@ -638,7 +653,7 @@ function Home() {
                   <div className="ez-cat-media">
                     <img src={img} alt={c.name_ar} loading="lazy" />
                     <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="ez-cat-go">↖</span>
+                    <span className="ez-cat-go"><ArrowUpLeft size={14} /></span>
                     <span className="ez-cat-name">{c.name_ar}</span>
                     <span className="ez-cat-count">
                       {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
@@ -685,14 +700,14 @@ function Home() {
           </div>
           <div className="ez-results-tools">
             <div className="ez-search">
-              <span className="ez-search-icon">🔍</span>
+              <span className="ez-search-icon"><Search size={15} /></span>
               <input
                 type="text"
                 placeholder={txt("home.search.placeholder", "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...")}
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
               />
-              {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح">✕</button>}
+              {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح"><X size={14} /></button>}
             </div>
             {filtersActive && (
               <button type="button" className="ez-btn-ghost" onClick={resetAll}>{txt("results.reset", "مسح الفلاتر")}</button>
@@ -836,7 +851,7 @@ function Home() {
             <div key={i} className={`ez-faq-item ${openFaq === i ? "open" : ""}`}>
               <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                 <span>{f.q}</span>
-                <i>{openFaq === i ? "−" : "+"}</i>
+                <i>+</i>
               </button>
               {openFaq === i && <p>{f.a}</p>}
             </div>
@@ -914,7 +929,7 @@ function ProviderCard({
           aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
         >
-          {isFav ? "♥" : "♡"}
+          <Heart size={15} fill={isFav ? "currentColor" : "none"} />
         </button>
       )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
@@ -926,9 +941,9 @@ function ProviderCard({
           {sub && <div className="ez-card-kicker">{sub.name_ar}</div>}
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
-            {provider.rating ? <span className="ez-rating">⭐ {provider.rating}</span> : null}
+            {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {city && <div className="ez-card-meta">📍 {city.name_ar}</div>}
+          {city && <div className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</div>}
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
@@ -1092,13 +1107,13 @@ const css = `
   .ez-nav-link:hover { color:var(--brand); }
   .ez-nav-actions { display:flex; align-items:center; gap:12px; }
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
-  .ez-nav-cta { display:inline-flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:1px solid var(--brand-dark); padding:9px 18px; border-radius:999px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 6px 16px rgba(102,0,0,.22); transition:background .2s, transform .2s; white-space:nowrap; }
+  .ez-nav-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; background:var(--brand); color:#fff; border:none; padding:0 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(102,0,0,.14); transition:background .2s, transform .2s; white-space:nowrap; }
   .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
 
   /* SHARED */
   .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Alexandria",sans-serif; }
   .ez-eyebrow-line { display:inline-block; width:1.65rem; height:1px; background:linear-gradient(90deg, transparent, var(--brand)); }
-  .ez-h2 { font-size:32px; font-weight:600; line-height:1.4; margin:0 0 10px; letter-spacing:-.035em; }
+  .ez-h2 { font-size:30px; font-weight:600; line-height:1.4; margin:0 0 10px; letter-spacing:-.035em; }
   .ez-h3 { font-size:17px; font-weight:600; margin:26px 0 14px; }
   .ez-muted { color:var(--muted); font-size:13.5px; line-height:1.9; max-width:560px; }
   .ez-count { color:var(--muted); font-size:16px; font-weight:600; margin-inline-start:8px; }
@@ -1146,10 +1161,11 @@ const css = `
   .ez-console { position:relative; z-index:20; max-width:1240px; margin:-32px auto 0; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px; box-shadow:0 22px 50px rgba(53,24,19,.12); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
   .ez-console-field { padding:8px 22px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:2px; }
   .ez-console-field:first-child { border-inline-start:none; }
-  .ez-console-field label { font-size:12px; color:var(--ink); font-weight:700; }
-  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--muted); outline:none; cursor:pointer; height:28px; }
+  .ez-console-field label { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-weight:500; }
+  .ez-console-field label .ez-fi { color:var(--brand); }
+  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); outline:none; cursor:pointer; height:30px; }
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
-  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 30px; border-radius:999px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; min-height:52px; }
+  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 28px; border-radius:999px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; min-height:48px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .ez-console-btn:hover { background:var(--brand-dark); }
 
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
@@ -1160,8 +1176,8 @@ const css = `
   .ez-fchips-count { font-size:12px; color:var(--muted); margin-inline-start:auto; }
   .ez-stats { border-bottom:1px solid rgba(102,0,0,.08); background:var(--surface); display:flex; justify-content:center; flex-wrap:wrap; padding:22px 16px; margin-top:34px; }
   .ez-stat { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 22px; }
-  .ez-stat-icon { width:32px; height:32px; border-radius:50%; background:rgba(102,0,0,.06); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; }
-  .ez-stat strong { display:block; color:var(--brand); font-size:24px; font-weight:800; letter-spacing:-.02em; }
+  .ez-stat-icon { width:36px; height:36px; border-radius:50%; background:rgba(102,0,0,.07); color:var(--brand); display:flex; align-items:center; justify-content:center; }
+  .ez-stat strong { display:flex; align-items:center; gap:6px; color:var(--brand); font-size:24px; font-weight:700; letter-spacing:-.02em; }
   .ez-stat small { color:var(--muted); font-size:11.5px; }
   .ez-ad-sec { padding:26px 32px 6px; }
   .ez-ad { max-width:1240px; margin:0 auto; background:#fff; border:1px solid rgba(102,0,0,.10); border-radius:6px; display:grid; grid-template-columns:.9fr 1.1fr; overflow:hidden; }
@@ -1199,8 +1215,8 @@ const css = `
 
   /* CATEGORIES */
   .ez-cats-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-  .ez-rail-nav { display:flex; gap:10px; }
-  .ez-rail-btn { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; cursor:pointer; transition:all .2s; }
+  .ez-rail-nav { display:flex; gap:8px; }
+  .ez-rail-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(102,0,0,.15); background:var(--surface); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; }
   .ez-rail-btn:hover { background:var(--brand); color:#FFFDF8; border-color:var(--brand); }
   .ez-cat-rail { display:flex; gap:14px; margin-top:26px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; scrollbar-width:none; }
   .ez-cat-rail::-webkit-scrollbar { display:none; }
@@ -1212,8 +1228,8 @@ const css = `
   .ez-cat-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(20,12,10,.72), rgba(20,12,10,.05) 60%); }
   .ez-cat-card:hover .ez-cat-media img { transform:scale(1.06); }
   .ez-cat-num { position:absolute; top:12px; inset-inline-start:12px; z-index:2; color:rgba(255,253,248,.85); font-size:11px; font-weight:700; }
-  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,253,248,.22); border:1px solid rgba(255,253,248,.45); color:#FFFDF8; font-size:14px; display:flex; align-items:center; justify-content:center; }
-  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:800; color:#FFFDF8; }
+  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.28); color:#fff; display:flex; align-items:center; justify-content:center; }
+  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:600; color:#FFFDF8; }
   .ez-cat-count { position:absolute; bottom:10px; inset-inline-start:14px; z-index:2; font-size:11px; color:rgba(255,253,248,.75); }
 
 
@@ -1222,8 +1238,8 @@ const css = `
   .ez-results-tools { display:flex; align-items:center; gap:10px; }
   .ez-search { background:var(--surface); border:1px solid var(--line); border-radius:50px; display:flex; align-items:center; gap:6px; padding:4px 14px; min-width:320px; }
   .ez-search input { flex:1; border:none; outline:none; padding:10px 6px; font-size:14px; font-family:inherit; background:transparent; color:var(--ink); }
-  .ez-search-icon { color:var(--brand); font-size:14px; }
-  .ez-search-clear { background:transparent; border:none; color:var(--brand); font-size:15px; cursor:pointer; padding:4px 8px; font-family:inherit; }
+  .ez-search-icon { color:var(--brand); display:inline-flex; }
+  .ez-search-clear { background:transparent; border:none; color:var(--brand); cursor:pointer; padding:4px 8px; display:inline-flex; align-items:center; font-family:inherit; }
   .ez-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
   .ez-chips button { background:var(--surface); border:1px solid var(--line); padding:8px 16px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:var(--ink); transition:all .2s; }
   .ez-chips button:hover { border-color:var(--brand); color:var(--brand); }
@@ -1279,8 +1295,8 @@ const css = `
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:700; margin-bottom:6px; }
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
   .ez-card-head h3 { font-size:18px; font-weight:800; color:var(--ink); margin:0; }
-  .ez-rating { font-size:12px; color:var(--muted); white-space:nowrap; }
-  .ez-card-meta { font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
+  .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
@@ -1293,10 +1309,11 @@ const css = `
   /* FAQ */
   .ez-faq { margin-top:26px; border-top:1px solid var(--line); }
   .ez-faq-item { border-bottom:1px solid var(--line); }
-  .ez-faq-item button { width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:20px 4px; font-family:inherit; font-size:16px; font-weight:700; color:var(--ink); cursor:pointer; text-align:start; }
-  .ez-faq-item i { font-style:normal; color:var(--brand); font-size:20px; }
-  .ez-faq-item p { color:var(--muted); font-size:14px; line-height:1.9; margin:0 4px 20px; max-width:760px; }
+  .ez-faq-item button { width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:16px 4px; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; text-align:start; }
+  .ez-faq-item i { font-style:normal; color:var(--brand); font-size:16px; width:28px; height:28px; border-radius:50%; background:var(--bg); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; transition:transform .2s var(--ease-out); }
+  .ez-faq-item p { color:var(--muted); font-size:13px; line-height:1.9; margin:0 4px 16px; max-width:760px; }
   .ez-faq-item.open button { color:var(--brand); }
+  .ez-faq-item.open i { transform:rotate(45deg); }
 
   /* FOOTER */
   .ez-footer { background:var(--brand); color:#fff; padding:0; }

@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, Heart, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
@@ -320,8 +321,8 @@ function ProviderPage() {
 
       <div className="pv-crumbbar">
         <Link to="/">الرئيسية</Link>
-        <span>›</span>
-        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span>›</span></>}
+        <span><ChevronLeft size={13} /></span>
+        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span><ChevronLeft size={13} /></span></>}
         <b>{provider.name}</b>
       </div>
 
@@ -338,9 +339,9 @@ function ProviderPage() {
           {images.length > 1 && (
             <>
               <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
-                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}>‹</button>
+                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
-                onClick={() => setActiveImg((n) => (n + 1) % images.length)}>›</button>
+                onClick={() => setActiveImg((n) => (n + 1) % images.length)}><ChevronLeft size={20} /></button>
               <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
             </>
           )}
@@ -364,7 +365,7 @@ function ProviderPage() {
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                 {cityName}
               </span>}
-              {avgRating && <span>⭐ {avgRating} ({reviews.length})</span>}
+              {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
             </div>
 
             <div className="pv-title-row">
@@ -384,7 +385,7 @@ function ProviderPage() {
                 disabled={favLoading}
                 onClick={toggleFav}
                 aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              >{isFav ? "♥" : "♡"}</button>
+              ><Heart size={16} fill={isFav ? "currentColor" : "none"} /></button>
             </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
@@ -701,8 +702,8 @@ function ProviderPage() {
                   <div className="pv-branch-wrap">
                     {list.length > 1 && (
                       <div className="pv-branch-arrows">
-                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق">‹</button>
-                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي">›</button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: -280, behavior: "smooth" })} aria-label="السابق"><ChevronRight size={16} /></button>
+                        <button type="button" onClick={() => brRef.current?.scrollBy({ left: 280, behavior: "smooth" })} aria-label="التالي"><ChevronLeft size={16} /></button>
                       </div>
                     )}
                     <div className={`pv-branch-rail ${list.length > 1 ? "" : "pv-branch-rail--one"}`} ref={brRef}>
@@ -738,8 +739,8 @@ function ProviderPage() {
                 <h2>ممكن يعجبك بعد</h2>
               </div>
               <div className="pv-sug-arrows">
-                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: -320, behavior: "smooth" })} aria-label="السابق">‹</button>
-                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: 320, behavior: "smooth" })} aria-label="التالي">›</button>
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: -320, behavior: "smooth" })} aria-label="السابق"><ChevronRight size={16} /></button>
+                <button type="button" onClick={() => sugRef.current?.scrollBy({ left: 320, behavior: "smooth" })} aria-label="التالي"><ChevronLeft size={16} /></button>
               </div>
             </div>
             <div className="pv-sug-rail" ref={sugRef}>
@@ -751,7 +752,7 @@ function ProviderPage() {
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
                     <small>السعر التقريبي</small>
                     <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
-                    <span className="pv-sug-more">اكتشف المزيد <i>←</i></span>
+                    <span className="pv-sug-more">اكتشف المزيد <i><ArrowLeft size={14} /></i></span>
                   </div>
                 </Link>
               ))}
@@ -841,7 +842,7 @@ function ProviderPage() {
                   } catch { /* noop */ }
                 }}
               >
-                {copiedPhone ? "✓ تم النسخ" : "نسخ الرقم"}
+                {copiedPhone ? <><Check size={14} /> تم النسخ</> : "نسخ الرقم"}
               </button>
             </div>
           </div>
@@ -1355,7 +1356,7 @@ const css3 = `
 
   .pv-sug-head { align-items:center; }
   .pv-sug-arrows { display:flex; gap:10px; justify-content:flex-start; }
-  .pv-sug-arrows button { width:40px; height:40px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:22px; line-height:1; cursor:pointer; }
+  .pv-sug-arrows button { width:36px; height:36px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; }
   .pv-sug-arrows button:hover { background:#660000; color:#fff; border-color:#660000; }
   .pv-sug-rail { max-width:1440px; margin:26px auto 0; display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory; }
   .pv-sug-card { flex:0 0 270px; scroll-snap-align:start; background:#FFFDF8; border:1px solid #E3DBC9; border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; }
@@ -1366,13 +1367,13 @@ const css3 = `
   .pv-sug-city { font-size:12px; color:#8A7A73; }
   .pv-sug-body small { color:#8A7A73; font-size:11.5px; margin-top:6px; }
   .pv-sug-body strong { color:#660000; font-size:14px; font-weight:900; }
-  .pv-sug-more { color:#660000; font-size:12.5px; font-weight:800; margin-top:6px; }
+  .pv-sug-more { display:inline-flex; align-items:center; gap:6px; color:#660000; font-size:12.5px; font-weight:600; margin-top:6px; }
 
   /* ===== hero carousel ===== */
   .pv-hero { display:block; }
   .pv-hero-carousel { position:relative; max-width:1440px; margin:0 auto; }
   .pv-hero-carousel .pv-hero-main { width:100%; height:520px; border-radius:10px; }
-  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
+  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
   .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
   .pv-hero-prev { right:16px; }
   .pv-hero-next { left:16px; }
@@ -1399,13 +1400,15 @@ const css3 = `
   /* ===== branches rail ===== */
   .pv-branch-wrap { position:relative; }
   .pv-branch-arrows { display:flex; gap:8px; justify-content:flex-start; margin-bottom:10px; }
-  .pv-branch-arrows button { width:34px; height:34px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; font-size:19px; line-height:1; cursor:pointer; }
+  .pv-branch-arrows button { width:32px; height:32px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; }
   .pv-branch-arrows button:hover { background:#660000; color:#fff; border-color:#660000; }
   .pv-branch-rail { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; }
   .pv-branch-rail .pv-branch { flex:0 0 260px; scroll-snap-align:start; flex-direction:column; align-items:flex-start; }
   .pv-branch-rail--one .pv-branch { flex:1 1 auto; }
 
-  .pv-sug-more i { font-style:normal; margin-inline-start:6px; }
+  .pv-sug-more i { font-style:normal; display:inline-flex; }
+  .pv-crumbs .pv-crumb-rate { display:inline-flex; align-items:center; gap:4px; color:#660000; }
+  .pv-crumbbar span { display:inline-flex; align-items:center; color:#9A8F86; }
 
   @media (max-width:900px) {
     .pv-hero-carousel .pv-hero-main { height:280px; }
