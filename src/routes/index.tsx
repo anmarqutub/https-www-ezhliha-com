@@ -653,7 +653,7 @@ function Home() {
                   <div className="ez-cat-media">
                     <img src={img} alt={c.name_ar} loading="lazy" />
                     <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="ez-cat-go">↖</span>
+                    <span className="ez-cat-go"><ArrowUpLeft size={14} /></span>
                     <span className="ez-cat-name">{c.name_ar}</span>
                     <span className="ez-cat-count">
                       {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
