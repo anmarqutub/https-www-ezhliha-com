@@ -1082,7 +1082,7 @@ const css = `
     --ease-out:cubic-bezier(.23,1,.32,1);
     min-height:100vh; background:var(--bg);
     background-image:radial-gradient(circle at 85% 6%, rgba(201,160,99,.22), transparent 24rem), linear-gradient(180deg,#FBF8F0,#F5F1E6);
-    font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; font-size:15px; line-height:1.78; }
+    font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:var(--ink); scroll-behavior:smooth; font-size:14.5px; line-height:1.78; }
   .ez-root * { box-sizing:border-box; }
   .ez-root h1, .ez-root h2, .ez-root h3, .ez-root h4, .ez-root button, .ez-root nav { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .ez-root ::selection { background:var(--brand); color:#FBF8F0; }
