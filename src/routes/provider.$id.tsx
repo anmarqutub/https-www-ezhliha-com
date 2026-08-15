@@ -1205,13 +1205,14 @@ const css = `
 
 const css2 = `
   .pv-root { background:#F7F3EA; }
-  .pv-top { position:sticky; top:0; z-index:60; background:#FFFDF8; border-bottom:1px solid #E3DBC9; height:64px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:0 28px; }
-  .pv-top .pv-brand img { height:38px; }
-  .pv-topnav { display:flex; align-items:center; gap:22px; }
-  .pv-topnav a { color:#241C1A; text-decoration:none; font-size:14px; font-weight:600; }
+  .pv-top { position:sticky; top:0; z-index:60; background:rgba(253,251,245,.92); backdrop-filter:blur(8px); border-bottom:1px solid #E3DBC9; min-height:64px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:8px 32px; }
+  .pv-top .pv-brand { display:flex; align-items:center; flex:0 0 auto; }
+  .pv-top .pv-brand img { height:64px; width:auto; object-fit:contain; }
+  .pv-topnav { display:flex; align-items:center; gap:22px; min-width:0; }
+  .pv-topnav a { color:#241C1A; text-decoration:none; font-size:15px; font-weight:600; white-space:nowrap; }
   .pv-topnav a:hover { color:#660000; }
-  .pv-top-side { display:flex; align-items:center; gap:10px; }
-  .pv-top-cta { display:inline-flex; align-items:center; gap:8px; background:#660000; color:#fff; text-decoration:none; padding:9px 18px; border-radius:999px; font-size:13px; font-weight:700; }
+  .pv-top-side { display:flex; align-items:center; gap:12px; flex:0 0 auto; }
+  .pv-top-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; background:#660000; color:#fff; text-decoration:none; padding:0 16px; border-radius:6px; font-size:13px; font-weight:600; white-space:nowrap; box-shadow:0 10px 24px rgba(102,0,0,.14); }
   .pv-top-cta:hover { background:#4d0000; }
   .pv-top-out { background:none; border:1px solid #E3DBC9; color:#7A6A64; border-radius:999px; padding:7px 14px; font-family:inherit; font-size:12px; cursor:pointer; }
 
@@ -1254,8 +1255,10 @@ const css2 = `
   .pv-lightbox-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
   .pv-lightbox-grid img { width:100%; height:200px; object-fit:cover; border-radius:8px; }
 
-  @media (max-width:900px) {
+  @media (max-width:1024px) {
     .pv-topnav { display:none; }
+  }
+  @media (max-width:900px) {
     .pv-hero { grid-template-columns:1fr; padding:10px 14px 0; }
     .pv-hero-main { height:260px; }
     .pv-hero-side { grid-template-rows:1fr; grid-template-columns:1fr 1fr; height:130px; }
@@ -1423,6 +1426,35 @@ const css3 = `
     .pv-sec-head h2 { font-size:20px; }
     .pv-srv { border-inline-start:none; }
     .pv-srv:nth-child(2) { border-top:1px solid #EFE7D8; }
+    .pv-media-tile { height:190px; }
+  }
+
+  /* ===== unified mobile alignment (matches home page) ===== */
+  @media (max-width:640px) {
+    .pv-top { padding:8px 16px; gap:10px; }
+    .pv-top .pv-brand img { height:52px; }
+    .pv-top-cta { height:40px; padding:0 14px; font-size:12.5px; border-radius:6px; }
+    .pv-top-out { padding:0 12px; height:40px; border-radius:6px; font-size:12.5px; }
+    .pv-crumbbar { padding:12px 16px 0; flex-wrap:wrap; justify-content:flex-start; text-align:right; }
+    .pv-hero { padding:10px 16px 0; }
+    .pv-main { padding:20px 16px 50px; }
+    .pv-secnav { margin:24px -16px 0; }
+    .pv-secnav-in { padding:0 16px; justify-content:flex-start; }
+    .pv-sec { margin:0 -16px; padding:40px 16px; }
+    .pv-head-info h1, .pv-head-grid h1 { font-size:24px; text-align:right; }
+    .pv-lead, .pv-sec-head p { text-align:right; }
+    .pv-crumbs { justify-content:flex-start; flex-wrap:wrap; }
+    .pv-aside-icons { justify-content:flex-start; }
+    .pv-price-bar { border-radius:14px; padding:14px 16px; }
+    .pv-price-cta { align-items:stretch; }
+    .pv-sq-btn { width:48px; min-height:48px; border-radius:8px; flex:0 0 auto; }
+    .pv-btn-quote--wide { min-height:48px; border-radius:8px; font-size:14px; }
+    .pv-quote { padding:20px 16px; text-align:right; }
+    .pv-quote-actions { flex-direction:row-reverse; justify-content:flex-end; }
+    .pv-quote-actions .pv-btn-quote, .pv-quote-actions .pv-quote-cancel { flex:1; min-height:48px; justify-content:center; }
+    .pv-soc-grid { justify-items:start; }
+    .pv-branch-rail .pv-branch { flex:0 0 82%; }
+    .pv-sug-rail .pv-sug-card { flex:0 0 82%; }
     .pv-media-tile { height:190px; }
   }
 `;
