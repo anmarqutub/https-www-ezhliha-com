@@ -1112,7 +1112,7 @@ const css = `
   .pv-btn-fav.active { background:#660000; color:#fff; }
 
   .pv-socials { display:flex; gap:10px; margin-top:6px; }
-  .pv-soc { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; color:#fff; text-decoration:none; font-size:12px; font-weight:800; }
+  .pv-soc { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; color:#fff; text-decoration:none; font-size:12px; font-weight:800; }
   .pv-soc-call { background:#660000; }
   .pv-soc-ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
   .pv-soc-tk { background:#000; }
@@ -1225,8 +1225,8 @@ const css2 = `
   .pv-crumbs { display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap; color:#7A6A64; font-size:12.5px; margin-bottom:10px; }
   .pv-crumb-city { display:inline-flex; align-items:center; gap:4px; }
   .pv-chip-new { background:#660000; color:#fff; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:700; }
-  .pv-head-info h1 { font-size:44px; font-weight:900; line-height:1.15; color:#241C1A; }
-  .pv-lead { margin:14px 0 22px; color:#5B4C46; font-size:15.5px; line-height:1.9; max-width:760px; }
+  .pv-head-info h1 { font-size:32px; font-weight:900; line-height:1.15; color:#241C1A; }
+  .pv-lead { margin:12px 0 18px; color:#5B4C46; font-size:14px; line-height:1.9; max-width:760px; }
   .pv-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .pv-tile { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:8px; padding:14px 16px; position:relative; }
   .pv-tile svg { color:#660000; position:absolute; top:14px; left:16px; }
@@ -1261,7 +1261,7 @@ const css2 = `
     .pv-hero-showall { left:26px; bottom:10px; }
     .pv-main { padding:20px 14px 50px; }
     .pv-head-grid { grid-template-columns:1fr; gap:22px; }
-    .pv-head-info h1 { font-size:30px; }
+    .pv-head-info h1 { font-size:24px; }
     .pv-tiles { grid-template-columns:1fr; }
     .pv-aside { position:static; }
   }
@@ -1274,9 +1274,10 @@ const css3 = `
   .pv-crumbbar b { color:#241C1A; font-weight:700; }
   .pv-empty { margin-top:22px; padding:26px; border:1px dashed #D9CFB8; border-radius:14px; background:#FFFDF8; color:#6B5B52; font-size:15px; font-weight:600; text-align:center; }
   .pv-empty--light { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.25); color:#F2E9DC; }
+  @keyframes pvFadeSlide { from { opacity:.35; transform:scale(1.03); } to { opacity:1; transform:scale(1); } }
   .pv-secnav { position:sticky; top:64px; z-index:40; background:#FFFDF8; border-top:1px solid #E3DBC9; border-bottom:1px solid #E3DBC9; margin:30px -28px 0; }
 
-  .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-end; }
+  .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-start; }
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
 
@@ -1287,7 +1288,7 @@ const css3 = `
   .pv-eyebrow { display:inline-flex; align-items:center; gap:10px; color:#660000; font-size:12.5px; font-weight:800; letter-spacing:.02em; }
   .pv-eyebrow::after { content:""; width:38px; height:1px; background:currentColor; opacity:.5; }
   .pv-eyebrow--light { color:#D9A24A; }
-  .pv-sec-head h2 { font-size:34px; font-weight:900; color:#241C1A; margin:12px 0 0; line-height:1.25; }
+  .pv-sec-head h2 { font-size:24px; font-weight:900; color:#241C1A; margin:12px 0 0; line-height:1.25; }
   .pv-sec--dark .pv-sec-head h2 { color:#F7F3EA; }
   .pv-sec-body p { color:#5B4C46; font-size:15.5px; line-height:2; margin:0; }
   .pv-sec-note { color:#7A6A64; font-size:14px; line-height:1.9; }
@@ -1388,7 +1389,7 @@ const css3 = `
 
   /* ===== social tiles ===== */
   .pv-soc-tile { display:flex; align-items:center; gap:10px; }
-  .pv-soc-glyph { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
+  .pv-soc-glyph { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
   .pv-soc-glyph--ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
   .pv-soc-glyph--sc { background:#FFFC00; color:#241C1A; }
   .pv-soc-glyph--tk { background:#000; }
@@ -1416,7 +1417,7 @@ const css3 = `
     .pv-secnav-in { padding:0 14px; gap:18px; justify-content:flex-start; }
     .pv-sec { margin:0 -14px; padding:40px 14px; }
     .pv-sec-grid, .pv-rev-cols, .pv-contact-cols, .pv-srv-grid, .pv-before, .pv-before-list { grid-template-columns:1fr; }
-    .pv-sec-head h2 { font-size:26px; }
+    .pv-sec-head h2 { font-size:20px; }
     .pv-srv { border-inline-start:none; }
     .pv-srv:nth-child(2) { border-top:1px solid #EFE7D8; }
     .pv-media-tile { height:190px; }
