@@ -1340,9 +1340,8 @@ const css = `
     .ez-nav-menu { display:none; }
     .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
     .ez-hero-media { max-width:none; }
-    .ez-steps-wrap { grid-template-columns:1fr; }
-    .ez-console { grid-template-columns:1fr 1fr; margin-inline:16px; }
-    .ez-console-btn { grid-column:1 / -1; padding:14px; }
+    .ez-console { grid-template-columns:repeat(3,1fr); margin-inline:16px; border-radius:22px; }
+    .ez-console-btn { grid-column:1 / -1; padding:14px; margin-top:8px; }
   }
   @media (max-width: 640px) {
     .ez-nav { padding:8px 16px; }
@@ -1351,12 +1350,13 @@ const css = `
     .ez-hero-frame { display:none; }
 
     .ez-h2 { font-size:26px; }
-    .ez-sec, .ez-steps-wrap { padding:44px 16px; }
-    .ez-console { grid-template-columns:1fr; }
+    .ez-sec { padding:44px 16px; }
+    .ez-console { grid-template-columns:repeat(3,1fr); }
+    .ez-console-field { padding:8px 8px; }
+    .ez-console-field label { font-size:11px; }
+    .ez-console-field select { font-size:12px; max-width:100%; }
     .ez-fchips { padding:0 16px; }
-    .ez-console-field { border-inline-start:none; border-top:1px solid var(--line); }
-    .ez-console-field:first-child { border-top:none; }
-    .ez-steps-cards { grid-template-columns:1fr; }
+
     .ez-cat-card { flex:0 0 78%; min-width:0; }
     .ez-cat-media { height:130px; }
     .ez-search { min-width:0; width:100%; }
