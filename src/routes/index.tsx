@@ -1375,12 +1375,19 @@ const css = `
   .ez-acct-out { color:var(--brand); }
 
   @media (max-width: 1024px) {
-    .ez-nav-menu { display:none; }
+    .ez-nav { flex-wrap:wrap; padding-bottom:0; }
+    .ez-nav-menu {
+      order:3; width:100%; gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+      scrollbar-width:none; padding:6px 0 8px; border-top:1px solid var(--line); margin-top:6px;
+    }
+    .ez-nav-menu::-webkit-scrollbar { display:none; }
+    .ez-nav-link { white-space:nowrap; font-size:14px; }
     .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
     .ez-hero-media { max-width:none; }
     .ez-console { grid-template-columns:repeat(3,1fr); margin-inline:16px; border-radius:22px; }
     .ez-console-btn { grid-column:1 / -1; padding:14px; margin-top:8px; }
   }
+
   @media (max-width: 640px) {
     .ez-nav { padding:8px 16px; }
     .ez-brand-logo { height:52px; }
