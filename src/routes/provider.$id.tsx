@@ -90,14 +90,14 @@ function ProviderPage() {
   const [subName, setSubName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+  const [copiedShare, setCopiedShare] = useState(false);
+  const [callOpen, setCallOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   useEffect(() => {
     if (images.length < 2 || galleryOpen) return;
     const t = setInterval(() => setActiveImg((n) => (n + 1) % images.length), 4000);
     return () => clearInterval(t);
   }, [images.length, galleryOpen]);
-  const [copiedShare, setCopiedShare] = useState(false);
-  const [callOpen, setCallOpen] = useState(false);
-  const [galleryOpen, setGalleryOpen] = useState(false);
   const sugRef = useRef<HTMLDivElement>(null);
   const brRef = useRef<HTMLDivElement>(null);
 
