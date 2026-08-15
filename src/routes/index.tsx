@@ -1171,7 +1171,7 @@ const css = `
   .ez-console-btn:hover { background:var(--brand-dark); }
 
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-  .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:50px; cursor:pointer; }
+  .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:6px; cursor:pointer; }
   .ez-fchip:hover { border-color:var(--brand); color:var(--brand); }
   .ez-fchip-clear { background:var(--brand); border-color:var(--brand); color:#fff; }
   .ez-fchip-clear:hover { background:var(--brand-dark); color:#fff; }
@@ -1244,7 +1244,7 @@ const css = `
   .ez-search-icon { color:var(--brand); display:inline-flex; }
   .ez-search-clear { background:transparent; border:none; color:var(--brand); cursor:pointer; padding:4px 8px; display:inline-flex; align-items:center; font-family:inherit; }
   .ez-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
-  .ez-chips button { background:var(--surface); border:1px solid var(--line); padding:8px 16px; border-radius:50px; font-family:inherit; font-size:13px; cursor:pointer; color:var(--ink); transition:all .2s; }
+  .ez-chips button { background:var(--surface); border:1px solid var(--line); padding:8px 16px; border-radius:6px; font-family:inherit; font-size:13px; cursor:pointer; color:var(--ink); transition:all .2s; }
   .ez-chips button:hover { border-color:var(--brand); color:var(--brand); }
   .ez-chips button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
   .ez-chips-tertiary { background:var(--surface); padding:8px 12px; border-radius:8px; align-items:center; border:1px solid var(--line); }
@@ -1252,7 +1252,7 @@ const css = `
 
   /* CITY CHIPS */
   .ez-city-chips { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
-  .ez-city-chips button { display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); padding:12px 22px; border-radius:50px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; color:var(--ink); transition:all .2s; }
+  .ez-city-chips button { display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); padding:12px 22px; border-radius:6px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; color:var(--ink); transition:all .2s; }
   .ez-city-chips button small { color:var(--muted); font-weight:600; font-size:11px; }
   .ez-city-chips button:hover { border-color:var(--brand); color:var(--brand); }
   .ez-city-chips button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
