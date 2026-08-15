@@ -320,32 +320,32 @@ function ProviderPage() {
       </div>
 
       <section className="pv-hero">
-        <button
-          type="button"
-          className="pv-hero-main"
-          style={{ backgroundImage: `url(${cover})` }}
-          onClick={() => setGalleryOpen(true)}
-          aria-label="عرض الصور"
-        />
-        <div className="pv-hero-side">
-          {[1, 2].map((k) => (
-            <button
-              key={k}
-              type="button"
-              className="pv-hero-thumb"
-              style={{ backgroundImage: `url(${heroImgs[k]})` }}
-              onClick={() => setGalleryOpen(true)}
-              aria-label={`صورة ${k + 1}`}
-            />
-          ))}
+        <div className="pv-hero-carousel">
+          <button
+            type="button"
+            className="pv-hero-main"
+            style={{ backgroundImage: `url(${cover})` }}
+            onClick={() => setGalleryOpen(true)}
+            aria-label="عرض الصور"
+          />
+          {images.length > 1 && (
+            <>
+              <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
+                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}>‹</button>
+              <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
+                onClick={() => setActiveImg((n) => (n + 1) % images.length)}>›</button>
+              <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
+            </>
+          )}
+          {images.length > 0 && (
+            <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
+              <span>شاهد الصور</span>
+            </button>
+          )}
         </div>
-        {images.length > 0 && (
-          <button type="button" className="pv-hero-showall" onClick={() => setGalleryOpen(true)}>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M3 14l4-4 4 4 3-3 7 6" /></svg>
-            <span>شاهد الصور</span>
-          </button>
-        )}
       </section>
+
 
       <main className="pv-main">
         <div className="pv-head-grid">
