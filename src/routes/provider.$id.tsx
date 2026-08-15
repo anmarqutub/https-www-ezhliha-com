@@ -667,11 +667,12 @@ function ProviderPage() {
 
               <div className="pv-soc-title">حسابات التواصل</div>
               <div className="pv-soc-grid">
-                <SocialTile label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
-                <SocialTile label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
-                <SocialTile label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
-                <SocialTile label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
+                <SocialTile platform="ig" label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
+                <SocialTile platform="sc" label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
+                <SocialTile platform="tk" label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
+                <SocialTile platform="tw" label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
               </div>
+
 
               <div className="pv-share-row">
                 <button type="button" className="pv-btn-share" onClick={shareProvider}>
