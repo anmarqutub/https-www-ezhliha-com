@@ -93,6 +93,11 @@ function ProviderPage() {
   const [copiedShare, setCopiedShare] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  useEffect(() => {
+    if (images.length < 2 || galleryOpen) return;
+    const t = setInterval(() => setActiveImg((n) => (n + 1) % images.length), 4000);
+    return () => clearInterval(t);
+  }, [images.length, galleryOpen]);
   const sugRef = useRef<HTMLDivElement>(null);
   const brRef = useRef<HTMLDivElement>(null);
 
@@ -325,7 +330,8 @@ function ProviderPage() {
           <button
             type="button"
             className="pv-hero-main"
-            style={{ backgroundImage: `url(${cover})` }}
+            key={cover}
+            style={{ backgroundImage: `url(${cover})`, animation: "pvFadeSlide .6s ease" }}
             onClick={() => setGalleryOpen(true)}
             aria-label="عرض الصور"
           />
@@ -390,9 +396,6 @@ function ProviderPage() {
                 </strong>
               </div>
               <div className="pv-price-cta">
-                {waUrl && (
-                  <a className="pv-sq-btn" href={waUrl} target="_blank" rel="noopener noreferrer" aria-label="مراسلة واتساب"><ChatIcon /></a>
-                )}
                 {callUrl && (
                   <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
                     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -990,12 +993,12 @@ function PinIcon() {
 
 function SocialGlyph({ platform }: { platform: string }) {
   if (platform === "ig")
-    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .49 1.4.9.4.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.49-1 .9-1.4.4-.4.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.56 1.56 0 1 1-3.12 0 1.56 1.56 0 0 1 3.12 0z" /></svg>;
   if (platform === "sc")
-    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2c2.9 0 5 2.2 5 5.1 0 .9-.06 1.7-.1 2.3.4.2.9.2 1.4 0 .5-.2 1.1.1 1.2.6.1.5-.2 1-.9 1.3-.7.3-1.6.5-1.7.9-.1.4.9 2.2 3 3.2.5.2.6.7.3 1.1-.4.5-1.4.8-2.3 1-.3.6-.2 1.2-.8 1.3-.5.1-1.3-.2-2.2-.2-1.1 0-1.7.9-3 .9s-1.9-.9-3-.9c-.9 0-1.7.3-2.2.2-.6-.1-.5-.7-.8-1.3-.9-.2-1.9-.5-2.3-1-.3-.4-.2-.9.3-1.1 2.1-1 3.1-2.8 3-3.2-.1-.4-1-.6-1.7-.9-.7-.3-1-.8-.9-1.3.1-.5.7-.8 1.2-.6.5.2 1 .2 1.4 0-.04-.6-.1-1.4-.1-2.3C7 4.2 9.1 2 12 2z" /></svg>;
   if (platform === "tk")
-    return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
-  return <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
+    return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.4 2.1 1.7 3.5 3.8 3.7v2.6c-1.3.1-2.5-.3-3.8-1v5.9c0 4.5-4.1 6.9-7.6 5.2-2.4-1.1-3.5-4-2.7-6.5.8-2.4 3.1-3.8 5.7-3.5v2.8c-.4-.1-.8-.2-1.2-.2-1.3 0-2.4 1.1-2.4 2.4 0 1.4 1.1 2.5 2.5 2.4 1.4 0 2.4-1.1 2.4-2.6V3h3.3z" /></svg>;
+  return <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.3l-7.2 8.2L22 21h-6.6l-4.4-5.7L5.9 21H2.6l7.7-8.8L2.3 3H9l4 5.3L17.5 3zm-1.2 16h1.8L7.8 4.9H5.9L16.3 19z" /></svg>;
 }
 
 function SocialTile({ platform, label, handle, href }: { platform: string; label: string; handle: string | null; href: string | null }) {
@@ -1015,7 +1018,7 @@ function SocialTile({ platform, label, handle, href }: { platform: string; label
 
 function WhatsAppIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
       <path d="M20.52 3.48A11.78 11.78 0 0012.06 0C5.5 0 .17 5.33.17 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.32-1.66a11.86 11.86 0 005.74 1.46h.01c6.56 0 11.89-5.33 11.89-11.9 0-3.18-1.24-6.17-3.44-8.42zM12.07 21.8h-.01a9.9 9.9 0 01-5.05-1.38l-.36-.21-3.75.99 1-3.66-.24-.38a9.86 9.86 0 01-1.51-5.26c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.13 1.03 7 2.9a9.83 9.83 0 012.9 7c0 5.46-4.44 9.9-9.88 9.9zm5.43-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.06 2.88 1.21 3.08.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" />
     </svg>
   );
@@ -1109,7 +1112,7 @@ const css = `
   .pv-btn-fav.active { background:#660000; color:#fff; }
 
   .pv-socials { display:flex; gap:10px; margin-top:6px; }
-  .pv-soc { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; color:#fff; text-decoration:none; font-size:12px; font-weight:800; }
+  .pv-soc { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; color:#fff; text-decoration:none; font-size:12px; font-weight:800; }
   .pv-soc-call { background:#660000; }
   .pv-soc-ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
   .pv-soc-tk { background:#000; }
@@ -1222,8 +1225,8 @@ const css2 = `
   .pv-crumbs { display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap; color:#7A6A64; font-size:12.5px; margin-bottom:10px; }
   .pv-crumb-city { display:inline-flex; align-items:center; gap:4px; }
   .pv-chip-new { background:#660000; color:#fff; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:700; }
-  .pv-head-info h1 { font-size:44px; font-weight:900; line-height:1.15; color:#241C1A; }
-  .pv-lead { margin:14px 0 22px; color:#5B4C46; font-size:15.5px; line-height:1.9; max-width:760px; }
+  .pv-head-info h1 { font-size:32px; font-weight:900; line-height:1.15; color:#241C1A; }
+  .pv-lead { margin:12px 0 18px; color:#5B4C46; font-size:14px; line-height:1.9; max-width:760px; }
   .pv-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .pv-tile { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:8px; padding:14px 16px; position:relative; }
   .pv-tile svg { color:#660000; position:absolute; top:14px; left:16px; }
@@ -1258,7 +1261,7 @@ const css2 = `
     .pv-hero-showall { left:26px; bottom:10px; }
     .pv-main { padding:20px 14px 50px; }
     .pv-head-grid { grid-template-columns:1fr; gap:22px; }
-    .pv-head-info h1 { font-size:30px; }
+    .pv-head-info h1 { font-size:24px; }
     .pv-tiles { grid-template-columns:1fr; }
     .pv-aside { position:static; }
   }
@@ -1271,9 +1274,10 @@ const css3 = `
   .pv-crumbbar b { color:#241C1A; font-weight:700; }
   .pv-empty { margin-top:22px; padding:26px; border:1px dashed #D9CFB8; border-radius:14px; background:#FFFDF8; color:#6B5B52; font-size:15px; font-weight:600; text-align:center; }
   .pv-empty--light { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.25); color:#F2E9DC; }
+  @keyframes pvFadeSlide { from { opacity:.35; transform:scale(1.03); } to { opacity:1; transform:scale(1); } }
   .pv-secnav { position:sticky; top:64px; z-index:40; background:#FFFDF8; border-top:1px solid #E3DBC9; border-bottom:1px solid #E3DBC9; margin:30px -28px 0; }
 
-  .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-end; }
+  .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-start; }
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
 
@@ -1284,7 +1288,7 @@ const css3 = `
   .pv-eyebrow { display:inline-flex; align-items:center; gap:10px; color:#660000; font-size:12.5px; font-weight:800; letter-spacing:.02em; }
   .pv-eyebrow::after { content:""; width:38px; height:1px; background:currentColor; opacity:.5; }
   .pv-eyebrow--light { color:#D9A24A; }
-  .pv-sec-head h2 { font-size:34px; font-weight:900; color:#241C1A; margin:12px 0 0; line-height:1.25; }
+  .pv-sec-head h2 { font-size:24px; font-weight:900; color:#241C1A; margin:12px 0 0; line-height:1.25; }
   .pv-sec--dark .pv-sec-head h2 { color:#F7F3EA; }
   .pv-sec-body p { color:#5B4C46; font-size:15.5px; line-height:2; margin:0; }
   .pv-sec-note { color:#7A6A64; font-size:14px; line-height:1.9; }
@@ -1385,7 +1389,7 @@ const css3 = `
 
   /* ===== social tiles ===== */
   .pv-soc-tile { display:flex; align-items:center; gap:10px; }
-  .pv-soc-glyph { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
+  .pv-soc-glyph { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
   .pv-soc-glyph--ig { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
   .pv-soc-glyph--sc { background:#FFFC00; color:#241C1A; }
   .pv-soc-glyph--tk { background:#000; }
@@ -1413,7 +1417,7 @@ const css3 = `
     .pv-secnav-in { padding:0 14px; gap:18px; justify-content:flex-start; }
     .pv-sec { margin:0 -14px; padding:40px 14px; }
     .pv-sec-grid, .pv-rev-cols, .pv-contact-cols, .pv-srv-grid, .pv-before, .pv-before-list { grid-template-columns:1fr; }
-    .pv-sec-head h2 { font-size:26px; }
+    .pv-sec-head h2 { font-size:20px; }
     .pv-srv { border-inline-start:none; }
     .pv-srv:nth-child(2) { border-top:1px solid #EFE7D8; }
     .pv-media-tile { height:190px; }

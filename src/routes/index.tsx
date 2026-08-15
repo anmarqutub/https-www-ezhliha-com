@@ -978,7 +978,7 @@ function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
         raf = window.requestAnimationFrame(tick);
         observer.disconnect();
       },
-      { threshold: 0.45 }
+      { threshold: 0.2 }
     );
     observer.observe(node);
     return () => { observer.disconnect(); window.cancelAnimationFrame(raf); };
