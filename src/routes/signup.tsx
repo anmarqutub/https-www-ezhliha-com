@@ -149,16 +149,19 @@ function SignupPage() {
 
 export function AuthShell({ title, sub, children }: { title: string; sub: string; children: React.ReactNode }) {
   return (
-    <div dir="rtl" style={shellStyle}>
-      <style>{authCss}</style>
-      <div className="auth-card">
-        <Link to="/" className="auth-brand">
-          <img src={logoUrl} alt="إزهليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
-        </Link>
-        <h1 className="auth-title">{title}</h1>
-        <p className="auth-sub">{sub}</p>
-        {children}
+    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
+      <div style={shellStyle}>
+        <style>{authCss}</style>
+        <div className="auth-card">
+          <Link to="/" className="auth-brand">
+            <img src={logoUrl} alt="إزهليها" style={{ height: 60, display: "block", margin: "0 auto" }} />
+          </Link>
+          <h1 className="auth-title">{title}</h1>
+          <p className="auth-sub">{sub}</p>
+          {children}
+        </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }
