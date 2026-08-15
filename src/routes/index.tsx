@@ -851,7 +851,7 @@ function Home() {
             <div key={i} className={`ez-faq-item ${openFaq === i ? "open" : ""}`}>
               <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                 <span>{f.q}</span>
-                <i>{openFaq === i ? "−" : "+"}</i>
+                <i>+</i>
               </button>
               {openFaq === i && <p>{f.a}</p>}
             </div>
