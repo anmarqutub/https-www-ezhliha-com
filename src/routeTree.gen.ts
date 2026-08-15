@@ -15,6 +15,7 @@ import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -52,6 +53,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const FavoritesRoute = FavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CitiesRoute = CitiesRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/categories'
     | '/cities'
+    | '/faq'
     | '/favorites'
     | '/forgot-password'
     | '/login'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/categories'
     | '/cities'
+    | '/faq'
     | '/favorites'
     | '/forgot-password'
     | '/login'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/categories'
     | '/cities'
+    | '/faq'
     | '/favorites'
     | '/forgot-password'
     | '/login'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CategoriesRoute: typeof CategoriesRoute
   CitiesRoute: typeof CitiesRoute
+  FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cities': {
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CategoriesRoute: CategoriesRoute,
   CitiesRoute: CitiesRoute,
+  FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
