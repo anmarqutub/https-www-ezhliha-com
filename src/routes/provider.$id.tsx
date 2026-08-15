@@ -312,6 +312,13 @@ function ProviderPage() {
         </div>
       </header>
 
+      <div className="pv-crumbbar">
+        <Link to="/">الرئيسية</Link>
+        <span>›</span>
+        {subName && <><Link to="/" hash="ez-results">{subName}</Link><span>›</span></>}
+        <b>{provider.name}</b>
+      </div>
+
       <section className="pv-hero">
         <button
           type="button"
@@ -1268,6 +1275,10 @@ const css2 = `
 `;
 
 const css3 = `
+  .pv-crumbbar { max-width:1440px; margin:0 auto; padding:14px 28px 0; display:flex; align-items:center; gap:8px; font-size:12.5px; color:#8A7A73; }
+  .pv-crumbbar a { color:#8A7A73; text-decoration:none; }
+  .pv-crumbbar a:hover { color:#660000; }
+  .pv-crumbbar b { color:#241C1A; font-weight:700; }
   .pv-secnav { position:sticky; top:64px; z-index:40; background:#FFFDF8; border-top:1px solid #E3DBC9; border-bottom:1px solid #E3DBC9; margin:30px -28px 0; }
   .pv-secnav-in { max-width:1440px; margin:0 auto; padding:0 28px; display:flex; gap:26px; overflow-x:auto; justify-content:flex-end; }
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:700; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
