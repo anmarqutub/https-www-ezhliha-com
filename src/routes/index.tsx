@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "إزهليها — دليلك الأول لتجهيز مناسباتك بأفخم مزودين الخدمات في المملكة، بضغطة زر.",
+          "إزهليها — دليلك الأول لتجهيز مناسباتك بأفخم مقدمي الخدمات في المملكة، بضغطة زر.",
       },
       { property: "og:title", content: "إزهليها — دليلك لأحلى المناسبات" },
       {
@@ -401,7 +401,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
   const faqs = [
-    { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف المزود وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
+    { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف مقدم الخدمة وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
     { q: txt("faq.q2", "هل الأسعار نهائية؟"), a: txt("faq.a2", "الأسعار تقريبية للاسترشاد، والسعر النهائي يتحدد مع مقدم الخدمة حسب تفاصيل مناسبتك.") },
     { q: txt("faq.q3", "وين ألقى الخدمات اللي حفظتها؟"), a: txt("faq.a3", "من صفحة «المفضلة» في حسابك، وتبقى اختياراتك محفوظة دائماً.") },
     { q: txt("faq.q4", "كيف أضيف مقدم خدمة للموقع؟"), a: txt("faq.a4", "تواصل معنا عبر الواتساب ونرتب لك إضافة ملفك بكل تفاصيله.") },
@@ -556,14 +556,14 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 <img src={txt("home.hero.image", "")} alt={txt("home.hero.title", "إزهليها")} />
                 <div className="ez-hero-banner-cap">
                   <strong>{txt("home.hero.title", "إزهليها")}</strong>
-                  <span>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</span>
+                  <span>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍")}</span>
                 </div>
               </div>
             ) : (
               <div className="ez-hero-banner ez-hero-banner-empty">
                 <div>
                   <h2 className="ez-logo-text">{txt("home.hero.title", "إزهليها")}</h2>
-                  <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍")}</p>
+                  <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍")}</p>
                 </div>
               </div>
             )}
@@ -666,7 +666,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <span className="ez-stat-icon"><Building2 size={16} /></span>
           <div>
             <strong>
-              أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مزود خدمة")}
+              أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مقدم خدمة")}
             </strong>
           </div>
         </div>
@@ -801,7 +801,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("footer.about", "من نحن")}</div>
         <h2 className="ez-h2">{txt("home.about.title", "من نحن")}</h2>
         <div className="ez-about-page">
-          <p>{txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}</p>
+          <p>{txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}</p>
           <p>{txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}</p>
           <p>{txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}</p>
         </div>
@@ -1012,7 +1012,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
             <h2 className="ez-about-title">{txt("home.about.title", "من نحن")}</h2>
             <p className="ez-about-text">
-              {txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}
+              {txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}
             </p>
             <p className="ez-about-text">
               {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}

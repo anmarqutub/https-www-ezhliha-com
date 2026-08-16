@@ -314,7 +314,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>ابحث عن مزوّد</span>
+            <span>ابحث عن مقدم خدمة</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -532,7 +532,7 @@ function ProviderPage() {
             <section className="pv-sec pv-sec--alt" id="s-media">
               <div className="pv-sec-grid">
                 <div className="pv-sec-head">
-                  <span className="pv-eyebrow">من حسابات المزوّد</span>
+                  <span className="pv-eyebrow">من حسابات المقدم الخدمة</span>
                   <h2>صور وفيديوهات {provider.name}</h2>
                 </div>
                 <div className="pv-sec-body">
