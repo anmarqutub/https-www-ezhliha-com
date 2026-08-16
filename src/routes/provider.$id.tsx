@@ -419,6 +419,16 @@ function ProviderPage() {
             ["s-contact", "التواصل والفروع"],
           ];
 
+          const goTo = (id: string) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const top = document.querySelector(".pv-top") as HTMLElement | null;
+            const nav = document.querySelector(".pv-secnav") as HTMLElement | null;
+            const offset = (top?.offsetHeight ?? 0) + (nav?.offsetHeight ?? 0) + 8;
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+          };
+
           return (
 
             <nav className="pv-secnav">
@@ -427,13 +437,14 @@ function ProviderPage() {
                   <button
                     key={id}
                     type="button"
-                    onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    onClick={() => goTo(id)}
                   >{label}</button>
                 ))}
               </div>
             </nav>
           );
         })()}
+
 
         {/* نبذة */}
         <section className="pv-sec" id="s-about">
