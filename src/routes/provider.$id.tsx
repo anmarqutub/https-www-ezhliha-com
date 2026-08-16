@@ -419,6 +419,16 @@ function ProviderPage() {
             ["s-contact", "التواصل والفروع"],
           ];
 
+          const goTo = (id: string) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const top = document.querySelector(".pv-top") as HTMLElement | null;
+            const nav = document.querySelector(".pv-secnav") as HTMLElement | null;
+            const offset = (top?.offsetHeight ?? 0) + (nav?.offsetHeight ?? 0) + 8;
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+          };
+
           return (
 
             <nav className="pv-secnav">
@@ -427,13 +437,14 @@ function ProviderPage() {
                   <button
                     key={id}
                     type="button"
-                    onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    onClick={() => goTo(id)}
                   >{label}</button>
                 ))}
               </div>
             </nav>
           );
         })()}
+
 
         {/* نبذة */}
         <section className="pv-sec" id="s-about">
@@ -1349,7 +1360,7 @@ const css3 = `
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:500; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
 
-  .pv-sec { margin:0 -28px; padding:64px 28px; border-bottom:1px solid #EFE7D8; }
+  .pv-sec { margin:0 -28px; padding:64px 28px; border-bottom:1px solid #EFE7D8; scroll-margin-top:130px; }
   .pv-sec--alt { background:#F1EADC; }
   .pv-sec--dark { background:#241C1A; color:#F7F3EA; }
   .pv-sec-grid { max-width:1440px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
