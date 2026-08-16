@@ -1360,7 +1360,7 @@ const css3 = `
   .pv-secnav button { background:none; border:none; font-family:inherit; font-size:14px; font-weight:500; color:#5B4C46; padding:15px 0; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
   .pv-secnav button:hover { color:#660000; border-bottom-color:#660000; }
 
-  .pv-sec { margin:0 -28px; padding:64px 28px; border-bottom:1px solid #EFE7D8; }
+  .pv-sec { margin:0 -28px; padding:64px 28px; border-bottom:1px solid #EFE7D8; scroll-margin-top:130px; }
   .pv-sec--alt { background:#F1EADC; }
   .pv-sec--dark { background:#241C1A; color:#F7F3EA; }
   .pv-sec-grid { max-width:1440px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
