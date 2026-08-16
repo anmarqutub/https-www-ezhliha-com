@@ -998,12 +998,12 @@ function DashboardTab() {
         />
         <RankCard
           title="أكثر المدن نشاطًا"
-          rows={d.topCities.map((r) => ({ label: r.name, value: `${r.count} مزود` }))}
+          rows={d.topCities.map((r) => ({ label: r.name, value: `${r.count} مقدم خدمة` }))}
           empty="لا توجد بيانات"
         />
         <RankCard
           title="أكثر التصنيفات طلبًا"
-          rows={d.topCategories.map((r) => ({ label: r.name, value: `${r.count} مزود` }))}
+          rows={d.topCategories.map((r) => ({ label: r.name, value: `${r.count} مقدم خدمة` }))}
           empty="لا توجد بيانات"
         />
       </div>
@@ -2116,7 +2116,7 @@ function ProvidersTab() {
                 <h4 style={{ fontWeight: 700 }}>تفصيل الباقات</h4>
                 <button type="button" className="adm-btn-sm" onClick={() => setEditingPackage({ sort_order: editingPackages.length })}>+ إضافة باقة</button>
               </div>
-              {editingPackages.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت باقات لهذا المزود.</p> : (
+              {editingPackages.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت باقات لمقدم الخدمة.</p> : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {editingPackages.map((pkg) => (
                     <div key={pkg.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
@@ -2192,7 +2192,7 @@ function ProvidersTab() {
                 <h4 style={{ fontWeight: 700 }}>الخدمات</h4>
                 <button type="button" className="adm-btn-sm" onClick={() => setEditingService({ sort_order: editingServices.length })}>+ إضافة خدمة</button>
               </div>
-              {editingServices.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت خدمات لهذا المزود.</p> : (
+              {editingServices.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت خدمات لمقدم الخدمة.</p> : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {editingServices.map((row) => (
                     <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
@@ -2268,7 +2268,7 @@ function ProvidersTab() {
                 <h4 style={{ fontWeight: 700 }}>الفروع</h4>
                 <button type="button" className="adm-btn-sm" onClick={() => setEditingBranch({ sort_order: editingBranches.length })}>+ إضافة فرع</button>
               </div>
-              {editingBranches.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت فروع لهذا المزود.</p> : (
+              {editingBranches.length === 0 ? <p className="adm-empty" style={{ padding: 12 }}>ما أضيفت فروع لمقدم الخدمة.</p> : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {editingBranches.map((row) => (
                     <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
@@ -2430,7 +2430,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "nav.cta", label: "زر البحث في الهيدر", value: "ابحث عن مقدم خدمة", updated_at: "" },
   { key: "home.hero.title", label: "عنوان صورة الواجهة", value: "إزهليها", updated_at: "" },
   { key: "home.hero.image", label: "رابط صورة الواجهة (اتركه فارغاً للخلفية العنابية)", value: "", updated_at: "" },
-  { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مزودين الخدمات في المملكة 🤍", updated_at: "" },
+  { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍", updated_at: "" },
 
   { key: "home.search.placeholder", label: "عبارة البحث السريع", value: "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...", updated_at: "" },
   { key: "home.city.label", label: "عبارة اختر مدينتك", value: "📍 اختر مدينتك", updated_at: "" },
@@ -2451,7 +2451,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "home.loading", label: "رسالة التحميل", value: "لحظات.. نجهّز لك كل شي ✨", updated_at: "" },
   { key: "home.no_results", label: "رسالة لا توجد نتائج", value: "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷", updated_at: "" },
   { key: "home.about.title", label: "عنوان من نحن", value: "من نحن", updated_at: "" },
-  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مزودين الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍", updated_at: "" },
+  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍", updated_at: "" },
   { key: "home.about.p2", label: "من نحن — الفقرة الثانية", value: "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.", updated_at: "" },
   { key: "home.about.p3", label: "من نحن — الفقرة الثالثة", value: "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐", updated_at: "" },
   { key: "footer.about", label: "زر من نحن (الفوتر)", value: "من نحن", updated_at: "" },
@@ -2474,7 +2474,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "stat.providers.value", label: "رقم عدد مقدمي الخدمة (اتركه فارغ للحساب التلقائي)", value: "500", updated_at: "" },
   { key: "stat.cities.value", label: "رقم عدد المدن (اتركه فارغ للحساب التلقائي)", value: "", updated_at: "" },
   { key: "stat.categories.value", label: "رقم عدد التصنيفات (اتركه فارغ للحساب التلقائي)", value: "", updated_at: "" },
-  { key: "stat.providers", label: "وصف رقم مقدمي الخدمة", value: "مزود خدمة", updated_at: "" },
+  { key: "stat.providers", label: "وصف رقم مقدمي الخدمة", value: "مقدم خدمة", updated_at: "" },
   { key: "stat.cities", label: "وصف رقم المدن", value: "مدينة", updated_at: "" },
   { key: "stat.categories", label: "وصف رقم التصنيفات", value: "تصنيف", updated_at: "" },
   { key: "ad.tag", label: "الإعلان — الوسم", value: "إعلان", updated_at: "" },

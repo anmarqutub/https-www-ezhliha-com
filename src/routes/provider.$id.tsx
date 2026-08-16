@@ -314,7 +314,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>ابحث عن مزوّد</span>
+            <span>ابحث عن مقدم خدمة</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -532,7 +532,7 @@ function ProviderPage() {
             <section className="pv-sec pv-sec--alt" id="s-media">
               <div className="pv-sec-grid">
                 <div className="pv-sec-head">
-                  <span className="pv-eyebrow">من حسابات المزوّد</span>
+                  <span className="pv-eyebrow">من حسابات المقدم الخدمة</span>
                   <h2>صور وفيديوهات {provider.name}</h2>
                 </div>
                 <div className="pv-sec-body">
@@ -883,16 +883,43 @@ function mediaSource(url: string): { key: string; label: string } {
   return { key: "web", label: "الرابط الأصلي" };
 }
 
-function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
+function staticPoster(url: string): string | null {
   const ytId = getYouTubeId(url);
+  if (ytId) return `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+  const ig = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
+  if (ig) return `https://www.instagram.com/p/${ig}/media/?size=l`;
+  return null;
+}
+
+function useRemotePoster(url: string, hasPoster: boolean) {
+  const [thumb, setThumb] = useState<string | null>(null);
+  useEffect(() => {
+    if (hasPoster) return;
+    const oembed = /tiktok\.com/i.test(url)
+      ? `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`
+      : null;
+    if (!oembed) return;
+    let alive = true;
+    fetch(oembed)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (alive && d?.thumbnail_url) setThumb(d.thumbnail_url as string); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [url, hasPoster]);
+  return thumb;
+}
+
+function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const img = poster || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const base = poster || staticPoster(url);
+  const remote = useRemotePoster(url, !!base);
+  const img = base || remote;
   const src = mediaSource(url);
   return (
     <figure className="pv-media-card">
       <button
         type="button"
-        className="pv-media-tile"
+        className={`pv-media-tile${!img && !isDirect ? " pv-media-tile--empty" : ""}`}
         style={img ? { backgroundImage: `url(${img})` } : undefined}
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
         aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
@@ -901,6 +928,7 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
           <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
         )}
         {isVideo && <span className="pv-media-play"><PlayIcon /></span>}
+        {!img && !isDirect && <span className="pv-media-fallback">{src.label}</span>}
       </button>
       <figcaption className="pv-media-cap">
         <span className="pv-media-src"><SocialGlyph platform={src.key} />{src.label}</span>
@@ -909,6 +937,7 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
     </figure>
   );
 }
+
 
 
 function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
@@ -1358,6 +1387,9 @@ const css3 = `
   .pv-media-grid { max-width:1440px; margin:30px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
   .pv-media-card { margin:0; display:flex; flex-direction:column; gap:8px; }
   .pv-media-tile { position:relative; width:100%; height:260px; border:0; padding:0; border-radius:8px; overflow:hidden; background:#EFE7D8 center/cover no-repeat; cursor:pointer; }
+  .pv-media-tile--empty { background:linear-gradient(135deg,#660000,#3d0000); }
+  .pv-media-fallback { position:absolute; inset:auto 0 12px 0; color:#fff; font-size:12.5px; font-weight:600; }
+
   .pv-media-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .pv-media-play { position:absolute; inset:0; margin:auto; width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.9); color:#241C1A; display:flex; align-items:center; justify-content:center; }
   .pv-media-play svg { width:20px; height:20px; margin-inline-start:2px; }
