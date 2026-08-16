@@ -1387,6 +1387,9 @@ const css3 = `
   .pv-media-grid { max-width:1440px; margin:30px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
   .pv-media-card { margin:0; display:flex; flex-direction:column; gap:8px; }
   .pv-media-tile { position:relative; width:100%; height:260px; border:0; padding:0; border-radius:8px; overflow:hidden; background:#EFE7D8 center/cover no-repeat; cursor:pointer; }
+  .pv-media-tile--empty { background:linear-gradient(135deg,#660000,#3d0000); }
+  .pv-media-fallback { position:absolute; inset:auto 0 12px 0; color:#fff; font-size:12.5px; font-weight:600; }
+
   .pv-media-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .pv-media-play { position:absolute; inset:0; margin:auto; width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.9); color:#241C1A; display:flex; align-items:center; justify-content:center; }
   .pv-media-play svg { width:20px; height:20px; margin-inline-start:2px; }
