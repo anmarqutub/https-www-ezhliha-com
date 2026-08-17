@@ -138,7 +138,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes, svcRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -152,6 +152,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
         supabase.from("branches").select("provider_id,city_id"),
+        supabase.from("services").select("provider_id,name").order("sort_order"),
       ]);
       setCities((cRes.data ?? []) as City[]);
       setSelectedCity("");
@@ -161,6 +162,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
       setBranchCities((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]);
+      setServiceTags((svcRes.data ?? []) as { provider_id: string; name: string }[]);
+
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
     })();
