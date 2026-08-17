@@ -1425,12 +1425,15 @@ const css = `
   .ez-card { position:relative; }
   .ez-card-fav { position:absolute; top:12px; inset-inline-end:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  @media (max-width: 1200px) {
+    .ez-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
     .ez-fpanel { position:static; }
-    .ez-card-link { grid-template-columns:1fr; }
-    .ez-card-img { min-height:210px; }
-    .ez-card-body { padding:18px; }
+    .ez-grid { grid-template-columns:1fr; }
+    .ez-card-img { min-height:190px; }
+    .ez-card-body { padding:16px; }
   }
 
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
