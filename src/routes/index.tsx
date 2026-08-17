@@ -1423,7 +1423,7 @@ const css = `
   .ez-ffav.active { background:var(--brand); border-color:var(--brand); color:#fff; }
   .ez-ffav small { opacity:.75; font-size:12px; }
   .ez-card { position:relative; }
-  .ez-card-fav { position:absolute; top:10px; inset-inline-start:10px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .ez-card-fav { position:absolute; top:12px; inset-inline-end:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
