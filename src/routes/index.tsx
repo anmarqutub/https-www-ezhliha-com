@@ -1065,19 +1065,19 @@ function ProviderCard({
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
-      {onToggleFav && (
-        <button
-          type="button"
-          className={`ez-card-fav ${isFav ? "active" : ""}`}
-          aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
-        >
-          <Heart size={15} fill={isFav ? "currentColor" : "none"} />
-        </button>
-      )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
           <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
+          {onToggleFav && (
+            <button
+              type="button"
+              className={`ez-card-fav ${isFav ? "active" : ""}`}
+              aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+            >
+              <Heart size={15} fill={isFav ? "currentColor" : "none"} />
+            </button>
+          )}
         </div>
 
         <div className="ez-card-body">
@@ -1103,6 +1103,7 @@ function ProviderCard({
 
         </div>
       </Link>
+
       {waUrl && (
         <div className="ez-card-foot">
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
@@ -1404,7 +1405,7 @@ const css = `
   .ez-city-chips button.active small { color:rgba(255,255,255,.75); }
 
   /* CARDS */
-  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:18px; }
+  .ez-grid { display:grid; grid-template-columns:1fr; gap:18px; }
   .ez-results-layout { display:grid; grid-template-columns:288px 1fr; gap:26px; align-items:start; }
   .ez-fpanel { position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:18px; }
   .ez-fpanel-head p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
@@ -1422,11 +1423,14 @@ const css = `
   .ez-ffav.active { background:var(--brand); border-color:var(--brand); color:#fff; }
   .ez-ffav small { opacity:.75; font-size:12px; }
   .ez-card { position:relative; }
-  .ez-card-fav { position:absolute; top:10px; inset-inline-start:10px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .ez-card-fav { position:absolute; top:12px; inset-inline-end:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
     .ez-fpanel { position:static; }
+    .ez-card-link { grid-template-columns:1fr; }
+    .ez-card-img { min-height:210px; }
+    .ez-card-body { padding:18px; }
   }
 
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
@@ -1434,12 +1438,13 @@ const css = `
   .ez-card::after { content:""; position:absolute; inset-inline-end:0; bottom:0; z-index:3; width:14px; height:14px; border-inline-end:1px solid rgba(102,0,0,.3); border-bottom:1px solid rgba(102,0,0,.3); }
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 20px 48px rgba(53,24,19,.1); border-color:rgba(102,0,0,.2); }
   .ez-card-featured { border-color:rgba(102,0,0,.3); }
-  .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
-  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
-  .ez-card:hover .ez-card-img { transform:scale(1.035); }
-  .ez-badge { position:absolute; top:10px; inset-inline-end:10px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:4px 10px; border-radius:0; font-size:9.5px; font-weight:600; }
+  .ez-card-link { text-decoration:none; color:inherit; display:grid; grid-template-columns:1.25fr 1fr; align-items:stretch; flex:1; }
+  .ez-card-img { min-height:270px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
+  .ez-card:hover .ez-card-img { transform:none; }
+  .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
-  .ez-card-body { padding:18px; flex:1; display:flex; flex-direction:column; }
+  .ez-card-body { padding:26px 28px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:500; margin-bottom:6px; }
   .ez-card-toprow { display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .ez-card-toprow .ez-card-kicker, .ez-card-toprow .ez-card-meta { margin-bottom:6px; }
@@ -1449,7 +1454,7 @@ const css = `
   .ez-card-head h3 { font-size:18px; font-weight:600; color:var(--ink); margin:0; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
   .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
-  .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:grid; gap:3px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
 
