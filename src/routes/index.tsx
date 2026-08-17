@@ -1405,7 +1405,7 @@ const css = `
   .ez-city-chips button.active small { color:rgba(255,255,255,.75); }
 
   /* CARDS */
-  .ez-grid { display:grid; grid-template-columns:1fr; gap:18px; }
+  .ez-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px; }
   .ez-results-layout { display:grid; grid-template-columns:288px 1fr; gap:26px; align-items:start; }
   .ez-fpanel { position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:18px; }
   .ez-fpanel-head p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
@@ -1425,12 +1425,15 @@ const css = `
   .ez-card { position:relative; }
   .ez-card-fav { position:absolute; top:12px; inset-inline-end:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  @media (max-width: 1200px) {
+    .ez-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
     .ez-fpanel { position:static; }
-    .ez-card-link { grid-template-columns:1fr; }
-    .ez-card-img { min-height:210px; }
-    .ez-card-body { padding:18px; }
+    .ez-grid { grid-template-columns:1fr; }
+    .ez-card-img { min-height:190px; }
+    .ez-card-body { padding:16px; }
   }
 
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
@@ -1438,12 +1441,12 @@ const css = `
   .ez-card::after { content:""; position:absolute; inset-inline-end:0; bottom:0; z-index:3; width:14px; height:14px; border-inline-end:1px solid rgba(102,0,0,.3); border-bottom:1px solid rgba(102,0,0,.3); }
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 20px 48px rgba(53,24,19,.1); border-color:rgba(102,0,0,.2); }
   .ez-card-featured { border-color:rgba(102,0,0,.3); }
-  .ez-card-link { text-decoration:none; color:inherit; display:grid; grid-template-columns:1.25fr 1fr; align-items:stretch; flex:1; }
-  .ez-card-img { min-height:270px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
+  .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
+  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
   .ez-card:hover .ez-card-img { transform:none; }
   .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
-  .ez-card-body { padding:26px 28px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .ez-card-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; }
 
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:500; margin-bottom:6px; }
   .ez-card-toprow { display:flex; align-items:center; justify-content:space-between; gap:8px; }
