@@ -1065,19 +1065,19 @@ function ProviderCard({
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
-      {onToggleFav && (
-        <button
-          type="button"
-          className={`ez-card-fav ${isFav ? "active" : ""}`}
-          aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
-        >
-          <Heart size={15} fill={isFav ? "currentColor" : "none"} />
-        </button>
-      )}
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
           <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
+          {onToggleFav && (
+            <button
+              type="button"
+              className={`ez-card-fav ${isFav ? "active" : ""}`}
+              aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+            >
+              <Heart size={15} fill={isFav ? "currentColor" : "none"} />
+            </button>
+          )}
         </div>
 
         <div className="ez-card-body">
@@ -1103,6 +1103,7 @@ function ProviderCard({
 
         </div>
       </Link>
+
       {waUrl && (
         <div className="ez-card-foot">
           <a className="ez-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
