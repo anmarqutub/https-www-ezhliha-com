@@ -120,6 +120,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [branchCities, setBranchCities] = useState<{ provider_id: string; city_id: string | null }[]>([]);
+  const [serviceTags, setServiceTags] = useState<{ provider_id: string; name: string }[]>([]);
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -138,7 +139,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes, svcRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -152,6 +153,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         supabase.from("banners").select("*").eq("active", true).order("sort_order"),
         supabase.from("site_texts").select("key,value"),
         supabase.from("branches").select("provider_id,city_id"),
+        supabase.from("services").select("provider_id,name").order("sort_order"),
       ]);
       setCities((cRes.data ?? []) as City[]);
       setSelectedCity("");
@@ -161,6 +163,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setImages((imgRes.data ?? []) as ProviderImage[]);
       setBanners((bRes.data ?? []) as Banner[]);
       setBranchCities((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]);
+      setServiceTags((svcRes.data ?? []) as { provider_id: string; name: string }[]);
+
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
     })();
@@ -222,6 +226,20 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     });
     return m;
   }, [images]);
+
+  const tagsByProvider = useMemo(() => {
+    const m = new Map<string, string[]>();
+    serviceTags.forEach((s) => {
+      const name = (s.name ?? "").trim();
+      if (!name) return;
+      const arr = m.get(s.provider_id) ?? [];
+      if (arr.length < 3 && !arr.includes(name)) arr.push(name);
+      m.set(s.provider_id, arr);
+    });
+    return m;
+  }, [serviceTags]);
+
+
 
   const providerCityIds = useMemo(() => {
     const m = new Map<string, Set<string>>();
@@ -822,6 +840,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 city={cities.find((c) => c.id === p.city_id)}
                 sub={subcategories.find((s) => s.id === p.subcategory_id)}
                 images={imgsByProvider.get(p.id) ?? []}
+                tags={tagsByProvider.get(p.id) ?? []}
                 contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                 featured={p.is_featured}
               />
@@ -946,6 +965,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           city={cities.find((c) => c.id === p.city_id)}
                           sub={subcategories.find((s) => s.id === p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
+                          tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                           featured
                           isFav={favIds.has(p.id)}
@@ -966,6 +986,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           city={cities.find((c) => c.id === p.city_id)}
                           sub={subcategories.find((s) => s.id === p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
+                          tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                           isFav={favIds.has(p.id)}
                           onToggleFav={user ? () => toggleFav(p.id) : undefined}
@@ -1050,6 +1071,7 @@ function ProviderCard({
   contactLabel,
   isFav,
   onToggleFav,
+  tags = [],
 }: {
   provider: Provider;
   city?: City;
@@ -1059,6 +1081,7 @@ function ProviderCard({
   contactLabel: string;
   isFav?: boolean;
   onToggleFav?: () => void;
+  tags?: string[];
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
@@ -1090,6 +1113,13 @@ function ProviderCard({
             {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
+          {tags.length > 0 && (
+            <div className="ez-card-tags">
+              {tags.map((t) => (
+                <span className="ez-card-tag" key={t}>{t}</span>
+              ))}
+            </div>
+          )}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
             <strong>
@@ -1458,6 +1488,8 @@ const css = `
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
   .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .ez-card-tags { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+  .ez-card-tag { border:1px solid color-mix(in oklab, var(--line) 85%, transparent); background:color-mix(in oklab, var(--surface) 70%, transparent); color:var(--muted); font-size:11px; font-weight:500; padding:4px 9px; border-radius:2px; white-space:nowrap; }
   .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:grid; gap:3px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
 
