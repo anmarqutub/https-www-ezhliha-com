@@ -1907,6 +1907,9 @@ function ProvidersTab() {
           >
             📥 رفع من Excel
           </button>
+          <Link to="/admin-services" className="adm-btn-primary" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
+            📄 رفع ملف الخدمات
+          </Link>
           <button
             className="adm-btn-primary"
             onClick={() => { void downloadTemplate({ providerIds: filtered.map((p) => p.id) }); }}
@@ -1914,6 +1917,7 @@ function ProvidersTab() {
           >
             📊 تصدير Excel ({filtered.length})
           </button>
+
 
         </div>
         {showImport && (
