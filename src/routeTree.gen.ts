@@ -18,6 +18,7 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as AdminServicesRouteImport } from './routes/admin-services'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -71,6 +72,11 @@ const CategoriesRoute = CategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminServicesRoute = AdminServicesRouteImport.update({
+  id: '/admin-services',
+  path: '/admin-services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/admin-services': typeof AdminServicesRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
   '/faq': typeof FaqRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/admin-services': typeof AdminServicesRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
   '/faq': typeof FaqRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/admin-services': typeof AdminServicesRoute
   '/categories': typeof CategoriesRoute
   '/cities': typeof CitiesRoute
   '/faq': typeof FaqRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/admin-services'
     | '/categories'
     | '/cities'
     | '/faq'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/admin-services'
     | '/categories'
     | '/cities'
     | '/faq'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/admin-services'
     | '/categories'
     | '/cities'
     | '/faq'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  AdminServicesRoute: typeof AdminServicesRoute
   CategoriesRoute: typeof CategoriesRoute
   CitiesRoute: typeof CitiesRoute
   FaqRoute: typeof FaqRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-services': {
+      id: '/admin-services'
+      path: '/admin-services'
+      fullPath: '/admin-services'
+      preLoaderRoute: typeof AdminServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -360,6 +380,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  AdminServicesRoute: AdminServicesRoute,
   CategoriesRoute: CategoriesRoute,
   CitiesRoute: CitiesRoute,
   FaqRoute: FaqRoute,
