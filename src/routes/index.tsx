@@ -1113,6 +1113,13 @@ function ProviderCard({
             {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
           {provider.description && <p className="ez-card-desc">{provider.description}</p>}
+          {tags.length > 0 && (
+            <div className="ez-card-tags">
+              {tags.map((t) => (
+                <span className="ez-card-tag" key={t}>{t}</span>
+              ))}
+            </div>
+          )}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
             <strong>
