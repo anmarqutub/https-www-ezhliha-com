@@ -227,6 +227,20 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return m;
   }, [images]);
 
+  const tagsByProvider = useMemo(() => {
+    const m = new Map<string, string[]>();
+    serviceTags.forEach((s) => {
+      const name = (s.name ?? "").trim();
+      if (!name) return;
+      const arr = m.get(s.provider_id) ?? [];
+      if (arr.length < 3 && !arr.includes(name)) arr.push(name);
+      m.set(s.provider_id, arr);
+    });
+    return m;
+  }, [serviceTags]);
+
+
+
   const providerCityIds = useMemo(() => {
     const m = new Map<string, Set<string>>();
     providers.forEach((p) => {
