@@ -1404,7 +1404,7 @@ const css = `
   .ez-city-chips button.active small { color:rgba(255,255,255,.75); }
 
   /* CARDS */
-  .ez-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:18px; }
+  .ez-grid { display:grid; grid-template-columns:1fr; gap:18px; }
   .ez-results-layout { display:grid; grid-template-columns:288px 1fr; gap:26px; align-items:start; }
   .ez-fpanel { position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:18px; }
   .ez-fpanel-head p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
