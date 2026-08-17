@@ -1071,6 +1071,7 @@ function ProviderCard({
   contactLabel,
   isFav,
   onToggleFav,
+  tags = [],
 }: {
   provider: Provider;
   city?: City;
@@ -1080,6 +1081,7 @@ function ProviderCard({
   contactLabel: string;
   isFav?: boolean;
   onToggleFav?: () => void;
+  tags?: string[];
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
