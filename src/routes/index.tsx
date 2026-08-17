@@ -120,6 +120,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [branchCities, setBranchCities] = useState<{ provider_id: string; city_id: string | null }[]>([]);
+  const [serviceTags, setServiceTags] = useState<{ provider_id: string; name: string }[]>([]);
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
