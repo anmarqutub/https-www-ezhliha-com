@@ -1446,7 +1446,7 @@ const css = `
   .ez-card:hover .ez-card-img { transform:none; }
   .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
-  .ez-card-body { padding:26px 28px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .ez-card-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; }
 
   .ez-card-kicker { font-size:11px; letter-spacing:2px; color:var(--brand); font-weight:500; margin-bottom:6px; }
   .ez-card-toprow { display:flex; align-items:center; justify-content:space-between; gap:8px; }
