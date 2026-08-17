@@ -1441,8 +1441,8 @@ const css = `
   .ez-card::after { content:""; position:absolute; inset-inline-end:0; bottom:0; z-index:3; width:14px; height:14px; border-inline-end:1px solid rgba(102,0,0,.3); border-bottom:1px solid rgba(102,0,0,.3); }
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 20px 48px rgba(53,24,19,.1); border-color:rgba(102,0,0,.2); }
   .ez-card-featured { border-color:rgba(102,0,0,.3); }
-  .ez-card-link { text-decoration:none; color:inherit; display:grid; grid-template-columns:1.25fr 1fr; align-items:stretch; flex:1; }
-  .ez-card-img { min-height:270px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
+  .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
+  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
   .ez-card:hover .ez-card-img { transform:none; }
   .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
