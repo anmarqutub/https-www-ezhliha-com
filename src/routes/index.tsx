@@ -1428,6 +1428,9 @@ const css = `
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
     .ez-fpanel { position:static; }
+    .ez-card-link { grid-template-columns:1fr; }
+    .ez-card-img { min-height:210px; }
+    .ez-card-body { padding:18px; }
   }
 
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
