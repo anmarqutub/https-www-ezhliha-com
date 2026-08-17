@@ -236,8 +236,20 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       if (arr.length < 3 && !arr.includes(name)) arr.push(name);
       m.set(s.provider_id, arr);
     });
+    // fallback: derive short chips from the description when no services exist
+    providers.forEach((p) => {
+      if ((m.get(p.id) ?? []).length > 0) return;
+      const chips = (p.description ?? "")
+        .replace(/[()（）]/g, " ")
+        .split(/[،,\n\-–|•/]+/)
+        .map((s) => s.trim().replace(/^(مع|و)\s+/, ""))
+        .filter((s) => s.length >= 3 && s.length <= 22 && !/\d/.test(s))
+        .slice(0, 3);
+      if (chips.length) m.set(p.id, chips);
+    });
     return m;
-  }, [serviceTags]);
+  }, [serviceTags, providers]);
+
 
 
 
