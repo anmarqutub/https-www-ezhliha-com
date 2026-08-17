@@ -840,6 +840,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 city={cities.find((c) => c.id === p.city_id)}
                 sub={subcategories.find((s) => s.id === p.subcategory_id)}
                 images={imgsByProvider.get(p.id) ?? []}
+                tags={tagsByProvider.get(p.id) ?? []}
                 contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                 featured={p.is_featured}
               />
@@ -964,6 +965,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           city={cities.find((c) => c.id === p.city_id)}
                           sub={subcategories.find((s) => s.id === p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
+                          tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                           featured
                           isFav={favIds.has(p.id)}
@@ -984,6 +986,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           city={cities.find((c) => c.id === p.city_id)}
                           sub={subcategories.find((s) => s.id === p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
+                          tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
                           isFav={favIds.has(p.id)}
                           onToggleFav={user ? () => toggleFav(p.id) : undefined}
