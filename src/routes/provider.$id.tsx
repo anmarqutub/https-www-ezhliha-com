@@ -384,13 +384,11 @@ function ProviderPage() {
             </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
-                <small>السعر التقريبي</small>
-                <strong>
-                  {provider.price_from
-                    ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
-                    : (provider.price || "السعر حسب التفاصيل")}
-                </strong>
+                <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
+                <strong>اطلب تسعيرة مرتبة من {provider.name}</strong>
+                <p className="pv-quote-sub">أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
               </div>
+
               <div className="pv-price-cta">
                 {callUrl && (
                   <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
@@ -1471,7 +1469,10 @@ const css3 = `
   /* ===== price bar ===== */
   .pv-price-bar { background:#FFFDF8; border:1px solid #E3DBC9; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:14px; }
   .pv-price-out small { display:block; color:#8A7A73; font-size:12px; margin-bottom:4px; }
-  .pv-price-out strong { color:#660000; font-size:20px; font-weight:600; }
+  .pv-price-out strong { display:block; color:#3A2A24; font-size:19px; font-weight:700; line-height:1.6; }
+  .pv-quote-eyebrow { display:block; color:#8B1A1A; font-size:12.5px; font-weight:600; margin-bottom:8px; }
+  .pv-quote-sub { margin:8px 0 0; color:#8A7A73; font-size:13px; line-height:1.85; }
+
   .pv-price-cta { display:flex; align-items:stretch; gap:10px; }
   .pv-sq-btn { width:52px; min-height:52px; border-radius:12px; border:1px solid #E3DBC9; background:#fff; color:#7A6A64; display:flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; }
   .pv-sq-btn:hover { color:#660000; border-color:#660000; }
