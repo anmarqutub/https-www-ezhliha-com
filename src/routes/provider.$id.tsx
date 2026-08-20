@@ -384,13 +384,11 @@ function ProviderPage() {
             </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
-                <small>السعر التقريبي</small>
-                <strong>
-                  {provider.price_from
-                    ? `من ${provider.price_from} ر.س${provider.price_to ? ` إلى ${provider.price_to} ر.س` : ""}`
-                    : (provider.price || "السعر حسب التفاصيل")}
-                </strong>
+                <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
+                <strong>اطلب تسعيرة مرتبة من {provider.name}</strong>
+                <p className="pv-quote-sub">أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
               </div>
+
               <div className="pv-price-cta">
                 {callUrl && (
                   <button type="button" className="pv-sq-btn" aria-label="اتصال" onClick={() => {
