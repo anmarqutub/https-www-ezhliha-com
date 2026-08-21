@@ -897,44 +897,50 @@ function mediaSource(url: string): { key: string; label: string } {
 function staticPoster(url: string): string | null {
   const ytId = getYouTubeId(url);
   if (ytId) return `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
-  const ig = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
-  if (ig) return `https://www.instagram.com/p/${ig}/media/?size=l`;
+  // روابط الصور المباشرة تُستخدم كما هي
+  if (/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(url)) return url;
   return null;
 }
 
+/** يجلب صورة الغلاف الأصلية (og:image / oEmbed) من السيرفر — مع كاش يوم كامل */
 function useRemotePoster(url: string, hasPoster: boolean) {
-  const [thumb, setThumb] = useState<string | null>(null);
-  useEffect(() => {
-    if (hasPoster) return;
-    const oembed = /tiktok\.com/i.test(url)
-      ? `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`
-      : null;
-    if (!oembed) return;
-    let alive = true;
-    fetch(oembed)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (alive && d?.thumbnail_url) setThumb(d.thumbnail_url as string); })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, [url, hasPoster]);
-  return thumb;
+  const { data } = useQuery({
+    queryKey: ["video-poster", url],
+    queryFn: () => getVideoPoster({ data: { url } }),
+    enabled: !hasPoster && /^https:\/\//i.test(url),
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    retry: false,
+  });
+  return data?.poster ?? null;
 }
 
 function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
   const base = poster || staticPoster(url);
-  const remote = useRemotePoster(url, !!base);
-  const img = base || remote;
+  const remote = useRemotePoster(url, !!base || isDirect);
+  const [failed, setFailed] = useState(false);
+  const img = failed ? null : base || remote;
   const src = mediaSource(url);
   return (
     <figure className="pv-media-card">
       <button
         type="button"
         className={`pv-media-tile${!img && !isDirect ? " pv-media-tile--empty" : ""}`}
-        style={img ? { backgroundImage: `url(${img})` } : undefined}
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
         aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
       >
+        {img && (
+          <img
+            className="pv-media-img"
+            src={img}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={() => setFailed(true)}
+          />
+        )}
         {!img && isDirect && (
           <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
         )}
@@ -948,6 +954,7 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
     </figure>
   );
 }
+
 
 
 
