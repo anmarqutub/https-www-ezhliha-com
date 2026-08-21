@@ -210,6 +210,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return () => clearTimeout(t);
   }, [loading]);
 
+  // On the providers page, jump straight to the results section
+  useEffect(() => {
+    if (view !== "providers" || loading || typeof window === "undefined") return;
+    if (window.location.hash) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById("ez-results");
+      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    }, 160);
+    return () => clearTimeout(t);
+  }, [view, loading]);
+
   // Banner rotator
   useEffect(() => {
     if (banners.length < 2) return;
