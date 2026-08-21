@@ -178,20 +178,22 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     });
   }, [user]);
 
-  const toggleFav = async (providerId: string) => {
+  const toggleFav = useCallback(async (providerId: string) => {
     if (!user) return;
-    const isFav = favIds.has(providerId);
+    let wasFav = false;
     setFavIds((prev) => {
       const next = new Set(prev);
-      if (isFav) next.delete(providerId); else next.add(providerId);
+      wasFav = next.has(providerId);
+      if (wasFav) next.delete(providerId); else next.add(providerId);
       return next;
     });
-    if (isFav) {
+    if (wasFav) {
       await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
     } else {
       await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
     }
-  };
+  }, [user]);
+
 
 
 
