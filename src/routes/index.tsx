@@ -1491,12 +1491,6 @@ const css = `
     .ez-results-tools { width:100%; flex-wrap:wrap; }
     .ez-search { flex:1 1 100%; min-width:0; }
     .ez-flist { max-height:none; }
-    .ez-card-more { display:none; }
-    .ez-card-head { flex-wrap:wrap; }
-    .ez-card-head h3 { min-width:0; overflow-wrap:anywhere; }
-    .ez-card-toprow { flex-wrap:wrap; }
-    .ez-card-toprow .ez-card-kicker, .ez-card-toprow .ez-card-meta { min-width:0; overflow-wrap:anywhere; }
-
   }
   @media (max-width: 640px) {
     .ez-grid { grid-template-columns:1fr; }
@@ -1510,9 +1504,8 @@ const css = `
     .ez-fselect { font-size:16px; }
     .ez-search input { font-size:16px; }
     .ez-results-tools .ez-btn-ghost { width:100%; justify-content:center; text-align:center; white-space:nowrap; }
-    .ez-card-head h3 { font-size:17px; min-width:0; overflow-wrap:anywhere; }
-    .ez-card-desc { -webkit-line-clamp:2; }
   }
+
 
 
   .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
