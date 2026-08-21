@@ -1421,7 +1421,7 @@ const css3 = `
   .pv-media-tile--empty { background:linear-gradient(135deg,#660000,#3d0000); }
   .pv-media-fallback { position:absolute; inset:auto 0 12px 0; color:#fff; font-size:12.5px; font-weight:600; }
 
-  .pv-media-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .pv-media-tile video, .pv-media-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .pv-media-play { position:absolute; inset:0; margin:auto; width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.9); color:#241C1A; display:flex; align-items:center; justify-content:center; }
   .pv-media-play svg { width:20px; height:20px; margin-inline-start:2px; }
   .pv-media-cap { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:11.5px; color:#8A7A73; }
