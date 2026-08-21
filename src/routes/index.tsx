@@ -1203,7 +1203,7 @@ const ProviderCard = memo(function ProviderCard({
 
     </article>
   );
-}
+});
 
 function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
