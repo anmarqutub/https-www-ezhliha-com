@@ -1663,5 +1663,19 @@ const css = `
     .ez-hero-copy, .ez-sec-head, .ez-card-body { text-align:right; }
     .ez-card-head { flex-wrap:wrap; }
     .ez-fchips, .ez-filters-bar { justify-content:flex-start; }
+    .ez-card-head h3 { font-size:17px; min-width:0; overflow-wrap:anywhere; }
+    .ez-card-desc { -webkit-line-clamp:2; }
+  }
+
+  @media (max-width: 900px) {
+    .ez-card-more { display:none; }
+    .ez-card-head { flex-wrap:wrap; }
+    .ez-card-head h3 { min-width:0; overflow-wrap:anywhere; }
+    .ez-card-toprow { flex-wrap:wrap; }
+    .ez-card-toprow .ez-card-kicker,
+    .ez-card-toprow .ez-card-meta { min-width:0; overflow-wrap:anywhere; }
+    .ez-card-price { min-width:0; }
+    .ez-card-price strong { overflow-wrap:anywhere; }
   }
 `;
+
