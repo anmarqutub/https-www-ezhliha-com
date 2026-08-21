@@ -202,6 +202,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     const raw = (siteTexts[key] ?? "").replace(/[^\d]/g, "");
     return raw ? Number(raw) : auto;
   };
+  const contactLabel = siteTexts["provider.whatsapp.label"] || "للمزيد من التفاصيل";
 
   // Scroll to hash target after data loads (links coming from inner pages)
   useEffect(() => {
