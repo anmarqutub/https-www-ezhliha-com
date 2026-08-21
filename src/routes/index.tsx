@@ -240,26 +240,20 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   const tagsByProvider = useMemo(() => {
     const m = new Map<string, string[]>();
+    // الوسوم تأتي فقط من جدول «الخدمات» الذي يضيفه الأدمن (لا نستنتجها من الوصف)
     serviceTags.forEach((s) => {
-      const name = (s.name ?? "").trim();
-      if (!name) return;
+      const name = (s.name ?? "")
+        .replace(/[()\[\]{}（）]/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+      if (!name || name.length < 2) return;
       const arr = m.get(s.provider_id) ?? [];
       if (arr.length < 3 && !arr.includes(name)) arr.push(name);
       m.set(s.provider_id, arr);
     });
-    // fallback: derive short chips from the description when no services exist
-    providers.forEach((p) => {
-      if ((m.get(p.id) ?? []).length > 0) return;
-      const chips = (p.description ?? "")
-        .replace(/[()（）]/g, " ")
-        .split(/[،,\n\-–|•/]+/)
-        .map((s) => s.trim().replace(/^(مع|و)\s+/, ""))
-        .filter((s) => s.length >= 3 && s.length <= 22 && !/\d/.test(s))
-        .slice(0, 3);
-      if (chips.length) m.set(p.id, chips);
-    });
     return m;
-  }, [serviceTags, providers]);
+  }, [serviceTags]);
+
 
 
 
