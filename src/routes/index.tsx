@@ -381,7 +381,30 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const featured = results.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
   );
-  const regular = results.filter((p) => !featured.includes(p));
+  const featuredIds = useMemo(() => new Set(featured.map((p) => p.id)), [featured]);
+  const regular = results.filter((p) => !featuredIds.has(p.id));
+
+  // خرائط بحث سريعة (بدل find داخل الرندر لكل بطاقة)
+  const cityById = useMemo(() => new Map(cities.map((c) => [c.id, c])), [cities]);
+  const subById = useMemo(() => new Map(subcategories.map((s) => [s.id, s])), [subcategories]);
+
+  // تحميل تدريجي للنتائج لتقليل زمن الرندر الأولي
+  const PAGE = 18;
+  const [visibleCount, setVisibleCount] = useState(PAGE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const resultsKey = `${q}|${selectedCategory}|${selectedCity}|${selectedSub}|${priceRange}|${favOnly}|${search}`;
+  useEffect(() => { setVisibleCount(PAGE); }, [resultsKey]);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) setVisibleCount((c) => c + PAGE);
+    }, { rootMargin: "600px 0px" });
+    io.observe(node);
+    return () => io.disconnect();
+  }, [regular.length, view]);
+  const visibleRegular = regular.slice(0, Math.max(0, visibleCount - featured.length));
+
 
   const homeFeatured = useMemo(
     () =>
