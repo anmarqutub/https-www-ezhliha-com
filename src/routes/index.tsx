@@ -1491,6 +1491,12 @@ const css = `
     .ez-results-tools { width:100%; flex-wrap:wrap; }
     .ez-search { flex:1 1 100%; min-width:0; }
     .ez-flist { max-height:none; }
+    .ez-card-more { display:none; }
+    .ez-card-head { flex-wrap:wrap; }
+    .ez-card-head h3 { min-width:0; overflow-wrap:anywhere; }
+    .ez-card-toprow { flex-wrap:wrap; }
+    .ez-card-toprow .ez-card-kicker, .ez-card-toprow .ez-card-meta { min-width:0; overflow-wrap:anywhere; }
+
   }
   @media (max-width: 640px) {
     .ez-grid { grid-template-columns:1fr; }
