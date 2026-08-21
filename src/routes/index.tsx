@@ -1550,8 +1550,11 @@ const css = `
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 20px 48px rgba(53,24,19,.1); border-color:rgba(102,0,0,.2); }
   .ez-card-featured { border-color:rgba(102,0,0,.3); }
   .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
-  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
+  .ez-card-img { height:200px; background-color:#EFE7DA; position:relative; overflow:hidden; }
+  .ez-card-img > img { width:100%; height:100%; object-fit:cover; display:block; }
   .ez-card:hover .ez-card-img { transform:none; }
+  .ez-more-sentinel { height:1px; }
+
   .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
   .ez-card-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; }
