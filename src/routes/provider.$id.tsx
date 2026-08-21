@@ -976,8 +976,19 @@ function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem
 function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
   const ytId = getYouTubeId(url);
   const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const poster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
+  const localPoster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
   const [frameFailed, setFrameFailed] = useState(false);
+
+  // جلب صورة الغلاف (og:image / oEmbed) للروابط الخارجية مثل إنستغرام وتيك توك
+  const { data: remote } = useQuery({
+    queryKey: ["video-poster", url],
+    queryFn: () => getVideoPoster({ data: { url } }),
+    enabled: !isDirect && !localPoster,
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    retry: false,
+  });
+  const poster = localPoster || remote?.poster || null;
 
   if (isDirect) {
     return (
@@ -986,7 +997,7 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
           src={poster ? url : `${url}#t=0.1`}
           controls
           playsInline
-          preload="metadata"
+          preload="none"
           poster={poster ?? undefined}
         />
       </div>
@@ -997,10 +1008,10 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
       <button
         type="button"
         className="pv-video-poster"
-        style={{ backgroundImage: `url(${poster})` }}
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
         aria-label="عرض المقطع في المصدر"
       >
+        <img src={poster} alt="" loading="lazy" decoding="async" onError={() => setFrameFailed(true)} />
         <span><PlayIcon /></span>
       </button>
     );
@@ -1038,6 +1049,7 @@ function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string |
     </button>
   );
 }
+
 
 
 
