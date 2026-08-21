@@ -1110,7 +1110,7 @@ export function cleanHandle(v: string | null) {
   return (v ?? "").trim().replace(/^@/, "").replace(/^https?:\/\/[^/]+\//, "").replace(/\/$/, "");
 }
 
-function ProviderCard({
+const ProviderCard = memo(function ProviderCard({
   provider,
   city,
   sub,
@@ -1120,6 +1120,7 @@ function ProviderCard({
   isFav,
   onToggleFav,
   tags = [],
+  eager = false,
 }: {
   provider: Provider;
   city?: City;
@@ -1128,8 +1129,9 @@ function ProviderCard({
   featured?: boolean;
   contactLabel: string;
   isFav?: boolean;
-  onToggleFav?: () => void;
+  onToggleFav?: (providerId: string) => void;
   tags?: string[];
+  eager?: boolean;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
@@ -1137,17 +1139,25 @@ function ProviderCard({
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
-        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+        <div className="ez-card-img">
+          <img
+            src={cover}
+            alt={provider.name}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            {...(eager ? { fetchPriority: "high" as const } : {})}
+          />
           <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
           {onToggleFav && (
             <button
               type="button"
               className={`ez-card-fav ${isFav ? "active" : ""}`}
               aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(provider.id); }}
             >
               <Heart size={15} fill={isFav ? "currentColor" : "none"} />
             </button>
+
           )}
         </div>
 
