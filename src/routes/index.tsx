@@ -210,6 +210,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return () => clearTimeout(t);
   }, [loading]);
 
+  // On the providers page, jump straight to the results section
+  useEffect(() => {
+    if (view !== "providers" || loading || typeof window === "undefined") return;
+    if (window.location.hash) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById("ez-results");
+      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    }, 160);
+    return () => clearTimeout(t);
+  }, [view, loading]);
+
   // Banner rotator
   useEffect(() => {
     if (banners.length < 2) return;
@@ -1500,17 +1511,18 @@ const css = `
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
   .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-  .ez-card-tags { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
-  .ez-card-tag { border:1px solid color-mix(in oklab, var(--line) 85%, transparent); background:color-mix(in oklab, var(--surface) 70%, transparent); color:var(--muted); font-size:11px; font-weight:500; padding:4px 9px; border-radius:2px; white-space:nowrap; }
+  .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
+  .ez-card-tag { display:inline-block; max-width:100%; border:1px solid color-mix(in oklab, var(--line) 85%, transparent); background:color-mix(in oklab, var(--surface) 70%, transparent); color:var(--muted); font-size:11px; font-weight:500; line-height:1.6; padding:4px 9px; border-radius:2px; white-space:normal; overflow-wrap:anywhere; text-align:start; }
   .ez-card-price { border-top:1px dashed var(--line); padding-top:12px; display:grid; gap:3px; }
   .ez-card-price small { color:var(--muted); font-size:11px; }
 
 
   .ez-card-price strong { color:var(--brand); font-size:14px; font-weight:600; }
   .ez-card-foot { padding:0 18px 16px; }
-  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; background:transparent; color:var(--brand); padding:10px 0; text-decoration:none; font-size:14px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
-  .ez-wa-btn:hover { color:var(--brand-dark); text-decoration:underline; text-underline-offset:4px; }
-  .ez-wa-btn:disabled { color:var(--muted); cursor:not-allowed; }
+  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; padding:12px 18px; border-radius:6px; text-decoration:none; font-size:13.5px; font-weight:600; border:1px solid var(--brand); cursor:pointer; font-family:inherit; transition:background .2s var(--ease-out), transform .2s var(--ease-out); }
+  .ez-wa-btn svg, .ez-wa-btn svg path { color:#fff; fill:currentColor; }
+  .ez-wa-btn:hover { background:var(--brand-dark); border-color:var(--brand-dark); color:#fff; transform:translateY(-1px); }
+  .ez-wa-btn:disabled { background:color-mix(in oklab, var(--muted) 40%, transparent); border-color:transparent; color:#fff; cursor:not-allowed; transform:none; }
 
   /* FAQ */
   .ez-faq { margin-top:26px; border-top:1px solid var(--line); }
