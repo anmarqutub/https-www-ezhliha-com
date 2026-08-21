@@ -1000,18 +1000,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   <>
                     <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
                     <div className="ez-grid">
-                      {featured.map((p) => (
+                      {featured.map((p, i) => (
                         <ProviderCard
                           key={p.id}
                           provider={p}
-                          city={cities.find((c) => c.id === p.city_id)}
-                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          city={cityById.get(p.city_id)}
+                          sub={subById.get(p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
-                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          contactLabel={contactLabel}
                           featured
+                          eager={i < 3}
                           isFav={favIds.has(p.id)}
-                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                          onToggleFav={user ? toggleFav : undefined}
                         />
                       ))}
                     </div>
@@ -1021,22 +1022,27 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   <>
                     {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
                     <div className="ez-grid">
-                      {regular.map((p) => (
+                      {visibleRegular.map((p, i) => (
                         <ProviderCard
                           key={p.id}
                           provider={p}
-                          city={cities.find((c) => c.id === p.city_id)}
-                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          city={cityById.get(p.city_id)}
+                          sub={subById.get(p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
-                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          contactLabel={contactLabel}
+                          eager={featured.length === 0 && i < 3}
                           isFav={favIds.has(p.id)}
-                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                          onToggleFav={user ? toggleFav : undefined}
                         />
                       ))}
                     </div>
+                    {visibleRegular.length < regular.length && (
+                      <div ref={sentinelRef} className="ez-more-sentinel" aria-hidden="true" />
+                    )}
                   </>
                 )}
+
               </>
             )}
           </div>
