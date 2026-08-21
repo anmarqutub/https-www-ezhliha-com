@@ -1519,9 +1519,10 @@ const css = `
 
   .ez-card-price strong { color:var(--brand); font-size:14px; font-weight:600; }
   .ez-card-foot { padding:0 18px 16px; }
-  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:7px; background:transparent; color:var(--brand); padding:10px 0; text-decoration:none; font-size:14px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
-  .ez-wa-btn:hover { color:var(--brand-dark); text-decoration:underline; text-underline-offset:4px; }
-  .ez-wa-btn:disabled { color:var(--muted); cursor:not-allowed; }
+  .ez-wa-btn { display:flex; width:100%; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; padding:12px 18px; border-radius:6px; text-decoration:none; font-size:13.5px; font-weight:600; border:1px solid var(--brand); cursor:pointer; font-family:inherit; transition:background .2s var(--ease-out), transform .2s var(--ease-out); }
+  .ez-wa-btn svg, .ez-wa-btn svg path { color:#fff; fill:currentColor; }
+  .ez-wa-btn:hover { background:var(--brand-dark); border-color:var(--brand-dark); color:#fff; transform:translateY(-1px); }
+  .ez-wa-btn:disabled { background:color-mix(in oklab, var(--muted) 40%, transparent); border-color:transparent; color:#fff; cursor:not-allowed; transform:none; }
 
   /* FAQ */
   .ez-faq { margin-top:26px; border-top:1px solid var(--line); }
