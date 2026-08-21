@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpLeft,
@@ -178,20 +178,22 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     });
   }, [user]);
 
-  const toggleFav = async (providerId: string) => {
+  const toggleFav = useCallback(async (providerId: string) => {
     if (!user) return;
-    const isFav = favIds.has(providerId);
+    let wasFav = false;
     setFavIds((prev) => {
       const next = new Set(prev);
-      if (isFav) next.delete(providerId); else next.add(providerId);
+      wasFav = next.has(providerId);
+      if (wasFav) next.delete(providerId); else next.add(providerId);
       return next;
     });
-    if (isFav) {
+    if (wasFav) {
       await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
     } else {
       await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
     }
-  };
+  }, [user]);
+
 
 
 
@@ -200,6 +202,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     const raw = (siteTexts[key] ?? "").replace(/[^\d]/g, "");
     return raw ? Number(raw) : auto;
   };
+  const contactLabel = siteTexts["provider.whatsapp.label"] || "للمزيد من التفاصيل";
 
   // Scroll to hash target after data loads (links coming from inner pages)
   useEffect(() => {
@@ -379,7 +382,30 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const featured = results.filter(
     (p) => p.is_featured && (!p.featured_until || new Date(p.featured_until) > new Date())
   );
-  const regular = results.filter((p) => !featured.includes(p));
+  const featuredIds = useMemo(() => new Set(featured.map((p) => p.id)), [featured]);
+  const regular = results.filter((p) => !featuredIds.has(p.id));
+
+  // خرائط بحث سريعة (بدل find داخل الرندر لكل بطاقة)
+  const cityById = useMemo(() => new Map(cities.map((c) => [c.id, c])), [cities]);
+  const subById = useMemo(() => new Map(subcategories.map((s) => [s.id, s])), [subcategories]);
+
+  // تحميل تدريجي للنتائج لتقليل زمن الرندر الأولي
+  const PAGE = 18;
+  const [visibleCount, setVisibleCount] = useState(PAGE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const resultsKey = `${q}|${selectedCategory}|${selectedCity}|${selectedSub}|${priceRange}|${favOnly}|${search}`;
+  useEffect(() => { setVisibleCount(PAGE); }, [resultsKey]);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) setVisibleCount((c) => c + PAGE);
+    }, { rootMargin: "600px 0px" });
+    io.observe(node);
+    return () => io.disconnect();
+  }, [regular.length, view]);
+  const visibleRegular = regular.slice(0, Math.max(0, visibleCount - featured.length));
+
 
   const homeFeatured = useMemo(
     () =>
@@ -975,18 +1001,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   <>
                     <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
                     <div className="ez-grid">
-                      {featured.map((p) => (
+                      {featured.map((p, i) => (
                         <ProviderCard
                           key={p.id}
                           provider={p}
-                          city={cities.find((c) => c.id === p.city_id)}
-                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          city={cityById.get(p.city_id)}
+                          sub={subById.get(p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
-                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          contactLabel={contactLabel}
                           featured
+                          eager={i < 3}
                           isFav={favIds.has(p.id)}
-                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                          onToggleFav={user ? toggleFav : undefined}
                         />
                       ))}
                     </div>
@@ -996,22 +1023,27 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   <>
                     {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
                     <div className="ez-grid">
-                      {regular.map((p) => (
+                      {visibleRegular.map((p, i) => (
                         <ProviderCard
                           key={p.id}
                           provider={p}
-                          city={cities.find((c) => c.id === p.city_id)}
-                          sub={subcategories.find((s) => s.id === p.subcategory_id)}
+                          city={cityById.get(p.city_id)}
+                          sub={subById.get(p.subcategory_id)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
-                          contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
+                          contactLabel={contactLabel}
+                          eager={featured.length === 0 && i < 3}
                           isFav={favIds.has(p.id)}
-                          onToggleFav={user ? () => toggleFav(p.id) : undefined}
+                          onToggleFav={user ? toggleFav : undefined}
                         />
                       ))}
                     </div>
+                    {visibleRegular.length < regular.length && (
+                      <div ref={sentinelRef} className="ez-more-sentinel" aria-hidden="true" />
+                    )}
                   </>
                 )}
+
               </>
             )}
           </div>
@@ -1079,7 +1111,7 @@ export function cleanHandle(v: string | null) {
   return (v ?? "").trim().replace(/^@/, "").replace(/^https?:\/\/[^/]+\//, "").replace(/\/$/, "");
 }
 
-function ProviderCard({
+const ProviderCard = memo(function ProviderCard({
   provider,
   city,
   sub,
@@ -1089,6 +1121,7 @@ function ProviderCard({
   isFav,
   onToggleFav,
   tags = [],
+  eager = false,
 }: {
   provider: Provider;
   city?: City;
@@ -1097,8 +1130,9 @@ function ProviderCard({
   featured?: boolean;
   contactLabel: string;
   isFav?: boolean;
-  onToggleFav?: () => void;
+  onToggleFav?: (providerId: string) => void;
   tags?: string[];
+  eager?: boolean;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
@@ -1106,17 +1140,25 @@ function ProviderCard({
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
-        <div className="ez-card-img" style={{ backgroundImage: `url(${cover})` }}>
+        <div className="ez-card-img">
+          <img
+            src={cover}
+            alt={provider.name}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            {...(eager ? { fetchPriority: "high" as const } : {})}
+          />
           <span className="ez-badge">{featured ? "اختيار أزهليها" : "جديد في أزهليها"}</span>
           {onToggleFav && (
             <button
               type="button"
               className={`ez-card-fav ${isFav ? "active" : ""}`}
               aria-label={isFav ? "إزالة من المفضلة" : "إضافة للمفضلة"}
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(); }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFav(provider.id); }}
             >
               <Heart size={15} fill={isFav ? "currentColor" : "none"} />
             </button>
+
           )}
         </div>
 
@@ -1162,7 +1204,7 @@ function ProviderCard({
 
     </article>
   );
-}
+});
 
 function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -1502,14 +1544,17 @@ const css = `
 
 
 
-  .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; }
+  .ez-card { position:relative; background:color-mix(in oklab, var(--surface) 94%, transparent); border:1px solid color-mix(in oklab, var(--line) 70%, transparent); box-shadow:0 14px 42px rgba(53,24,19,.06); border-radius:0; overflow:hidden; transition:transform .24s var(--ease-out), box-shadow .24s var(--ease-out), border-color .18s var(--ease-out); display:flex; flex-direction:column; content-visibility:auto; contain-intrinsic-size:auto 420px; }
   .ez-card::before { content:""; position:absolute; inset-inline-start:1.4rem; top:-1px; z-index:3; width:2.4rem; height:1px; background:var(--brand); }
   .ez-card::after { content:""; position:absolute; inset-inline-end:0; bottom:0; z-index:3; width:14px; height:14px; border-inline-end:1px solid rgba(102,0,0,.3); border-bottom:1px solid rgba(102,0,0,.3); }
   .ez-card:hover { transform:translateY(-3px); box-shadow:0 20px 48px rgba(53,24,19,.1); border-color:rgba(102,0,0,.2); }
   .ez-card-featured { border-color:rgba(102,0,0,.3); }
   .ez-card-link { text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; }
-  .ez-card-img { height:200px; background-size:cover; background-position:center; background-color:#EFE7DA; position:relative; transition:transform .52s var(--ease-out); }
+  .ez-card-img { height:200px; background-color:#EFE7DA; position:relative; overflow:hidden; }
+  .ez-card-img > img { width:100%; height:100%; object-fit:cover; display:block; }
   .ez-card:hover .ez-card-img { transform:none; }
+  .ez-more-sentinel { height:1px; }
+
   .ez-badge { position:absolute; top:12px; inset-inline-start:12px; background:rgba(238,231,216,.94); backdrop-filter:blur(4px); border:1px solid rgba(102,0,0,.1); color:var(--brand); padding:5px 11px; border-radius:0; font-size:10px; font-weight:600; }
 
   .ez-card-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; }
