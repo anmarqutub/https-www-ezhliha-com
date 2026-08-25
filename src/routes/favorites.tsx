@@ -115,7 +115,8 @@ function FavoritesPage() {
 }
 
 const css = `
-  .fav-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
+  .fav-root { min-height:100vh; background:#e6e4d7; font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:#2A211C; font-size:13.5px; line-height:1.75; }
+  .fav-root h1, .fav-root h2, .fav-root h3, .fav-root button { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .fav-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; }
   .fav-brand img { height:54px; }
   .fav-nav-menu { display:flex; gap:16px; align-items:center; }

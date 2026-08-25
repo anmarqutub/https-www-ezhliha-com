@@ -1138,7 +1138,7 @@ const css = `
   .pv-btn-quote { background:#660000; color:#fff; border:none; min-height:40px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
   .pv-btn-quote svg { width:16px; height:16px; }
   .pv-btn-quote:hover { background:#4d0000; }
-  .pv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; font-family:Tajawal, system-ui, sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.28); text-align:right; }
+  .pv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.28); text-align:right; }
   .pv-quote-head { display:flex; align-items:center; justify-content:space-between; }
   .pv-quote-tag { color:#660000; font-size:13px; font-weight:500; }
   .pv-quote-close { background:none; border:none; font-size:24px; line-height:1; cursor:pointer; color:#6b5b55; }
@@ -1155,7 +1155,8 @@ const css = `
   .pv-quote-cancel { background:none; border:none; font-family:inherit; font-size:14px; font-weight:500; color:#241C1A; cursor:pointer; }
   .pv-quote-actions .pv-btn-quote { padding:12px 22px; box-shadow:none; }
   @media (max-width:640px) { .pv-quote-grid { grid-template-columns:1fr; } }
-  .pv-root { min-height:100vh; background:#e6e4d7; font-family:Tajawal, system-ui, sans-serif; color:#000; }
+  .pv-root { min-height:100vh; background:#e6e4d7; font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:#2A211C; font-size:13.5px; line-height:1.75; }
+  .pv-root h1, .pv-root h2, .pv-root h3, .pv-root h4, .pv-root button, .pv-root nav { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .pv-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); position:sticky; top:0; z-index:50; }
   .pv-brand img { height:54px; }
   .pv-nav-actions { display:flex; gap:12px; align-items:center; }
@@ -1284,7 +1285,7 @@ const css = `
   .pv-suggest-body strong { color:#660000; font-size:13px; font-weight:600; }
   .pv-soc-call { border:none; cursor:pointer; font-family:inherit; }
   .pv-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:16px; }
-  .pv-modal { background:#fff; border-radius:18px; padding:28px 24px; max-width:360px; width:100%; text-align:center; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.3); font-family:'Tajawal', sans-serif; }
+  .pv-modal { background:#fff; border-radius:18px; padding:28px 24px; max-width:360px; width:100%; text-align:center; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.3); font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; }
   .pv-modal-close { position:absolute; top:10px; left:14px; background:none; border:none; font-size:26px; cursor:pointer; color:#888; line-height:1; }
   .pv-modal-close:hover { color:#660000; }
   .pv-modal-icon { width:64px; height:64px; border-radius:50%; background:#660000; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
