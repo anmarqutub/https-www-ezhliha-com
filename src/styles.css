@@ -139,6 +139,16 @@
 
   body {
     background-color: var(--color-background);
-    color: var(--color-foreground);
+    color: #2a211c;
+    font-family: var(--site-font, "Noto Sans Arabic", Tajawal, system-ui, sans-serif);
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Alexandria", "Noto Sans Arabic", Tajawal, sans-serif;
   }
 }
