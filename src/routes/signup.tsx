@@ -184,13 +184,13 @@ const shellStyle: React.CSSProperties = {
   justifyContent: "center",
   background: "linear-gradient(135deg, #FAF6F2 0%, #F5EEEE 100%)",
   padding: 24,
-  fontFamily: "Tajawal, system-ui, sans-serif",
+  fontFamily: '"Noto Sans Arabic", Tajawal, system-ui, sans-serif',
 };
 
 export const authCss = `
   .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(102,0,0,0.15); }
   .auth-brand { display:block; text-align:center; text-decoration:none; margin-bottom:24px; }
-  .auth-title { font-size:24px; font-weight:800; color:#000; text-align:center; margin-bottom:6px; }
+  .auth-title { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; font-size:24px; font-weight:700; color:#2A211C; text-align:center; margin-bottom:6px; }
   .auth-sub { font-size:14px; color:#555; text-align:center; margin-bottom:24px; }
   .auth-form { display:flex; flex-direction:column; gap:14px; }
   .auth-field { display:flex; flex-direction:column; gap:6px; font-size:13px; color:#5A4A4A; font-weight:600; }
