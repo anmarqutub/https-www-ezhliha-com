@@ -355,21 +355,12 @@ function ProviderPage() {
                 onClick={() => setActiveImg((n) => (n - 1 + heroBase.length) % heroBase.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
                 onClick={() => setActiveImg((n) => (n + 1) % heroBase.length)}><ChevronLeft size={20} /></button>
-              <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
+              <div className="pv-hero-count" dir="ltr">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="9" cy="9" r="2" /><path d="M21 15l-4.5-4.5L6 21" /></svg>
+                {(activeImg % heroBase.length) + 1} / {heroBase.length}
+              </div>
             </>
           )}
-          <div className="pv-hero-actions">
-            <button
-              type="button"
-              className={`pv-hero-act ${isFav ? "on" : ""}`}
-              disabled={favLoading}
-              onClick={toggleFav}
-              aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-            ><Heart size={18} fill={isFav ? "currentColor" : "none"} /></button>
-            <button type="button" className="pv-hero-act" onClick={shareProvider} aria-label="مشاركة">
-              {copiedShare ? <Check size={18} /> : <ShareIcon />}
-            </button>
-          </div>
         </div>
       </section>
 
@@ -377,14 +368,34 @@ function ProviderPage() {
       <main className="pv-main">
         <div className="pv-head-grid">
           <div className="pv-head-info">
-            <div className="pv-crumbs">
-              <span className="pv-chip-new">جديد في أزهليها</span>
-              {subName && <span>{subName}</span>}
-              {cityName && <span className="pv-crumb-city">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                {cityName}
-              </span>}
-              {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
+            <div className="pv-meta-row">
+              <div className="pv-meta-info">
+                <span className="pv-badge-quote">متاح لطلب التسعيرة</span>
+                {(cityName || subName) && (
+                  <span className="pv-meta-loc">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                    {[cityName, subName].filter(Boolean).join(" · ")}
+                  </span>
+                )}
+                {(provider.price_from || provider.price) && (
+                  <span className="pv-meta-price">
+                    {provider.price_from ? `يبدأ من ${Number(provider.price_from).toLocaleString("ar-SA")} ر.س` : provider.price}
+                  </span>
+                )}
+                {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
+              </div>
+              <div className="pv-meta-actions">
+                <button type="button" className="pv-sq-act" onClick={shareProvider} aria-label="مشاركة">
+                  {copiedShare ? <Check size={17} /> : <ShareIcon />}
+                </button>
+                <button
+                  type="button"
+                  className={`pv-sq-act ${isFav ? "on" : ""}`}
+                  disabled={favLoading}
+                  onClick={toggleFav}
+                  aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+                ><Heart size={17} fill={isFav ? "currentColor" : "none"} /></button>
+              </div>
             </div>
 
             <div className="pv-title-row">
@@ -396,16 +407,6 @@ function ProviderPage() {
           </div>
 
           <aside className="pv-aside">
-            <div className="pv-aside-icons">
-              <button type="button" className="pv-icon-btn" onClick={shareProvider} aria-label="مشاركة"><ShareIcon /></button>
-              <button
-                type="button"
-                className={`pv-icon-btn ${isFav ? "on" : ""}`}
-                disabled={favLoading}
-                onClick={toggleFav}
-                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              ><Heart size={16} fill={isFav ? "currentColor" : "none"} /></button>
-            </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
@@ -1210,7 +1211,7 @@ const css2 = `
   .pv-crumbs { display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap; color:#7A6A64; font-size:12.5px; margin-bottom:10px; }
   .pv-crumb-city { display:inline-flex; align-items:center; gap:4px; }
   .pv-chip-new { background:#660000; color:#fff; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:500; }
-  .pv-head-info h1 { font-size:32px; font-weight:600; line-height:1.15; color:#241C1A; }
+  .pv-head-info h1 { font-size:40px; font-weight:800; line-height:1.2; color:#241C1A; margin:4px 0 0; }
   .pv-lead { margin:12px 0 18px; color:#5B4C46; font-size:14px; line-height:1.9; max-width:760px; }
   .pv-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .pv-tile { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:8px; padding:14px 16px; position:relative; }
@@ -1378,7 +1379,20 @@ const css3 = `
   .pv-hero-arrow:hover { background:#660000; color:#fff; }
   .pv-hero-prev { right:18px; }
   .pv-hero-next { left:18px; }
-  .pv-hero-count { position:absolute; bottom:20px; right:22px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; border-radius:999px; padding:5px 14px; font-size:12.5px; font-weight:600; letter-spacing:.5px; }
+  .pv-hero-count { position:absolute; bottom:18px; right:20px; background:rgba(255,253,248,.94); backdrop-filter:blur(4px); color:#241C1A; border-radius:10px; padding:7px 14px; font-size:13px; font-weight:700; letter-spacing:.5px; display:inline-flex; align-items:center; gap:7px; box-shadow:0 4px 14px rgba(0,0,0,.14); }
+  .pv-hero-count svg { color:#660000; }
+
+  .pv-meta-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .pv-meta-info { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .pv-badge-quote { background:#F5E3E3; color:#660000; border-radius:8px; padding:6px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+  .pv-meta-loc { display:inline-flex; align-items:center; gap:6px; color:#5B4C46; font-size:13.5px; font-weight:600; }
+  .pv-meta-loc svg { color:#660000; }
+  .pv-meta-price { color:#660000; font-size:14.5px; font-weight:700; white-space:nowrap; }
+  .pv-meta-actions { display:flex; gap:10px; flex:none; }
+  .pv-sq-act { width:44px; height:44px; border-radius:12px; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .2s, color .2s, background .2s; }
+  .pv-sq-act:hover { border-color:#660000; color:#660000; }
+  .pv-sq-act.on { color:#C0392B; border-color:#C0392B; background:#FBF1F1; }
+  .pv-sq-act:disabled { opacity:.6; cursor:default; }
   .pv-hero-actions { position:absolute; top:18px; right:18px; display:flex; gap:10px; }
   .pv-hero-act { width:44px; height:44px; border-radius:50%; border:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18); transition:transform .15s, color .2s; }
   .pv-hero-act:hover { transform:scale(1.08); }
