@@ -368,14 +368,34 @@ function ProviderPage() {
       <main className="pv-main">
         <div className="pv-head-grid">
           <div className="pv-head-info">
-            <div className="pv-crumbs">
-              <span className="pv-chip-new">جديد في أزهليها</span>
-              {subName && <span>{subName}</span>}
-              {cityName && <span className="pv-crumb-city">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                {cityName}
-              </span>}
-              {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
+            <div className="pv-meta-row">
+              <div className="pv-meta-info">
+                <span className="pv-badge-quote">متاح لطلب التسعيرة</span>
+                {(cityName || subName) && (
+                  <span className="pv-meta-loc">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                    {[cityName, subName].filter(Boolean).join(" · ")}
+                  </span>
+                )}
+                {(provider.price_from || provider.price) && (
+                  <span className="pv-meta-price">
+                    {provider.price_from ? `يبدأ من ${Number(provider.price_from).toLocaleString("ar-SA")} ر.س` : provider.price}
+                  </span>
+                )}
+                {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
+              </div>
+              <div className="pv-meta-actions">
+                <button type="button" className="pv-sq-act" onClick={shareProvider} aria-label="مشاركة">
+                  {copiedShare ? <Check size={17} /> : <ShareIcon />}
+                </button>
+                <button
+                  type="button"
+                  className={`pv-sq-act ${isFav ? "on" : ""}`}
+                  disabled={favLoading}
+                  onClick={toggleFav}
+                  aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+                ><Heart size={17} fill={isFav ? "currentColor" : "none"} /></button>
+              </div>
             </div>
 
             <div className="pv-title-row">
