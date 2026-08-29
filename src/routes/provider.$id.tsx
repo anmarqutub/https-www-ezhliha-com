@@ -1407,10 +1407,10 @@ const css3 = `
     .pv-secnav { margin:24px -14px 0; top:64px; }
     .pv-secnav-in { padding:0 14px; gap:18px; justify-content:flex-start; }
     .pv-sec { margin:0 -14px; padding:40px 14px; }
-    .pv-sec-grid, .pv-rev-cols, .pv-contact-cols, .pv-srv-grid, .pv-before, .pv-before-list { grid-template-columns:1fr; }
+    .pv-sec-grid, .pv-rev-cols, .pv-contact-cols, .pv-before, .pv-before-list { grid-template-columns:1fr; }
+    .pv-srv-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
     .pv-sec-head h2 { font-size:20px; }
-    .pv-srv { border-inline-start:none; }
-    .pv-srv:nth-child(2) { border-top:1px solid #EFE7D8; }
+
     .pv-media-tile { height:190px; }
   }
 
