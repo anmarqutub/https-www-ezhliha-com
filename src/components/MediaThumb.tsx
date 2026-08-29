@@ -51,7 +51,7 @@ function needsProxy(u: string) {
 }
 
 function proxied(u: string) {
-  return `/api/public/poster?url=${encodeURIComponent(u)}`;
+  return `/api/public/img?url=${encodeURIComponent(u)}`;
 }
 
 
@@ -84,11 +84,11 @@ export function MediaThumb({
     retry: false,
   });
 
-  const chain = [local, remote?.poster ?? null, instagramPoster(url)].filter(Boolean) as string[];
-  const [step, setStep] = useState(0);
-  const rawPoster = chain[step] ?? null;
+  const raws = [local, remote?.poster ?? null, instagramPoster(url)].filter(Boolean) as string[];
   // بعض المنصات (تيك توك/إنستغرام) تمنع عرض الصورة مباشرة، فنمررها عبر وسيط
-  const poster = rawPoster ? (needsProxy(rawPoster) ? proxied(rawPoster) : rawPoster) : null;
+  const chain = raws.flatMap((u) => (needsProxy(u) ? [proxied(u), u] : [u, proxied(u)]));
+  const [step, setStep] = useState(0);
+  const poster = chain[step] ?? null;
 
 
 
