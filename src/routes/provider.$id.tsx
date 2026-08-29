@@ -1422,7 +1422,13 @@ const css3 = `
   .pv-crumbbar span { display:inline-flex; align-items:center; color:#9A8F86; }
 
   @media (max-width:900px) {
-    .pv-hero-carousel .pv-hero-main { height:280px; }
+    .pv-hero-carousel .pv-hero-main { height:300px; border-radius:20px; }
+    .pv-hero-arrow { width:38px; height:38px; }
+    .pv-hero-act { width:38px; height:38px; }
+    .pv-hero-actions { top:12px; right:12px; gap:8px; }
+    .pv-hero-count { bottom:14px; right:14px; }
+    .pv-hero-prev { right:12px; }
+    .pv-hero-next { left:12px; }
     .pv-price-bar { position:sticky; bottom:0; }
   }
 
