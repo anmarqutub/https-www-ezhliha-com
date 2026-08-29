@@ -248,8 +248,13 @@ function ProviderPage() {
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
   const refImages = pickRefImages(subName);
+  const SOCIAL_URL_RE = /(instagram\.com|tiktok\.com|snapchat\.com|twitter\.com|x\.com)/i;
+  // للهيرو نفضّل الصور المرفوعة عالية الجودة ونتجنّب بوسترات الفيديو منخفضة الدقة
+  const photoPool = images.filter((im) => im.image_url && !SOCIAL_URL_RE.test(im.image_url));
+  const ytPool = images.filter((im) => im.image_url && /(youtube\.com|youtu\.be)/i.test(im.image_url));
+  const heroBase = photoPool.length > 0 ? photoPool : ytPool.length > 0 ? ytPool : images;
   const heroImgs: string[] = [0, 1, 2].map(
-    (i) => images[(activeImg + i) % Math.max(images.length, 1)]?.image_url || refImages[i % refImages.length]
+    (i) => heroBase[(activeImg + i) % Math.max(heroBase.length, 1)]?.image_url || refImages[i % refImages.length]
   );
   const cover = heroImgs[0];
   const waUrl = waLink(provider.whatsapp);
@@ -342,14 +347,15 @@ function ProviderPage() {
             aria-label="عرض الصور"
           >
             <SocialImg src={cover} alt={provider.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.28))", pointerEvents: "none" }} />
           </button>
-          {images.length > 1 && (
+          {heroBase.length > 1 && (
             <>
               <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
-                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}><ChevronRight size={20} /></button>
+                onClick={() => setActiveImg((n) => (n - 1 + heroBase.length) % heroBase.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
-                onClick={() => setActiveImg((n) => (n + 1) % images.length)}><ChevronLeft size={20} /></button>
-              <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
+                onClick={() => setActiveImg((n) => (n + 1) % heroBase.length)}><ChevronLeft size={20} /></button>
+              <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
             </>
           )}
         </div>
@@ -1354,8 +1360,8 @@ const css3 = `
 
   /* ===== hero carousel ===== */
   .pv-hero { display:block; }
-  .pv-hero-carousel { position:relative; max-width:1440px; margin:0 auto; }
-  .pv-hero-carousel .pv-hero-main { width:100%; height:520px; border-radius:10px; }
+  .pv-hero-carousel { position:relative; max-width:1200px; margin:0 auto; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:440px; border-radius:12px; }
   .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
   .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
   .pv-hero-prev { right:16px; }
