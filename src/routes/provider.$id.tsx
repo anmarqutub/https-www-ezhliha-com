@@ -514,19 +514,33 @@ function ProviderPage() {
             </div>
             {services.length > 0 ? (
               <div className="pv-srv-grid">
-                {services.map((sv) => (
-                  <article className="pv-srv" key={sv.id}>
-                    <span className="pv-srv-ico"><SparkIcon /></span>
-                    <h3>{sv.name}</h3>
-                    {sv.price && <strong>{sv.price}</strong>}
-                    {sv.description && <p>{sv.description}</p>}
-                    <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
-                  </article>
-                ))}
+                {services.map((sv) => {
+                  const nImg = (sv.images ?? []).length + (sv.image_url ? 1 : 0);
+                  const nVid = (sv.videos ?? []).length;
+                  return (
+                    <Link
+                      className="pv-srv"
+                      key={sv.id}
+                      to="/provider/$id/service/$serviceId"
+                      params={{ id: provider.id, serviceId: sv.id }}
+                    >
+                      <span className="pv-srv-ico"><SparkIcon /></span>
+                      <h3>{sv.name}</h3>
+                      {sv.price && <strong>{sv.price}</strong>}
+                      {sv.description && <p>{sv.description}</p>}
+                      <span className="pv-srv-meta">
+                        {nImg > 0 && <em>{nImg} صورة</em>}
+                        {nVid > 0 && <em>{nVid} مقطع</em>}
+                        <b>عرض التفاصيل ←</b>
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
             ) : (
               <div className="pv-empty">سيتم إضافة الخدمات قريباً.</div>
             )}
+
           </div>
         </section>
 
