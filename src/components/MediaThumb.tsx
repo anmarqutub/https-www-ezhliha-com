@@ -30,6 +30,31 @@ function isDirectImage(url: string) {
   return /\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(url);
 }
 
+const PROXY_HOSTS = [
+  "tiktokcdn.com",
+  "tiktokcdn-eu.com",
+  "tiktokcdn-us.com",
+  "ibyteimg.com",
+  "cdninstagram.com",
+  "fbcdn.net",
+  "sc-cdn.net",
+  "instagram.com",
+];
+
+function needsProxy(u: string) {
+  try {
+    const h = new URL(u).hostname;
+    return PROXY_HOSTS.some((s) => h === s || h.endsWith("." + s));
+  } catch {
+    return false;
+  }
+}
+
+function proxied(u: string) {
+  return `/api/public/poster?url=${encodeURIComponent(u)}`;
+}
+
+
 /**
  * بطاقة وسائط موحّدة: تعرض صورة البداية دائمًا (بدون إطار إنستغرام/تيك توك)
  * وعند الضغط تفتح الرابط الأصلي.
@@ -63,7 +88,8 @@ export function MediaThumb({
   const [step, setStep] = useState(0);
   const rawPoster = chain[step] ?? null;
   // بعض المنصات (تيك توك/إنستغرام) تمنع عرض الصورة مباشرة، فنمررها عبر وسيط
-  const poster = rawPoster ? `/api/public/poster?url=${encodeURIComponent(rawPoster)}` : null;
+  const poster = rawPoster ? (needsProxy(rawPoster) ? proxied(rawPoster) : rawPoster) : null;
+
 
 
   return (
