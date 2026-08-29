@@ -105,6 +105,11 @@ function ProviderPage() {
   }, [images.length, galleryOpen]);
   const sugRef = useRef<HTMLDivElement>(null);
   const brRef = useRef<HTMLDivElement>(null);
+  const pkgRef = useRef<HTMLDivElement>(null);
+  const scrollPkg = (dir: number) => {
+    const el = pkgRef.current;
+    if (el) el.scrollBy({ left: dir * Math.min(el.clientWidth, 380), behavior: "smooth" });
+  };
 
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
