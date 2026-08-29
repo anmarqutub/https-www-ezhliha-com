@@ -1277,11 +1277,10 @@ const css3 = `
   .pv-pkg-list svg { flex:none; margin-top:3px; color:#660000; }
   .pv-pkg-foot { margin:auto 0 0; padding-top:14px; border-top:1px solid #EFE7D8; color:#8A7A73; font-size:12.5px; line-height:1.7; }
 
-  .pv-srv-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid #E3DBC9; border-radius:12px; overflow:hidden; background:#FFFDF8; }
-  .pv-srv { display:flex; flex-direction:column; padding:22px; border-inline-start:1px solid #EFE7D8; border-top:1px solid #EFE7D8; text-decoration:none; transition:background .18s ease; }
-  .pv-srv:hover { background:#FBF6EC; }
-  .pv-srv:nth-child(-n+2) { border-top:none; }
-  .pv-srv:nth-child(odd) { border-inline-start:none; }
+  .pv-srv-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
+  .pv-srv { display:flex; flex-direction:column; padding:20px; background:#FFFDF8; border:1px solid #E3DBC9; border-radius:12px; text-decoration:none; transition:background .18s ease, box-shadow .18s ease; }
+  .pv-srv:hover { background:#FBF6EC; box-shadow:0 10px 22px rgba(102,0,0,.08); }
+
   .pv-srv-ico { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:#F5EDE0; color:#660000; margin-bottom:12px; }
   .pv-srv h3 { font-size:17px; font-weight:600; color:#241C1A; margin:0 0 6px; }
   .pv-srv strong { display:block; color:#660000; font-size:14px; margin-bottom:6px; }
