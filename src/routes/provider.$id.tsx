@@ -358,6 +358,18 @@ function ProviderPage() {
               <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
             </>
           )}
+          <div className="pv-hero-actions">
+            <button
+              type="button"
+              className={`pv-hero-act ${isFav ? "on" : ""}`}
+              disabled={favLoading}
+              onClick={toggleFav}
+              aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+            ><Heart size={18} fill={isFav ? "currentColor" : "none"} /></button>
+            <button type="button" className="pv-hero-act" onClick={shareProvider} aria-label="مشاركة">
+              {copiedShare ? <Check size={18} /> : <ShareIcon />}
+            </button>
+          </div>
         </div>
       </section>
 
