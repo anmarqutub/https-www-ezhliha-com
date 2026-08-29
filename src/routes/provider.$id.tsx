@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Heart, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle } from "./index";
-import { getVideoPoster } from "@/lib/media.functions";
+import { MediaThumb } from "@/components/MediaThumb";
+
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import refHall from "@/assets/provider-hall.jpg.asset.json";
@@ -514,19 +514,33 @@ function ProviderPage() {
             </div>
             {services.length > 0 ? (
               <div className="pv-srv-grid">
-                {services.map((sv) => (
-                  <article className="pv-srv" key={sv.id}>
-                    <span className="pv-srv-ico"><SparkIcon /></span>
-                    <h3>{sv.name}</h3>
-                    {sv.price && <strong>{sv.price}</strong>}
-                    {sv.description && <p>{sv.description}</p>}
-                    <OfferMedia images={sv.images ?? []} videos={sv.videos ?? []} />
-                  </article>
-                ))}
+                {services.map((sv) => {
+                  const nImg = (sv.images ?? []).length + (sv.image_url ? 1 : 0);
+                  const nVid = (sv.videos ?? []).length;
+                  return (
+                    <Link
+                      className="pv-srv"
+                      key={sv.id}
+                      to="/provider/$id/service/$serviceId"
+                      params={{ id: provider.id, serviceId: sv.id }}
+                    >
+                      <span className="pv-srv-ico"><SparkIcon /></span>
+                      <h3>{sv.name}</h3>
+                      {sv.price && <strong>{sv.price}</strong>}
+                      {sv.description && <p>{sv.description}</p>}
+                      <span className="pv-srv-meta">
+                        {nImg > 0 && <em>{nImg} صورة</em>}
+                        {nVid > 0 && <em>{nVid} مقطع</em>}
+                        <b>عرض التفاصيل ←</b>
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
             ) : (
               <div className="pv-empty">سيتم إضافة الخدمات قريباً.</div>
             )}
+
           </div>
         </section>
 
@@ -871,20 +885,6 @@ function phoneLink(value: string | null) {
   return `tel:${phone}`;
 }
 
-function getYouTubeId(url: string) {
-  return url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
-}
-
-function getTikTokEmbed(url: string) {
-  const id = url.match(/tiktok\.com\/(?:@[^/]+\/video\/|v\/|embed\/v2\/)(\d+)/)?.[1];
-  return id ? `https://www.tiktok.com/embed/v2/${id}` : null;
-}
-
-function getInstagramEmbed(url: string) {
-  const code = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
-  return code ? `https://www.instagram.com/p/${code}/embed` : null;
-}
-
 function mediaSource(url: string): { key: string; label: string } {
   if (/instagram\.com/i.test(url)) return { key: "ig", label: "إنستغرام" };
   if (/tiktok\.com/i.test(url)) return { key: "tk", label: "تيك توك" };
@@ -894,59 +894,11 @@ function mediaSource(url: string): { key: string; label: string } {
   return { key: "web", label: "الرابط الأصلي" };
 }
 
-function staticPoster(url: string): string | null {
-  const ytId = getYouTubeId(url);
-  if (ytId) return `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
-  // روابط الصور المباشرة تُستخدم كما هي
-  if (/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(url)) return url;
-  return null;
-}
-
-/** يجلب صورة الغلاف الأصلية (og:image / oEmbed) من السيرفر — مع كاش يوم كامل */
-function useRemotePoster(url: string, hasPoster: boolean) {
-  const { data } = useQuery({
-    queryKey: ["video-poster", url],
-    queryFn: () => getVideoPoster({ data: { url } }),
-    enabled: !hasPoster && /^https:\/\//i.test(url),
-    staleTime: 24 * 60 * 60 * 1000,
-    gcTime: 24 * 60 * 60 * 1000,
-    retry: false,
-  });
-  return data?.poster ?? null;
-}
-
 function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
-  const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const base = poster || staticPoster(url);
-  const remote = useRemotePoster(url, !!base || isDirect);
-  const [failed, setFailed] = useState(false);
-  const img = failed ? null : base || remote;
   const src = mediaSource(url);
   return (
     <figure className="pv-media-card">
-      <button
-        type="button"
-        className={`pv-media-tile${!img && !isDirect ? " pv-media-tile--empty" : ""}`}
-        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
-      >
-        {img && (
-          <img
-            className="pv-media-img"
-            src={img}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            referrerPolicy="no-referrer"
-            onError={() => setFailed(true)}
-          />
-        )}
-        {!img && isDirect && (
-          <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
-        )}
-        {isVideo && <span className="pv-media-play"><PlayIcon /></span>}
-        {!img && !isDirect && <span className="pv-media-fallback">{src.label}</span>}
-      </button>
+      <MediaThumb url={url} thumbnailUrl={poster} isVideo={isVideo} ratio="4/5" />
       <figcaption className="pv-media-cap">
         <span className="pv-media-src"><SocialGlyph platform={src.key} />{src.label}</span>
         <span className="pv-media-hint">بالانتقال للرابط</span>
@@ -958,106 +910,26 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
 
 
 
+
 function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
-  if (!images?.length && !videos?.length) return null;
+  const imgs = (images ?? []).filter((m) => m?.url);
+  const vids = (videos ?? []).filter((m) => m?.url);
+  if (!imgs.length && !vids.length) return null;
   return (
     <div className="pv-offer-media">
-      {images?.length > 0 && (
-        <div className="pv-offer-imgs">
-          {images.map((im, i) => (
-            <a key={`i${i}`} href={im.url} target="_blank" rel="noopener noreferrer" style={{ backgroundImage: `url(${im.url})` }} />
-          ))}
-        </div>
-      )}
-      {videos?.length > 0 && (
-        <div className="pv-offer-vids">
-          {videos.map((v, i) => (
-            <VideoEmbed key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
-          ))}
-        </div>
-      )}
+      {imgs.map((im, i) => (
+        <MediaThumb key={`i${i}`} url={im.url} thumbnailUrl={im.thumbnail_url ?? null} isVideo={false} ratio="1/1" />
+      ))}
+      {vids.map((v, i) => (
+        <MediaThumb key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} isVideo ratio="1/1" />
+      ))}
     </div>
   );
 }
 
 
 
-function VideoEmbed({ url, thumbnailUrl }: { url: string; thumbnailUrl: string | null }) {
-  const ytId = getYouTubeId(url);
-  const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const localPoster = thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : null);
-  const [frameFailed, setFrameFailed] = useState(false);
 
-  // جلب صورة الغلاف (og:image / oEmbed) للروابط الخارجية مثل إنستغرام وتيك توك
-  const { data: remote } = useQuery({
-    queryKey: ["video-poster", url],
-    queryFn: () => getVideoPoster({ data: { url } }),
-    enabled: !isDirect && !localPoster,
-    staleTime: 24 * 60 * 60 * 1000,
-    gcTime: 24 * 60 * 60 * 1000,
-    retry: false,
-  });
-  const poster = localPoster || remote?.poster || null;
-
-  if (isDirect) {
-    return (
-      <div className="pv-video-wrap">
-        <video
-          src={poster ? url : `${url}#t=0.1`}
-          controls
-          playsInline
-          preload="none"
-          poster={poster ?? undefined}
-        />
-      </div>
-    );
-  }
-  if (poster) {
-    return (
-      <button
-        type="button"
-        className="pv-video-poster"
-        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label="عرض المقطع في المصدر"
-      >
-        <img src={poster} alt="" loading="lazy" decoding="async" onError={() => setFrameFailed(true)} />
-        <span><PlayIcon /></span>
-      </button>
-    );
-  }
-  if (!frameFailed) {
-    // نحاول عرض أول لقطة من المقطع نفسه بدل الخلفية الساده
-    return (
-      <button
-        type="button"
-        className="pv-video-poster pv-video-poster--frame"
-        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label="عرض المقطع في المصدر"
-      >
-        <video
-          src={`${url}#t=0.1`}
-          muted
-          playsInline
-          preload="metadata"
-          onError={() => setFrameFailed(true)}
-          aria-hidden="true"
-        />
-        <span><PlayIcon /></span>
-      </button>
-    );
-  }
-  return (
-    <button
-      type="button"
-      className="pv-video-poster pv-video-poster--empty"
-      onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-      aria-label="عرض المقطع في المصدر"
-    >
-      <span><PlayIcon /></span>
-      <em className="pv-video-poster-label">شاهد المقطع</em>
-    </button>
-  );
-}
 
 
 
@@ -1268,10 +1140,8 @@ const css = `
   .pv-review-item p { color:#222; line-height:1.7; margin:4px 0; }
   .pv-review-item small { color:#888; font-size:11px; }
   .pv-video-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; }
-  .pv-offer-media { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
-  .pv-offer-imgs { display:flex; gap:6px; flex-wrap:wrap; }
-  .pv-offer-imgs a { width:64px; height:64px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e8e6d7; }
-  .pv-offer-vids { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:8px; }
+  .pv-offer-media { margin-top:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }
+
 
   .pv-suggest { background:#fff; border:1px solid #d8d4c0; border-radius:18px; padding:24px; margin-top:24px; }
   .pv-suggest h2 { font-size:20px; font-weight:600; margin-bottom:16px; color:#660000; }
@@ -1408,13 +1278,18 @@ const css3 = `
   .pv-pkg-foot { margin:auto 0 0; padding-top:14px; border-top:1px solid #EFE7D8; color:#8A7A73; font-size:12.5px; line-height:1.7; }
 
   .pv-srv-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid #E3DBC9; border-radius:12px; overflow:hidden; background:#FFFDF8; }
-  .pv-srv { padding:22px; border-inline-start:1px solid #EFE7D8; border-top:1px solid #EFE7D8; }
+  .pv-srv { display:flex; flex-direction:column; padding:22px; border-inline-start:1px solid #EFE7D8; border-top:1px solid #EFE7D8; text-decoration:none; transition:background .18s ease; }
+  .pv-srv:hover { background:#FBF6EC; }
   .pv-srv:nth-child(-n+2) { border-top:none; }
   .pv-srv:nth-child(odd) { border-inline-start:none; }
   .pv-srv-ico { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:#F5EDE0; color:#660000; margin-bottom:12px; }
   .pv-srv h3 { font-size:17px; font-weight:600; color:#241C1A; margin:0 0 6px; }
   .pv-srv strong { display:block; color:#660000; font-size:14px; margin-bottom:6px; }
-  .pv-srv p { margin:0; color:#7A6A64; font-size:13.5px; line-height:1.8; }
+  .pv-srv p { margin:0; color:#7A6A64; font-size:13.5px; line-height:1.8; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .pv-srv-meta { margin-top:12px; display:flex; align-items:center; gap:10px; font-size:12.5px; color:#8A7A73; }
+  .pv-srv-meta em { font-style:normal; background:#F5EDE0; border-radius:20px; padding:3px 9px; }
+  .pv-srv-meta b { margin-inline-start:auto; color:#660000; font-weight:600; }
+
 
   .pv-media-grid { max-width:1440px; margin:30px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
   .pv-media-card { margin:0; display:flex; flex-direction:column; gap:8px; }

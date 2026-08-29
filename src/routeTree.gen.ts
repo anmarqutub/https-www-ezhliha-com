@@ -23,6 +23,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProviderIdRouteImport } from './routes/provider.$id'
+import { Route as ProviderIdServiceServiceIdRouteImport } from './routes/provider.$id.service.$serviceId'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -97,6 +98,12 @@ const ProviderIdRoute = ProviderIdRouteImport.update({
   path: '/provider/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProviderIdServiceServiceIdRoute =
+  ProviderIdServiceServiceIdRouteImport.update({
+    id: '/service/$serviceId',
+    path: '/service/$serviceId',
+    getParentRoute: () => ProviderIdRoute,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -128,10 +135,11 @@ export interface FileRoutesByFullPath {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/provider/$id': typeof ProviderIdRoute
+  '/provider/$id': typeof ProviderIdRouteWithChildren
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/provider/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,10 +155,11 @@ export interface FileRoutesByTo {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/provider/$id': typeof ProviderIdRoute
+  '/provider/$id': typeof ProviderIdRouteWithChildren
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/provider/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,10 +176,11 @@ export interface FileRoutesById {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/provider/$id': typeof ProviderIdRoute
+  '/provider/$id': typeof ProviderIdRouteWithChildren
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/provider/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/provider/$id/service/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/provider/$id/service/$serviceId'
   id:
     | '__root__'
     | '/'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/provider/$id/service/$serviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -246,7 +259,7 @@ export interface RootRouteChildren {
   ProvidersRoute: typeof ProvidersRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
-  ProviderIdRoute: typeof ProviderIdRoute
+  ProviderIdRoute: typeof ProviderIdRouteWithChildren
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProviderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/provider/$id/service/$serviceId': {
+      id: '/provider/$id/service/$serviceId'
+      path: '/service/$serviceId'
+      fullPath: '/provider/$id/service/$serviceId'
+      preLoaderRoute: typeof ProviderIdServiceServiceIdRouteImport
+      parentRoute: typeof ProviderIdRoute
+    }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
       path: '/lovable/email/queue/process'
@@ -376,6 +396,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ProviderIdRouteChildren {
+  ProviderIdServiceServiceIdRoute: typeof ProviderIdServiceServiceIdRoute
+}
+
+const ProviderIdRouteChildren: ProviderIdRouteChildren = {
+  ProviderIdServiceServiceIdRoute: ProviderIdServiceServiceIdRoute,
+}
+
+const ProviderIdRouteWithChildren = ProviderIdRoute._addFileChildren(
+  ProviderIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -390,7 +422,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProvidersRoute: ProvidersRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
-  ProviderIdRoute: ProviderIdRoute,
+  ProviderIdRoute: ProviderIdRouteWithChildren,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
