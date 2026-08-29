@@ -248,8 +248,13 @@ function ProviderPage() {
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
   const refImages = pickRefImages(subName);
+  const SOCIAL_URL_RE = /(instagram\.com|tiktok\.com|snapchat\.com|twitter\.com|x\.com)/i;
+  // للهيرو نفضّل الصور المرفوعة عالية الجودة ونتجنّب بوسترات الفيديو منخفضة الدقة
+  const photoPool = images.filter((im) => im.image_url && !SOCIAL_URL_RE.test(im.image_url));
+  const ytPool = images.filter((im) => im.image_url && /(youtube\.com|youtu\.be)/i.test(im.image_url));
+  const heroBase = photoPool.length > 0 ? photoPool : ytPool.length > 0 ? ytPool : images;
   const heroImgs: string[] = [0, 1, 2].map(
-    (i) => images[(activeImg + i) % Math.max(images.length, 1)]?.image_url || refImages[i % refImages.length]
+    (i) => heroBase[(activeImg + i) % Math.max(heroBase.length, 1)]?.image_url || refImages[i % refImages.length]
   );
   const cover = heroImgs[0];
   const waUrl = waLink(provider.whatsapp);
