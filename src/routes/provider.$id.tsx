@@ -1,12 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Heart, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle } from "./index";
-import { getVideoPoster } from "@/lib/media.functions";
 import { MediaThumb } from "@/components/MediaThumb";
 
 import logoUrl from "@/assets/logo.jpg";
@@ -887,20 +885,6 @@ function phoneLink(value: string | null) {
   return `tel:${phone}`;
 }
 
-function getYouTubeId(url: string) {
-  return url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
-}
-
-function getTikTokEmbed(url: string) {
-  const id = url.match(/tiktok\.com\/(?:@[^/]+\/video\/|v\/|embed\/v2\/)(\d+)/)?.[1];
-  return id ? `https://www.tiktok.com/embed/v2/${id}` : null;
-}
-
-function getInstagramEmbed(url: string) {
-  const code = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/)?.[1];
-  return code ? `https://www.instagram.com/p/${code}/embed` : null;
-}
-
 function mediaSource(url: string): { key: string; label: string } {
   if (/instagram\.com/i.test(url)) return { key: "ig", label: "إنستغرام" };
   if (/tiktok\.com/i.test(url)) return { key: "tk", label: "تيك توك" };
@@ -908,27 +892,6 @@ function mediaSource(url: string): { key: string; label: string } {
   if (/(twitter|x)\.com/i.test(url)) return { key: "tw", label: "إكس" };
   if (/(youtube\.com|youtu\.be)/i.test(url)) return { key: "yt", label: "يوتيوب" };
   return { key: "web", label: "الرابط الأصلي" };
-}
-
-function staticPoster(url: string): string | null {
-  const ytId = getYouTubeId(url);
-  if (ytId) return `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
-  // روابط الصور المباشرة تُستخدم كما هي
-  if (/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(url)) return url;
-  return null;
-}
-
-/** يجلب صورة الغلاف الأصلية (og:image / oEmbed) من السيرفر — مع كاش يوم كامل */
-function useRemotePoster(url: string, hasPoster: boolean) {
-  const { data } = useQuery({
-    queryKey: ["video-poster", url],
-    queryFn: () => getVideoPoster({ data: { url } }),
-    enabled: !hasPoster && /^https:\/\//i.test(url),
-    staleTime: 24 * 60 * 60 * 1000,
-    gcTime: 24 * 60 * 60 * 1000,
-    retry: false,
-  });
-  return data?.poster ?? null;
 }
 
 function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
