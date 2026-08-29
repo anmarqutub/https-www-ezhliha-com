@@ -61,7 +61,10 @@ export function MediaThumb({
 
   const chain = [local, remote?.poster ?? null, instagramPoster(url)].filter(Boolean) as string[];
   const [step, setStep] = useState(0);
-  const poster = chain[step] ?? null;
+  const rawPoster = chain[step] ?? null;
+  // بعض المنصات (تيك توك/إنستغرام) تمنع عرض الصورة مباشرة، فنمررها عبر وسيط
+  const poster = rawPoster ? `/api/public/poster?url=${encodeURIComponent(rawPoster)}` : null;
+
 
   return (
     <figure className="mt-card" style={{ aspectRatio: ratio }}>
