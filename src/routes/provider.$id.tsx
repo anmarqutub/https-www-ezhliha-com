@@ -497,25 +497,25 @@ function ProviderPage() {
           </div>
         </section>
 
-        {/* الباقات */}
+        {/* الخدمات (الباقات) */}
         <section className="pv-sec pv-sec--alt" id="s-packages">
-          <div className="pv-sec-grid">
-            <div className="pv-sec-head">
-              <span className="pv-eyebrow">الباقات والخدمات</span>
-              <h2>اختر باقة وعدّل عليها</h2>
-            </div>
-            <div className="pv-sec-body">
-              <p className="pv-sec-note">الباقات تعطيك بداية واضحة، والسعر النهائي يتحدد بعد معرفة العدد والتاريخ.</p>
+          <div className="pv-pkg-head">
+            <button type="button" className="pv-pkg-arrow" aria-label="التالي" onClick={() => scrollPkg(-1)}><ChevronRight size={18} /></button>
+            <button type="button" className="pv-pkg-arrow" aria-label="السابق" onClick={() => scrollPkg(1)}><ChevronLeft size={18} /></button>
+            <div className="pv-pkg-titles">
+              <span className="pv-eyebrow">طريقة الخدمة</span>
+              <h2>الخدمات</h2>
+              <p className="pv-sec-note">اختار الأقرب، وبعدها عدّل تفاصيلك في طلب التسعيرة.</p>
             </div>
           </div>
           {packages.length > 0 ? (
-            <div className="pv-pkg-grid">
-              {packages.map((pkg, i) => (
+            <div className="pv-pkg-rail" ref={pkgRef}>
+              {packages.map((pkg) => (
                 <article className="pv-pkg" key={pkg.id}>
-                  {i === 0 && <span className="pv-pkg-badge">الأقرب للطلب الحالي</span>}
-                  {pkg.image_url && <SmartImg className="pv-pkg-img" src={pkg.image_url} alt={pkg.name} loading="lazy" />}
-                  <h3>{pkg.name}</h3>
-                  <strong className="pv-pkg-price">{pkg.price || "يُحدد حسب التفاصيل"}</strong>
+                  <div className="pv-pkg-top">
+                    <h3>{pkg.name}</h3>
+                    <strong className="pv-pkg-price">{pkg.price || "حسب تفاصيل المناسبة"}</strong>
+                  </div>
                   {pkg.description && (
                     <ul className="pv-pkg-list">
                       {pkg.description.split(/\n|،|·|-\s/).map((s) => s.trim()).filter(Boolean).slice(0, 5).map((line, k) => (
@@ -524,12 +524,12 @@ function ProviderPage() {
                     </ul>
                   )}
                   <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
-                  <p className="pv-pkg-foot">تقدر تحدد هذه الباقة داخل طلب التسعيرة الأساسي.</p>
+                  <span className="pv-pkg-cta">اختار هذه الباقة</span>
                 </article>
               ))}
             </div>
           ) : (
-            <div className="pv-empty">سيتم إضافة الباقات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
+            <div className="pv-empty">سيتم إضافة الخدمات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
           )}
         </section>
 
