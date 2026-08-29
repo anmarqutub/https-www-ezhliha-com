@@ -1379,7 +1379,20 @@ const css3 = `
   .pv-hero-arrow:hover { background:#660000; color:#fff; }
   .pv-hero-prev { right:18px; }
   .pv-hero-next { left:18px; }
-  .pv-hero-count { position:absolute; bottom:20px; right:22px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; border-radius:999px; padding:5px 14px; font-size:12.5px; font-weight:600; letter-spacing:.5px; }
+  .pv-hero-count { position:absolute; bottom:18px; right:20px; background:rgba(255,253,248,.94); backdrop-filter:blur(4px); color:#241C1A; border-radius:10px; padding:7px 14px; font-size:13px; font-weight:700; letter-spacing:.5px; display:inline-flex; align-items:center; gap:7px; box-shadow:0 4px 14px rgba(0,0,0,.14); }
+  .pv-hero-count svg { color:#660000; }
+
+  .pv-meta-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .pv-meta-info { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .pv-badge-quote { background:#F5E3E3; color:#660000; border-radius:8px; padding:6px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+  .pv-meta-loc { display:inline-flex; align-items:center; gap:6px; color:#5B4C46; font-size:13.5px; font-weight:600; }
+  .pv-meta-loc svg { color:#660000; }
+  .pv-meta-price { color:#660000; font-size:14.5px; font-weight:700; white-space:nowrap; }
+  .pv-meta-actions { display:flex; gap:10px; flex:none; }
+  .pv-sq-act { width:44px; height:44px; border-radius:12px; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .2s, color .2s, background .2s; }
+  .pv-sq-act:hover { border-color:#660000; color:#660000; }
+  .pv-sq-act.on { color:#C0392B; border-color:#C0392B; background:#FBF1F1; }
+  .pv-sq-act:disabled { opacity:.6; cursor:default; }
   .pv-hero-actions { position:absolute; top:18px; right:18px; display:flex; gap:10px; }
   .pv-hero-act { width:44px; height:44px; border-radius:50%; border:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18); transition:transform .15s, color .2s; }
   .pv-hero-act:hover { transform:scale(1.08); }
