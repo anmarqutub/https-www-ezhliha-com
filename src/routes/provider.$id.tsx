@@ -973,26 +973,21 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
 
 
 function OfferMedia({ images, videos }: { images: MediaItem[]; videos: MediaItem[] }) {
-  if (!images?.length && !videos?.length) return null;
+  const imgs = (images ?? []).filter((m) => m?.url);
+  const vids = (videos ?? []).filter((m) => m?.url);
+  if (!imgs.length && !vids.length) return null;
   return (
     <div className="pv-offer-media">
-      {images?.length > 0 && (
-        <div className="pv-offer-imgs">
-          {images.map((im, i) => (
-            <a key={`i${i}`} href={im.url} target="_blank" rel="noopener noreferrer" style={{ backgroundImage: `url(${im.url})` }} />
-          ))}
-        </div>
-      )}
-      {videos?.length > 0 && (
-        <div className="pv-offer-vids">
-          {videos.map((v, i) => (
-            <VideoEmbed key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} />
-          ))}
-        </div>
-      )}
+      {imgs.map((im, i) => (
+        <MediaThumb key={`i${i}`} url={im.url} thumbnailUrl={im.thumbnail_url ?? null} isVideo={false} ratio="1/1" />
+      ))}
+      {vids.map((v, i) => (
+        <MediaThumb key={`v${i}`} url={v.url} thumbnailUrl={v.thumbnail_url ?? null} isVideo ratio="1/1" />
+      ))}
     </div>
   );
 }
+
 
 
 
