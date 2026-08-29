@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle } from "./index";
 import { getVideoPoster } from "@/lib/media.functions";
+import { MediaThumb } from "@/components/MediaThumb";
+
 import logoUrl from "@/assets/logo.jpg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import refHall from "@/assets/provider-hall.jpg.asset.json";
