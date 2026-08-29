@@ -358,6 +358,18 @@ function ProviderPage() {
               <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
             </>
           )}
+          <div className="pv-hero-actions">
+            <button
+              type="button"
+              className={`pv-hero-act ${isFav ? "on" : ""}`}
+              disabled={favLoading}
+              onClick={toggleFav}
+              aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+            ><Heart size={18} fill={isFav ? "currentColor" : "none"} /></button>
+            <button type="button" className="pv-hero-act" onClick={shareProvider} aria-label="مشاركة">
+              {copiedShare ? <Check size={18} /> : <ShareIcon />}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -1360,13 +1372,19 @@ const css3 = `
 
   /* ===== hero carousel ===== */
   .pv-hero { display:block; }
-  .pv-hero-carousel { position:relative; max-width:1200px; margin:0 auto; }
-  .pv-hero-carousel .pv-hero-main { width:100%; height:440px; border-radius:12px; }
-  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
-  .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
-  .pv-hero-prev { right:16px; }
-  .pv-hero-next { left:16px; }
-  .pv-hero-count { position:absolute; bottom:18px; right:50%; transform:translateX(50%); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 14px; font-size:12px; font-weight:500; }
+  .pv-hero-carousel { position:relative; max-width:1100px; margin:0 auto; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:460px; border-radius:26px; }
+  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18); transition:background .2s, color .2s; }
+  .pv-hero-arrow:hover { background:#660000; color:#fff; }
+  .pv-hero-prev { right:18px; }
+  .pv-hero-next { left:18px; }
+  .pv-hero-count { position:absolute; bottom:20px; right:22px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; border-radius:999px; padding:5px 14px; font-size:12.5px; font-weight:600; letter-spacing:.5px; }
+  .pv-hero-actions { position:absolute; top:18px; right:18px; display:flex; gap:10px; }
+  .pv-hero-act { width:44px; height:44px; border-radius:50%; border:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18); transition:transform .15s, color .2s; }
+  .pv-hero-act:hover { transform:scale(1.08); }
+  .pv-hero-act.on { color:#C0392B; }
+  .pv-hero-act:disabled { opacity:.6; cursor:default; }
+  .pv-hero-act svg { display:block; }
 
   /* ===== price bar ===== */
   .pv-price-bar { background:#FFFDF8; border:1px solid #E3DBC9; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:14px; }
@@ -1404,7 +1422,13 @@ const css3 = `
   .pv-crumbbar span { display:inline-flex; align-items:center; color:#9A8F86; }
 
   @media (max-width:900px) {
-    .pv-hero-carousel .pv-hero-main { height:280px; }
+    .pv-hero-carousel .pv-hero-main { height:300px; border-radius:20px; }
+    .pv-hero-arrow { width:38px; height:38px; }
+    .pv-hero-act { width:38px; height:38px; }
+    .pv-hero-actions { top:12px; right:12px; gap:8px; }
+    .pv-hero-count { bottom:14px; right:14px; }
+    .pv-hero-prev { right:12px; }
+    .pv-hero-next { left:12px; }
     .pv-price-bar { position:sticky; bottom:0; }
   }
 
