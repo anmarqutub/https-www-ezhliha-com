@@ -2081,11 +2081,27 @@ function ProvidersTab() {
               </Field>
               <FileInput accept="image/*" multiple disabled={uploading} onChange={(e) => handleUpload(e.target.files)} label="اضغط لرفع صور (يمكن اختيار أكثر من صورة)" />
               {uploading && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
+              <Field label="أو أضف صورة من رابط سوشال ميديا (إنستغرام / تيك توك / يوتيوب) — تظهر صورتها تلقائياً في الموقع">
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    value={socialImgUrl}
+                    onChange={(e) => setSocialImgUrl(e.target.value)}
+                    dir="ltr"
+                    placeholder="https://www.instagram.com/p/..."
+                    style={{ flex: 1 }}
+                  />
+                  <button type="button" onClick={addSocialImage} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "0 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>إضافة الرابط</button>
+                </div>
+              </Field>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(120px,1fr))", gap: 10, marginTop: 12 }}>
                 {editingImages.map((img) => (
                   <div key={img.id} style={{ position: "relative" }}>
-                    <img src={img.image_url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 8 }} />
-                    <button type="button" onClick={() => delImg(img)} style={{ position: "absolute", top: 4, left: 4, background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "2px 8px", fontSize: 11, cursor: "pointer" }}>حذف</button>
+                    {isSocialMediaUrl(img.image_url) ? (
+                      <MediaThumb url={img.image_url} isVideo={false} ratio="1/1" />
+                    ) : (
+                      <img src={img.image_url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 8 }} />
+                    )}
+                    <button type="button" onClick={() => delImg(img)} style={{ position: "absolute", top: 4, left: 4, zIndex: 2, background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "2px 8px", fontSize: 11, cursor: "pointer" }}>حذف</button>
                   </div>
                 ))}
               </div>
