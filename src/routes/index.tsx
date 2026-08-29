@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
+import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
 import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
@@ -1142,7 +1143,7 @@ const ProviderCard = memo(function ProviderCard({
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img">
-          <SmartImg
+          <SocialImg
             src={cover}
             fallback={defaultProviderUrl}
             alt={provider.name}

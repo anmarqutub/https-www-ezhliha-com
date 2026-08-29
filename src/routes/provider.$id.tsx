@@ -9,6 +9,7 @@ import { MediaThumb } from "@/components/MediaThumb";
 
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
+import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import refHall from "@/assets/provider-hall.jpg.asset.json";
 import refBeauty from "@/assets/provider-beauty.jpg.asset.json";
@@ -336,10 +337,12 @@ function ProviderPage() {
             type="button"
             className="pv-hero-main"
             key={cover}
-            style={{ backgroundImage: `url(${cover})`, animation: "pvFadeSlide .6s ease" }}
+            style={{ position: "relative", overflow: "hidden", animation: "pvFadeSlide .6s ease" }}
             onClick={() => setGalleryOpen(true)}
             aria-label="عرض الصور"
-          />
+          >
+            <SocialImg src={cover} alt={provider.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          </button>
           {images.length > 1 && (
             <>
               <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
@@ -826,7 +829,7 @@ function ProviderPage() {
             <button type="button" className="pv-quote-close" onClick={() => setGalleryOpen(false)} aria-label="إغلاق">×</button>
             <div className="pv-lightbox-grid">
               {images.map((im) => (
-                <SmartImg key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
+                <SocialImg key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
               ))}
             </div>
           </div>

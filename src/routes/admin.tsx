@@ -11,6 +11,8 @@ import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
 import { downloadTemplate } from "@/lib/template-export";
 
 import { parseDevice, parseBrowser, lookupIp, formatGeo, type GeoInfo } from "@/lib/device-info";
+import { MediaThumb } from "@/components/MediaThumb";
+import { isSocialMediaUrl } from "@/components/SocialImg";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
@@ -1603,6 +1605,20 @@ function ProvidersTab() {
   const [editingBranch, setEditingBranch] = useState<Partial<BranchRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [socialImgUrl, setSocialImgUrl] = useState("");
+
+  const addSocialImage = async () => {
+    const url = socialImgUrl.trim();
+    if (!editing?.id || !url) return;
+    if (!/^https:\/\//i.test(url)) { alert("أدخل رابطاً صحيحاً يبدأ بـ https"); return; }
+    const { error } = await supabase.from("provider_images").insert({
+      provider_id: editing.id, image_url: url, sort_order: editingImages.length,
+    });
+    if (error) { alert("خطأ: " + error.message); return; }
+    logActivity("add_social_image", "provider", editing.id, { name: editing.name, url });
+    setSocialImgUrl("");
+    reload();
+  };
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
   const [filterSub, setFilterSub] = useState<string>("all");
@@ -2065,11 +2081,27 @@ function ProvidersTab() {
               </Field>
               <FileInput accept="image/*" multiple disabled={uploading} onChange={(e) => handleUpload(e.target.files)} label="اضغط لرفع صور (يمكن اختيار أكثر من صورة)" />
               {uploading && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
+              <Field label="أو أضف صورة من رابط سوشال ميديا (إنستغرام / تيك توك / يوتيوب) — تظهر صورتها تلقائياً في الموقع">
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    value={socialImgUrl}
+                    onChange={(e) => setSocialImgUrl(e.target.value)}
+                    dir="ltr"
+                    placeholder="https://www.instagram.com/p/..."
+                    style={{ flex: 1 }}
+                  />
+                  <button type="button" onClick={addSocialImage} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "0 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>إضافة الرابط</button>
+                </div>
+              </Field>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(120px,1fr))", gap: 10, marginTop: 12 }}>
                 {editingImages.map((img) => (
                   <div key={img.id} style={{ position: "relative" }}>
-                    <img src={img.image_url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 8 }} />
-                    <button type="button" onClick={() => delImg(img)} style={{ position: "absolute", top: 4, left: 4, background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "2px 8px", fontSize: 11, cursor: "pointer" }}>حذف</button>
+                    {isSocialMediaUrl(img.image_url) ? (
+                      <MediaThumb url={img.image_url} isVideo={false} ratio="1/1" />
+                    ) : (
+                      <img src={img.image_url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 8 }} />
+                    )}
+                    <button type="button" onClick={() => delImg(img)} style={{ position: "absolute", top: 4, left: 4, zIndex: 2, background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "2px 8px", fontSize: 11, cursor: "pointer" }}>حذف</button>
                   </div>
                 ))}
               </div>
