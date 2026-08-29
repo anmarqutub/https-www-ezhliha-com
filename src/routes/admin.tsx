@@ -11,6 +11,8 @@ import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
 import { downloadTemplate } from "@/lib/template-export";
 
 import { parseDevice, parseBrowser, lookupIp, formatGeo, type GeoInfo } from "@/lib/device-info";
+import { MediaThumb } from "@/components/MediaThumb";
+import { isSocialMediaUrl } from "@/components/SocialImg";
 import logoUrl from "@/assets/logo.jpg";
 
 export const Route = createFileRoute("/admin")({
@@ -1603,6 +1605,20 @@ function ProvidersTab() {
   const [editingBranch, setEditingBranch] = useState<Partial<BranchRow> | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [socialImgUrl, setSocialImgUrl] = useState("");
+
+  const addSocialImage = async () => {
+    const url = socialImgUrl.trim();
+    if (!editing?.id || !url) return;
+    if (!/^https:\/\//i.test(url)) { alert("أدخل رابطاً صحيحاً يبدأ بـ https"); return; }
+    const { error } = await supabase.from("provider_images").insert({
+      provider_id: editing.id, image_url: url, sort_order: editingImages.length,
+    });
+    if (error) { alert("خطأ: " + error.message); return; }
+    logActivity("add_social_image", "provider", editing.id, { name: editing.name, url });
+    setSocialImgUrl("");
+    reload();
+  };
   const [filterCity, setFilterCity] = useState<string>("all");
   const [filterCat, setFilterCat] = useState<string>("all");
   const [filterSub, setFilterSub] = useState<string>("all");
