@@ -8,6 +8,7 @@ import { waLink, cleanHandle } from "./index";
 import { MediaThumb } from "@/components/MediaThumb";
 
 import logoUrl from "@/assets/logo.jpg";
+import { SmartImg } from "@/components/SmartImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import refHall from "@/assets/provider-hall.jpg.asset.json";
 import refBeauty from "@/assets/provider-beauty.jpg.asset.json";
@@ -366,7 +367,7 @@ function ProviderPage() {
             </div>
 
             <div className="pv-title-row">
-              {provider.logo_url && <img src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
+              {provider.logo_url && <SmartImg src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
               <h1>{provider.name}</h1>
             </div>
             {provider.description && <p className="pv-lead">{provider.description}</p>}
@@ -485,7 +486,7 @@ function ProviderPage() {
               {packages.map((pkg, i) => (
                 <article className="pv-pkg" key={pkg.id}>
                   {i === 0 && <span className="pv-pkg-badge">الأقرب للطلب الحالي</span>}
-                  {pkg.image_url && <img className="pv-pkg-img" src={pkg.image_url} alt={pkg.name} loading="lazy" />}
+                  {pkg.image_url && <SmartImg className="pv-pkg-img" src={pkg.image_url} alt={pkg.name} loading="lazy" />}
                   <h3>{pkg.name}</h3>
                   <strong className="pv-pkg-price">{pkg.price || "يُحدد حسب التفاصيل"}</strong>
                   {pkg.description && (
@@ -825,7 +826,7 @@ function ProviderPage() {
             <button type="button" className="pv-quote-close" onClick={() => setGalleryOpen(false)} aria-label="إغلاق">×</button>
             <div className="pv-lightbox-grid">
               {images.map((im) => (
-                <img key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
+                <SmartImg key={im.id} src={im.image_url} alt={provider.name} loading="lazy" />
               ))}
             </div>
           </div>
