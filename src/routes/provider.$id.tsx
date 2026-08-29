@@ -930,37 +930,10 @@ function useRemotePoster(url: string, hasPoster: boolean) {
 }
 
 function MediaCard({ url, poster, isVideo }: { url: string; poster: string | null; isVideo: boolean }) {
-  const isDirect = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
-  const base = poster || staticPoster(url);
-  const remote = useRemotePoster(url, !!base || isDirect);
-  const [failed, setFailed] = useState(false);
-  const img = failed ? null : base || remote;
   const src = mediaSource(url);
   return (
     <figure className="pv-media-card">
-      <button
-        type="button"
-        className={`pv-media-tile${!img && !isDirect ? " pv-media-tile--empty" : ""}`}
-        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
-      >
-        {img && (
-          <img
-            className="pv-media-img"
-            src={img}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            referrerPolicy="no-referrer"
-            onError={() => setFailed(true)}
-          />
-        )}
-        {!img && isDirect && (
-          <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
-        )}
-        {isVideo && <span className="pv-media-play"><PlayIcon /></span>}
-        {!img && !isDirect && <span className="pv-media-fallback">{src.label}</span>}
-      </button>
+      <MediaThumb url={url} thumbnailUrl={poster} isVideo={isVideo} ratio="4/5" />
       <figcaption className="pv-media-cap">
         <span className="pv-media-src"><SocialGlyph platform={src.key} />{src.label}</span>
         <span className="pv-media-hint">بالانتقال للرابط</span>
@@ -968,6 +941,7 @@ function MediaCard({ url, poster, isVideo }: { url: string; poster: string | nul
     </figure>
   );
 }
+
 
 
 
