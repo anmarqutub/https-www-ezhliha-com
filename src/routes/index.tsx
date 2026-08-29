@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import logoUrl from "@/assets/logo.jpg";
+import { SmartImg } from "@/components/SmartImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
 import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
@@ -603,12 +604,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             {currentBanner ? (
               currentBanner.link_url ? (
                 <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
-                  <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                  <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
                   {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
                 </a>
               ) : (
                 <div className="ez-hero-banner">
-                  <img src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
+                  <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
                   {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
                 </div>
               )
@@ -740,7 +741,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         <section className="ez-ad-sec" aria-label="إعلان">
           <div className="ez-ad">
             <div className="ez-ad-media">
-              <img src={currentBanner.image_url} alt={currentBanner.title ?? "إعلان"} loading="lazy" />
+              <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? "إعلان"} loading="lazy" />
             </div>
             <div className="ez-ad-body">
               <div className="ez-ad-tags">
@@ -1141,8 +1142,9 @@ const ProviderCard = memo(function ProviderCard({
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
       <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
         <div className="ez-card-img">
-          <img
+          <SmartImg
             src={cover}
+            fallback={defaultProviderUrl}
             alt={provider.name}
             loading={eager ? "eager" : "lazy"}
             decoding="async"
