@@ -12,6 +12,7 @@ const ALLOWED_SUFFIX = [
   "twimg.com",
   "sc-cdn.net",
   "snapchat.com",
+  "instagram.com",
 ];
 
 export const Route = createFileRoute("/api/public/poster")({
