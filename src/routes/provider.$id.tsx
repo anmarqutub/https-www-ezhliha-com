@@ -407,16 +407,6 @@ function ProviderPage() {
           </div>
 
           <aside className="pv-aside">
-            <div className="pv-aside-icons">
-              <button type="button" className="pv-icon-btn" onClick={shareProvider} aria-label="مشاركة"><ShareIcon /></button>
-              <button
-                type="button"
-                className={`pv-icon-btn ${isFav ? "on" : ""}`}
-                disabled={favLoading}
-                onClick={toggleFav}
-                aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-              ><Heart size={16} fill={isFav ? "currentColor" : "none"} /></button>
-            </div>
             <div className="pv-price-bar">
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
