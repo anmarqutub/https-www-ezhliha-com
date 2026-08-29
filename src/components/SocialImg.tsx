@@ -43,7 +43,7 @@ export function SocialImg({
 
   if (!social) return <SmartImg src={src} fallback={fallback} {...rest} />;
 
-  const raws = [local, remote?.poster ?? null].filter(Boolean) as string[];
+  const raws = [local, yt ? `https://i.ytimg.com/vi/${yt}/sddefault.jpg` : null, remote?.poster ?? null, yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : null].filter(Boolean) as string[];
   const chain = raws.flatMap((u) => [proxiedImage(u), u]);
   if (fallback) chain.push(fallback);
   const current = chain[Math.min(step, chain.length - 1)];

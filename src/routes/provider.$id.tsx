@@ -1360,8 +1360,8 @@ const css3 = `
 
   /* ===== hero carousel ===== */
   .pv-hero { display:block; }
-  .pv-hero-carousel { position:relative; max-width:1440px; margin:0 auto; }
-  .pv-hero-carousel .pv-hero-main { width:100%; height:520px; border-radius:10px; }
+  .pv-hero-carousel { position:relative; max-width:1200px; margin:0 auto; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:440px; border-radius:12px; }
   .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:1px solid #E3DBC9; background:#FFFDF8; color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.14); }
   .pv-hero-arrow:hover { background:#660000; color:#fff; border-color:#660000; }
   .pv-hero-prev { right:16px; }
