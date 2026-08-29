@@ -518,12 +518,7 @@ function ProviderPage() {
                   const nImg = (sv.images ?? []).length + (sv.image_url ? 1 : 0);
                   const nVid = (sv.videos ?? []).length;
                   return (
-                    <Link
-                      className="pv-srv"
-                      key={sv.id}
-                      to="/provider/$id/service/$serviceId"
-                      params={{ id: provider.id, serviceId: sv.id }}
-                    >
+                    <article className="pv-srv" key={sv.id}>
                       <span className="pv-srv-ico"><SparkIcon /></span>
                       <h3>{sv.name}</h3>
                       {sv.price && <strong>{sv.price}</strong>}
@@ -531,9 +526,9 @@ function ProviderPage() {
                       <span className="pv-srv-meta">
                         {nImg > 0 && <em>{nImg} صورة</em>}
                         {nVid > 0 && <em>{nVid} مقطع</em>}
-                        <b>عرض التفاصيل ←</b>
                       </span>
-                    </Link>
+                    </article>
+
                   );
                 })}
               </div>
