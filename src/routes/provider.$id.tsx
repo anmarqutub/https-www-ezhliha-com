@@ -355,21 +355,12 @@ function ProviderPage() {
                 onClick={() => setActiveImg((n) => (n - 1 + heroBase.length) % heroBase.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
                 onClick={() => setActiveImg((n) => (n + 1) % heroBase.length)}><ChevronLeft size={20} /></button>
-              <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
+              <div className="pv-hero-count" dir="ltr">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="9" cy="9" r="2" /><path d="M21 15l-4.5-4.5L6 21" /></svg>
+                {(activeImg % heroBase.length) + 1} / {heroBase.length}
+              </div>
             </>
           )}
-          <div className="pv-hero-actions">
-            <button
-              type="button"
-              className={`pv-hero-act ${isFav ? "on" : ""}`}
-              disabled={favLoading}
-              onClick={toggleFav}
-              aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
-            ><Heart size={18} fill={isFav ? "currentColor" : "none"} /></button>
-            <button type="button" className="pv-hero-act" onClick={shareProvider} aria-label="مشاركة">
-              {copiedShare ? <Check size={18} /> : <ShareIcon />}
-            </button>
-          </div>
         </div>
       </section>
 
