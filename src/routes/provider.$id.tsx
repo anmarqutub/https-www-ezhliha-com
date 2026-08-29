@@ -1211,7 +1211,7 @@ const css2 = `
   .pv-crumbs { display:flex; align-items:center; justify-content:flex-start; gap:10px; flex-wrap:wrap; color:#7A6A64; font-size:12.5px; margin-bottom:10px; }
   .pv-crumb-city { display:inline-flex; align-items:center; gap:4px; }
   .pv-chip-new { background:#660000; color:#fff; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:500; }
-  .pv-head-info h1 { font-size:32px; font-weight:600; line-height:1.15; color:#241C1A; }
+  .pv-head-info h1 { font-size:40px; font-weight:800; line-height:1.2; color:#241C1A; margin:4px 0 0; }
   .pv-lead { margin:12px 0 18px; color:#5B4C46; font-size:14px; line-height:1.9; max-width:760px; }
   .pv-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
   .pv-tile { background:#FBF7EE; border:1px solid #E3DBC9; border-radius:8px; padding:14px 16px; position:relative; }
