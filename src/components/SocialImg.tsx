@@ -26,7 +26,7 @@ export function SocialImg({
   const yt = src ? getYouTubeId(src) : null;
   const local = social
     ? yt
-      ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`
+      ? `https://i.ytimg.com/vi/${yt}/maxresdefault.jpg`
       : instagramPoster(src!)
     : null;
 

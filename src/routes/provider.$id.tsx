@@ -347,14 +347,15 @@ function ProviderPage() {
             aria-label="عرض الصور"
           >
             <SocialImg src={cover} alt={provider.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.28))", pointerEvents: "none" }} />
           </button>
-          {images.length > 1 && (
+          {heroBase.length > 1 && (
             <>
               <button type="button" className="pv-hero-arrow pv-hero-prev" aria-label="السابق"
-                onClick={() => setActiveImg((n) => (n - 1 + images.length) % images.length)}><ChevronRight size={20} /></button>
+                onClick={() => setActiveImg((n) => (n - 1 + heroBase.length) % heroBase.length)}><ChevronRight size={20} /></button>
               <button type="button" className="pv-hero-arrow pv-hero-next" aria-label="التالي"
-                onClick={() => setActiveImg((n) => (n + 1) % images.length)}><ChevronLeft size={20} /></button>
-              <div className="pv-hero-count" dir="ltr">{(activeImg % images.length) + 1} / {images.length}</div>
+                onClick={() => setActiveImg((n) => (n + 1) % heroBase.length)}><ChevronLeft size={20} /></button>
+              <div className="pv-hero-count" dir="ltr">{(activeImg % heroBase.length) + 1} / {heroBase.length}</div>
             </>
           )}
         </div>
