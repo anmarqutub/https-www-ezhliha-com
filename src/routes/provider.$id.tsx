@@ -524,7 +524,6 @@ function ProviderPage() {
                     </ul>
                   )}
                   <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
-                  <span className="pv-pkg-cta">اختار هذه الباقة</span>
                 </article>
               ))}
             </div>
