@@ -106,6 +106,7 @@ function ProviderPage() {
   const sugRef = useRef<HTMLDivElement>(null);
   const brRef = useRef<HTMLDivElement>(null);
   const pkgRef = useRef<HTMLDivElement>(null);
+  const [selectedPkg, setSelectedPkg] = useState<string | null>(null);
   const scrollPkg = (dir: number) => {
     const el = pkgRef.current;
     if (el) el.scrollBy({ left: dir * Math.min(el.clientWidth, 380), behavior: "smooth" });
