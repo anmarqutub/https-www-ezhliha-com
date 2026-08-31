@@ -500,30 +500,45 @@ function ProviderPage() {
         {/* الخدمات (الباقات) */}
         <section className="pv-sec pv-sec--alt" id="s-packages">
           <div className="pv-pkg-head">
-            <button type="button" className="pv-pkg-arrow" aria-label="التالي" onClick={() => scrollPkg(-1)}><ChevronRight size={18} /></button>
-            <button type="button" className="pv-pkg-arrow" aria-label="السابق" onClick={() => scrollPkg(1)}><ChevronLeft size={18} /></button>
             <div className="pv-pkg-titles">
-              <span className="pv-eyebrow">طريقة الخدمة</span>
               <h2>الخدمات</h2>
-              <p className="pv-sec-note">اختار الأقرب، وبعدها عدّل تفاصيلك في طلب التسعيرة.</p>
+            </div>
+            <div className="pv-pkg-navs">
+              <button type="button" className="pv-pkg-arrow" aria-label="السابق" onClick={() => scrollPkg(-1)}><ChevronRight size={17} /></button>
+              <button type="button" className="pv-pkg-arrow" aria-label="التالي" onClick={() => scrollPkg(1)}><ChevronLeft size={17} /></button>
             </div>
           </div>
           {packages.length > 0 ? (
             <div className="pv-pkg-rail" ref={pkgRef}>
-              {packages.map((pkg) => (
-                <article className="pv-pkg" key={pkg.id}>
+              {packages.map((pkg, i) => (
+                <article className={"pv-pkg" + (selectedPkg === pkg.id ? " is-selected" : "")} key={pkg.id}>
+                  <span className="pv-pkg-tag">{i === 0 ? "الأكثر طلباً" : "باقة"}</span>
                   <div className="pv-pkg-top">
                     <h3>{pkg.name}</h3>
                     <strong className="pv-pkg-price">{pkg.price || "حسب تفاصيل المناسبة"}</strong>
                   </div>
                   {pkg.description && (
                     <ul className="pv-pkg-list">
-                      {pkg.description.split(/\n|،|·|-\s/).map((s) => s.trim()).filter(Boolean).slice(0, 5).map((line, k) => (
+                      {pkg.description.split(/\n|،|·|-\s/).map((s) => s.trim()).filter(Boolean).slice(0, 3).map((line, k) => (
                         <li key={k}><CheckIcon />{line}</li>
                       ))}
                     </ul>
                   )}
                   <OfferMedia images={pkg.images ?? []} videos={pkg.videos ?? []} />
+                  <button
+                    type="button"
+                    className="pv-pkg-pick"
+                    onClick={() => {
+                      setSelectedPkg(pkg.id);
+                      setQNotes((prev) => {
+                        const base = prev.replace(/^الباقة المطلوبة:.*(\n|$)/, "").trim();
+                        return `الباقة المطلوبة: ${pkg.name}${pkg.price ? ` (${pkg.price})` : ""}\n${base}`.trim();
+                      });
+                      setQuoteOpen(true);
+                    }}
+                  >
+                    {selectedPkg === pkg.id ? "تم اختيار هذه الباقة" : "اختر هذه الباقة"}
+                  </button>
                 </article>
               ))}
             </div>
