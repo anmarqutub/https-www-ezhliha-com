@@ -570,6 +570,14 @@ function ProviderPage() {
                         {nImg > 0 && <em>{nImg} صورة</em>}
                         {nVid > 0 && <em>{nVid} مقطع</em>}
                       </span>
+                      <OfferMedia
+                        images={[
+                          ...(sv.image_url ? [{ url: sv.image_url } as MediaItem] : []),
+                          ...(sv.images ?? []),
+                        ]}
+                        videos={sv.videos ?? []}
+                      />
+
                     </article>
 
                   );
