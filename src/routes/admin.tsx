@@ -354,7 +354,7 @@ function UsersTab() {
         <button
           type="button"
           onClick={() => setShowCreate(true)}
-          style={{ background: "#640000", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, cursor: "pointer" }}
+          style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700, cursor: "pointer" }}
         >
           + إضافة أدمن جديد
         </button>
@@ -534,9 +534,9 @@ function UsersTab() {
                           type="button"
                           onClick={() => handleToggleRole(u)}
                           style={{
-                            background: isAdmin ? "#fff" : "#640000",
-                            color: isAdmin ? "#640000" : "#fff",
-                            border: "1px solid #640000",
+                            background: isAdmin ? "#fff" : "#660000",
+                            color: isAdmin ? "#660000" : "#fff",
+                            border: "1px solid #660000",
                             borderRadius: 6,
                             padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
                           }}
@@ -562,7 +562,7 @@ function UsersTab() {
                           onClick={() => handleSendReset(u)}
                           title="إرسال رابط إعادة تعيين كلمة المرور للمستخدم"
                           style={{
-                            background: "#fff", color: "#640000", border: "1px solid #640000",
+                            background: "#fff", color: "#660000", border: "1px solid #660000",
                             borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
                           }}
                         >
@@ -611,7 +611,7 @@ function UsersTab() {
             <label style={{ fontSize: 13, fontWeight: 600 }}>المدينة (اختياري)
               <input value={newAdmin.city} onChange={(e) => setNewAdmin({ ...newAdmin, city: e.target.value })} style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd", marginTop: 4 }} />
             </label>
-            <button type="submit" disabled={creating} style={{ background: "#640000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px", fontWeight: 700, cursor: creating ? "wait" : "pointer", marginTop: 4 }}>
+            <button type="submit" disabled={creating} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px", fontWeight: 700, cursor: creating ? "wait" : "pointer", marginTop: 4 }}>
               {creating ? "جارٍ الإنشاء..." : "إنشاء الأدمن"}
             </button>
           </form>
@@ -1569,7 +1569,7 @@ function MediaListEditor({
                   {it.thumbnail_url ? "▶" : "فيديو"}
                 </div>
               )}
-              <a href={it.url} target="_blank" rel="noopener noreferrer" dir="ltr" style={{ fontSize: 11, color: "#640000", textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.url}</a>
+              <a href={it.url} target="_blank" rel="noopener noreferrer" dir="ltr" style={{ fontSize: 11, color: "#660000", textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.url}</a>
               {kind === "video" && (
                 <input
                   value={it.thumbnail_url ?? ""}
@@ -2090,7 +2090,7 @@ function ProvidersTab() {
                     placeholder="https://www.instagram.com/p/..."
                     style={{ flex: 1 }}
                   />
-                  <button type="button" onClick={addSocialImage} style={{ background: "#640000", color: "#fff", border: "none", borderRadius: 8, padding: "0 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>إضافة الرابط</button>
+                  <button type="button" onClick={addSocialImage} style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "0 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>إضافة الرابط</button>
                 </div>
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(120px,1fr))", gap: 10, marginTop: 12 }}>
@@ -2130,7 +2130,7 @@ function ProvidersTab() {
               {uploadingVideo && <p style={{ marginTop: 8, fontSize: 13 }}>جارٍ الرفع...</p>}
               {editing.video_url && (
                 <div style={{ marginTop: 12, display: "flex", gap: 10, alignItems: "center" }}>
-                  <a href={editing.video_url} target="_blank" rel="noopener noreferrer" style={{ color: "#640000", fontSize: 13, fontWeight: 600, textDecoration: "underline", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", direction: "ltr" }}>{editing.video_url}</a>
+                  <a href={editing.video_url} target="_blank" rel="noopener noreferrer" style={{ color: "#660000", fontSize: 13, fontWeight: 600, textDecoration: "underline", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", direction: "ltr" }}>{editing.video_url}</a>
                   <button type="button" onClick={async () => { await supabase.from("providers").update({ video_url: null }).eq("id", editing.id!); logActivity("delete_video", "provider", editing.id!, { name: editing.name }); setEditing({ ...editing, video_url: null }); reload(); }} style={{ background: "rgba(220,30,30,0.9)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>حذف الفيديو</button>
                 </div>
               )}
@@ -2524,11 +2524,11 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "footer.contact.title", label: "الفوتر — عنوان تواصل معنا", value: "تواصل معنا", updated_at: "" },
   { key: "footer.email", label: "الفوتر — الإيميل", value: "admin@ezhliha.com", updated_at: "" },
   { key: "footer.motto", label: "الفوتر — العبارة السفلية", value: "صُممت لتجعل قرار المناسبة أسهل.", updated_at: "" },
-  { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Tajawal", updated_at: "" },
+  { key: "site.font_family", label: "خط الموقع (اختر من القائمة)", value: "Thmanyah Serif Display", updated_at: "" },
 ];
 
 const FONT_OPTIONS = [
-  "Tajawal", "Cairo", "Almarai", "Amiri", "Reem Kufi Fun",
+  "Thmanyah Serif Display", "Tajawal", "Cairo", "Almarai", "Amiri", "Reem Kufi Fun",
   "Noto Kufi Arabic", "Changa", "El Messiri", "Rakkas",
 ];
 
@@ -2805,7 +2805,7 @@ function fmt(iso: string) {
 }
 
 const pageStyle: React.CSSProperties = {
-  minHeight: "100vh", background: "#FAF6F2", fontFamily: "Tajawal, system-ui, sans-serif", color: "#1A1A1A",
+  minHeight: "100vh", background: "#e6e4d7", fontFamily: "Thmanyah Serif Display, Tajawal, system-ui, sans-serif", color: "#1A1A1A",
 };
 const loadingStyle: React.CSSProperties = { ...pageStyle, display: "flex", alignItems: "center", justifyContent: "center" };
 const filterBarStyle: React.CSSProperties = { display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", padding: "10px 12px", background: "#fafafa", border: "1px solid #eee", borderRadius: 8, marginBottom: 12 };
@@ -3141,8 +3141,8 @@ function CodesTab() {
   }
 
   return (
-    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#640000", marginBottom: 16 }}>
+    <div dir="rtl" style={{ fontFamily: "Thmanyah Serif Display, Tajawal, system-ui, sans-serif" }}>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#660000", marginBottom: 16 }}>
         أكواد الشراء — {codes.length} كود (متاح: {unusedCount})
       </h2>
 
@@ -3155,17 +3155,17 @@ function CodesTab() {
           ملاحظة (اختياري)
           <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثال: دفعة سلة يناير" style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
         </label>
-        <button disabled={busy} style={{ background: "#640000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+        <button disabled={busy} style={{ background: "#660000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
           {busy ? "..." : "توليد"}
         </button>
-        <button type="button" onClick={copyAll} style={{ background: "#fff", color: "#640000", border: "2px solid #640000", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+        <button type="button" onClick={copyAll} style={{ background: "#fff", color: "#660000", border: "2px solid #660000", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
           نسخ غير المستخدمة
         </button>
       </form>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         {(["all", "unused", "used"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} style={{ padding: "6px 14px", borderRadius: 50, border: "1px solid #640000", background: filter === f ? "#640000" : "#fff", color: filter === f ? "#fff" : "#640000", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+          <button key={f} onClick={() => setFilter(f)} style={{ padding: "6px 14px", borderRadius: 50, border: "1px solid #660000", background: filter === f ? "#660000" : "#fff", color: filter === f ? "#fff" : "#660000", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
             {f === "all" ? "الكل" : f === "unused" ? "غير مستخدم" : "مستخدم"}
           </button>
         ))}
@@ -3296,8 +3296,8 @@ function SallaOrdersTab() {
   }
 
   return (
-    <div dir="rtl" style={{ fontFamily: "Tajawal, system-ui, sans-serif" }}>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#640000", marginBottom: 16 }}>
+    <div dir="rtl" style={{ fontFamily: "Thmanyah Serif Display, Tajawal, system-ui, sans-serif" }}>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: "#660000", marginBottom: 16 }}>
         طلبات سلة — {orders.length} طلب
       </h2>
 
@@ -3319,7 +3319,7 @@ function SallaOrdersTab() {
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd" }} />
         </label>
         <div style={{ display: "flex", alignItems: "end" }}>
-          <button disabled={busy} style={{ background: "#640000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer", width: "100%" }}>
+          <button disabled={busy} style={{ background: "#660000", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer", width: "100%" }}>
             {busy ? "..." : "توليد كود وحفظ"}
           </button>
         </div>
@@ -3340,7 +3340,7 @@ function SallaOrdersTab() {
 
       <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="بحث بالاسم/الجوال/رقم الطلب/الكود..." style={{ padding: 8, borderRadius: 6, border: "1px solid #ddd", flex: 1, minWidth: 200 }} />
-        <button onClick={exportCSV} style={{ background: "#fff", color: "#640000", border: "2px solid #640000", padding: "8px 18px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>تصدير CSV</button>
+        <button onClick={exportCSV} style={{ background: "#fff", color: "#660000", border: "2px solid #660000", padding: "8px 18px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>تصدير CSV</button>
       </div>
 
       <div style={{ background: "#fff", borderRadius: 12, overflow: "auto", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
