@@ -99,7 +99,7 @@ export async function buildTemplateWorkbook(opts?: { providerIds?: string[] }): 
   lines.forEach((t, i) => {
     const row = info.addRow([t]);
     row.getCell(1).alignment = { wrapText: true, horizontal: "right" };
-    if (i === 0) row.getCell(1).font = { bold: true, size: 14, color: { argb: "FF660000" } };
+    if (i === 0) row.getCell(1).font = { bold: true, size: 14, color: { argb: "FF640000" } };
   });
 
   // ---------- Lists sheet ----------

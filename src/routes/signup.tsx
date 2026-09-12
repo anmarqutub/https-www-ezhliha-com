@@ -188,7 +188,7 @@ const shellStyle: React.CSSProperties = {
 };
 
 export const authCss = `
-  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(102,0,0,0.15); }
+  .auth-card { background:#fff; border-radius:18px; padding:40px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(100,0,0,0.15); }
   .auth-brand { display:block; text-align:center; text-decoration:none; margin-bottom:24px; }
   .auth-title { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; font-size:24px; font-weight:700; color:#2A211C; text-align:center; margin-bottom:6px; }
   .auth-sub { font-size:14px; color:#555; text-align:center; margin-bottom:24px; }
