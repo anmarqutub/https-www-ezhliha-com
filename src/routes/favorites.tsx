@@ -115,19 +115,19 @@ function FavoritesPage() {
 }
 
 const css = `
-  .fav-root { min-height:100vh; background:#e6e4d7; font-family:"Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:#2A211C; font-size:13.5px; line-height:1.75; }
-  .fav-root h1, .fav-root h2, .fav-root h3, .fav-root button { font-family:"Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
+  .fav-root { min-height:100vh; background:#e6e4d7; font-family:"Thmanyah Serif Display", "Noto Sans Arabic", Tajawal, system-ui, sans-serif; color:#2A211C; font-size:13.5px; line-height:1.75; }
+  .fav-root h1, .fav-root h2, .fav-root h3, .fav-root button { font-family:"Thmanyah Serif Display","Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .fav-nav { background:#fff; border-bottom:1px solid #d8d4c0; padding:0 24px; height:72px; display:flex; align-items:center; justify-content:space-between; }
   .fav-brand img { height:54px; }
   .fav-nav-menu { display:flex; gap:16px; align-items:center; }
   .fav-nav-actions { display:flex; gap:12px; align-items:center; }
   .fav-link { color:#000; text-decoration:none; font-weight:600; font-size:14px; }
   .fav-user { font-size:12px; color:#555; }
-  .fav-btn-out { background:transparent; color:#640000; border:1px solid #640000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .fav-btn-out { background:transparent; color:#660000; border:1px solid #660000; padding:7px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
   .fav-main { max-width:1200px; margin:0 auto; padding:24px; }
-  .fav-main h1 { font-size:26px; font-weight:900; margin-bottom:20px; color:#640000; }
+  .fav-main h1 { font-size:26px; font-weight:900; margin-bottom:20px; color:#660000; }
   .fav-empty { text-align:center; color:#555; padding:50px; font-size:15px; }
-  .fav-empty a { color:#640000; font-weight:700; }
+  .fav-empty a { color:#660000; font-weight:700; }
   .fav-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
   .fav-card { background:#fff; border:1px solid #d8d4c0; border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
   .fav-card-link { text-decoration:none; color:inherit; flex:1; }
@@ -137,7 +137,7 @@ const css = `
   .fav-meta { font-size:12px; color:#555; margin-bottom:8px; display:flex; gap:6px; flex-wrap:wrap; }
   .fav-body p { font-size:13px; color:#555; line-height:1.6; }
   .fav-foot { padding:0 14px 14px; display:flex; gap:8px; }
-  .fav-wa { flex:1; background:transparent; color:#640000; padding:9px; border-radius:0; text-align:center; text-decoration:none; font-weight:800; font-size:13px; }
+  .fav-wa { flex:1; background:transparent; color:#660000; padding:9px; border-radius:0; text-align:center; text-decoration:none; font-weight:800; font-size:13px; }
   .fav-wa:hover { text-decoration:underline; text-underline-offset:4px; }
   .fav-remove { background:transparent; color:#a01919; border:1px solid #f5d5d5; border-radius:8px; padding:9px 14px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; }
   .fav-remove:hover { background:#fdf0f0; }
