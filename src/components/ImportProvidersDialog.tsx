@@ -570,7 +570,7 @@ export function ImportProvidersDialog({
               disabled={downloading}
               style={{
                 display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px",
-                background: "#640000", color: "#fff", border: "none", borderRadius: 10,
+                background: "#660000", color: "#fff", border: "none", borderRadius: 10,
                 fontWeight: 700, fontSize: 13, cursor: downloading ? "wait" : "pointer",
                 opacity: downloading ? 0.7 : 1,
               }}
@@ -669,5 +669,5 @@ export function ImportProvidersDialog({
 
 const th: React.CSSProperties = { padding: 8, textAlign: "right", borderBottom: "1px solid #ddd", fontWeight: 700 };
 const td: React.CSSProperties = { padding: 6, borderBottom: "1px solid #f0f0f0" };
-const btnPrimary: React.CSSProperties = { background: "#640000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontWeight: 700, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "#fff", color: "#640000", border: "1px solid #640000", borderRadius: 8, padding: "10px 18px", fontWeight: 700, cursor: "pointer" };
+const btnPrimary: React.CSSProperties = { background: "#660000", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontWeight: 700, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { background: "#fff", color: "#660000", border: "1px solid #660000", borderRadius: 8, padding: "10px 18px", fontWeight: 700, cursor: "pointer" };
