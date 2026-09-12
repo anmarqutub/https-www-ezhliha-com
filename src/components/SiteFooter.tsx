@@ -85,13 +85,13 @@ const footerCss = `
   .ez-footer-grid { max-width:1240px; margin:0 auto; padding:52px 32px 44px; display:grid; grid-template-columns:1.2fr .8fr .9fr; gap:36px; }
   .ez-footer-brand { max-width:400px; }
   .ez-footer-brand img { height:64px; width:auto; object-fit:contain; background:#fff; border-radius:8px; padding:6px 10px; }
-  .ez-footer-brand p { color:rgba(255,255,255,.72); font-size:13.5px; line-height:1.95; margin:16px 0 0; }
+  .ez-footer-brand p { color:#fff; font-size:13.5px; line-height:1.95; margin:16px 0 0; }
   .ez-footer-col h3 { font-size:14px; font-weight:500; margin:0; color:#fff; }
-  .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:rgba(255,255,255,.7); }
+  .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:#fff; }
   .ez-footer-links > * { display:inline-flex; align-items:center; gap:8px; text-align:start; }
-  .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:rgba(255,255,255,.7); text-decoration:none; font-family:inherit; font-size:13.5px; }
+  .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:#fff; text-decoration:none; font-family:inherit; font-size:13.5px; }
   .ez-footer-links a:hover, .ez-footer-links button:hover { color:#fff; }
   .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; }
-  .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); max-width:1240px; margin:0 auto; padding:18px 32px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:12px; color:rgba(255,255,255,.55); }
+  .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); max-width:1240px; margin:0 auto; padding:18px 32px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:12px; color:#fff; }
   @media (max-width: 860px) { .ez-footer-grid { grid-template-columns:1fr; padding:36px 20px 28px; } .ez-footer-bar { padding:16px 20px; } }
 `;
