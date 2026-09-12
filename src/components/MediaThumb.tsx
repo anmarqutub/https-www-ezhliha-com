@@ -127,7 +127,7 @@ export function MediaThumb({
         .mt-tile { position:relative; display:block; width:100%; height:100%; padding:0; border:0; background:#F1E9DA; cursor:pointer; }
         .mt-tile img, .mt-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
         .mt-empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#8A7A70; font-size:13px; }
-        .mt-play { position:absolute; inset:0; margin:auto; width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.94); color:#640000; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(0,0,0,0.22); }
+        .mt-play { position:absolute; inset:0; margin:auto; width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.94); color:#660000; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(0,0,0,0.22); }
       `}</style>
     </figure>
   );
