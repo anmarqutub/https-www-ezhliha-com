@@ -1439,7 +1439,7 @@ const css3 = `
   .pv-price-bar { background:#FFFDF8; border:1px solid #E3DBC9; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:14px; }
   .pv-price-out small { display:block; color:#8A7A73; font-size:12px; margin-bottom:4px; }
   .pv-price-out strong { display:block; color:#3A2A24; font-size:19px; font-weight:700; line-height:1.6; }
-  .pv-quote-eyebrow { display:block; color:#8B1A1A; font-size:12.5px; font-weight:600; margin-bottom:8px; }
+  .pv-quote-eyebrow { display:block; color:#660000; font-size:12.5px; font-weight:600; margin-bottom:8px; }
   .pv-quote-sub { margin:8px 0 0; color:#8A7A73; font-size:13px; line-height:1.85; }
 
   .pv-price-cta { display:flex; align-items:stretch; gap:10px; }

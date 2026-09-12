@@ -585,7 +585,7 @@ export function ImportProvidersDialog({
           style={{
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
             gap: 6, padding: "22px 14px", border: "2px dashed #C47A7A", borderRadius: 12,
-            background: "#FAF6F2", cursor: "pointer", color: "#6B1F1F", textAlign: "center",
+            background: "#FAF6F2", cursor: "pointer", color: "#660000", textAlign: "center",
             marginBottom: 14,
           }}
         >

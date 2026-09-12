@@ -170,8 +170,8 @@ function AdminServicesImportPage() {
 
   return (
     <div dir="rtl" style={{ maxWidth: 980, margin: "0 auto", padding: "28px 16px 60px" }}>
-      <Link to="/admin" style={{ color: "#7b1e3c", fontSize: 13.5 }}>→ رجوع للوحة التحكم</Link>
-      <h1 style={{ fontSize: 22, margin: "12px 0 6px", color: "#7b1e3c" }}>رفع ملف الخدمات</h1>
+      <Link to="/admin" style={{ color: "#660000", fontSize: 13.5 }}>→ رجوع للوحة التحكم</Link>
+      <h1 style={{ fontSize: 22, margin: "12px 0 6px", color: "#660000" }}>رفع ملف الخدمات</h1>
       <p style={{ fontSize: 13.5, color: "#6b6259", lineHeight: 1.9, margin: "0 0 18px" }}>
         ارفع ملف إكسل يحتوي ورقة باسم «الخدمات» بالأعمدة: اسم المزود · مدينة المزود · اسم الخدمة · وصف الخدمة · سعر
         الخدمة · الترتيب. بعد الرفع تتحدّث وسوم الخدمات (المربعات الصغيرة) داخل بطاقات مقدمي الخدمة تلقائيًا.
@@ -181,7 +181,7 @@ function AdminServicesImportPage() {
         style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
           border: "1.5px dashed #d9cbbd", borderRadius: 10, padding: "26px 16px",
-          background: "#fdfaf6", cursor: "pointer", fontSize: 14, color: "#7b1e3c",
+          background: "#fdfaf6", cursor: "pointer", fontSize: 14, color: "#660000",
         }}
       >
         📄 {fileName || "اختر ملف الإكسل (xlsx)"}
@@ -240,7 +240,7 @@ function AdminServicesImportPage() {
             disabled={busy || stats.ok === 0}
             style={{
               marginTop: 16, height: 44, padding: "0 26px", borderRadius: 6, border: "none",
-              background: stats.ok === 0 ? "#c9b8a8" : "#7b1e3c", color: "#fff", fontSize: 14,
+              background: stats.ok === 0 ? "#c9b8a8" : "#660000", color: "#fff", fontSize: 14,
               cursor: stats.ok === 0 ? "not-allowed" : "pointer",
             }}
           >

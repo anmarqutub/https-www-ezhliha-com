@@ -198,16 +198,16 @@ export const authCss = `
     border:1px solid #E8DADA; border-radius:10px; padding:11px 14px;
     font-family:inherit; font-size:14px; color:#1A1A1A; background:#FAF6F2; outline:none; transition:border-color .2s;
   }
-  .auth-field input:focus, .auth-field select:focus { border-color:#6B1F1F; background:#fff; }
+  .auth-field input:focus, .auth-field select:focus { border-color:#660000; background:#fff; }
   .auth-btn {
-    margin-top:6px; background:#6B1F1F; color:#fff; border:none; border-radius:50px;
+    margin-top:6px; background:#660000; color:#fff; border:none; border-radius:50px;
     padding:13px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; transition:background .2s;
   }
-  .auth-btn:hover { background:#4A1414; }
+  .auth-btn:hover { background:#4D0000; }
   .auth-btn:disabled { opacity:.6; cursor:not-allowed; }
   .auth-error { background:#fde8e8; color:#7a1a1a; padding:10px 14px; border-radius:8px; font-size:13px; }
   .auth-switch { text-align:center; font-size:14px; color:#5A4A4A; margin-top:8px; }
   .auth-field-hint { font-size:11.5px; color:#9A8A8A; font-weight:500; margin-top:2px; }
   .auth-field-error { font-size:11.5px; color:#B01818; font-weight:600; margin-top:2px; }
-  .auth-switch a { color:#6B1F1F; font-weight:700; text-decoration:none; }
+  .auth-switch a { color:#660000; font-weight:700; text-decoration:none; }
 `;

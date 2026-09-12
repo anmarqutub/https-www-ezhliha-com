@@ -946,7 +946,7 @@ function DashboardTab() {
       {/* KPI Section: Users */}
       <h3 className="adm-section-h">المستخدمات</h3>
       <div className="adm-stats">
-        <StatCard label="إجمالي المستخدمات" value={d.totalUsers} hint={`${d.emailConfirmed} مفعّلات`} color="#6B1F1F" />
+        <StatCard label="إجمالي المستخدمات" value={d.totalUsers} hint={`${d.emailConfirmed} مفعّلات`} color="#660000" />
         <StatCard label="جديدات (آخر 7 أيام)" value={d.newUsers7d} hint={`${d.newUsers30d} في 30 يوم`} color="#2E7D32" />
         <StatCard label="عدد الأدمن" value={d.adminsCount} color="#5A4A4A" />
         <StatCard label="إجمالي المفضلات" value={d.favoritesTotal} hint="عدد الإضافات للمفضلة" color="#C47A7A" />
@@ -955,7 +955,7 @@ function DashboardTab() {
       {/* KPI Section: Catalog */}
       <h3 className="adm-section-h">الكتالوج</h3>
       <div className="adm-stats">
-        <StatCard label="مقدمو الخدمة" value={d.providersTotal} hint={`${d.providersActive} نشط · ${d.providersFeatured} مميز`} color="#6B1F1F" />
+        <StatCard label="مقدمو الخدمة" value={d.providersTotal} hint={`${d.providersActive} نشط · ${d.providersFeatured} مميز`} color="#660000" />
         <StatCard label="مقدمو خدمة جدد (7 أيام)" value={d.providersNew7d} color="#2E7D32" />
         <StatCard label="المدن" value={d.citiesTotal} hint={`${d.citiesActive} نشطة`} color="#5A4A4A" />
         <StatCard label="التصنيفات" value={d.categoriesTotal} hint={`${d.subcategoriesTotal} تصنيف فرعي`} color="#5A4A4A" />
@@ -965,7 +965,7 @@ function DashboardTab() {
       {/* KPI Section: Engagement */}
       <h3 className="adm-section-h">التفاعل والمبيعات</h3>
       <div className="adm-stats">
-        <StatCard label="إجمالي التقييمات" value={d.reviewsTotal} hint={`${d.reviews7d} في آخر 7 أيام`} color="#6B1F1F" />
+        <StatCard label="إجمالي التقييمات" value={d.reviewsTotal} hint={`${d.reviews7d} في آخر 7 أيام`} color="#660000" />
         <StatCard label="متوسط التقييم" value={d.reviewsTotal ? `${d.reviewsAvg.toFixed(1)} ★` : "—"} color="#E8A317" />
         <StatCard label="الأجهزة المسجلة" value={d.devicesTotal} hint={`${d.devicesPending} بانتظار الموافقة`} color="#5A4A4A" />
         <StatCard label="المستخدمات المعلّقة" value={d.suspendedUsers} color={d.suspendedUsers > 0 ? "#C47A7A" : "#2E7D32"} />
@@ -981,7 +981,7 @@ function DashboardTab() {
               <div style={{
                 width: "100%",
                 height: `${(s.count / maxSignup) * 90}px`,
-                background: s.count ? "linear-gradient(180deg,#C47A7A,#6B1F1F)" : "#F0E5E5",
+                background: s.count ? "linear-gradient(180deg,#C47A7A,#660000)" : "#F0E5E5",
                 borderRadius: "6px 6px 0 0",
                 minHeight: 4,
               }} />
@@ -1056,12 +1056,12 @@ function DashboardTab() {
 function StatCard({ label, value, hint, color, progress }: { label: string; value: number | string; hint?: string; color?: string; progress?: number }) {
   return (
     <div className="adm-stat">
-      <div className="adm-stat-num" style={{ color: color ?? "#6B1F1F" }}>{value}</div>
+      <div className="adm-stat-num" style={{ color: color ?? "#660000" }}>{value}</div>
       <div className="adm-stat-label">{label}</div>
       {hint && <div style={{ fontSize: 11, color: "#9A8A8A", marginTop: 6 }}>{hint}</div>}
       {typeof progress === "number" && (
         <div style={{ marginTop: 10, height: 6, background: "#F0E5E5", borderRadius: 4, overflow: "hidden" }}>
-          <div style={{ width: `${Math.min(100, progress)}%`, height: "100%", background: color ?? "#6B1F1F" }} />
+          <div style={{ width: `${Math.min(100, progress)}%`, height: "100%", background: color ?? "#660000" }} />
         </div>
       )}
     </div>
@@ -1087,7 +1087,7 @@ function RankCard({ title, rows, empty }: { title: string; rows: { label: string
                 }}>{i + 1}</span>
                 <span style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</span>
               </div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#6B1F1F", whiteSpace: "nowrap" }}>{r.value}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#660000", whiteSpace: "nowrap" }}>{r.value}</span>
               
             </div>
           ))}
@@ -1565,7 +1565,7 @@ function MediaListEditor({
               {kind === "image" ? (
                 <img src={it.url} alt="" style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 6 }} />
               ) : (
-                <div style={{ width: "100%", height: 100, borderRadius: 6, background: it.thumbnail_url ? `url(${it.thumbnail_url}) center/cover` : "#F2E6E6", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B1F1F", fontSize: 12, fontWeight: 700 }}>
+                <div style={{ width: "100%", height: 100, borderRadius: 6, background: it.thumbnail_url ? `url(${it.thumbnail_url}) center/cover` : "#F2E6E6", display: "flex", alignItems: "center", justifyContent: "center", color: "#660000", fontSize: 12, fontWeight: 700 }}>
                   {it.thumbnail_url ? "▶" : "فيديو"}
                 </div>
               )}
@@ -2158,7 +2158,7 @@ function ProvidersTab() {
                     <div key={pkg.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
                       <div>
                         <strong>{pkg.name}</strong>
-                        {pkg.price && <span style={{ color: "#6B1F1F", fontWeight: 700, marginInlineStart: 8 }}>{pkg.price}</span>}
+                        {pkg.price && <span style={{ color: "#660000", fontWeight: 700, marginInlineStart: 8 }}>{pkg.price}</span>}
                         {pkg.description && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>{pkg.description}</div>}
                       </div>
                       <div>
@@ -2234,7 +2234,7 @@ function ProvidersTab() {
                     <div key={row.id} style={{ border: "1px solid #F0E5E5", borderRadius: 10, padding: 12, display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center" }}>
                       <div>
                         <strong>{row.name}</strong>
-                        {row.price && <span style={{ color: "#6B1F1F", fontWeight: 700, marginInlineStart: 8 }}>{row.price}</span>}
+                        {row.price && <span style={{ color: "#660000", fontWeight: 700, marginInlineStart: 8 }}>{row.price}</span>}
                         {row.description && <div style={{ fontSize: 12, color: "#5A4A4A", marginTop: 4 }}>{row.description}</div>}
                       </div>
                       <div>
@@ -2574,7 +2574,7 @@ function SiteTextsTab() {
           className="adm-btn-primary"
           disabled={saving || loading}
           onClick={saveAll}
-          style={{ background: "#6B1226", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 800, fontSize: 15, cursor: saving ? "not-allowed" : "pointer", opacity: saving || loading ? 0.7 : 1 }}
+          style={{ background: "#660000", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 800, fontSize: 15, cursor: saving ? "not-allowed" : "pointer", opacity: saving || loading ? 0.7 : 1 }}
         >
           {saving ? "جارٍ الحفظ..." : dirty ? "حفظ جميع التغييرات" : "حفظ الكل"}
         </button>
@@ -2742,7 +2742,7 @@ function FileInput({ accept, multiple, disabled, onChange, label }: {
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       gap: 6, padding: "18px 12px", border: "2px dashed #C47A7A", borderRadius: 10,
       background: "#FAF6F2", cursor: disabled ? "not-allowed" : "pointer",
-      color: "#6B1F1F", fontSize: 13, fontWeight: 600, textAlign: "center",
+      color: "#660000", fontSize: 13, fontWeight: 600, textAlign: "center",
       opacity: disabled ? 0.6 : 1,
     }}>
       <span style={{ fontSize: 26 }}>📎</span>
@@ -2812,29 +2812,29 @@ const filterBarStyle: React.CSSProperties = { display: "flex", flexWrap: "wrap",
 const filterInputStyle: React.CSSProperties = { padding: "6px 10px", borderRadius: 6, border: "1px solid #ddd", fontSize: 13, background: "#fff", fontFamily: "inherit" };
 
 const adminCss = `
-  .adm-nav { background:#fff; border-bottom:1px solid #E8DADA; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(107,31,31,0.06); }
+  .adm-nav { background:#fff; border-bottom:1px solid #E8DADA; padding:0 24px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(102,0,0,0.06); }
   .adm-brand { text-decoration:none; }
-  .adm-brand-name { font-size:20px; font-weight:900; color:#6B1F1F; }
+  .adm-brand-name { font-size:20px; font-weight:900; color:#660000; }
   .adm-brand-en { font-size:9px; letter-spacing:5px; color:#C47A7A; }
   .adm-nav-right { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .adm-link { color:#5A4A4A; text-decoration:none; font-size:13px; }
-  .adm-link:hover { color:#6B1F1F; }
+  .adm-link:hover { color:#660000; }
   .adm-user { font-size:12px; color:#5A4A4A; }
-  .adm-logout { background:#fff; color:#6B1F1F; border:1px solid #6B1F1F; border-radius:50px; padding:6px 14px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
-  .adm-logout:hover { background:#6B1F1F; color:#fff; }
+  .adm-logout { background:#fff; color:#660000; border:1px solid #660000; border-radius:50px; padding:6px 14px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+  .adm-logout:hover { background:#660000; color:#fff; }
 
   .adm-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 64px); }
   .adm-side { background:#fff; border-left:1px solid #E8DADA; padding:20px 12px; display:flex; flex-direction:column; gap:4px; }
   .adm-side-group { font-size:11px; color:#9A8A8A; padding:14px 12px 6px; letter-spacing:2px; font-weight:700; }
   .adm-side-btn { background:transparent; border:none; text-align:right; padding:10px 14px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:14px; color:#5A4A4A; transition:all .2s; }
-  .adm-side-btn:hover { background:#FAF6F2; color:#6B1F1F; }
-  .adm-side-btn.active { background:#6B1F1F; color:#fff; font-weight:700; }
+  .adm-side-btn:hover { background:#FAF6F2; color:#660000; }
+  .adm-side-btn.active { background:#660000; color:#fff; font-weight:700; }
   .adm-content { padding:32px; max-width:100%; overflow-x:auto; }
 
   .adm-title { font-size:26px; font-weight:900; color:#1A1A1A; margin-bottom:20px; }
   .adm-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:32px; }
   .adm-stat { background:#fff; border:1px solid #E8DADA; border-radius:14px; padding:20px; }
-  .adm-stat-num { font-size:32px; font-weight:900; color:#6B1F1F; }
+  .adm-stat-num { font-size:32px; font-weight:900; color:#660000; }
   .adm-stat-label { font-size:13px; color:#5A4A4A; margin-top:4px; }
   .adm-card { background:#fff; border:1px solid #E8DADA; border-radius:14px; padding:20px; }
   .adm-empty { color:#5A4A4A; font-size:14px; text-align:center; padding:30px; }
@@ -2847,18 +2847,18 @@ const adminCss = `
   .adm-table tr:hover td { background:#FCFAF8; }
 
   .adm-badge { display:inline-block; padding:3px 10px; border-radius:50px; background:#F0E8E0; color:#5A4A4A; font-size:12px; font-weight:600; }
-  .adm-badge-admin { background:#6B1F1F; color:#fff; }
+  .adm-badge-admin { background:#660000; color:#fff; }
   .adm-badge-on { background:#d4f5d4; color:#2a6e2a; }
 
   .adm-pill { background:#F0E8E0; border:none; padding:5px 12px; border-radius:50px; font-family:inherit; font-size:12px; cursor:pointer; color:#5A4A4A; }
   .adm-pill.on { background:#D4AF37; color:#fff; font-weight:700; }
 
-  .adm-btn-primary { background:#6B1F1F; color:#fff; border:none; padding:10px 22px; border-radius:8px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
-  .adm-btn-primary:hover { background:#4A1414; }
+  .adm-btn-primary { background:#660000; color:#fff; border:none; padding:10px 22px; border-radius:8px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+  .adm-btn-primary:hover { background:#4D0000; }
   .adm-btn-primary:disabled { background:#999; cursor:not-allowed; }
   .adm-btn-secondary { background:#fff; color:#5A4A4A; border:1px solid #E8DADA; padding:10px 22px; border-radius:8px; font-family:inherit; font-size:14px; cursor:pointer; }
   .adm-section-h { font-size:13px; font-weight:700; color:#9A8A8A; letter-spacing:2px; margin:8px 0 12px; }
-  .adm-btn-sm { background:#fff; color:#6B1F1F; border:1px solid #E8DADA; padding:5px 11px; border-radius:6px; font-family:inherit; font-size:12px; cursor:pointer; margin:0 2px; }
+  .adm-btn-sm { background:#fff; color:#660000; border:1px solid #E8DADA; padding:5px 11px; border-radius:6px; font-family:inherit; font-size:12px; cursor:pointer; margin:0 2px; }
   .adm-btn-sm:hover { background:#FAF6F2; }
   .adm-btn-danger { color:#a01919; border-color:#f5d5d5; }
   .adm-btn-danger:hover { background:#fdf0f0; }
