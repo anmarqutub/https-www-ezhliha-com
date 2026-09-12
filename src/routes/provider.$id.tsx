@@ -487,11 +487,6 @@ function ProviderPage() {
               <div className="pv-chips">
                 {subName && <span>{subName}</span>}
                 {cityName && <span>خدمة في {cityName}</span>}
-                {(provider.people_from || provider.people_to) && (
-                  <span>
-                    {`مناسب لـ ${provider.people_from ?? ""}${provider.people_from && provider.people_to ? "–" : ""}${provider.people_to ?? ""} شخص`}
-                  </span>
-                )}
                 <span>قابل للتخصيص</span>
               </div>
             </div>
