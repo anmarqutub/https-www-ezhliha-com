@@ -213,12 +213,12 @@ function ServiceDetailPage() {
 
       <style>{`
         .sv-wrap { max-width:1180px; margin:0 auto; padding:26px 18px 70px; }
-        .sv-back { display:inline-block; color:#660000; font-size:13.5px; margin-bottom:14px; text-decoration:none; }
+        .sv-back { display:inline-block; color:#640000; font-size:13.5px; margin-bottom:14px; text-decoration:none; }
         .sv-cols { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:26px; align-items:start; }
         .sv-head { border-bottom:1px solid #EBE2D2; padding-bottom:18px; margin-bottom:22px; }
         .sv-eyebrow { color:#9A8878; font-size:12.5px; }
         .sv-head h1 { font-size:26px; margin:6px 0 8px; color:#241C1A; }
-        .sv-price { display:block; color:#660000; font-size:15px; margin-bottom:8px; }
+        .sv-price { display:block; color:#640000; font-size:15px; margin-bottom:8px; }
         .sv-desc { color:#6F615A; font-size:14px; line-height:1.9; margin:0; max-width:760px; }
         .sv-sec { margin-top:26px; }
         .sv-sec h2 { font-size:17px; color:#241C1A; margin:0 0 12px; }
@@ -229,11 +229,11 @@ function ServiceDetailPage() {
         .sv-quote-eyebrow { color:#9A8878; font-size:12.5px; }
         .sv-quote-card strong { display:block; font-size:18px; color:#241C1A; margin:6px 0 8px; font-weight:600; }
         .sv-quote-card p { margin:0 0 14px; color:#7A6A64; font-size:13px; line-height:1.8; }
-        .sv-btn-quote { background:#660000; color:#fff; border:none; width:100%; min-height:44px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 24px rgba(102,0,0,.18); }
+        .sv-btn-quote { background:#640000; color:#fff; border:none; width:100%; min-height:44px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13.5px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 24px rgba(100,0,0,.18); }
         .sv-overlay { position:fixed; inset:0; background:rgba(20,12,10,.55); display:flex; align-items:center; justify-content:center; z-index:60; padding:16px; }
         .sv-quote { background:#FFFDF8; border-radius:18px; padding:22px; width:min(560px,94vw); max-height:92vh; overflow:auto; text-align:right; box-shadow:0 24px 60px rgba(0,0,0,.28); }
         .sv-quote-head { display:flex; align-items:center; justify-content:space-between; }
-        .sv-quote-tag { color:#660000; font-size:13px; font-weight:500; }
+        .sv-quote-tag { color:#640000; font-size:13px; font-weight:500; }
         .sv-quote-close { background:none; border:none; font-size:24px; line-height:1; cursor:pointer; color:#6b5b55; }
         .sv-quote-title { margin:10px 0 4px; font-size:22px; font-weight:600; color:#241C1A; }
         .sv-quote-sub { margin:0 0 16px; color:#7A6A64; font-size:14px; }
@@ -241,7 +241,7 @@ function ServiceDetailPage() {
         .sv-field > span { display:block; font-size:13px; font-weight:500; margin-bottom:6px; color:#241C1A; }
         .sv-field > span b { color:#B3261E; }
         .sv-field input, .sv-field select, .sv-field textarea { width:100%; padding:11px 12px; border:1px solid #E3DBC9; border-radius:10px; font-family:inherit; font-size:14px; background:#fff; color:#241C1A; }
-        .sv-field input:focus, .sv-field select:focus, .sv-field textarea:focus { outline:none; border-color:#660000; }
+        .sv-field input:focus, .sv-field select:focus, .sv-field textarea:focus { outline:none; border-color:#640000; }
         .sv-quote-actions { display:flex; align-items:center; gap:12px; margin-top:18px; }
         .sv-quote-actions .sv-btn-quote { width:auto; }
         .sv-quote-cancel { background:#fff; border:1px solid #E3DBC9; border-radius:6px; min-height:44px; padding:0 18px; cursor:pointer; font-family:inherit; font-size:13.5px; color:#5B4A44; }

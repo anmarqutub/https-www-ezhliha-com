@@ -80,7 +80,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
 }
 
 const footerCss = `
-  .ez-footer { background:#660000; color:#fff; padding:0; font-family:"Thmanyah Serif Display", "Noto Sans Arabic", Tajawal, system-ui, sans-serif; font-size:13.5px; line-height:1.75; }
+  .ez-footer { background:#640000; color:#fff; padding:0; font-family:"Thmanyah Serif Display", "Noto Sans Arabic", Tajawal, system-ui, sans-serif; font-size:13.5px; line-height:1.75; }
   .ez-footer h3 { font-family:"Thmanyah Serif Display","Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
   .ez-footer-grid { max-width:1240px; margin:0 auto; padding:52px 32px 44px; display:grid; grid-template-columns:1.2fr .8fr .9fr; gap:36px; }
   .ez-footer-brand { max-width:400px; }
