@@ -1656,6 +1656,7 @@ const css = `
   /* CATEGORIES */
   .ez-cats-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
   .ez-cat-grid { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:18px 14px; margin-top:24px; }
+  @media (max-width: 1100px) { .ez-cat-grid { grid-template-columns:repeat(4, minmax(0,1fr)); } }
   .ez-cat-tile { display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:0; padding:0; font:inherit; cursor:pointer; }
   .ez-cat-thumb { position:relative; display:block; width:100%; aspect-ratio:1/1; border-radius:18px; overflow:hidden; background:#F1E9DA; border:1px solid var(--line); transition:border-color .2s, box-shadow .2s; }
   .ez-cat-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
