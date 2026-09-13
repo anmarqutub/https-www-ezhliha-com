@@ -860,33 +860,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {(view === "home" || view === "providers") && (
       <section className="ez-hero">
         {view === "home" && (
-        <div className="ez-hero-grid">
-          <div className="ez-hero-text ez-reveal">
-            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("hero.eyebrow", "دليل مناسبتك الأقرب لك")}</div>
-            <h1 className="ez-hero-title">
-              {txt("hero.title1", "كل اللي تحتاجه لمناسبتك،")}
-              <span className="ez-hero-title-accent">{txt("hero.title2", "بمكان واحد")}</span>
-            </h1>
-            <p className="ez-hero-desc">
-              {txt("hero.desc", "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
-            </p>
-            <ul className="ez-hero-checks">
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check1", "بحث سريع")}</li>
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check2", "تفاصيل واضحة")}</li>
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check3", "تواصل مباشر")}</li>
-            </ul>
-          </div>
-
-          <div className="ez-hero-media ez-reveal ez-reveal-1">
-            <div className="ez-hero-banner">
-              <img
-                src={heroBride.url}
-                alt={txt("home.hero.title", "إزهليها")}
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-          </div>
+        <div className="ez-hero-full">
+          <img
+            src={heroBride.url}
+            alt={txt("home.hero.title", "إزهليها")}
+            loading="eager"
+            decoding="async"
+          />
         </div>
         )}
 
@@ -1583,6 +1563,9 @@ const css = `
   .ez-hero-checks li { display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(42,33,28,.72); }
   .ez-hero-checks i { width:20px; height:20px; border-radius:50%; border:1px solid rgba(100,0,0,.2); background:rgba(100,0,0,.06); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:11px; color:var(--brand); }
   .ez-hero-media { position:relative; max-width:570px; width:100%; }
+  .ez-hero-full { width:100%; margin:0; }
+  .ez-hero-full img { display:block; width:100%; height:auto; max-height:520px; object-fit:cover; object-position:center; }
+  @media (max-width:700px){ .ez-hero-full img { max-height:340px; } }
   .ez-hero-frame { position:absolute; top:-32px; inset-inline-start:-32px; width:38%; height:72%; border:1px solid rgba(100,0,0,.16); z-index:0; }
   .ez-hero-banner { display:block; position:relative; overflow:hidden; border-radius:14px; box-shadow:0 28px 70px rgba(53,24,19,.16); z-index:1; }
   .ez-hero-banner img { display:block; width:100%; aspect-ratio:16/10; height:auto; object-fit:cover; transition:transform .52s var(--ease-out); }
