@@ -113,18 +113,29 @@ export function fallbackCategoryImage(name: string, index: number) {
 export type EzView = "home" | "providers" | "categories" | "cities" | "faq" | "about";
 
 // فلاتر مؤقتة تنتقل بين الصفحات (من التصنيفات/المدن إلى صفحة مقدمي الخدمات)
-export const pendingFilters: { categoryId?: string | null; cityId?: string } = {};
+export const pendingFilters: { categoryId?: string | null; cityId?: string; subId?: string } = {};
 
 export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const pendingApplied = useRef(false);
+
 
   useEffect(() => {
     if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
     if (pendingFilters.cityId !== undefined) setSelectedCity(pendingFilters.cityId);
+    if (pendingFilters.subId !== undefined) setSelectedSub(pendingFilters.subId);
+    if (
+      pendingFilters.categoryId !== undefined ||
+      pendingFilters.cityId !== undefined ||
+      pendingFilters.subId !== undefined
+    ) {
+      pendingApplied.current = true;
+    }
     pendingFilters.categoryId = undefined;
     pendingFilters.cityId = undefined;
+    pendingFilters.subId = undefined;
   }, []);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -487,7 +498,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setSelectedCategory(patch.categoryId);
       setSelectedSub("all");
     }
-    if (patch.subId !== undefined) setSelectedSub(patch.subId);
+    if (patch.subId !== undefined) {
+      pendingFilters.subId = patch.subId;
+      setSelectedSub(patch.subId);
+    }
     if (patch.cityId !== undefined) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
@@ -527,7 +541,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     // إذا جاء المستخدم من التصنيفات/المدن باختيار جديد، نحترم الاختيار الجديد
-    if (pendingFilters.categoryId !== undefined || pendingFilters.cityId !== undefined) return;
+    if (
+      pendingApplied.current ||
+      pendingFilters.categoryId !== undefined ||
+      pendingFilters.cityId !== undefined ||
+      pendingFilters.subId !== undefined
+    )
+      return;
     let raw: string | null = null;
     try {
       raw = sessionStorage.getItem("ez-browse-state");

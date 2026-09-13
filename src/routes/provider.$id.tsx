@@ -4,7 +4,7 @@ import { ArrowLeft, Check, ChevronLeft, ChevronRight, Heart, Star } from "lucide
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
-import { waLink, cleanHandle } from "./index";
+import { waLink, cleanHandle, pendingFilters } from "./index";
 import { MediaThumb } from "@/components/MediaThumb";
 
 import logoUrl from "@/assets/logo.jpg";
@@ -93,6 +93,7 @@ function ProviderPage() {
   const [cityName, setCityName] = useState<string>("");
   const [allCities, setAllCities] = useState<Array<{ id: string; name_ar: string }>>([]);
   const [subName, setSubName] = useState<string>("");
+  const [subCatId, setSubCatId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
@@ -140,7 +141,7 @@ function ProviderPage() {
       setProvider(p.data as unknown as Provider);
       const [c, s, pkg, srv, br, txt] = await Promise.all([
         supabase.from("cities").select("name_ar").eq("id", p.data.city_id).maybeSingle(),
-        supabase.from("subcategories").select("name_ar").eq("id", p.data.subcategory_id).maybeSingle(),
+        supabase.from("subcategories").select("name_ar,category_id").eq("id", p.data.subcategory_id).maybeSingle(),
         supabase.from("packages").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("services").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("branches").select("id,name,address,map_url,phone,sort_order").eq("provider_id", id).order("sort_order"),
@@ -148,6 +149,7 @@ function ProviderPage() {
       ]);
       setCityName(c.data?.name_ar ?? "");
       setSubName(s.data?.name_ar ?? "");
+      setSubCatId((s.data as { category_id?: string } | null)?.category_id ?? null);
       setPackages((pkg.data ?? []) as unknown as Package[]);
       setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
@@ -348,7 +350,22 @@ function ProviderPage() {
         </button>
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
-        {subName && <><span className="pv-crumb-sub">{subName}</span><span><ChevronLeft size={13} /></span></>}
+        {subName && (
+          <>
+            <button
+              type="button"
+              className="pv-crumb-sub"
+              onClick={() => {
+                pendingFilters.categoryId = subCatId ?? null;
+                pendingFilters.subId = provider.subcategory_id;
+                navigate({ to: "/providers" });
+              }}
+            >
+              {subName}
+            </button>
+            <span><ChevronLeft size={13} /></span>
+          </>
+        )}
         <b>{provider.name}</b>
       </div>
 
@@ -1428,7 +1445,8 @@ const css3 = `
   .pv-hero-next { left:12px; }
   .pv-hero-count { position:absolute; bottom:12px; right:12px; background:rgba(255,253,248,.94); color:#241C1A; border-radius:8px; padding:4px 9px; font-size:11.5px; font-weight:600; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
   .pv-hero-count svg { color:#640000; width:11px; height:11px; }
-  .pv-crumb-sub { color:#5B4C46; }
+  .pv-crumb-sub { color:#5B4C46; background:none; border:0; padding:0; font:inherit; cursor:pointer; }
+  .pv-crumb-sub:hover { color:#640000; text-decoration:underline; }
 
   .pv-meta-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
   .pv-meta-info { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
