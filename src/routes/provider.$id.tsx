@@ -149,6 +149,7 @@ function ProviderPage() {
       ]);
       setCityName(c.data?.name_ar ?? "");
       setSubName(s.data?.name_ar ?? "");
+      setSubCatId((s.data as { category_id?: string } | null)?.category_id ?? null);
       setPackages((pkg.data ?? []) as unknown as Package[]);
       setServices((srv.data ?? []) as unknown as Service[]);
       setBranches((br.data ?? []) as Branch[]);
