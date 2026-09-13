@@ -71,6 +71,8 @@ type Provider = {
   price_from: number | null;
   price_to: number | null;
   price: string | null;
+  people_from: number | null;
+  people_to: number | null;
   whatsapp: string | null;
   contact_phone: string | null;
   instagram: string | null;
