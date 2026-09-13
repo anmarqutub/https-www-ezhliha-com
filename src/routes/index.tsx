@@ -970,7 +970,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
               <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
               {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
-              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>— {t.name_ar}</option>)}
+              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>{t.name_ar}</option>)}
             </select>
           </div>
 
