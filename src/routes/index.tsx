@@ -335,10 +335,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   const PRICE_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
     { id: "all", label: txt("filter.price.all", "كل الأسعار"), min: 0, max: Infinity },
-    { id: "lt1000", label: txt("filter.price.1", "أقل من 1,000 ر.س"), min: 0, max: 1000 },
-    { id: "1000-3000", label: txt("filter.price.2", "1,000 – 3,000 ر.س"), min: 1000, max: 3000 },
-    { id: "3000-10000", label: txt("filter.price.3", "3,000 – 10,000 ر.س"), min: 3000, max: 10000 },
-    { id: "gt10000", label: txt("filter.price.4", "أكثر من 10,000 ر.س"), min: 10000, max: Infinity },
+    { id: "lt5000", label: txt("filter.price.1", "أقل من 5,000 ر.س"), min: 0, max: 5000 },
+    { id: "5000-10000", label: txt("filter.price.2", "من 5,000 إلى 10,000 ر.س"), min: 5000, max: 10000 },
+    { id: "10000-20000", label: txt("filter.price.3", "من 10,000 إلى 20,000 ر.س"), min: 10000, max: 20000 },
+    { id: "gt20000", label: txt("filter.price.4", "أكثر من 20,000 ر.س"), min: 20000, max: Infinity },
+  ];
+
+  const CAPACITY_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
+    { id: "all", label: txt("filter.capacity.all", "كل السعات"), min: 0, max: Infinity },
+    { id: "lt100", label: txt("filter.capacity.1", "أقل من 100 ضيف"), min: 0, max: 100 },
+    { id: "100-200", label: txt("filter.capacity.2", "من 100 إلى 200 ضيف"), min: 100, max: 200 },
+    { id: "200-300", label: txt("filter.capacity.3", "من 200 إلى 300 ضيف"), min: 200, max: 300 },
+    { id: "300-500", label: txt("filter.capacity.4", "من 300 إلى 500 ضيف"), min: 300, max: 500 },
+    { id: "500-700", label: txt("filter.capacity.5", "من 500 إلى 700 ضيف"), min: 500, max: 700 },
   ];
 
   const matchesPrice = (p: Provider) => {
@@ -350,6 +359,24 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return val >= band.min && val < band.max;
   };
 
+  const matchesCapacity = (p: Provider) => {
+    if (capacityRange === "all") return true;
+    const band = CAPACITY_BANDS.find((b) => b.id === capacityRange);
+    if (!band) return true;
+    const from = p.people_from ?? p.people_to;
+    const to = p.people_to ?? p.people_from;
+    if (from == null || to == null) return false;
+    // تداخل نطاق سعة القاعة مع النطاق المختار
+    return from < band.max && to >= band.min;
+  };
+
+  // هل التصنيف الحالي هو القاعات (لعرض فلتر السعة)
+  const isVenueCategory = (() => {
+    const cat = categories.find((c) => c.id === selectedCategory);
+    if (cat) return /قاع|استراح/.test(cat.name_ar);
+    return false;
+  })();
+
   // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
   const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
@@ -357,6 +384,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     if (!sub) return false;
     if (selectedCategory && sub.category_id !== selectedCategory) return false;
     if (!matchesPrice(p)) return false;
+    if (isVenueCategory && !matchesCapacity(p)) return false;
     if (favOnly && !favIds.has(p.id)) return false;
     if (search.trim()) {
       const s = search.trim().toLowerCase();
