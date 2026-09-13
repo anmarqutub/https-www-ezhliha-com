@@ -858,6 +858,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {/* ── HERO ── */}
       {(view === "home" || view === "providers") && (
       <section className="ez-hero">
+        {view === "home" && (
         <div className="ez-hero-grid">
           <div className="ez-hero-text ez-reveal">
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("hero.eyebrow", "دليل مناسبتك الأقرب لك")}</div>
@@ -929,6 +930,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             )}
           </div>
         </div>
+        )}
 
         {/* Search console */}
         <div className="ez-console">
