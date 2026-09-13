@@ -1226,81 +1226,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </div>
 
         <div className="ez-results-layout">
-          <aside className="ez-fpanel">
-            <div className="ez-fpanel-head">
-              <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("filter.title", "رتّب اختياراتك")}</div>
-              <p>{txt("filter.desc", "حدد اللي يهمك أولاً، والنتائج تتحدث مباشرة.")}</p>
-            </div>
-
-            <div className="ez-fgroup">
-              <div className="ez-fgroup-head">
-                <h4>{txt("filter.service", "نوع الخدمة")}</h4>
-                {filtersActive && (
-                  <button type="button" className="ez-fclear" onClick={resetAll}>{txt("filter.clear", "مسح الكل")}</button>
-                )}
-              </div>
-              <ul className="ez-flist">
-                <li>
-                  <button type="button" className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>
-                    <span>{txt("filter.service.all", "كل الخدمات")}</span>
-                  </button>
-                </li>
-                {sidebarSubs.map((s) => (
-                  <li key={s.id}>
-                    <button type="button" className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>
-                      <span>{s.name_ar}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {visibleTertiaries.length > 0 && (
-              <div className="ez-fgroup">
-                <h4>{txt("home.subs.tertiary_label", "تصنيفات فرعية")}</h4>
-                <div className="ez-chips ez-chips-tertiary">
-                  {visibleTertiaries.map((t) => (
-                    <button key={t.id} className={selectedSub === t.id ? "active" : ""} onClick={() => setSelectedSub(t.id)}>{t.name_ar}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="ez-fgroup">
-              <h4>{txt("console.city", "المدينة")}</h4>
-              <select className="ez-fselect" value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
-                <option value="">{txt("home.city.all", "كل المدن")}</option>
-                {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
-              </select>
-            </div>
-
-            <div className="ez-fgroup">
-              <h4>{txt("filter.price", "السعر")}</h4>
-              <select className="ez-fselect" value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
-                {PRICE_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
-              </select>
-            </div>
-
-            {isVenueCategory && (
-              <div className="ez-fgroup">
-                <h4>{txt("filter.capacity", "السعة (عدد الضيوف)")}</h4>
-                <select className="ez-fselect" value={capacityRange} onChange={(e) => setCapacityRange(e.target.value)}>
-                  {CAPACITY_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
-                </select>
-              </div>
-            )}
-
-            {user && (
-              <button
-                type="button"
-                className={`ez-ffav ${favOnly ? "active" : ""}`}
-                onClick={() => setFavOnly((v) => !v)}
-              >
-                <span>♡ {txt("filter.fav_only", "المفضلة فقط")}</span>
-                <small>{favIds.size}</small>
-              </button>
-            )}
-          </aside>
 
           <div className="ez-results-main">
             {loading ? (
@@ -1831,7 +1756,7 @@ const css = `
 
   /* CARDS */
   .ez-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:16px; }
-  .ez-results-layout { display:grid; grid-template-columns:288px 1fr; gap:26px; align-items:start; }
+  .ez-results-layout { display:block; }
   .ez-fpanel { position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:18px; }
   .ez-fpanel-head p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
   .ez-fgroup h4 { margin:0 0 10px; font-size:15px; color:var(--ink); }
