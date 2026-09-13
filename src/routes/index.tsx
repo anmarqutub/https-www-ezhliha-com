@@ -113,7 +113,7 @@ export function fallbackCategoryImage(name: string, index: number) {
 export type EzView = "home" | "providers" | "categories" | "cities" | "faq" | "about";
 
 // فلاتر مؤقتة تنتقل بين الصفحات (من التصنيفات/المدن إلى صفحة مقدمي الخدمات)
-export const pendingFilters: { categoryId?: string | null; cityId?: string } = {};
+export const pendingFilters: { categoryId?: string | null; cityId?: string; subId?: string } = {};
 
 export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
