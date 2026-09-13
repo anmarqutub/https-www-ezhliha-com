@@ -957,11 +957,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 const subs = subcategories.filter((s) => s.category_id === c.id && !s.parent_id);
                 return (
                   <optgroup key={c.id} label={c.name_ar}>
-                    <option value={c.id}>{c.name_ar} — {txt("console.category.all_in", "كل الخدمات")}</option>
-                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>‏— {s.name_ar}</option>)}
+                    <option value={c.id}>{txt("console.category.all_in", "كل الخدمات")}</option>
+                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>{s.name_ar}</option>)}
                   </optgroup>
                 );
               })}
+
             </select>
           </div>
           <div className="ez-console-field">
@@ -969,7 +970,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
               <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
               {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
-              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>— {t.name_ar}</option>)}
+              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>{t.name_ar}</option>)}
             </select>
           </div>
 
@@ -1667,6 +1668,9 @@ const css = `
   .ez-console-field select:hover { background-color:#fff; border-color:rgba(100,0,0,.28); }
   .ez-console-field select:focus { background-color:#fff; border-color:var(--brand); box-shadow:0 0 0 3px rgba(100,0,0,.10); }
   .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; opacity:.7; }
+  .ez-console-field select optgroup { font-family:inherit; font-size:12.5px; font-weight:700; color:var(--brand); background:#f4efe6; padding:6px 0; }
+  .ez-console-field select option { font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); background:#fff; padding:8px 12px; }
+  .ez-console-field select option:checked { background:var(--brand); color:#fff; }
   .ez-console-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:12px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; height:44px; box-shadow:0 8px 20px rgba(100,0,0,.20); transition:background .15s, transform .15s; }
   .ez-console-btn svg { width:16px; height:16px; }
   .ez-console-btn:hover { background:var(--brand-dark); transform:translateY(-1px); }
