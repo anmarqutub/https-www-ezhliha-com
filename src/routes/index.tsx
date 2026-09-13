@@ -119,6 +119,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const pendingApplied = useRef(false);
+
 
   useEffect(() => {
     if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
