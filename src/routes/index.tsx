@@ -576,6 +576,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     setSearch("");
     setQuickSearch("");
     setPriceRange("all");
+    setCapacityRange("all");
     setFavOnly(false);
   };
 
