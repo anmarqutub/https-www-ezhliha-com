@@ -1718,7 +1718,7 @@ const css = `
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
   .ez-card-head h3 { font-size:18px; font-weight:600; color:var(--ink); margin:0; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
-  .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); margin-bottom:6px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
   .ez-card-tag { display:inline-block; max-width:100%; border:1px solid #000; background:color-mix(in oklab, var(--surface) 70%, transparent); color:#000; font-size:11px; font-weight:500; line-height:1.6; padding:4px 9px; border-radius:2px; white-space:normal; overflow-wrap:anywhere; text-align:start; }
