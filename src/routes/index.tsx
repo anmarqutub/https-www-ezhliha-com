@@ -1659,16 +1659,17 @@ const css = `
   .ez-hero-dots button.active { background:#fff; width:20px; border-radius:50px; }
 
   /* CONSOLE */
-  .ez-console { position:relative; z-index:20; max-width:1240px; margin:-32px auto 0; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px; box-shadow:0 22px 50px rgba(53,24,19,.12); display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:center; }
-  .ez-console-field { padding:8px 22px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; gap:2px; }
-  .ez-console-field:first-child { border-inline-start:none; }
-  .ez-console-field label { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-weight:500; }
+  .ez-console { position:relative; z-index:20; max-width:1240px; margin:-28px auto 0; background:#fff; border:1px solid var(--line); border-radius:20px; padding:14px; box-shadow:0 18px 44px rgba(53,24,19,.10); display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:10px; align-items:end; }
+  .ez-console-field { display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .ez-console-field label { display:flex; align-items:center; gap:6px; font-size:11px; letter-spacing:.02em; color:var(--muted); font-weight:500; }
   .ez-console-field label .ez-fi { color:var(--brand); }
-  .ez-console-field select { border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); outline:none; cursor:pointer; height:30px; }
-  .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; }
-  .ez-console-btn { align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; min-height:48px; box-shadow:0 10px 24px rgba(100,0,0,.18); }
+  .ez-console-field select { appearance:none; -webkit-appearance:none; width:100%; border:1px solid var(--line); background:#faf8f4 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23875a5a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat left 12px center / 15px 15px; padding:0 14px 0 34px; border-radius:12px; font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); outline:none; cursor:pointer; height:44px; transition:border-color .15s, background-color .15s, box-shadow .15s; }
+  .ez-console-field select:hover { background-color:#fff; border-color:rgba(100,0,0,.28); }
+  .ez-console-field select:focus { background-color:#fff; border-color:var(--brand); box-shadow:0 0 0 3px rgba(100,0,0,.10); }
+  .ez-console-field select:disabled { color:var(--muted); cursor:not-allowed; opacity:.7; }
+  .ez-console-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--brand); color:#fff; border:none; padding:0 26px; border-radius:12px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; height:44px; box-shadow:0 8px 20px rgba(100,0,0,.20); transition:background .15s, transform .15s; }
   .ez-console-btn svg { width:16px; height:16px; }
-  .ez-console-btn:hover { background:var(--brand-dark); }
+  .ez-console-btn:hover { background:var(--brand-dark); transform:translateY(-1px); }
 
   .ez-fchips { max-width:1240px; margin:14px auto 0; padding:0 32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
   .ez-fchip { background:var(--surface); border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:6px; cursor:pointer; }
