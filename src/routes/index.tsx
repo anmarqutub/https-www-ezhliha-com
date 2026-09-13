@@ -829,6 +829,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 <Link to="/admin" onClick={() => setMenuOpen(false)}>{txt("nav.admin", "لوحة الأدمن")}</Link>
               )}
             </nav>
+            {categories.length > 0 && (
+              <div className="ez-drawer-cats">
+                <p className="ez-drawer-cats-title">{txt("nav.allCats", "جميع الأقسام")}</p>
+                {renderMega(() => setMenuOpen(false))}
+              </div>
+            )}
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
               <p>{txt("drawer.cta.text", "حدد التصنيف والخدمة والمدينة، ونطلع لك الخيارات اللي تناسبك.")}</p>
