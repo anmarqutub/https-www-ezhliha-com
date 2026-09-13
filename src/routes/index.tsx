@@ -91,14 +91,18 @@ export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهل�
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
-const REF_IMAGES = [catCateringAsset.url, catVenueAsset.url, catPhotoAsset.url, catBeautyAsset.url];
+const REF_IMAGES = [catCatering, catHalls, catPhoto, catLook];
 
-function fallbackCategoryImage(name: string, index: number) {
+export function fallbackCategoryImage(name: string, index: number) {
   const n = name || "";
-  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCateringAsset.url;
-  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catVenueAsset.url;
-  if (/تصوير|فيديو|كامي/.test(n)) return catPhotoAsset.url;
-  if (/تجميل|شعر|مكياج|عناي/.test(n)) return catBeautyAsset.url;
+  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCatering;
+  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catHalls;
+  if (/تنسيق|تصميم|ديكور|زهور|ورد/.test(n)) return catDecor;
+  if (/دعو|بطاق/.test(n)) return catInvites;
+  if (/تصوير|فيديو|كامي|توثيق/.test(n)) return catPhoto;
+  if (/إطلال|اطلال|تجميل|شعر|مكياج|عناي|فست|عبا/.test(n)) return catLook;
+  if (/سبا|مساج|منزلي/.test(n)) return catSpa;
+  if (/إضاف|اضاف|أخرى|اخرى/.test(n)) return catExtra;
   return REF_IMAGES[index % REF_IMAGES.length];
 }
 
