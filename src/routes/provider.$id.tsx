@@ -336,6 +336,16 @@ function ProviderPage() {
       </header>
 
       <div className="pv-crumbbar">
+        <button
+          type="button"
+          className="pv-crumb-back"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
+            else window.location.assign("/providers");
+          }}
+        >
+          <ChevronRight size={14} /> رجوع
+        </button>
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
         {subName && <><Link to="/providers">{subName}</Link><span><ChevronLeft size={13} /></span></>}
