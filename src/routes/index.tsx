@@ -1323,22 +1323,11 @@ const ProviderCard = memo(function ProviderCard({
         </div>
 
         <div className="ez-card-body">
-          <div className="ez-card-toprow">
-            {sub && <span className="ez-card-kicker">{sub.name_ar}</span>}
-            {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
-          </div>
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
-            {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {provider.description && <p className="ez-card-desc">{provider.description}</p>}
-          {tags.length > 0 && (
-            <div className="ez-card-tags">
-              {tags.map((t) => (
-                <span className="ez-card-tag" key={t}>{t}</span>
-              ))}
-            </div>
-          )}
+          {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
+          {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
             <strong>
@@ -1349,7 +1338,6 @@ const ProviderCard = memo(function ProviderCard({
                   : "السعر حسب التفاصيل"}
             </strong>
           </div>
-
         </div>
       </Link>
 
