@@ -953,11 +953,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         <div className="ez-cats-head">
           <div>
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
-            <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
-          </div>
-          <div className="ez-rail-nav">
-            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}><ChevronRight size={16} /></button>
-            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}><ChevronLeft size={16} /></button>
+            <h2 className="ez-h2">{txt("categories.title", "تصفّحي حسب الفئات")}</h2>
           </div>
         </div>
 
@@ -968,36 +964,66 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
           </p>
         ) : (
-          <div className="ez-cat-rail" id="ez-cat-rail">
+          <div className="ez-cat-grid" id="ez-cat-rail">
+            <button
+              type="button"
+              className="ez-cat-tile"
+              onClick={() => {
+                setSearch("");
+                setQuickSearch("");
+                goProviders({ categoryId: null });
+              }}
+            >
+              <span className="ez-cat-thumb ez-cat-thumb-all"><LayoutGrid size={26} /></span>
+              <span className="ez-cat-label">{txt("categories.all", "مشاهدة الكل")}</span>
+            </button>
             {categories.map((c, i) => {
-              const count = providersCountByCat.get(c.id) ?? 0;
               const img = c.image_url || fallbackCategoryImage(c.name_ar, i);
               return (
                 <button
                   key={c.id}
-                  className={`ez-cat-card ${selectedCategory === c.id ? "active" : ""}`}
+                  type="button"
+                  className={`ez-cat-tile ${selectedCategory === c.id ? "active" : ""}`}
                   onClick={() => {
                     setSearch("");
                     setQuickSearch("");
                     goProviders({ categoryId: c.id });
                   }}
                 >
-                  <div className="ez-cat-media">
-                    <img src={img} alt={c.name_ar} loading="lazy" />
-                    <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="ez-cat-go"><ArrowUpLeft size={14} /></span>
-                    <span className="ez-cat-name">{c.name_ar}</span>
-                    <span className="ez-cat-count">
-                      {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
-                    </span>
-                  </div>
+                  <span className="ez-cat-thumb">
+                    <img src={img} alt={c.name_ar} loading="lazy" decoding="async" />
+                  </span>
+                  <span className="ez-cat-label">{c.name_ar}</span>
                 </button>
               );
             })}
           </div>
         )}
+
+        {!loading && categories.length > 0 && (
+          <div className="ez-subquick">
+            {subcategories
+              .filter((s) => !s.parent_id)
+              .slice(0, 18)
+              .map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="ez-subquick-pill"
+                  onClick={() => {
+                    setSearch("");
+                    setQuickSearch("");
+                    goProviders({ categoryId: s.category_id, subId: s.id });
+                  }}
+                >
+                  {s.name_ar}
+                </button>
+              ))}
+          </div>
+        )}
       </section>
       )}
+
 
       {/* ── CITIES ── */}
       {view === "cities" && (
