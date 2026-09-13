@@ -1680,6 +1680,8 @@ const css = `
   .ez-acc-sub.all { font-weight:700; color:var(--ink); }
   .ez-acc-sub.kid { padding-inline-start:12px; color:#7A6A63; font-size:12.5px; }
   .ez-mega-inline { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .ez-drawer-cats { margin-top:6px; border-top:1px solid var(--line); }
+  .ez-drawer-cats-title { padding:12px 16px 6px; margin:0; font-size:12.5px; font-weight:800; color:#8A7C74; }
 
   /* SHARED */
   .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Thmanyah Serif Display","Alexandria",sans-serif; }
