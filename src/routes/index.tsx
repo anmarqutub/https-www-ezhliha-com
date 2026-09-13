@@ -416,7 +416,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   }));
 
   const filtersActive = !!(
-    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" || favOnly
+    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" ||
+    capacityRange !== "all" || favOnly
   );
 
 
