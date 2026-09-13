@@ -930,6 +930,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             )}
           </div>
         </div>
+        )}
 
         {/* Search console */}
         <div className="ez-console">
