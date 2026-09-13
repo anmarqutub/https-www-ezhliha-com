@@ -1445,7 +1445,8 @@ const css3 = `
   .pv-hero-next { left:12px; }
   .pv-hero-count { position:absolute; bottom:12px; right:12px; background:rgba(255,253,248,.94); color:#241C1A; border-radius:8px; padding:4px 9px; font-size:11.5px; font-weight:600; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
   .pv-hero-count svg { color:#640000; width:11px; height:11px; }
-  .pv-crumb-sub { color:#5B4C46; }
+  .pv-crumb-sub { color:#5B4C46; background:none; border:0; padding:0; font:inherit; cursor:pointer; }
+  .pv-crumb-sub:hover { color:#640000; text-decoration:underline; }
 
   .pv-meta-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
   .pv-meta-info { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
