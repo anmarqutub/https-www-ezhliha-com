@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
+  LayoutGrid,
   MapPin,
   Menu,
   Search,
