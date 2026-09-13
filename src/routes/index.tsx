@@ -1940,10 +1940,9 @@ const css = `
 
     .ez-h2 { font-size:26px; }
     .ez-sec { padding:44px 16px; }
-    .ez-console { grid-template-columns:repeat(3,1fr); }
-    .ez-console-field { padding:8px 8px; }
+    .ez-console { grid-template-columns:1fr; padding:12px; }
     .ez-console-field label { font-size:11px; }
-    .ez-console-field select { font-size:12px; max-width:100%; }
+    .ez-console-field select { font-size:12.5px; max-width:100%; height:42px; }
     .ez-fchips { padding:0 16px; }
 
     .ez-cat-grid { grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px 10px; }
