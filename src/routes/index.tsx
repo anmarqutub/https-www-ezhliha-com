@@ -630,82 +630,107 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
   ];
 
-  const megaCatId = megaCat ?? categories[0]?.id ?? null;
-  const megaSubs = subcategories.filter((s) => s.category_id === megaCatId && !s.parent_id);
   const renderMega = (onPick?: () => void) => (
-    <div className="ez-mega">
-      <div className="ez-mega-cats">
-        {categories.map((c, i) => (
-          <button
-            key={c.id}
-            type="button"
-            className={`ez-mega-cat ${megaCatId === c.id ? "active" : ""}`}
-            onMouseEnter={() => setMegaCat(c.id)}
-            onFocus={() => setMegaCat(c.id)}
-            onClick={() => {
-              setSearch("");
-              setQuickSearch("");
-              onPick?.();
-              goProviders({ categoryId: c.id });
-            }}
-          >
-            <img src={c.image_url || fallbackCategoryImage(c.name_ar, i)} alt="" loading="lazy" />
-            <span>{c.name_ar}</span>
-            <ChevronLeft size={14} className="ez-mega-arrow" />
-          </button>
-        ))}
-      </div>
-      <div className="ez-mega-subs">
-        <button
-          type="button"
-          className="ez-mega-sub head"
-          onClick={() => {
-            setSearch("");
-            setQuickSearch("");
-            onPick?.();
-            goProviders({ categoryId: megaCatId });
-          }}
-        >
-          {txt("mega.allIn", "كل الخدمات")}
-        </button>
-        {megaSubs.map((s) => {
-          const kids = subcategories.filter((k) => k.parent_id === s.id);
-          return (
-            <div key={s.id} className="ez-mega-col">
+    <div className="ez-acc">
+      <button
+        type="button"
+        className="ez-acc-all"
+        onClick={() => {
+          setSearch("");
+          setQuickSearch("");
+          onPick?.();
+          goProviders({ categoryId: null });
+        }}
+      >
+        <LayoutGrid size={15} />
+        {txt("categories.all", "مشاهدة الكل")}
+      </button>
+
+      {categories.map((c, i) => {
+        const open = megaCat === c.id;
+        const subs = subcategories.filter((s) => s.category_id === c.id && !s.parent_id);
+        return (
+          <div key={c.id} className={`ez-acc-item ${open ? "open" : ""}`}>
+            <div className="ez-acc-row">
               <button
                 type="button"
-                className="ez-mega-sub head"
+                className="ez-acc-name"
                 onClick={() => {
                   setSearch("");
                   setQuickSearch("");
                   onPick?.();
-                  goProviders({ categoryId: s.category_id, subId: s.id });
+                  goProviders({ categoryId: c.id });
                 }}
               >
-                {s.name_ar}
+                <img src={c.image_url || fallbackCategoryImage(c.name_ar, i)} alt="" loading="lazy" decoding="async" />
+                <span>{c.name_ar}</span>
               </button>
-              {kids.map((k) => (
+              {subs.length > 0 && (
                 <button
-                  key={k.id}
                   type="button"
-                  className="ez-mega-sub"
+                  className="ez-acc-tog"
+                  aria-expanded={open}
+                  aria-label={c.name_ar}
+                  onClick={() => setMegaCat(open ? null : c.id)}
+                >
+                  <ChevronDown size={16} className={open ? "open" : ""} />
+                </button>
+              )}
+            </div>
+
+            {open && (
+              <div className="ez-acc-subs">
+                <button
+                  type="button"
+                  className="ez-acc-sub all"
                   onClick={() => {
                     setSearch("");
                     setQuickSearch("");
                     onPick?.();
-                    goProviders({ categoryId: s.category_id, subId: s.id });
+                    goProviders({ categoryId: c.id });
                   }}
                 >
-                  {k.name_ar}
+                  {txt("mega.allIn", "كل الخدمات")}
                 </button>
-              ))}
-            </div>
-          );
-        })}
-        {megaSubs.length === 0 && (
-          <p className="ez-mega-empty">{txt("mega.empty", "ما فيه تصنيفات فرعية لهذا القسم.")}</p>
-        )}
-      </div>
+                {subs.map((s) => {
+                  const kids = subcategories.filter((k) => k.parent_id === s.id);
+                  return (
+                    <div key={s.id} className="ez-acc-sub-group">
+                      <button
+                        type="button"
+                        className="ez-acc-sub"
+                        onClick={() => {
+                          setSearch("");
+                          setQuickSearch("");
+                          onPick?.();
+                          goProviders({ categoryId: s.category_id, subId: s.id });
+                        }}
+                      >
+                        {s.name_ar}
+                      </button>
+                      {kids.map((k) => (
+                        <button
+                          key={k.id}
+                          type="button"
+                          className="ez-acc-sub kid"
+                          onClick={() => {
+                            setSearch("");
+                            setQuickSearch("");
+                            onPick?.();
+                            goProviders({ categoryId: s.category_id, subId: s.id });
+                          }}
+                        >
+                          {k.name_ar}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 
