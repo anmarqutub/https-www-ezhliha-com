@@ -1673,24 +1673,23 @@ const css = `
   .ez-ffav.active { background:var(--brand); border-color:var(--brand); color:#fff; }
   .ez-ffav small { opacity:.75; font-size:12px; }
   .ez-card { position:relative; }
-  .ez-card-fav { position:absolute; top:12px; inset-inline-end:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--brand); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .ez-card-fav { position:absolute; top:9px; inset-inline-end:9px; z-index:2; width:28px; height:28px; border-radius:50%; border:1px solid rgba(100,0,0,.12); background:rgba(255,253,248,.94); color:var(--brand); font-size:14px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .ez-card-fav.active { background:var(--brand); color:#fff; border-color:var(--brand); }
   @media (max-width: 1200px) {
-    .ez-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .ez-grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
   }
   @media (max-width: 900px) {
     .ez-results-layout { grid-template-columns:1fr; }
     .ez-fpanel { position:static; top:auto; }
     .ez-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
-    .ez-card-img { min-height:190px; }
-    .ez-card-body { padding:16px; }
+    .ez-card-body { padding:10px 11px 12px; }
     .ez-results-head { align-items:flex-start; gap:14px; }
     .ez-results-tools { width:100%; flex-wrap:wrap; }
     .ez-search { flex:1 1 100%; min-width:0; }
     .ez-flist { max-height:none; }
   }
   @media (max-width: 640px) {
-    .ez-grid { grid-template-columns:1fr; }
+    .ez-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
     .ez-fpanel { padding:14px; gap:14px; border-radius:12px; }
     .ez-fpanel-head p { font-size:12.5px; }
     .ez-flist { max-height:260px; overflow-y:auto; }
