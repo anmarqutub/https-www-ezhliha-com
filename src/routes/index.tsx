@@ -435,8 +435,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const PAGE = 18;
   const [visibleCount, setVisibleCount] = useState(PAGE);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const keepCountRef = useRef<number | null>(null);
   const resultsKey = `${q}|${selectedCategory}|${selectedCity}|${selectedSub}|${priceRange}|${capacityRange}|${favOnly}|${search}`;
-  useEffect(() => { setVisibleCount(PAGE); }, [resultsKey]);
+  useEffect(() => {
+    // عند الرجوع من صفحة مزود نبقي نفس عدد النتائج المعروضة
+    if (keepCountRef.current != null) {
+      setVisibleCount(keepCountRef.current);
+      keepCountRef.current = null;
+      return;
+    }
+    setVisibleCount(PAGE);
+  }, [resultsKey]);
   useEffect(() => {
     const node = sentinelRef.current;
     if (!node) return;
