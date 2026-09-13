@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "./index";
 
 export const Route = createFileRoute("/providers")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    cat: typeof search.cat === "string" ? search.cat : undefined,
+    sub: typeof search.sub === "string" ? search.sub : undefined,
+    city: typeof search.city === "string" ? search.city : undefined,
+  }),
   component: () => <HomePage view="providers" />,
   head: () => ({
     meta: [
