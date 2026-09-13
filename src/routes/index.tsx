@@ -758,11 +758,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </Link>
 
         <nav className="ez-nav-menu">
-          <div
-            className="ez-mega-wrap"
-            onMouseEnter={() => setMegaOpen(true)}
-            onMouseLeave={() => setMegaOpen(false)}
-          >
+          <div className="ez-mega-wrap">
             <button
               type="button"
               className={`ez-nav-link ez-mega-trigger ${megaOpen ? "open" : ""}`}
