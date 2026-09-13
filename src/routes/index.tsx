@@ -1118,6 +1118,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               </select>
             </div>
 
+            {isVenueCategory && (
+              <div className="ez-fgroup">
+                <h4>{txt("filter.capacity", "السعة (عدد الضيوف)")}</h4>
+                <select className="ez-fselect" value={capacityRange} onChange={(e) => setCapacityRange(e.target.value)}>
+                  {CAPACITY_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+                </select>
+              </div>
+            )}
+
             {user && (
               <button
                 type="button"
