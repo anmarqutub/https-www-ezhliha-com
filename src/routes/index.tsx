@@ -1271,6 +1271,7 @@ const ProviderCard = memo(function ProviderCard({
   onToggleFav,
   tags = [],
   eager = false,
+  onOpen,
 }: {
   provider: Provider;
   city?: City;
@@ -1282,13 +1283,22 @@ const ProviderCard = memo(function ProviderCard({
   onToggleFav?: (providerId: string) => void;
   tags?: string[];
   eager?: boolean;
+  onOpen?: () => void;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
+  const capacity =
+    provider.people_from && provider.people_to
+      ? `${provider.people_from} – ${provider.people_to} ضيف`
+      : provider.people_to
+        ? `حتى ${provider.people_to} ضيف`
+        : provider.people_from
+          ? `من ${provider.people_from} ضيف`
+          : null;
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
-      <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
+      <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link" onClick={() => onOpen?.()}>
         <div className="ez-card-img">
           <SocialImg
             src={cover}
