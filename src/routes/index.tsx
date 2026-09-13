@@ -1927,8 +1927,8 @@ const css = `
     .ez-nav-menu { display:none; }
     .ez-hero-grid { grid-template-columns:1fr; gap:32px; min-height:0; }
     .ez-hero-media { max-width:none; }
-    .ez-console { grid-template-columns:repeat(3,1fr); margin-inline:16px; border-radius:22px; }
-    .ez-console-btn { grid-column:1 / -1; padding:14px; margin-top:8px; }
+    .ez-console { grid-template-columns:repeat(2,1fr); margin-inline:16px; border-radius:18px; }
+    .ez-console-btn { grid-column:1 / -1; margin-top:2px; }
   }
 
   @media (max-width: 640px) {
