@@ -522,13 +522,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   }, [view, selectedCity, selectedCategory, selectedSub, search, quickSearch, priceRange, capacityRange, favOnly, visibleCount]);
 
   const restoreRef = useRef<number | null>(null);
-  // استرجاع الفلاتر فوراً عند العودة من صفحة مقدم الخدمة
+  const persistReady = useRef(false);
+  // استرجاع الفلاتر ونقطة التصفح عند العودة للصفحة (رجوع للخلف أو إعادة فتح)
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // إذا جاء المستخدم من التصنيفات/المدن باختيار جديد، نحترم الاختيار الجديد
+    if (pendingFilters.categoryId !== undefined || pendingFilters.cityId !== undefined) return;
     let raw: string | null = null;
     try {
       raw = sessionStorage.getItem("ez-browse-state");
-      sessionStorage.removeItem("ez-browse-state");
     } catch {
       return;
     }
@@ -547,12 +549,20 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       keepCountRef.current = Math.max(PAGE, s.visibleCount ?? PAGE);
       setVisibleCount(keepCountRef.current);
       restoreRef.current = typeof s.scrollY === "number" ? s.scrollY : null;
-      pendingFilters.categoryId = undefined;
-      pendingFilters.cityId = undefined;
     } catch {
       /* ignore */
     }
   }, []);
+
+  // حفظ الفلاتر تلقائياً كل ما تغيرت، حتى يبقى التصفح كما هو عند الرجوع
+  useEffect(() => {
+    if (view !== "providers") return;
+    if (!persistReady.current) {
+      persistReady.current = true;
+      return;
+    }
+    saveBrowseState();
+  }, [view, saveBrowseState]);
 
   // استرجاع موضع التمرير بعد ما تجهز البيانات
   useEffect(() => {
