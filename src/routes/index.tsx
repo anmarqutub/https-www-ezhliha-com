@@ -877,57 +877,14 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </div>
 
           <div className="ez-hero-media ez-reveal ez-reveal-1">
-            <span className="ez-hero-frame" aria-hidden="true" />
-            {currentBanner ? (
-              currentBanner.link_url ? (
-                <a href={currentBanner.link_url} target="_blank" rel="noopener noreferrer" className="ez-hero-banner">
-                  <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-                  {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
-                </a>
-              ) : (
-                <div className="ez-hero-banner">
-                  <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? ""} />
-                  {currentBanner.title && <div className="ez-hero-banner-cap">{currentBanner.title}</div>}
-                </div>
-              )
-            ) : txt("home.hero.image", "") ? (
-              <div className="ez-hero-banner">
-                <img src={txt("home.hero.image", "")} alt={txt("home.hero.title", "إزهليها")} />
-                <div className="ez-hero-banner-cap">
-                  <strong>{txt("home.hero.title", "إزهليها")}</strong>
-                  <span>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍")}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="ez-hero-banner ez-hero-banner-empty">
-                <div>
-                  <h2 className="ez-logo-text">{txt("home.hero.title", "إزهليها")}</h2>
-                  <p>{txt("home.hero.fallback", "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍")}</p>
-                </div>
-              </div>
-            )}
-
-            {banners.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  className="ez-hero-arrow ez-hero-arrow-prev"
-                  onClick={() => setBannerIdx((i) => (i - 1 + banners.length) % banners.length)}
-                  aria-label="السابق"
-                ><ChevronRight size={18} /></button>
-                <button
-                  type="button"
-                  className="ez-hero-arrow ez-hero-arrow-next"
-                  onClick={() => setBannerIdx((i) => (i + 1) % banners.length)}
-                  aria-label="التالي"
-                ><ChevronLeft size={18} /></button>
-                <div className="ez-hero-dots">
-                  {banners.map((_, i) => (
-                    <button key={i} onClick={() => setBannerIdx(i)} className={i === bannerIdx ? "active" : ""} aria-label={`بنر ${i + 1}`} />
-                  ))}
-                </div>
-              </>
-            )}
+            <div className="ez-hero-banner">
+              <img
+                src={heroBride.url}
+                alt={txt("home.hero.title", "إزهليها")}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
         )}
