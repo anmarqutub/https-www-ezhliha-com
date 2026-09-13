@@ -1100,25 +1100,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         )}
 
         {!loading && categories.length > 0 && (
-          <div className="ez-subquick">
-            {subcategories
-              .filter((s) => !s.parent_id)
-              .slice(0, 18)
-              .map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className="ez-subquick-pill"
-                  onClick={() => {
-                    setSearch("");
-                    setQuickSearch("");
-                    goProviders({ categoryId: s.category_id, subId: s.id });
-                  }}
-                >
-                  {s.name_ar}
-                </button>
-              ))}
-          </div>
+          <div className="ez-mega-inline">{renderMega()}</div>
         )}
       </section>
       )}
