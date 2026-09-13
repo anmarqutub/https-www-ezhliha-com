@@ -543,7 +543,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setPriceRange(s.priceRange ?? "all");
       setCapacityRange(s.capacityRange ?? "all");
       setFavOnly(!!s.favOnly);
-      setVisibleCount(Math.max(PAGE, s.visibleCount ?? PAGE));
+      keepCountRef.current = Math.max(PAGE, s.visibleCount ?? PAGE);
+      setVisibleCount(keepCountRef.current);
       restoreRef.current = typeof s.scrollY === "number" ? s.scrollY : null;
       pendingFilters.categoryId = undefined;
       pendingFilters.cityId = undefined;
