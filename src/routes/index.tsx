@@ -860,33 +860,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {(view === "home" || view === "providers") && (
       <section className="ez-hero">
         {view === "home" && (
-        <div className="ez-hero-grid">
-          <div className="ez-hero-text ez-reveal">
-            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("hero.eyebrow", "دليل مناسبتك الأقرب لك")}</div>
-            <h1 className="ez-hero-title">
-              {txt("hero.title1", "كل اللي تحتاجه لمناسبتك،")}
-              <span className="ez-hero-title-accent">{txt("hero.title2", "بمكان واحد")}</span>
-            </h1>
-            <p className="ez-hero-desc">
-              {txt("hero.desc", "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
-            </p>
-            <ul className="ez-hero-checks">
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check1", "بحث سريع")}</li>
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check2", "تفاصيل واضحة")}</li>
-              <li><i><Check size={12} strokeWidth={2.4} /></i>{txt("hero.check3", "تواصل مباشر")}</li>
-            </ul>
-          </div>
-
-          <div className="ez-hero-media ez-reveal ez-reveal-1">
-            <div className="ez-hero-banner">
-              <img
-                src={heroBride.url}
-                alt={txt("home.hero.title", "إزهليها")}
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-          </div>
+        <div className="ez-hero-full">
+          <img
+            src={heroBride.url}
+            alt={txt("home.hero.title", "إزهليها")}
+            loading="eager"
+            decoding="async"
+          />
         </div>
         )}
 
