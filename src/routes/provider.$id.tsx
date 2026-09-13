@@ -93,6 +93,7 @@ function ProviderPage() {
   const [cityName, setCityName] = useState<string>("");
   const [allCities, setAllCities] = useState<Array<{ id: string; name_ar: string }>>([]);
   const [subName, setSubName] = useState<string>("");
+  const [subCatId, setSubCatId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
