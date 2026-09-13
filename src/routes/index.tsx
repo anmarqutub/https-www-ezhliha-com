@@ -471,12 +471,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const goProviders = (patch: { categoryId?: string | null; cityId?: string }) => {
+  const goProviders = (patch: { categoryId?: string | null; cityId?: string; subId?: string }) => {
     if (patch.categoryId !== undefined) {
       pendingFilters.categoryId = patch.categoryId;
       setSelectedCategory(patch.categoryId);
       setSelectedSub("all");
     }
+    if (patch.subId !== undefined) setSelectedSub(patch.subId);
     if (patch.cityId !== undefined) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
@@ -484,6 +485,72 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     if (view !== "providers") navigate({ to: "/providers" });
     else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
+
+  // حفظ نقطة التصفح قبل الانتقال لصفحة مقدم الخدمة، لاسترجاعها عند الرجوع
+  const saveBrowseState = useCallback(() => {
+    if (typeof window === "undefined") return;
+    try {
+      sessionStorage.setItem(
+        "ez-browse-state",
+        JSON.stringify({
+          view,
+          selectedCity,
+          selectedCategory,
+          selectedSub,
+          search,
+          quickSearch,
+          priceRange,
+          capacityRange,
+          favOnly,
+          visibleCount,
+          scrollY: window.scrollY,
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [view, selectedCity, selectedCategory, selectedSub, search, quickSearch, priceRange, capacityRange, favOnly, visibleCount]);
+
+  const restoreRef = useRef<number | null>(null);
+  // استرجاع الفلاتر فوراً عند العودة من صفحة مقدم الخدمة
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem("ez-browse-state");
+      sessionStorage.removeItem("ez-browse-state");
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      if (s.view !== view) return;
+      setSelectedCity(s.selectedCity ?? "");
+      setSelectedCategory(s.selectedCategory ?? null);
+      setSelectedSub(s.selectedSub ?? "all");
+      setSearch(s.search ?? "");
+      setQuickSearch(s.quickSearch ?? "");
+      setPriceRange(s.priceRange ?? "all");
+      setCapacityRange(s.capacityRange ?? "all");
+      setFavOnly(!!s.favOnly);
+      setVisibleCount(Math.max(PAGE, s.visibleCount ?? PAGE));
+      restoreRef.current = typeof s.scrollY === "number" ? s.scrollY : null;
+      pendingFilters.categoryId = undefined;
+      pendingFilters.cityId = undefined;
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // استرجاع موضع التمرير بعد ما تجهز البيانات
+  useEffect(() => {
+    if (loading || restoreRef.current == null || typeof window === "undefined") return;
+    const y = restoreRef.current;
+    restoreRef.current = null;
+    const t = setTimeout(() => window.scrollTo({ top: y, behavior: "auto" }), 80);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   const scrollRail = (dir: number) => {
     const el = document.getElementById("ez-cat-rail");
