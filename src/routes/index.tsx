@@ -1563,6 +1563,9 @@ const css = `
   .ez-hero-checks li { display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(42,33,28,.72); }
   .ez-hero-checks i { width:20px; height:20px; border-radius:50%; border:1px solid rgba(100,0,0,.2); background:rgba(100,0,0,.06); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:11px; color:var(--brand); }
   .ez-hero-media { position:relative; max-width:570px; width:100%; }
+  .ez-hero-full { width:100%; margin:0; }
+  .ez-hero-full img { display:block; width:100%; height:auto; max-height:520px; object-fit:cover; object-position:center; }
+  @media (max-width:700px){ .ez-hero-full img { max-height:340px; } }
   .ez-hero-frame { position:absolute; top:-32px; inset-inline-start:-32px; width:38%; height:72%; border:1px solid rgba(100,0,0,.16); z-index:0; }
   .ez-hero-banner { display:block; position:relative; overflow:hidden; border-radius:14px; box-shadow:0 28px 70px rgba(53,24,19,.16); z-index:1; }
   .ez-hero-banner img { display:block; width:100%; aspect-ratio:16/10; height:auto; object-fit:cover; transition:transform .52s var(--ease-out); }
