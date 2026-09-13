@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
+  LayoutGrid,
   MapPin,
   Menu,
   Search,
@@ -593,10 +594,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return () => clearTimeout(t);
   }, [loading]);
 
-  const scrollRail = (dir: number) => {
-    const el = document.getElementById("ez-cat-rail");
-    if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
-  };
 
 
 
@@ -953,11 +950,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         <div className="ez-cats-head">
           <div>
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
-            <h2 className="ez-h2">{txt("categories.title", "اختر الخدمة اللي تبيها")}</h2>
-          </div>
-          <div className="ez-rail-nav">
-            <button type="button" aria-label="التالي" className="ez-rail-btn" onClick={() => scrollRail(-1)}><ChevronRight size={16} /></button>
-            <button type="button" aria-label="السابق" className="ez-rail-btn" onClick={() => scrollRail(1)}><ChevronLeft size={16} /></button>
+            <h2 className="ez-h2">{txt("categories.title", "تصفّحي حسب الفئات")}</h2>
           </div>
         </div>
 
@@ -968,36 +961,66 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
           </p>
         ) : (
-          <div className="ez-cat-rail" id="ez-cat-rail">
+          <div className="ez-cat-grid" id="ez-cat-rail">
+            <button
+              type="button"
+              className="ez-cat-tile"
+              onClick={() => {
+                setSearch("");
+                setQuickSearch("");
+                goProviders({ categoryId: null });
+              }}
+            >
+              <span className="ez-cat-thumb ez-cat-thumb-all"><LayoutGrid size={26} /></span>
+              <span className="ez-cat-label">{txt("categories.all", "مشاهدة الكل")}</span>
+            </button>
             {categories.map((c, i) => {
-              const count = providersCountByCat.get(c.id) ?? 0;
               const img = c.image_url || fallbackCategoryImage(c.name_ar, i);
               return (
                 <button
                   key={c.id}
-                  className={`ez-cat-card ${selectedCategory === c.id ? "active" : ""}`}
+                  type="button"
+                  className={`ez-cat-tile ${selectedCategory === c.id ? "active" : ""}`}
                   onClick={() => {
                     setSearch("");
                     setQuickSearch("");
                     goProviders({ categoryId: c.id });
                   }}
                 >
-                  <div className="ez-cat-media">
-                    <img src={img} alt={c.name_ar} loading="lazy" />
-                    <span className="ez-cat-num">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="ez-cat-go"><ArrowUpLeft size={14} /></span>
-                    <span className="ez-cat-name">{c.name_ar}</span>
-                    <span className="ez-cat-count">
-                      {count > 0 ? `${count} ${txt("home.category.count_suffix", "مقدم خدمة")}` : txt("home.category.coming_soon", "قريباً")}
-                    </span>
-                  </div>
+                  <span className="ez-cat-thumb">
+                    <img src={img} alt={c.name_ar} loading="lazy" decoding="async" />
+                  </span>
+                  <span className="ez-cat-label">{c.name_ar}</span>
                 </button>
               );
             })}
           </div>
         )}
+
+        {!loading && categories.length > 0 && (
+          <div className="ez-subquick">
+            {subcategories
+              .filter((s) => !s.parent_id)
+              .slice(0, 18)
+              .map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="ez-subquick-pill"
+                  onClick={() => {
+                    setSearch("");
+                    setQuickSearch("");
+                    goProviders({ categoryId: s.category_id, subId: s.id });
+                  }}
+                >
+                  {s.name_ar}
+                </button>
+              ))}
+          </div>
+        )}
       </section>
       )}
+
 
       {/* ── CITIES ── */}
       {view === "cities" && (
@@ -1109,14 +1132,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 <li>
                   <button type="button" className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>
                     <span>{txt("filter.service.all", "كل الخدمات")}</span>
-                    <small>{baseResults.length}</small>
                   </button>
                 </li>
                 {sidebarSubs.map((s) => (
                   <li key={s.id}>
                     <button type="button" className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>
                       <span>{s.name_ar}</span>
-                      <small>{s.count}</small>
                     </button>
                   </li>
                 ))}
@@ -1634,22 +1655,20 @@ const css = `
 
   /* CATEGORIES */
   .ez-cats-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-  .ez-rail-nav { display:flex; gap:8px; }
-  .ez-rail-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(100,0,0,.15); background:var(--surface); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; }
-  .ez-rail-btn:hover { background:var(--brand); color:#FFFDF8; border-color:var(--brand); }
-  .ez-cat-rail { display:flex; gap:14px; margin-top:26px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; scrollbar-width:none; }
-  .ez-cat-rail::-webkit-scrollbar { display:none; }
-  .ez-cat-card { position:relative; flex:0 0 calc(25% - 11px); min-width:250px; scroll-snap-align:start; background:var(--surface); border:1px solid var(--line); border-radius:4px; overflow:hidden; cursor:pointer; text-align:start; font-family:inherit; padding:0; transition:transform .25s, box-shadow .25s, border-color .25s; }
-  .ez-cat-card:hover { transform:translateY(-4px); box-shadow:0 18px 36px rgba(122,20,20,.14); border-color:var(--brand); }
-  .ez-cat-card.active { border-color:var(--brand); box-shadow:0 10px 26px rgba(122,20,20,.14); }
-  .ez-cat-media { position:relative; height:150px; background:#EFE7DA; overflow:hidden; }
-  .ez-cat-media img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
-  .ez-cat-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(20,12,10,.72), rgba(20,12,10,.05) 60%); }
-  .ez-cat-card:hover .ez-cat-media img { transform:scale(1.06); }
-  .ez-cat-num { position:absolute; top:12px; inset-inline-start:12px; z-index:2; color:rgba(255,253,248,.85); font-size:11px; font-weight:500; }
-  .ez-cat-go { position:absolute; bottom:12px; inset-inline-end:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.28); color:#fff; display:flex; align-items:center; justify-content:center; }
-  .ez-cat-name { position:absolute; bottom:26px; inset-inline-start:14px; z-index:2; font-size:16px; font-weight:600; color:#FFFDF8; }
-  .ez-cat-count { position:absolute; bottom:10px; inset-inline-start:14px; z-index:2; font-size:11px; color:rgba(255,253,248,.75); }
+  .ez-cat-grid { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:18px 14px; margin-top:24px; }
+  @media (max-width: 1100px) { .ez-cat-grid { grid-template-columns:repeat(4, minmax(0,1fr)); } }
+  .ez-cat-tile { display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:0; padding:0; font:inherit; cursor:pointer; }
+  .ez-cat-thumb { position:relative; display:block; width:100%; aspect-ratio:1/1; border-radius:18px; overflow:hidden; background:#F1E9DA; border:1px solid var(--line); transition:border-color .2s, box-shadow .2s; }
+  .ez-cat-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ez-cat-thumb-all { display:flex; align-items:center; justify-content:center; color:var(--brand); }
+  .ez-cat-tile:hover .ez-cat-thumb { border-color:var(--brand); box-shadow:0 10px 22px rgba(100,0,0,.12); }
+  .ez-cat-tile.active .ez-cat-thumb { border-color:var(--brand); box-shadow:0 0 0 2px rgba(100,0,0,.25); }
+  .ez-cat-label { font-size:13px; line-height:1.5; color:var(--ink); text-align:center; }
+  .ez-cat-tile.active .ez-cat-label { color:var(--brand); font-weight:600; }
+  .ez-subquick { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .ez-subquick-pill { background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 14px; font:inherit; font-size:12.5px; color:var(--ink); cursor:pointer; transition:all .2s; }
+  .ez-subquick-pill:hover { background:var(--brand); color:#FFFDF8; border-color:var(--brand); }
+
 
 
   /* RESULTS HEAD */
@@ -1863,8 +1882,9 @@ const css = `
     .ez-console-field select { font-size:12px; max-width:100%; }
     .ez-fchips { padding:0 16px; }
 
-    .ez-cat-card { flex:0 0 82%; min-width:0; }
-    .ez-cat-media { height:130px; }
+    .ez-cat-grid { grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px 10px; }
+    .ez-cat-thumb { border-radius:14px; }
+    .ez-cat-label { font-size:12px; }
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
