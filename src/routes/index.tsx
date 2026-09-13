@@ -5,6 +5,7 @@ import {
   ArrowUpLeft,
   Building2,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -141,6 +142,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [megaOpen, setMegaOpen] = useState(false);
+  const [megaCat, setMegaCat] = useState<string | null>(null);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [images, setImages] = useState<ProviderImage[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -627,6 +630,86 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
   ];
 
+  const megaCatId = megaCat ?? categories[0]?.id ?? null;
+  const megaSubs = subcategories.filter((s) => s.category_id === megaCatId && !s.parent_id);
+  const renderMega = (onPick?: () => void) => (
+    <div className="ez-mega">
+      <div className="ez-mega-cats">
+        {categories.map((c, i) => (
+          <button
+            key={c.id}
+            type="button"
+            className={`ez-mega-cat ${megaCatId === c.id ? "active" : ""}`}
+            onMouseEnter={() => setMegaCat(c.id)}
+            onFocus={() => setMegaCat(c.id)}
+            onClick={() => {
+              setSearch("");
+              setQuickSearch("");
+              onPick?.();
+              goProviders({ categoryId: c.id });
+            }}
+          >
+            <img src={c.image_url || fallbackCategoryImage(c.name_ar, i)} alt="" loading="lazy" />
+            <span>{c.name_ar}</span>
+            <ChevronLeft size={14} className="ez-mega-arrow" />
+          </button>
+        ))}
+      </div>
+      <div className="ez-mega-subs">
+        <button
+          type="button"
+          className="ez-mega-sub head"
+          onClick={() => {
+            setSearch("");
+            setQuickSearch("");
+            onPick?.();
+            goProviders({ categoryId: megaCatId });
+          }}
+        >
+          {txt("mega.allIn", "كل الخدمات")}
+        </button>
+        {megaSubs.map((s) => {
+          const kids = subcategories.filter((k) => k.parent_id === s.id);
+          return (
+            <div key={s.id} className="ez-mega-col">
+              <button
+                type="button"
+                className="ez-mega-sub head"
+                onClick={() => {
+                  setSearch("");
+                  setQuickSearch("");
+                  onPick?.();
+                  goProviders({ categoryId: s.category_id, subId: s.id });
+                }}
+              >
+                {s.name_ar}
+              </button>
+              {kids.map((k) => (
+                <button
+                  key={k.id}
+                  type="button"
+                  className="ez-mega-sub"
+                  onClick={() => {
+                    setSearch("");
+                    setQuickSearch("");
+                    onPick?.();
+                    goProviders({ categoryId: s.category_id, subId: s.id });
+                  }}
+                >
+                  {k.name_ar}
+                </button>
+              ))}
+            </div>
+          );
+        })}
+        {megaSubs.length === 0 && (
+          <p className="ez-mega-empty">{txt("mega.empty", "ما فيه تصنيفات فرعية لهذا القسم.")}</p>
+        )}
+      </div>
+    </div>
+  );
+
+
   if (!authLoading && !user) {
     return <AuthGate />;
   }
@@ -650,6 +733,25 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </Link>
 
         <nav className="ez-nav-menu">
+          <div
+            className="ez-mega-wrap"
+            onMouseEnter={() => setMegaOpen(true)}
+            onMouseLeave={() => setMegaOpen(false)}
+          >
+            <button
+              type="button"
+              className={`ez-nav-link ez-mega-trigger ${megaOpen ? "open" : ""}`}
+              onClick={() => setMegaOpen((v) => !v)}
+              aria-expanded={megaOpen}
+            >
+              <LayoutGrid size={15} />
+              {txt("nav.allCats", "جميع الأقسام")}
+              <ChevronDown size={14} />
+            </button>
+            {megaOpen && categories.length > 0 && (
+              <div className="ez-mega-pop">{renderMega(() => setMegaOpen(false))}</div>
+            )}
+          </div>
           {navItems.map((it) =>
             it.href ? (
               <a key={it.label} className="ez-nav-link" href={it.href} target="_blank" rel="noopener noreferrer">{it.label}</a>
@@ -998,25 +1100,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         )}
 
         {!loading && categories.length > 0 && (
-          <div className="ez-subquick">
-            {subcategories
-              .filter((s) => !s.parent_id)
-              .slice(0, 18)
-              .map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className="ez-subquick-pill"
-                  onClick={() => {
-                    setSearch("");
-                    setQuickSearch("");
-                    goProviders({ categoryId: s.category_id, subId: s.id });
-                  }}
-                >
-                  {s.name_ar}
-                </button>
-              ))}
-          </div>
+          <div className="ez-mega-inline">{renderMega()}</div>
         )}
       </section>
       )}
@@ -1546,6 +1630,35 @@ const css = `
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
   .ez-nav-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; background:var(--brand); color:#fff; border:none; padding:0 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(100,0,0,.14); transition:background .2s, transform .2s; white-space:nowrap; }
   .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
+
+  /* MEGA MENU */
+  .ez-mega-wrap { position:relative; }
+  .ez-mega-trigger { display:inline-flex; align-items:center; gap:6px; }
+  .ez-mega-trigger.open { color:var(--brand); }
+  .ez-mega-pop { position:absolute; top:calc(100% + 10px); right:0; z-index:200; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 60px rgba(0,0,0,.14); overflow:hidden; }
+  .ez-mega { display:flex; min-width:min(860px, 88vw); max-height:70vh; }
+  .ez-mega-cats { width:230px; flex:0 0 230px; background:var(--cream, #F7F3EA); border-inline-end:1px solid var(--line); overflow-y:auto; padding:8px 0; }
+  .ez-mega-cat { width:100%; display:flex; align-items:center; gap:10px; background:none; border:0; padding:9px 14px; cursor:pointer; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--ink); text-align:start; }
+  .ez-mega-cat img { width:30px; height:30px; border-radius:8px; object-fit:cover; flex:0 0 30px; }
+  .ez-mega-cat span { flex:1; }
+  .ez-mega-arrow { opacity:0; transition:opacity .15s; }
+  .ez-mega-cat.active, .ez-mega-cat:hover { background:#fff; color:var(--brand); }
+  .ez-mega-cat.active .ez-mega-arrow { opacity:1; }
+  .ez-mega-subs { flex:1; padding:16px 20px; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px 24px; align-content:start; overflow-y:auto; }
+  .ez-mega-col { display:flex; flex-direction:column; gap:2px; margin-bottom:12px; }
+  .ez-mega-sub { background:none; border:0; padding:4px 0; text-align:start; cursor:pointer; font-family:inherit; font-size:13px; color:#5B4C46; }
+  .ez-mega-sub:hover { color:var(--brand); }
+  .ez-mega-sub.head { font-weight:700; color:var(--ink); font-size:13.5px; }
+  .ez-mega-empty { grid-column:1/-1; color:#8A7C74; font-size:13px; }
+  .ez-mega-inline { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .ez-mega-inline .ez-mega { min-width:0; max-height:none; }
+  @media (max-width: 720px) {
+    .ez-mega { flex-direction:column; }
+    .ez-mega-cats { width:100%; flex:none; display:flex; overflow-x:auto; border-inline-end:0; border-bottom:1px solid var(--line); }
+    .ez-mega-cat { width:auto; white-space:nowrap; }
+    .ez-mega-arrow { display:none; }
+    .ez-mega-subs { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
 
   /* SHARED */
   .ez-eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-size:11.5px; color:var(--brand); font-weight:500; letter-spacing:.06em; margin-bottom:14px; font-family:"Thmanyah Serif Display","Alexandria",sans-serif; }
