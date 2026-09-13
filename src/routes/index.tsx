@@ -1068,7 +1068,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── CATEGORIES ── */}
-      {(view === "home" || view === "categories") && (
+      {view === "categories" && (
       <section className="ez-sec" id="ez-categories">
         <div className="ez-cats-head">
           <div>
