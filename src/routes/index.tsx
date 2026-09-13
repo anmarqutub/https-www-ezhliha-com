@@ -628,6 +628,86 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
   ];
 
+  const megaCatId = megaCat ?? categories[0]?.id ?? null;
+  const megaSubs = subcategories.filter((s) => s.category_id === megaCatId && !s.parent_id);
+  const renderMega = (onPick?: () => void) => (
+    <div className="ez-mega">
+      <div className="ez-mega-cats">
+        {categories.map((c, i) => (
+          <button
+            key={c.id}
+            type="button"
+            className={`ez-mega-cat ${megaCatId === c.id ? "active" : ""}`}
+            onMouseEnter={() => setMegaCat(c.id)}
+            onFocus={() => setMegaCat(c.id)}
+            onClick={() => {
+              setSearch("");
+              setQuickSearch("");
+              onPick?.();
+              goProviders({ categoryId: c.id });
+            }}
+          >
+            <img src={c.image_url || fallbackCategoryImage(c.name_ar, i)} alt="" loading="lazy" />
+            <span>{c.name_ar}</span>
+            <ChevronLeft size={14} className="ez-mega-arrow" />
+          </button>
+        ))}
+      </div>
+      <div className="ez-mega-subs">
+        <button
+          type="button"
+          className="ez-mega-sub head"
+          onClick={() => {
+            setSearch("");
+            setQuickSearch("");
+            onPick?.();
+            goProviders({ categoryId: megaCatId });
+          }}
+        >
+          {txt("mega.allIn", "كل الخدمات")}
+        </button>
+        {megaSubs.map((s) => {
+          const kids = subcategories.filter((k) => k.parent_id === s.id);
+          return (
+            <div key={s.id} className="ez-mega-col">
+              <button
+                type="button"
+                className="ez-mega-sub head"
+                onClick={() => {
+                  setSearch("");
+                  setQuickSearch("");
+                  onPick?.();
+                  goProviders({ categoryId: s.category_id, subId: s.id });
+                }}
+              >
+                {s.name_ar}
+              </button>
+              {kids.map((k) => (
+                <button
+                  key={k.id}
+                  type="button"
+                  className="ez-mega-sub"
+                  onClick={() => {
+                    setSearch("");
+                    setQuickSearch("");
+                    onPick?.();
+                    goProviders({ categoryId: s.category_id, subId: s.id });
+                  }}
+                >
+                  {k.name_ar}
+                </button>
+              ))}
+            </div>
+          );
+        })}
+        {megaSubs.length === 0 && (
+          <p className="ez-mega-empty">{txt("mega.empty", "ما فيه تصنيفات فرعية لهذا القسم.")}</p>
+        )}
+      </div>
+    </div>
+  );
+
+
   if (!authLoading && !user) {
     return <AuthGate />;
   }
