@@ -336,6 +336,16 @@ function ProviderPage() {
       </header>
 
       <div className="pv-crumbbar">
+        <button
+          type="button"
+          className="pv-crumb-back"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
+            else window.location.assign("/providers");
+          }}
+        >
+          <ChevronRight size={14} /> رجوع
+        </button>
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
         {subName && <><Link to="/providers">{subName}</Link><span><ChevronLeft size={13} /></span></>}
@@ -1279,7 +1289,9 @@ const css2 = `
 `;
 
 const css3 = `
-  .pv-crumbbar { max-width:1440px; margin:0 auto; padding:14px 28px 0; display:flex; align-items:center; gap:8px; font-size:12.5px; color:#8A7A73; }
+  .pv-crumbbar { position:sticky; top:0; z-index:60; max-width:1440px; margin:0 auto; padding:12px 28px; display:flex; align-items:center; gap:8px; font-size:12.5px; color:#8A7A73; background:rgba(253,250,244,.96); backdrop-filter:blur(6px); border-bottom:1px solid #EDE3D2; }
+  .pv-crumb-back { display:inline-flex; align-items:center; gap:4px; margin-inline-end:6px; padding:6px 12px; border:1px solid #E0D5C0; border-radius:999px; background:#FFFDF8; color:#640000; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .pv-crumb-back:hover { background:#640000; color:#fff; border-color:#640000; }
   .pv-crumbbar a { color:#8A7A73; text-decoration:none; }
   .pv-crumbbar a:hover { color:#640000; }
   .pv-crumbbar b { color:#241C1A; font-weight:500; }

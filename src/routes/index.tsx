@@ -14,6 +14,7 @@ import {
   Shapes,
   SlidersHorizontal,
   Star,
+  Users,
   X,
 } from "lucide-react";
 
@@ -24,10 +25,14 @@ import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
-import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
-import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
-import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
-import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
+import catHalls from "@/assets/cats/halls.jpg";
+import catDecor from "@/assets/cats/decor.jpg";
+import catCatering from "@/assets/cats/catering.jpg";
+import catInvites from "@/assets/cats/invites.jpg";
+import catPhoto from "@/assets/cats/photo.jpg";
+import catLook from "@/assets/cats/look.jpg";
+import catSpa from "@/assets/cats/spa.jpg";
+import catExtra from "@/assets/cats/extra.jpg";
 
 export const Route = createFileRoute("/")({
   component: () => <HomePage view="home" />,
@@ -67,6 +72,8 @@ type Provider = {
   price_from: number | null;
   price_to: number | null;
   price: string | null;
+  people_from: number | null;
+  people_to: number | null;
   whatsapp: string | null;
   contact_phone: string | null;
   instagram: string | null;
@@ -87,14 +94,18 @@ export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهل�
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
 
-const REF_IMAGES = [catCateringAsset.url, catVenueAsset.url, catPhotoAsset.url, catBeautyAsset.url];
+const REF_IMAGES = [catCatering, catHalls, catPhoto, catLook];
 
-function fallbackCategoryImage(name: string, index: number) {
+export function fallbackCategoryImage(name: string, index: number) {
   const n = name || "";
-  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCateringAsset.url;
-  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catVenueAsset.url;
-  if (/تصوير|فيديو|كامي/.test(n)) return catPhotoAsset.url;
-  if (/تجميل|شعر|مكياج|عناي/.test(n)) return catBeautyAsset.url;
+  if (/ضياف|بوفيه|طعام|مأكول|قهو/.test(n)) return catCatering;
+  if (/قاع|استراح|مكان|فيلا|شاليه/.test(n)) return catHalls;
+  if (/تنسيق|تصميم|ديكور|زهور|ورد/.test(n)) return catDecor;
+  if (/دعو|بطاق/.test(n)) return catInvites;
+  if (/تصوير|فيديو|كامي|توثيق/.test(n)) return catPhoto;
+  if (/إطلال|اطلال|تجميل|شعر|مكياج|عناي|فست|عبا/.test(n)) return catLook;
+  if (/سبا|مساج|منزلي/.test(n)) return catSpa;
+  if (/إضاف|اضاف|أخرى|اخرى/.test(n)) return catExtra;
   return REF_IMAGES[index % REF_IMAGES.length];
 }
 
@@ -135,6 +146,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
   const [priceRange, setPriceRange] = useState<string>("all");
+  const [capacityRange, setCapacityRange] = useState<string>("all");
   const [favOnly, setFavOnly] = useState(false);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
@@ -324,10 +336,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   const PRICE_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
     { id: "all", label: txt("filter.price.all", "كل الأسعار"), min: 0, max: Infinity },
-    { id: "lt1000", label: txt("filter.price.1", "أقل من 1,000 ر.س"), min: 0, max: 1000 },
-    { id: "1000-3000", label: txt("filter.price.2", "1,000 – 3,000 ر.س"), min: 1000, max: 3000 },
-    { id: "3000-10000", label: txt("filter.price.3", "3,000 – 10,000 ر.س"), min: 3000, max: 10000 },
-    { id: "gt10000", label: txt("filter.price.4", "أكثر من 10,000 ر.س"), min: 10000, max: Infinity },
+    { id: "lt5000", label: txt("filter.price.1", "أقل من 5,000 ر.س"), min: 0, max: 5000 },
+    { id: "5000-10000", label: txt("filter.price.2", "من 5,000 إلى 10,000 ر.س"), min: 5000, max: 10000 },
+    { id: "10000-20000", label: txt("filter.price.3", "من 10,000 إلى 20,000 ر.س"), min: 10000, max: 20000 },
+    { id: "gt20000", label: txt("filter.price.4", "أكثر من 20,000 ر.س"), min: 20000, max: Infinity },
+  ];
+
+  const CAPACITY_BANDS: Array<{ id: string; label: string; min: number; max: number }> = [
+    { id: "all", label: txt("filter.capacity.all", "كل السعات"), min: 0, max: Infinity },
+    { id: "lt100", label: txt("filter.capacity.1", "أقل من 100 ضيف"), min: 0, max: 100 },
+    { id: "100-200", label: txt("filter.capacity.2", "من 100 إلى 200 ضيف"), min: 100, max: 200 },
+    { id: "200-300", label: txt("filter.capacity.3", "من 200 إلى 300 ضيف"), min: 200, max: 300 },
+    { id: "300-500", label: txt("filter.capacity.4", "من 300 إلى 500 ضيف"), min: 300, max: 500 },
+    { id: "500-700", label: txt("filter.capacity.5", "من 500 إلى 700 ضيف"), min: 500, max: 700 },
   ];
 
   const matchesPrice = (p: Provider) => {
@@ -339,6 +360,24 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return val >= band.min && val < band.max;
   };
 
+  const matchesCapacity = (p: Provider) => {
+    if (capacityRange === "all") return true;
+    const band = CAPACITY_BANDS.find((b) => b.id === capacityRange);
+    if (!band) return true;
+    const from = p.people_from ?? p.people_to;
+    const to = p.people_to ?? p.people_from;
+    if (from == null || to == null) return false;
+    // تداخل نطاق سعة القاعة مع النطاق المختار
+    return from < band.max && to >= band.min;
+  };
+
+  // هل التصنيف الحالي هو القاعات (لعرض فلتر السعة)
+  const isVenueCategory = (() => {
+    const cat = categories.find((c) => c.id === selectedCategory);
+    if (cat) return /قاع|استراح/.test(cat.name_ar);
+    return false;
+  })();
+
   // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
   const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
@@ -346,6 +385,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     if (!sub) return false;
     if (selectedCategory && sub.category_id !== selectedCategory) return false;
     if (!matchesPrice(p)) return false;
+    if (isVenueCategory && !matchesCapacity(p)) return false;
     if (favOnly && !favIds.has(p.id)) return false;
     if (search.trim()) {
       const s = search.trim().toLowerCase();
@@ -377,7 +417,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   }));
 
   const filtersActive = !!(
-    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" || favOnly
+    q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" ||
+    capacityRange !== "all" || favOnly
   );
 
 
@@ -395,8 +436,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const PAGE = 18;
   const [visibleCount, setVisibleCount] = useState(PAGE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const resultsKey = `${q}|${selectedCategory}|${selectedCity}|${selectedSub}|${priceRange}|${favOnly}|${search}`;
-  useEffect(() => { setVisibleCount(PAGE); }, [resultsKey]);
+  const keepCountRef = useRef<number | null>(null);
+  const resultsKey = `${q}|${selectedCategory}|${selectedCity}|${selectedSub}|${priceRange}|${capacityRange}|${favOnly}|${search}`;
+  useEffect(() => {
+    // عند الرجوع من صفحة مزود نبقي نفس عدد النتائج المعروضة
+    if (keepCountRef.current != null) {
+      setVisibleCount(keepCountRef.current);
+      keepCountRef.current = null;
+      return;
+    }
+    setVisibleCount(PAGE);
+  }, [resultsKey]);
   useEffect(() => {
     const node = sentinelRef.current;
     if (!node) return;
@@ -431,12 +481,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const goProviders = (patch: { categoryId?: string | null; cityId?: string }) => {
+  const goProviders = (patch: { categoryId?: string | null; cityId?: string; subId?: string }) => {
     if (patch.categoryId !== undefined) {
       pendingFilters.categoryId = patch.categoryId;
       setSelectedCategory(patch.categoryId);
       setSelectedSub("all");
     }
+    if (patch.subId !== undefined) setSelectedSub(patch.subId);
     if (patch.cityId !== undefined) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
@@ -444,6 +495,73 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     if (view !== "providers") navigate({ to: "/providers" });
     else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
+
+  // حفظ نقطة التصفح قبل الانتقال لصفحة مقدم الخدمة، لاسترجاعها عند الرجوع
+  const saveBrowseState = useCallback(() => {
+    if (typeof window === "undefined") return;
+    try {
+      sessionStorage.setItem(
+        "ez-browse-state",
+        JSON.stringify({
+          view,
+          selectedCity,
+          selectedCategory,
+          selectedSub,
+          search,
+          quickSearch,
+          priceRange,
+          capacityRange,
+          favOnly,
+          visibleCount,
+          scrollY: window.scrollY,
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [view, selectedCity, selectedCategory, selectedSub, search, quickSearch, priceRange, capacityRange, favOnly, visibleCount]);
+
+  const restoreRef = useRef<number | null>(null);
+  // استرجاع الفلاتر فوراً عند العودة من صفحة مقدم الخدمة
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem("ez-browse-state");
+      sessionStorage.removeItem("ez-browse-state");
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      if (s.view !== view) return;
+      setSelectedCity(s.selectedCity ?? "");
+      setSelectedCategory(s.selectedCategory ?? null);
+      setSelectedSub(s.selectedSub ?? "all");
+      setSearch(s.search ?? "");
+      setQuickSearch(s.quickSearch ?? "");
+      setPriceRange(s.priceRange ?? "all");
+      setCapacityRange(s.capacityRange ?? "all");
+      setFavOnly(!!s.favOnly);
+      keepCountRef.current = Math.max(PAGE, s.visibleCount ?? PAGE);
+      setVisibleCount(keepCountRef.current);
+      restoreRef.current = typeof s.scrollY === "number" ? s.scrollY : null;
+      pendingFilters.categoryId = undefined;
+      pendingFilters.cityId = undefined;
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // استرجاع موضع التمرير بعد ما تجهز البيانات
+  useEffect(() => {
+    if (loading || restoreRef.current == null || typeof window === "undefined") return;
+    const y = restoreRef.current;
+    restoreRef.current = null;
+    const t = setTimeout(() => window.scrollTo({ top: y, behavior: "auto" }), 80);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   const scrollRail = (dir: number) => {
     const el = document.getElementById("ez-cat-rail");
@@ -459,6 +577,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     setSearch("");
     setQuickSearch("");
     setPriceRange("all");
+    setCapacityRange("all");
     setFavOnly(false);
   };
 
@@ -660,11 +779,31 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <div className="ez-console-field">
             <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
             <select
-              value={selectedCategory ?? ""}
-              onChange={(e) => { setSelectedCategory(e.target.value || null); setSelectedSub("all"); }}
+              value={selectedSub !== "all" ? `sub:${selectedSub}` : (selectedCategory ?? "")}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) { setSelectedCategory(null); setSelectedSub("all"); return; }
+                if (v.startsWith("sub:")) {
+                  const subId = v.slice(4);
+                  const sub = subcategories.find((s) => s.id === subId);
+                  setSelectedCategory(sub?.category_id ?? null);
+                  setSelectedSub(subId);
+                  return;
+                }
+                setSelectedCategory(v);
+                setSelectedSub("all");
+              }}
             >
               <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+              {categories.map((c) => {
+                const subs = subcategories.filter((s) => s.category_id === c.id && !s.parent_id);
+                return (
+                  <optgroup key={c.id} label={c.name_ar}>
+                    <option value={c.id}>{c.name_ar} — {txt("console.category.all_in", "كل الخدمات")}</option>
+                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>‏— {s.name_ar}</option>)}
+                  </optgroup>
+                );
+              })}
             </select>
           </div>
           <div className="ez-console-field">
@@ -980,6 +1119,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               </select>
             </div>
 
+            {isVenueCategory && (
+              <div className="ez-fgroup">
+                <h4>{txt("filter.capacity", "السعة (عدد الضيوف)")}</h4>
+                <select className="ez-fselect" value={capacityRange} onChange={(e) => setCapacityRange(e.target.value)}>
+                  {CAPACITY_BANDS.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+                </select>
+              </div>
+            )}
+
             {user && (
               <button
                 type="button"
@@ -1016,6 +1164,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           eager={i < 3}
                           isFav={favIds.has(p.id)}
                           onToggleFav={user ? toggleFav : undefined}
+                          onOpen={saveBrowseState}
                         />
                       ))}
                     </div>
@@ -1037,6 +1186,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           eager={featured.length === 0 && i < 3}
                           isFav={favIds.has(p.id)}
                           onToggleFav={user ? toggleFav : undefined}
+                          onOpen={saveBrowseState}
                         />
                       ))}
                     </div>
@@ -1124,6 +1274,7 @@ const ProviderCard = memo(function ProviderCard({
   onToggleFav,
   tags = [],
   eager = false,
+  onOpen,
 }: {
   provider: Provider;
   city?: City;
@@ -1135,13 +1286,22 @@ const ProviderCard = memo(function ProviderCard({
   onToggleFav?: (providerId: string) => void;
   tags?: string[];
   eager?: boolean;
+  onOpen?: () => void;
 }) {
   const cover = images[0]?.image_url || defaultProviderUrl;
   const waUrl = waLink(provider.whatsapp);
+  const capacity =
+    provider.people_from && provider.people_to
+      ? `${provider.people_from} – ${provider.people_to} ضيف`
+      : provider.people_to
+        ? `حتى ${provider.people_to} ضيف`
+        : provider.people_from
+          ? `من ${provider.people_from} ضيف`
+          : null;
 
   return (
     <article className={`ez-card ${featured ? "ez-card-featured" : ""}`}>
-      <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link">
+      <Link to="/provider/$id" params={{ id: provider.id }} className="ez-card-link" onClick={() => onOpen?.()}>
         <div className="ez-card-img">
           <SocialImg
             src={cover}
@@ -1166,22 +1326,11 @@ const ProviderCard = memo(function ProviderCard({
         </div>
 
         <div className="ez-card-body">
-          <div className="ez-card-toprow">
-            {sub && <span className="ez-card-kicker">{sub.name_ar}</span>}
-            {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
-          </div>
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
-            {provider.rating ? <span className="ez-rating"><Star size={12} fill="currentColor" /> {provider.rating}</span> : null}
           </div>
-          {provider.description && <p className="ez-card-desc">{provider.description}</p>}
-          {tags.length > 0 && (
-            <div className="ez-card-tags">
-              {tags.map((t) => (
-                <span className="ez-card-tag" key={t}>{t}</span>
-              ))}
-            </div>
-          )}
+          {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
+          {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
             <small>السعر التقريبي</small>
             <strong>
@@ -1192,7 +1341,6 @@ const ProviderCard = memo(function ProviderCard({
                   : "السعر حسب التفاصيل"}
             </strong>
           </div>
-
         </div>
       </Link>
 
@@ -1570,7 +1718,7 @@ const css = `
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
   .ez-card-head h3 { font-size:18px; font-weight:600; color:var(--ink); margin:0; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
-  .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .ez-card-meta { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); margin-bottom:6px; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
   .ez-card-tag { display:inline-block; max-width:100%; border:1px solid #000; background:color-mix(in oklab, var(--surface) 70%, transparent); color:#000; font-size:11px; font-weight:500; line-height:1.6; padding:4px 9px; border-radius:2px; white-space:normal; overflow-wrap:anywhere; text-align:start; }
