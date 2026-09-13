@@ -145,6 +145,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [search, setSearch] = useState("");
   const [quickSearch, setQuickSearch] = useState("");
   const [priceRange, setPriceRange] = useState<string>("all");
+  const [capacityRange, setCapacityRange] = useState<string>("all");
   const [favOnly, setFavOnly] = useState(false);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
