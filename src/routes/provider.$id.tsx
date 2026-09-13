@@ -341,14 +341,14 @@ function ProviderPage() {
           className="pv-crumb-back"
           onClick={() => {
             if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
-            else window.location.assign("/providers");
+            else window.location.assign("/");
           }}
         >
           <ChevronRight size={14} /> رجوع
         </button>
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
-        {subName && <><Link to="/providers">{subName}</Link><span><ChevronLeft size={13} /></span></>}
+        {subName && <><span className="pv-crumb-sub">{subName}</span><span><ChevronLeft size={13} /></span></>}
         <b>{provider.name}</b>
       </div>
 
@@ -357,8 +357,7 @@ function ProviderPage() {
           <button
             type="button"
             className="pv-hero-main"
-            key={cover}
-            style={{ position: "relative", overflow: "hidden", animation: "pvFadeSlide .6s ease" }}
+            style={{ position: "relative", overflow: "hidden" }}
             onClick={() => setGalleryOpen(true)}
             aria-label="عرض الصور"
           >
@@ -1421,13 +1420,15 @@ const css3 = `
   /* ===== hero carousel ===== */
   .pv-hero { display:block; }
   .pv-hero-carousel { position:relative; max-width:1100px; margin:0 auto; }
-  .pv-hero-carousel .pv-hero-main { width:100%; height:460px; border-radius:26px; }
-  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18); transition:background .2s, color .2s; }
+  .pv-hero-carousel .pv-hero-main { width:100%; height:420px; border-radius:20px; }
+  .pv-hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%; border:0; background:rgba(255,255,255,.92); color:#241C1A; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.14); transition:background .2s, color .2s; }
+  .pv-hero-arrow svg { width:16px; height:16px; }
   .pv-hero-arrow:hover { background:#640000; color:#fff; }
-  .pv-hero-prev { right:18px; }
-  .pv-hero-next { left:18px; }
-  .pv-hero-count { position:absolute; bottom:18px; right:20px; background:rgba(255,253,248,.94); backdrop-filter:blur(4px); color:#241C1A; border-radius:10px; padding:7px 14px; font-size:13px; font-weight:700; letter-spacing:.5px; display:inline-flex; align-items:center; gap:7px; box-shadow:0 4px 14px rgba(0,0,0,.14); }
-  .pv-hero-count svg { color:#640000; }
+  .pv-hero-prev { right:12px; }
+  .pv-hero-next { left:12px; }
+  .pv-hero-count { position:absolute; bottom:12px; right:12px; background:rgba(255,253,248,.94); color:#241C1A; border-radius:8px; padding:4px 9px; font-size:11.5px; font-weight:600; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+  .pv-hero-count svg { color:#640000; width:11px; height:11px; }
+  .pv-crumb-sub { color:#5B4C46; }
 
   .pv-meta-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
   .pv-meta-info { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
@@ -1483,13 +1484,13 @@ const css3 = `
   .pv-crumbbar span { display:inline-flex; align-items:center; color:#9A8F86; }
 
   @media (max-width:900px) {
-    .pv-hero-carousel .pv-hero-main { height:300px; border-radius:20px; }
-    .pv-hero-arrow { width:38px; height:38px; }
-    .pv-hero-act { width:38px; height:38px; }
-    .pv-hero-actions { top:12px; right:12px; gap:8px; }
-    .pv-hero-count { bottom:14px; right:14px; }
-    .pv-hero-prev { right:12px; }
-    .pv-hero-next { left:12px; }
+    .pv-hero-carousel .pv-hero-main { height:280px; border-radius:16px; }
+    .pv-hero-arrow { width:30px; height:30px; }
+    .pv-hero-act { width:34px; height:34px; }
+    .pv-hero-actions { top:10px; right:10px; gap:8px; }
+    .pv-hero-count { bottom:10px; right:10px; }
+    .pv-hero-prev { right:8px; }
+    .pv-hero-next { left:8px; }
     .pv-price-bar { position:sticky; bottom:0; }
   }
 
