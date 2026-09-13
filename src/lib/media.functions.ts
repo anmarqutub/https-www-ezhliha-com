@@ -53,6 +53,18 @@ export const getVideoPoster = createServerFn({ method: "GET" })
         "Mozilla/5.0 (compatible; facebookexternalhit/1.1; +https://www.ezhliha.com)",
       "Accept-Language": "ar,en;q=0.8",
     };
+    const browserHeaders = {
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36",
+      "Accept-Language": "ar,en;q=0.8",
+      Accept: "text/html,application/xhtml+xml,*/*;q=0.8",
+    };
+
+    // صور بديلة عامة (شعار تيك توك مثلاً) نرفضها
+    const isPlaceholder = (u: string) =>
+      /tiktok-logo|poster-square|default_avatar|obj\/tiktok-web-common/i.test(u);
+    const clean = (u: string | null) =>
+      u && u.startsWith("https://") && !isPlaceholder(u) ? u : null;
 
     // TikTok / Vimeo لديهما oEmbed عام يعطي thumbnail_url
     try {
@@ -62,14 +74,45 @@ export const getVideoPoster = createServerFn({ method: "GET" })
           ? `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(data.url)}`
           : null;
       if (oembed) {
-        const r = await fetch(oembed, { headers });
+        const r = await fetch(oembed, { headers: browserHeaders });
         if (r.ok) {
           const j = (await r.json()) as { thumbnail_url?: string };
-          if (j.thumbnail_url) return { poster: j.thumbnail_url };
+          const t = clean(j.thumbnail_url ?? null);
+          if (t) return { poster: t };
         }
       }
     } catch {
-      /* نتجاهل ونجرّب og:image */
+      /* نتجاهل ونجرّب طرق أخرى */
+    }
+
+    // تيك توك: نقرأ صفحة التضمين ونستخرج غلاف الفيديو من بيانات الصفحة
+    if (target.hostname.includes("tiktok")) {
+      const vid = data.url.match(/\/video\/(\d{6,})/)?.[1];
+      const pages = [
+        vid ? `https://www.tiktok.com/embed/v2/${vid}` : null,
+        data.url,
+      ].filter(Boolean) as string[];
+      for (const page of pages) {
+        try {
+          const r = await fetch(page, { headers: browserHeaders, redirect: "follow" });
+          if (!r.ok) continue;
+          const html = (await r.text()).slice(0, 600_000);
+          const candidates = [
+            html.match(/"(?:originCover|dynamicCover|cover|thumbnail_url)":"([^"]+)"/)?.[1],
+            html.match(/https:\\?\/\\?\/[^"\\]*tiktokcdn[^"\\]*/)?.[0],
+            pickMeta(html, ["og:image:secure_url", "og:image", "twitter:image"]),
+          ]
+            .filter(Boolean)
+            .map((u) => (u as string).replace(/\\u002F/g, "/").replace(/\\\//g, "/"));
+          for (const c of candidates) {
+            const ok = clean(c);
+            if (ok) return { poster: ok };
+          }
+        } catch {
+          /* نكمل للمحاولة التالية */
+        }
+      }
+      return { poster: null as string | null };
     }
 
     try {
@@ -82,7 +125,7 @@ export const getVideoPoster = createServerFn({ method: "GET" })
         "twitter:image",
         "twitter:image:src",
       ]);
-      return { poster: poster && poster.startsWith("https://") ? poster : null };
+      return { poster: clean(poster) };
     } catch {
       return { poster: null as string | null };
     }
