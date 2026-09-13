@@ -594,10 +594,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return () => clearTimeout(t);
   }, [loading]);
 
-  const scrollRail = (dir: number) => {
-    const el = document.getElementById("ez-cat-rail");
-    if (el) el.scrollBy({ left: dir * Math.max(280, el.clientWidth * 0.7), behavior: "smooth" });
-  };
 
 
 
@@ -1136,14 +1132,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 <li>
                   <button type="button" className={selectedSub === "all" ? "active" : ""} onClick={() => setSelectedSub("all")}>
                     <span>{txt("filter.service.all", "كل الخدمات")}</span>
-                    <small>{baseResults.length}</small>
                   </button>
                 </li>
                 {sidebarSubs.map((s) => (
                   <li key={s.id}>
                     <button type="button" className={selectedSub === s.id ? "active" : ""} onClick={() => setSelectedSub(s.id)}>
                       <span>{s.name_ar}</span>
-                      <small>{s.count}</small>
                     </button>
                   </li>
                 ))}
@@ -1887,8 +1881,9 @@ const css = `
     .ez-console-field select { font-size:12px; max-width:100%; }
     .ez-fchips { padding:0 16px; }
 
-    .ez-cat-card { flex:0 0 82%; min-width:0; }
-    .ez-cat-media { height:130px; }
+    .ez-cat-grid { grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px 10px; }
+    .ez-cat-thumb { border-radius:14px; }
+    .ez-cat-label { font-size:12px; }
     .ez-search { min-width:0; width:100%; }
     .ez-results-tools { width:100%; }
     .ez-footer-brand { max-width:none; }
