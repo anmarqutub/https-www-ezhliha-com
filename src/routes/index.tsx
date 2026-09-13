@@ -124,6 +124,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
     if (pendingFilters.cityId !== undefined) setSelectedCity(pendingFilters.cityId);
     if (pendingFilters.subId !== undefined) setSelectedSub(pendingFilters.subId);
+    if (
+      pendingFilters.categoryId !== undefined ||
+      pendingFilters.cityId !== undefined ||
+      pendingFilters.subId !== undefined
+    ) {
+      pendingApplied.current = true;
+    }
     pendingFilters.categoryId = undefined;
     pendingFilters.cityId = undefined;
     pendingFilters.subId = undefined;
