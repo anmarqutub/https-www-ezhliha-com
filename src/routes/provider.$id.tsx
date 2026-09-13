@@ -350,7 +350,22 @@ function ProviderPage() {
         </button>
         <Link to="/">الرئيسية</Link>
         <span><ChevronLeft size={13} /></span>
-        {subName && <><span className="pv-crumb-sub">{subName}</span><span><ChevronLeft size={13} /></span></>}
+        {subName && (
+          <>
+            <button
+              type="button"
+              className="pv-crumb-sub"
+              onClick={() => {
+                pendingFilters.categoryId = subCatId ?? null;
+                pendingFilters.subId = provider.subcategory_id;
+                navigate({ to: "/providers" });
+              }}
+            >
+              {subName}
+            </button>
+            <span><ChevronLeft size={13} /></span>
+          </>
+        )}
         <b>{provider.name}</b>
       </div>
 
