@@ -14,6 +14,7 @@ import {
   Shapes,
   SlidersHorizontal,
   Star,
+  Users,
   X,
 } from "lucide-react";
 
