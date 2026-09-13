@@ -733,6 +733,25 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </Link>
 
         <nav className="ez-nav-menu">
+          <div
+            className="ez-mega-wrap"
+            onMouseEnter={() => setMegaOpen(true)}
+            onMouseLeave={() => setMegaOpen(false)}
+          >
+            <button
+              type="button"
+              className={`ez-nav-link ez-mega-trigger ${megaOpen ? "open" : ""}`}
+              onClick={() => setMegaOpen((v) => !v)}
+              aria-expanded={megaOpen}
+            >
+              <LayoutGrid size={15} />
+              {txt("nav.allCats", "جميع الأقسام")}
+              <ChevronDown size={14} />
+            </button>
+            {megaOpen && categories.length > 0 && (
+              <div className="ez-mega-pop">{renderMega(() => setMegaOpen(false))}</div>
+            )}
+          </div>
           {navItems.map((it) =>
             it.href ? (
               <a key={it.label} className="ez-nav-link" href={it.href} target="_blank" rel="noopener noreferrer">{it.label}</a>
