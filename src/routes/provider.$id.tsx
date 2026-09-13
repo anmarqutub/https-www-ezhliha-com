@@ -141,7 +141,7 @@ function ProviderPage() {
       setProvider(p.data as unknown as Provider);
       const [c, s, pkg, srv, br, txt] = await Promise.all([
         supabase.from("cities").select("name_ar").eq("id", p.data.city_id).maybeSingle(),
-        supabase.from("subcategories").select("name_ar").eq("id", p.data.subcategory_id).maybeSingle(),
+        supabase.from("subcategories").select("name_ar,category_id").eq("id", p.data.subcategory_id).maybeSingle(),
         supabase.from("packages").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("services").select("id,name,description,price,image_url,sort_order,images,videos").eq("provider_id", id).order("sort_order"),
         supabase.from("branches").select("id,name,address,map_url,phone,sort_order").eq("provider_id", id).order("sort_order"),
