@@ -778,11 +778,31 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <div className="ez-console-field">
             <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
             <select
-              value={selectedCategory ?? ""}
-              onChange={(e) => { setSelectedCategory(e.target.value || null); setSelectedSub("all"); }}
+              value={selectedSub !== "all" ? `sub:${selectedSub}` : (selectedCategory ?? "")}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) { setSelectedCategory(null); setSelectedSub("all"); return; }
+                if (v.startsWith("sub:")) {
+                  const subId = v.slice(4);
+                  const sub = subcategories.find((s) => s.id === subId);
+                  setSelectedCategory(sub?.category_id ?? null);
+                  setSelectedSub(subId);
+                  return;
+                }
+                setSelectedCategory(v);
+                setSelectedSub("all");
+              }}
             >
               <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+              {categories.map((c) => {
+                const subs = subcategories.filter((s) => s.category_id === c.id && !s.parent_id);
+                return (
+                  <optgroup key={c.id} label={c.name_ar}>
+                    <option value={c.id}>{c.name_ar} — {txt("console.category.all_in", "كل الخدمات")}</option>
+                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>‏— {s.name_ar}</option>)}
+                  </optgroup>
+                );
+              })}
             </select>
           </div>
           <div className="ez-console-field">
