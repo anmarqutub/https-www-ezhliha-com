@@ -24,10 +24,14 @@ import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
-import catCateringAsset from "@/assets/ref/cat-catering.jpg.asset.json";
-import catVenueAsset from "@/assets/ref/cat-venue.jpg.asset.json";
-import catPhotoAsset from "@/assets/ref/cat-photo.jpg.asset.json";
-import catBeautyAsset from "@/assets/ref/cat-beauty.jpg.asset.json";
+import catHalls from "@/assets/cats/halls.jpg";
+import catDecor from "@/assets/cats/decor.jpg";
+import catCatering from "@/assets/cats/catering.jpg";
+import catInvites from "@/assets/cats/invites.jpg";
+import catPhoto from "@/assets/cats/photo.jpg";
+import catLook from "@/assets/cats/look.jpg";
+import catSpa from "@/assets/cats/spa.jpg";
+import catExtra from "@/assets/cats/extra.jpg";
 
 export const Route = createFileRoute("/")({
   component: () => <HomePage view="home" />,
