@@ -35,6 +35,7 @@ import catPhoto from "@/assets/cats/photo.jpg";
 import catLook from "@/assets/cats/look.jpg";
 import catSpa from "@/assets/cats/spa.jpg";
 import catExtra from "@/assets/cats/extra.jpg";
+import heroBride from "@/assets/hero-bride.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   component: () => <HomePage view="home" />,
