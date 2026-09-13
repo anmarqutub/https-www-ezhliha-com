@@ -4,7 +4,7 @@ import { ArrowLeft, Check, ChevronLeft, ChevronRight, Heart, Star } from "lucide
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
-import { waLink, cleanHandle } from "./index";
+import { waLink, cleanHandle, pendingFilters } from "./index";
 import { MediaThumb } from "@/components/MediaThumb";
 
 import logoUrl from "@/assets/logo.jpg";
