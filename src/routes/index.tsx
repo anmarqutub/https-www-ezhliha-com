@@ -123,8 +123,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   useEffect(() => {
     if (pendingFilters.categoryId !== undefined) setSelectedCategory(pendingFilters.categoryId ?? null);
     if (pendingFilters.cityId !== undefined) setSelectedCity(pendingFilters.cityId);
+    if (pendingFilters.subId !== undefined) setSelectedSub(pendingFilters.subId);
     pendingFilters.categoryId = undefined;
     pendingFilters.cityId = undefined;
+    pendingFilters.subId = undefined;
   }, []);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
