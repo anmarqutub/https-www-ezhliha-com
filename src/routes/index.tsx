@@ -1186,6 +1186,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           eager={featured.length === 0 && i < 3}
                           isFav={favIds.has(p.id)}
                           onToggleFav={user ? toggleFav : undefined}
+                          onOpen={saveBrowseState}
                         />
                       ))}
                     </div>
