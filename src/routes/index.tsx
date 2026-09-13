@@ -1855,12 +1855,12 @@ const css = `
     .ez-nav-cta { height:40px; padding:0 14px; font-size:12.5px; border-radius:6px; }
     .ez-nav-btn { height:40px; display:inline-flex; align-items:center; padding:0 14px; font-size:12.5px; border-radius:6px; }
     .ez-console-btn { min-height:48px; border-radius:12px; }
-    .ez-wa-btn { min-height:48px; padding:0; font-size:14px; }
-    .ez-card-fav { inset-inline-start:10px; }
+    .ez-wa-btn { min-height:42px; padding:0; font-size:12.5px; }
+    .ez-card-fav { inset-inline-start:auto; inset-inline-end:9px; }
     .ez-hero-copy, .ez-sec-head, .ez-card-body { text-align:right; }
     .ez-card-head { flex-wrap:wrap; }
     .ez-fchips, .ez-filters-bar { justify-content:flex-start; }
-    .ez-card-head h3 { font-size:17px; min-width:0; overflow-wrap:anywhere; }
+    .ez-card-head h3 { font-size:13.5px; min-width:0; overflow-wrap:anywhere; }
     .ez-card-desc { -webkit-line-clamp:2; }
   }
 
