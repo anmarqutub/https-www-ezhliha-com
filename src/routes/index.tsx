@@ -538,7 +538,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     // إذا جاء المستخدم من التصنيفات/المدن باختيار جديد، نحترم الاختيار الجديد
-    if (pendingFilters.categoryId !== undefined || pendingFilters.cityId !== undefined) return;
+    if (
+      pendingApplied.current ||
+      pendingFilters.categoryId !== undefined ||
+      pendingFilters.cityId !== undefined ||
+      pendingFilters.subId !== undefined
+    )
+      return;
     let raw: string | null = null;
     try {
       raw = sessionStorage.getItem("ez-browse-state");
