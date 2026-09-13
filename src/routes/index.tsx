@@ -957,11 +957,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 const subs = subcategories.filter((s) => s.category_id === c.id && !s.parent_id);
                 return (
                   <optgroup key={c.id} label={c.name_ar}>
-                    <option value={c.id}>{c.name_ar} — {txt("console.category.all_in", "كل الخدمات")}</option>
-                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>‏— {s.name_ar}</option>)}
+                    <option value={c.id}>{txt("console.category.all_in", "كل الخدمات")}</option>
+                    {subs.map((s) => <option key={s.id} value={`sub:${s.id}`}>{s.name_ar}</option>)}
                   </optgroup>
                 );
               })}
+
             </select>
           </div>
           <div className="ez-console-field">
