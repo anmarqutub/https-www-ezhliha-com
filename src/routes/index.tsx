@@ -498,7 +498,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setSelectedCategory(patch.categoryId);
       setSelectedSub("all");
     }
-    if (patch.subId !== undefined) setSelectedSub(patch.subId);
+    if (patch.subId !== undefined) {
+      pendingFilters.subId = patch.subId;
+      setSelectedSub(patch.subId);
+    }
     if (patch.cityId !== undefined) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
