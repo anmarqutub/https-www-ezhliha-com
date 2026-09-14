@@ -246,13 +246,11 @@ const trustCats = [
 function TrustCounter({
   txt,
   target,
-  cityCount,
   favCount,
   onExplore,
 }: {
   txt: (k: string, f: string) => string;
   target: number;
-  cityCount: number;
   favCount: number;
   onExplore: () => void;
 }) {
