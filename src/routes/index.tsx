@@ -803,6 +803,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
                 <Search size={16} strokeWidth={2} /> {txt("nav.cta", "ابحث عن مقدم خدمة")}
               </button>
+              <Link to="/favorites" className="ez-nav-ico" aria-label={txt("nav.favorites", "المفضلة")}>
+                <Heart size={17} />
+                {favIds.size > 0 && <i>{favIds.size}</i>}
+              </Link>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
           )}
