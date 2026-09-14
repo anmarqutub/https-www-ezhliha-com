@@ -218,38 +218,115 @@ export default function HomeLanding({
         </ol>
       </section>
 
-      {/* ── 9. TRUST ── */}
-      <section className="hl-trust">
-        <div className="hl-trust-in">
-          <div className="hl-trust-grid">
-            <div className="hl-trust-item">
-              <Building2 size={18} />
-              <strong>
-                +{Math.max(500, Math.floor(providerCount / 50) * 50)} {txt("hl.trust.providers", "مزود خدمة")}
-              </strong>
-            </div>
-            <div className="hl-trust-item">
-              <Star size={18} />
-              <strong>{txt("hl.trust.data", "معلومات موثوقة ومحدثة")}</strong>
-            </div>
-            <div className="hl-trust-item">
-              <MapPin size={18} />
-              <strong>
-                {txt("hl.trust.cities", "خيارات في")} {cityCount} {txt("hl.trust.cities2", "مدينة")}
-              </strong>
-            </div>
-            <div className="hl-trust-item">
-              <Heart size={18} />
-              <strong>
-                {txt("hl.trust.fav", "مفضلة خاصة بكِ")}
-                {favCount > 0 ? ` (${favCount})` : ""}
-              </strong>
-            </div>
-          </div>
-          <p className="hl-trust-note">{txt("hl.trust.note", "كل تفاصيل فرحتكِ تبدأ بخيار واضح.")}</p>
-        </div>
-      </section>
+      {/* ── 9. TRUST (animated) ── */}
+      <TrustCounter
+        txt={txt}
+        target={Math.max(500, Math.floor(providerCount / 50) * 50)}
+        cityCount={cityCount}
+        favCount={favCount}
+        onExplore={() => onExploreCategory(null)}
+      />
     </>
+  );
+}
+
+const trustCats = [
+  { n: "قاعات زفاف", i: <Building2 size={16} /> },
+  { n: "تصوير وفيديو", i: <Camera size={16} /> },
+  { n: "تجميل وعناية", i: <Sparkles size={16} /> },
+  { n: "ورد وتنسيق", i: <Flower2 size={16} /> },
+  { n: "زفات وموسيقى", i: <Music4 size={16} /> },
+  { n: "ضيافة وحلويات", i: <Cake size={16} /> },
+];
+
+function TrustCounter({
+  txt,
+  target,
+  cityCount,
+  favCount,
+  onExplore,
+}: {
+  txt: (k: string, f: string) => string;
+  target: number;
+  cityCount: number;
+  favCount: number;
+  onExplore: () => void;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  const [on, setOn] = useState(false);
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || on) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setOn(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [on]);
+
+  useEffect(() => {
+    if (!on) return;
+    const dur = 1800;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [on, target]);
+
+  return (
+    <section className={`hl-tc${on ? " is-on" : ""}`} ref={ref}>
+      <div className="hl-tc-in">
+        <div className="hl-tc-cards hl-tc-cards-a">
+          {trustCats.slice(0, 3).map((c, i) => (
+            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.5 + i * 0.16}s` }}>
+              <em>{c.i}</em>
+              {c.n}
+            </span>
+          ))}
+        </div>
+
+        <div className="hl-tc-core">
+          <span className="hl-tc-pre">{txt("hl.tc.pre", "أكثر من")}</span>
+          <strong className="hl-tc-num">+{val}</strong>
+          <span className="hl-tc-label">{txt("hl.tc.label", "مزود خدمة لمناسبتكِ")}</span>
+          <p className="hl-tc-note">
+            {txt("hl.tc.note", "من القاعات والتصوير إلى الورد، الجمال والضيافة.")}
+          </p>
+          <p className="hl-tc-meta">
+            <MapPin size={14} /> {cityCount} {txt("hl.trust.cities2", "مدينة")}
+            <span className="hl-tc-dot" />
+            <Heart size={14} /> {txt("hl.trust.fav", "مفضلة خاصة بكِ")}
+            {favCount > 0 ? ` (${favCount})` : ""}
+          </p>
+          <button type="button" className="hl-btn hl-tc-btn" onClick={onExplore}>
+            {txt("hl.hero.cta", "استكشفي الدليل")}
+          </button>
+        </div>
+
+        <div className="hl-tc-cards hl-tc-cards-b">
+          {trustCats.slice(3).map((c, i) => (
+            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.58 + i * 0.16}s` }}>
+              <em>{c.i}</em>
+              {c.n}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
