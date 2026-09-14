@@ -904,7 +904,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       )}
 
       {/* ── HERO ── */}
-      {view === "providers" && (
+      {(view === "providers" || view === "home") && (
       <section className="ez-hero">
         {/* Search console */}
         <div className="ez-console">
