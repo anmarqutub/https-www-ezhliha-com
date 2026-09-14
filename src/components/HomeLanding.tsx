@@ -117,6 +117,14 @@ export default function HomeLanding({
 
       {filterSlot}
 
+      {/* ── TRUST (animated) ── */}
+      <TrustCounter
+        txt={txt}
+        target={Math.max(500, Math.floor(providerCount / 50) * 50)}
+        favCount={favCount}
+        onExplore={() => onExploreCategory(null)}
+      />
+
       {/* ── 4. QUICK CATEGORIES ── */}
       {quickCats.length > 0 && (
         <section className="hl-sec">
