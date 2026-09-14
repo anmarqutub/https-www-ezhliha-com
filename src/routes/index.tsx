@@ -865,46 +865,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </div>
       )}
 
-      {/* ── LUXURY LANDING (home) ── */}
-      {view === "home" && (
-        <HomeLanding
-          txt={txt}
-          categories={categories}
-          cityCount={cities.length}
-          providerCount={providers.length}
-          favCount={favIds.size}
-          heroImage={heroBride.url}
-          banner={currentBanner ?? null}
-          showcase={showcase}
-          renderProviderCard={(id) => {
-            const p = providers.find((x) => x.id === id);
-            if (!p) return null;
-            return (
-              <ProviderCard
-                key={p.id}
-                provider={p}
-                city={cityById.get(p.city_id)}
-                sub={subById.get(p.subcategory_id)}
-                images={imgsByProvider.get(p.id) ?? []}
-                tags={tagsByProvider.get(p.id) ?? []}
-                contactLabel={contactLabel}
-                featured={p.is_featured}
-                isFav={favIds.has(p.id)}
-                onToggleFav={user ? toggleFav : undefined}
-                onOpen={saveBrowseState}
-              />
-            );
-          }}
-          onExploreCategory={(categoryId) => {
-            setSearch("");
-            setQuickSearch("");
-            goProviders({ categoryId });
-          }}
-        />
-      )}
 
       {/* ── HERO ── */}
-      {view === "providers" && (
+      {(view === "providers" || view === "home") && (
       <section className="ez-hero">
         {/* Search console */}
         <div className="ez-console">
@@ -941,7 +904,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
             </select>
           </div>
-          <button type="button" className="ez-console-btn" onClick={scrollToResults}>
+          <button
+            type="button"
+            className="ez-console-btn"
+            onClick={() => {
+              if (view === "home") {
+                goProviders({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub });
+              } else {
+                scrollToResults();
+              }
+            }}
+          >
             <Search size={16} /> {txt("console.cta", "ابحث الآن")}
           </button>
         </div>
@@ -978,6 +951,44 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       </section>
+      )}
+
+      {/* ── LUXURY LANDING (home) ── */}
+      {view === "home" && (
+        <HomeLanding
+          txt={txt}
+          categories={categories}
+          cityCount={cities.length}
+          providerCount={providers.length}
+          favCount={favIds.size}
+          heroImage={heroBride.url}
+          banner={currentBanner ?? null}
+          showcase={showcase}
+          renderProviderCard={(id) => {
+            const p = providers.find((x) => x.id === id);
+            if (!p) return null;
+            return (
+              <ProviderCard
+                key={p.id}
+                provider={p}
+                city={cityById.get(p.city_id)}
+                sub={subById.get(p.subcategory_id)}
+                images={imgsByProvider.get(p.id) ?? []}
+                tags={tagsByProvider.get(p.id) ?? []}
+                contactLabel={contactLabel}
+                featured={p.is_featured}
+                isFav={favIds.has(p.id)}
+                onToggleFav={user ? toggleFav : undefined}
+                onOpen={saveBrowseState}
+              />
+            );
+          }}
+          onExploreCategory={(categoryId) => {
+            setSearch("");
+            setQuickSearch("");
+            goProviders({ categoryId });
+          }}
+        />
       )}
 
 
