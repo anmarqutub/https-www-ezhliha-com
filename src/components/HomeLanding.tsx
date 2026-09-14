@@ -488,9 +488,15 @@ const landingCss = `
     .hl-tc-note, .hl-tc-meta { font-size:14px; }
     .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
   }
-  @media (max-width:420px) {
-    .hl-hero-in { grid-template-columns:1.15fr .85fr; }
-    .hl-cat-grid > * { flex:0 0 44%; }
+  /* على الشاشات الضيقة جدًا: نفس ترتيب العناصر لكن عمود واحد لتبقى القراءة مريحة */
+  @media (max-width:560px) {
+    .hl-hero-in { grid-template-columns:1fr; gap:18px; }
+    .hl-hero-media img { max-height:clamp(200px,58vw,280px); }
+    .hl-ad { grid-template-columns:1fr; gap:14px; }
+    .hl-ad-media img { height:clamp(170px,46vw,220px); }
+    .hl-cat-grid > * { flex:0 0 46%; }
+    .hl-picks > * { flex:0 0 82%; }
+    .hl-journey > * { flex:0 0 84%; }
   }
 
   /* trust counter */
