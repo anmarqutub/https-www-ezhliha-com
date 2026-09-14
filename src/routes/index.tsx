@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
+import HomeLanding, { HomeTopStrip } from "@/components/HomeLanding";
 import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catHalls from "@/assets/cats/halls.jpg";
@@ -744,6 +745,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     <div dir="rtl" className="ez-root">
       <style>{css}</style>
 
+      {view === "home" && (
+        <HomeTopStrip text={txt("hl.topbar", "أزهليها، دليلكِ لكل متطلبات مناسبتكِ")} />
+      )}
+
       <header className="ez-nav">
         <button
           type="button"
@@ -798,6 +803,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
                 <Search size={16} strokeWidth={2} /> {txt("nav.cta", "ابحث عن مقدم خدمة")}
               </button>
+              <Link to="/favorites" className="ez-nav-ico" aria-label={txt("nav.favorites", "المفضلة")}>
+                <Heart size={17} />
+                {favIds.size > 0 && <i>{favIds.size}</i>}
+              </Link>
               <AccountMenu email={user.email ?? ""} onSignOut={signOut} texts={siteTexts} />
             </>
           )}
@@ -856,20 +865,47 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </div>
       )}
 
-      {/* ── HERO ── */}
-      {(view === "home" || view === "providers") && (
-      <section className="ez-hero">
-        {view === "home" && (
-        <div className="ez-hero-full">
-          <img
-            src={heroBride.url}
-            alt={txt("home.hero.title", "إزهليها")}
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-        )}
+      {/* ── LUXURY LANDING (home) ── */}
+      {view === "home" && (
+        <HomeLanding
+          txt={txt}
+          categories={categories}
+          cityCount={cities.length}
+          providerCount={providers.length}
+          favCount={favIds.size}
+          heroImage={heroBride.url}
+          banner={currentBanner ?? null}
+          showcase={showcase}
+          renderProviderCard={(id) => {
+            const p = providers.find((x) => x.id === id);
+            if (!p) return null;
+            return (
+              <ProviderCard
+                key={p.id}
+                provider={p}
+                city={cityById.get(p.city_id)}
+                sub={subById.get(p.subcategory_id)}
+                images={imgsByProvider.get(p.id) ?? []}
+                tags={tagsByProvider.get(p.id) ?? []}
+                contactLabel={contactLabel}
+                featured={p.is_featured}
+                isFav={favIds.has(p.id)}
+                onToggleFav={user ? toggleFav : undefined}
+                onOpen={saveBrowseState}
+              />
+            );
+          }}
+          onExploreCategory={(categoryId) => {
+            setSearch("");
+            setQuickSearch("");
+            goProviders({ categoryId });
+          }}
+        />
+      )}
 
+      {/* ── HERO ── */}
+      {view === "providers" && (
+      <section className="ez-hero">
         {/* Search console */}
         <div className="ez-console">
           <div className="ez-console-field">
@@ -944,57 +980,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       </section>
       )}
 
-      {/* ── PLATFORM STATS ── */}
-      {view === "home" && (
-      <section className="ez-stats" aria-label="أرقام إزهليها">
-        <div className="ez-stat ez-stat--solo">
-          <span className="ez-stat-icon"><Building2 size={16} /></span>
-          <div>
-            <strong>
-              أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مقدم خدمة")}
-            </strong>
-          </div>
-        </div>
-      </section>
-      )}
 
 
-      {/* ── ADS / BANNERS ── */}
-      {view === "home" && banners.length > 0 && currentBanner && (
-        <section className="ez-ad-sec" aria-label="إعلان">
-          <div className="ez-ad">
-            <div className="ez-ad-media">
-              <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? "إعلان"} loading="lazy" />
-            </div>
-            <div className="ez-ad-body">
-              <div className="ez-ad-tags">
-                <span className="ez-ad-tag">{txt("ad.tag", "إعلان")}</span>
-                <span className="ez-ad-partner">🔖 {txt("ad.partner", "عرض شريك إزهليها")}</span>
-              </div>
-              <h2 className="ez-ad-title">{currentBanner.title || txt("ad.title", "مساحة إعلانية لشركائنا")}</h2>
-              <p className="ez-ad-desc">{txt("ad.desc", "مساحة إعلانية تتغير صورتها ونصها ورابطها حسب حملة العميل، من دون ما تزاحم رحلة التصفح.")}</p>
-              {currentBanner.link_url && (
-                <a className="ez-ad-cta" href={currentBanner.link_url} target="_blank" rel="noopener noreferrer">
-                  {txt("ad.cta", "شوف تفاصيل العرض")} ←
-                </a>
-              )}
-              {banners.length > 1 && (
-                <div className="ez-ad-dots">
-                  {banners.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={i === bannerIdx ? "active" : ""}
-                      onClick={() => setBannerIdx(i)}
-                      aria-label={`إعلان ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
 
 
 
@@ -1102,27 +1089,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       )}
 
 
-      {/* ── SHOWCASE ── */}
-      {view === "home" && !loading && showcase.length > 0 && (
-        <section className="ez-sec ez-sec-alt">
-          <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("showcase.eyebrow", "اختيارات إزهليها")}</div>
-          <h2 className="ez-h2">{txt("showcase.title", "خيارات تستاهل تبدأ منها")}</h2>
-          <div className="ez-grid">
-            {showcase.map((p) => (
-              <ProviderCard
-                key={p.id}
-                provider={p}
-                city={cities.find((c) => c.id === p.city_id)}
-                sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                images={imgsByProvider.get(p.id) ?? []}
-                tags={tagsByProvider.get(p.id) ?? []}
-                contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                featured={p.is_featured}
-              />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ── RESULTS ── */}
       {view === "providers" && (
@@ -1219,7 +1185,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── FAQ ── */}
-      {(view === "home" || view === "faq") && (
+      {view === "faq" && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
         <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
@@ -1509,6 +1475,9 @@ const css = `
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
   .ez-nav-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; background:var(--brand); color:#fff; border:none; padding:0 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(100,0,0,.14); transition:background .2s, transform .2s; white-space:nowrap; }
   .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
+  .ez-nav-ico { position:relative; width:38px; height:38px; border-radius:50%; border:1px solid rgba(100,0,0,.16); color:var(--brand); display:inline-flex; align-items:center; justify-content:center; background:#fff; text-decoration:none; }
+  .ez-nav-ico:hover { border-color:var(--brand); }
+  .ez-nav-ico i { position:absolute; top:-4px; inset-inline-start:-4px; min-width:17px; height:17px; border-radius:999px; background:var(--brand); color:#fff; font-size:10px; font-style:normal; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 
   /* MEGA MENU */
   .ez-mega-wrap { position:relative; }
