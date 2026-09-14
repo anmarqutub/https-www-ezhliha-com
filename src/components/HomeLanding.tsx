@@ -8,7 +8,7 @@ import {
   Flower2,
   Gem,
   Heart,
-  MapPin,
+  
   Music4,
   Shirt,
   Sparkles,
