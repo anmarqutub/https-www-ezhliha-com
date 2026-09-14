@@ -309,8 +309,6 @@ function TrustCounter({
             {txt("hl.tc.note", "من القاعات والتصوير إلى الورد، الجمال والضيافة.")}
           </p>
           <p className="hl-tc-meta">
-            <MapPin size={14} /> {cityCount} {txt("hl.trust.cities2", "مدينة")}
-            <span className="hl-tc-dot" />
             <Heart size={14} /> {txt("hl.trust.fav", "مفضلة خاصة بكِ")}
             {favCount > 0 ? ` (${favCount})` : ""}
           </p>
