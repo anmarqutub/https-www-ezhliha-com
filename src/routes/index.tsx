@@ -741,6 +741,87 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     return <AuthGate />;
   }
 
+  const searchConsole = (
+    <section className="ez-hero">
+      {/* Search console */}
+      <div className="ez-console">
+        <div className="ez-console-field">
+          <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
+          <select
+            value={selectedCategory ?? ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSelectedCategory(v || null);
+              setSelectedSub("all");
+            }}
+          >
+            <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.name_ar}</option>
+            ))}
+          </select>
+        </div>
+        <div className="ez-console-field">
+          <label><SlidersHorizontal size={14} className="ez-fi" /> {txt("console.sub", "نوع الخدمة")}</label>
+          <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
+            <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
+            {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
+            {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>{t.name_ar}</option>)}
+          </select>
+        </div>
+        <div className="ez-console-field">
+          <label><MapPin size={14} className="ez-fi" /> {txt("console.city", "المدينة")}</label>
+          <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+            <option value="">{txt("home.city.all", "كل المدن")}</option>
+            {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+          </select>
+        </div>
+        <button
+          type="button"
+          className="ez-console-btn"
+          onClick={() => {
+            if (view === "home") {
+              goProviders({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub });
+            } else {
+              scrollToResults();
+            }
+          }}
+        >
+          <Search size={16} /> {txt("console.cta", "ابحث الآن")}
+        </button>
+      </div>
+
+      {filtersActive && (
+        <div className="ez-fchips">
+          {activeCategory && (
+            <button type="button" className="ez-fchip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
+              {activeCategory.name_ar} ×
+            </button>
+          )}
+          {selectedSub !== "all" && (
+            <button type="button" className="ez-fchip" onClick={() => setSelectedSub("all")}>
+              {subcategories.find((s) => s.id === selectedSub)?.name_ar} ×
+            </button>
+          )}
+          {selectedCity && (
+            <button type="button" className="ez-fchip" onClick={() => setSelectedCity("")}>
+              {cities.find((c) => c.id === selectedCity)?.name_ar} ×
+            </button>
+          )}
+          {(quickSearch.trim() || search.trim()) && (
+            <button type="button" className="ez-fchip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
+              «{quickSearch.trim() || search.trim()}» ×
+            </button>
+          )}
+          <button type="button" className="ez-fchip ez-fchip-clear" onClick={resetAll}>
+            {txt("console.reset", "مسح الفلاتر")}
+          </button>
+          <span className="ez-fchips-count">{results.length} نتيجة</span>
+        </div>
+      )}
+    </section>
+  );
+
   return (
     <div dir="rtl" className="ez-root">
       <style>{css}</style>
@@ -866,92 +947,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       )}
 
 
-      {/* ── HERO ── */}
-      {(view === "providers" || view === "home") && (
-      <section className="ez-hero">
-        {/* Search console */}
-        <div className="ez-console">
-          <div className="ez-console-field">
-            <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
-            <select
-              value={selectedCategory ?? ""}
-              onChange={(e) => {
-                const v = e.target.value;
-                setSelectedCategory(v || null);
-                setSelectedSub("all");
-              }}
-            >
-              <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name_ar}</option>
-              ))}
-            </select>
+      {/* ── FILTER (providers view) ── */}
+      {view === "providers" && searchConsole}
 
-          </div>
-          <div className="ez-console-field">
-            <label><SlidersHorizontal size={14} className="ez-fi" /> {txt("console.sub", "نوع الخدمة")}</label>
-            <select value={selectedSub} onChange={(e) => setSelectedSub(e.target.value)}>
-              <option value="all">{txt("console.sub.all", "كل الخدمات")}</option>
-              {consoleSubs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
-              {visibleTertiaries.map((t) => <option key={t.id} value={t.id}>{t.name_ar}</option>)}
-            </select>
-          </div>
-
-          <div className="ez-console-field">
-            <label><MapPin size={14} className="ez-fi" /> {txt("console.city", "المدينة")}</label>
-            <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
-              <option value="">{txt("home.city.all", "كل المدن")}</option>
-              {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
-            </select>
-          </div>
-          <button
-            type="button"
-            className="ez-console-btn"
-            onClick={() => {
-              if (view === "home") {
-                goProviders({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub });
-              } else {
-                scrollToResults();
-              }
-            }}
-          >
-            <Search size={16} /> {txt("console.cta", "ابحث الآن")}
-          </button>
-        </div>
-
-        {filtersActive && (
-          <div className="ez-fchips">
-            {activeCategory && (
-              <button type="button" className="ez-fchip" onClick={() => { setSelectedCategory(null); setSelectedSub("all"); }}>
-                {activeCategory.name_ar} ×
-              </button>
-            )}
-            {selectedSub !== "all" && (
-              <button type="button" className="ez-fchip" onClick={() => setSelectedSub("all")}>
-                {subcategories.find((s) => s.id === selectedSub)?.name_ar} ×
-              </button>
-            )}
-            {selectedCity && (
-              <button type="button" className="ez-fchip" onClick={() => setSelectedCity("")}>
-                {cities.find((c) => c.id === selectedCity)?.name_ar} ×
-              </button>
-            )}
-            {(quickSearch.trim() || search.trim()) && (
-              <button type="button" className="ez-fchip" onClick={() => { setQuickSearch(""); setSearch(""); }}>
-                «{quickSearch.trim() || search.trim()}» ×
-              </button>
-            )}
-            <button type="button" className="ez-fchip ez-fchip-clear" onClick={resetAll}>
-              {txt("console.reset", "مسح الفلاتر")}
-            </button>
-            <span className="ez-fchips-count">{results.length} نتيجة</span>
-          </div>
-        )}
-
-
-
-      </section>
-      )}
 
       {/* ── LUXURY LANDING (home) ── */}
       {view === "home" && (
@@ -964,6 +962,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           heroImage={heroBride.url}
           banner={currentBanner ?? null}
           showcase={showcase}
+          filterSlot={searchConsole}
           renderProviderCard={(id) => {
             const p = providers.find((x) => x.id === id);
             if (!p) return null;
