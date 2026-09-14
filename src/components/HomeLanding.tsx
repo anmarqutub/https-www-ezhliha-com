@@ -41,6 +41,7 @@ export type LandingProps = {
   heroImage: string;
   banner: Banner | null;
   showcase: Array<{ id: string }>;
+  filterSlot?: ReactNode;
   renderProviderCard: (id: string) => ReactNode;
   onExploreCategory: (categoryId: string | null) => void;
 };
