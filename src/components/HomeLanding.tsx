@@ -477,15 +477,18 @@ const landingCss = `
     .hl-steps h3 { font-size:16px; }
     .hl-steps p { font-size:14px; }
 
-    /* trust counter keeps number centered with chip rows around it */
-    .hl-tc-in { grid-template-columns:1fr; gap:14px; padding:clamp(34px,8vw,50px) 14px; }
-    .hl-tc-cards { display:flex; overflow-x:auto; gap:10px; scrollbar-width:none; padding-bottom:4px; }
-    .hl-tc-cards::-webkit-scrollbar { display:none; }
-    .hl-tc-cards .hl-tc-chip { flex:0 0 auto; margin-inline:0 !important; font-size:14px; padding:10px 13px; }
-    .hl-tc-num { font-size:clamp(2.8rem,16vw,4.4rem); }
+    /* trust counter on mobile: number first, then chips in a tidy 2-column grid */
+    .hl-tc-in { grid-template-columns:1fr; gap:12px; padding:clamp(28px,7vw,44px) 14px; }
+    .hl-tc-core { order:-1; padding:20px 16px; border-radius:18px; }
+    .hl-tc-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; overflow:visible; }
+    .hl-tc-cards .hl-tc-chip { margin-inline:0 !important; font-size:13px; padding:10px 11px; gap:8px; border-radius:12px; box-shadow:0 6px 16px rgba(53,24,19,.05); }
+    .hl-tc-chip em { width:26px; height:26px; }
+    .hl-tc-num { font-size:clamp(3rem,17vw,4.6rem); }
     .hl-tc-label { font-size:16px; }
-    .hl-tc-note, .hl-tc-meta { font-size:14px; }
+    .hl-tc-note, .hl-tc-meta { font-size:13px; }
     .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
+    .hl-tc-btn { width:100%; min-height:44px; }
+
   }
   /* على الشاشات الضيقة جدًا: نفس ترتيب العناصر لكن عمود واحد لتبقى القراءة مريحة */
   @media (max-width:560px) {
