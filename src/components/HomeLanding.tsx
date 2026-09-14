@@ -416,22 +416,81 @@ const landingCss = `
   .hl-trust-note { margin:26px 0 0; font-size:13px; opacity:.82; }
 
   @media (max-width:1000px) {
-    .hl-hero-in { grid-template-columns:1fr; gap:34px; padding:44px 20px 52px; }
+    .hl-hero-in { gap:clamp(16px,3vw,34px); padding:clamp(26px,5vw,44px) clamp(14px,3vw,20px) clamp(30px,5vw,52px); }
     .hl-hero-frame { display:none; }
     .hl-cat-grid { grid-template-columns:repeat(3,1fr); }
     .hl-journey, .hl-steps { grid-template-columns:1fr; }
     .hl-picks { grid-template-columns:repeat(2,1fr); }
-    .hl-ad { grid-template-columns:1fr; padding:22px; }
     .hl-trust-grid { grid-template-columns:repeat(2,1fr); }
-    .hl-sec { padding:44px 20px; }
-    .hl-sec-alt > * { padding-inline:20px; }
+    .hl-sec { padding:clamp(28px,6vw,44px) clamp(14px,3vw,20px); }
+    .hl-sec-alt > * { padding-inline:clamp(14px,3vw,20px); }
     .hl-trust-in { padding:38px 20px; }
   }
-  @media (max-width:620px) {
-    .hl-cat-grid { grid-template-columns:repeat(2,1fr); }
-    .hl-picks { grid-template-columns:1fr; }
-    .hl-trust-grid { grid-template-columns:1fr; }
-    .hl-trust-item { border-inline-end:0; }
+
+  /* ── MOBILE: proportionally scaled copy of the desktop layout (same DOM, same composition) ── */
+  @media (max-width:760px) {
+    .hl-sec { padding:clamp(26px,7vw,38px) 14px; }
+    .hl-sec-alt > * { padding-inline:14px; }
+    .hl-sec-head { margin-bottom:16px; }
+    .hl-h2 { font-size:clamp(1.15rem,5.2vw,1.55rem); }
+    .hl-sub { font-size:14px; }
+    .hl-btn { min-height:44px; padding:11px 18px; font-size:14px; }
+    .hl-link { font-size:14px; min-height:44px; }
+
+    /* hero keeps the desktop horizontal composition */
+    .hl-hero-in { grid-template-columns:1.05fr .95fr; gap:12px; align-items:center; }
+    .hl-hero-copy { max-width:none; }
+    .hl-eyebrow { font-size:12px; }
+    .hl-eyebrow-line { width:16px; }
+    .hl-hero-title { font-size:clamp(1.1rem,5.6vw,1.75rem); line-height:1.3; margin:10px 0 8px; }
+    .hl-hero-desc { font-size:14px; line-height:1.7; margin:0 0 14px; }
+    .hl-hero-actions { gap:10px; }
+    .hl-hero-media img { max-height:clamp(180px,44vw,240px); object-fit:cover; object-position:center 22%; border-radius:8px; }
+
+    /* card rows stay horizontal with smooth scrolling */
+    .hl-cat-grid, .hl-picks, .hl-journey {
+      display:flex; grid-template-columns:none; gap:10px;
+      overflow-x:auto; -webkit-overflow-scrolling:touch;
+      scroll-snap-type:x proximity; padding-bottom:6px;
+      scrollbar-width:none;
+    }
+    .hl-cat-grid::-webkit-scrollbar, .hl-picks::-webkit-scrollbar, .hl-journey::-webkit-scrollbar { display:none; }
+    .hl-cat-grid > *, .hl-picks > *, .hl-journey > * { scroll-snap-align:start; }
+    .hl-cat-grid > * { flex:0 0 40%; min-width:132px; }
+    .hl-cat { padding:14px 12px; gap:10px; }
+    .hl-cat-ico { width:38px; height:38px; }
+    .hl-cat-name { font-size:14px; }
+    .hl-picks > * { flex:0 0 72%; min-width:230px; }
+    .hl-journey > * { flex:0 0 74%; min-width:236px; }
+    .hl-jcard { padding:16px 14px; }
+    .hl-jcard h3 { font-size:16px; }
+    .hl-jcard p { font-size:14px; line-height:1.7; }
+
+    /* sponsored banner stays horizontal, image cropped smartly */
+    .hl-ad { grid-template-columns:1.1fr .9fr; gap:12px; padding:14px; border-radius:10px; }
+    .hl-ad-title { font-size:clamp(1rem,4.6vw,1.3rem); }
+    .hl-ad-desc { font-size:14px; line-height:1.7; max-width:none; }
+    .hl-ad-gold { font-size:12px; }
+    .hl-ad-media img { height:clamp(150px,38vw,200px); object-fit:cover; object-position:center; }
+
+    .hl-steps li { padding-top:14px; gap:12px; }
+    .hl-step-num { width:34px; height:34px; }
+    .hl-steps h3 { font-size:16px; }
+    .hl-steps p { font-size:14px; }
+
+    /* trust counter keeps number centered with chip rows around it */
+    .hl-tc-in { grid-template-columns:1fr; gap:14px; padding:clamp(34px,8vw,50px) 14px; }
+    .hl-tc-cards { display:flex; overflow-x:auto; gap:10px; scrollbar-width:none; padding-bottom:4px; }
+    .hl-tc-cards::-webkit-scrollbar { display:none; }
+    .hl-tc-cards .hl-tc-chip { flex:0 0 auto; margin-inline:0 !important; font-size:14px; padding:10px 13px; }
+    .hl-tc-num { font-size:clamp(2.8rem,16vw,4.4rem); }
+    .hl-tc-label { font-size:16px; }
+    .hl-tc-note, .hl-tc-meta { font-size:14px; }
+    .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
+  }
+  @media (max-width:420px) {
+    .hl-hero-in { grid-template-columns:1.15fr .85fr; }
+    .hl-cat-grid > * { flex:0 0 44%; }
   }
 
   /* trust counter */
