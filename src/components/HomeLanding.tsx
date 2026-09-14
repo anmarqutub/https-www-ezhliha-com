@@ -499,11 +499,11 @@ const landingCss = `
   }
 
   /* trust counter */
-  .hl-tc { background:#e6e4d7; background-image:radial-gradient(rgba(100,0,0,.045) 1px, transparent 1px); background-size:5px 5px; border-top:1px solid rgba(160,120,60,.22); }
-  .hl-tc-in { max-width:1240px; margin:0 auto; padding:74px 32px; display:grid; grid-template-columns:1fr auto 1fr; gap:34px; align-items:center; }
-  .hl-tc-core { text-align:center; display:grid; justify-items:center; gap:6px; }
+  .hl-tc { background:#e6e4d7; background-image:radial-gradient(rgba(100,0,0,.045) 1px, transparent 1px); background-size:5px 5px; border-top:1px solid rgba(160,120,60,.22); border-bottom:1px solid rgba(160,120,60,.22); }
+  .hl-tc-in { max-width:1240px; margin:0 auto; padding:clamp(34px,5vw,58px) clamp(16px,3vw,32px); display:grid; grid-template-columns:1fr auto 1fr; gap:clamp(16px,2.6vw,34px); align-items:center; }
+  .hl-tc-core { text-align:center; display:grid; justify-items:center; gap:6px; background:rgba(255,255,255,.55); border:1px solid rgba(160,120,60,.28); border-radius:22px; padding:clamp(22px,3vw,34px) clamp(20px,3vw,40px); box-shadow:0 18px 44px rgba(53,24,19,.07); }
   .hl-tc-pre { font-size:13px; color:rgba(42,33,28,.6); letter-spacing:.08em; }
-  .hl-tc-num { font-size:clamp(3.4rem,7vw,6rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; }
+  .hl-tc-num { font-size:clamp(3rem,6vw,5.2rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; }
   .hl-tc-label { font-size:17px; color:#2a211c; }
   .hl-tc-note { margin:6px 0 0; font-size:13.5px; color:rgba(42,33,28,.66); }
   .hl-tc-meta { margin:2px 0 0; display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(42,33,28,.6); }
