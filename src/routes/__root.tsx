@@ -104,7 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=1240" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "إزهليها — دليلك للمناسبات" },
       { name: "description", content: "إزهليها منصة سعودية لاكتشاف مقدمي خدمات المناسبات والتواصل معهم بسهولة." },
       { name: "author", content: "Ezhliha" },

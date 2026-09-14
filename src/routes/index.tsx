@@ -1888,5 +1888,49 @@ const css = `
     .ez-card-price { min-width:0; }
     .ez-card-price strong { overflow-wrap:anywhere; }
   }
+
+  /* ── MOBILE: scaled-down desktop experience (no separate mobile design) ── */
+  @media (max-width:760px) {
+    html, body { overflow-x:hidden; -webkit-text-size-adjust:100%; }
+
+    /* hero banner keeps its aspect and safe text area */
+    .ez-hero-full img { width:100%; height:auto; max-height:clamp(200px,52vw,300px); object-fit:cover; object-position:center 25%; }
+    .ez-hero-arrow { width:36px; height:36px; }
+
+    /* filter console: compact but full-size touch targets */
+    .ez-console { grid-template-columns:1fr 1fr; padding:12px; gap:8px; margin-inline:14px; }
+    .ez-console-field select { height:46px; font-size:15px; }
+    .ez-console-btn { grid-column:1 / -1; min-height:48px; font-size:15px; }
+    .ez-fchips { padding:0 14px; }
+    .ez-fchip { font-size:13px; min-height:36px; }
+
+    /* category tiles stay in one horizontal row like desktop */
+    .ez-cat-grid { display:flex; grid-template-columns:none; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; scrollbar-width:none; padding-bottom:6px; }
+    .ez-cat-grid::-webkit-scrollbar { display:none; }
+    .ez-cat-grid > * { flex:0 0 27%; min-width:96px; scroll-snap-align:start; }
+    .ez-cat-label { font-size:13px; }
+    .ez-subquick { gap:8px; overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; padding-bottom:4px; }
+    .ez-subquick::-webkit-scrollbar { display:none; }
+    .ez-subquick-pill { flex:0 0 auto; min-height:40px; font-size:13px; }
+
+    /* sponsored/ad banner keeps the desktop horizontal split */
+    .ez-ad { grid-template-columns:1.1fr .9fr; }
+    .ez-ad-body { padding:14px 12px; }
+    .ez-ad-media { min-height:0; }
+    .ez-ad-media img { height:100%; min-height:150px; object-fit:cover; object-position:center; }
+    .ez-ad-title { font-size:clamp(1rem,4.6vw,1.3rem); }
+    .ez-ad-sec { padding:18px 14px 4px; }
+
+    /* steps cards stay side by side with soft horizontal scroll */
+    .ez-steps-wrap { grid-template-columns:1fr; gap:18px; padding:clamp(30px,7vw,44px) 14px; }
+    .ez-steps-cards { display:flex; grid-template-columns:none; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:6px; }
+    .ez-steps-cards::-webkit-scrollbar { display:none; }
+    .ez-steps-cards > * { flex:0 0 74%; min-width:230px; }
+
+    /* readable minimums */
+    .ez-muted, .ez-hero-desc, .ez-card-desc, .ez-step-card p { font-size:14px; }
+    .ez-search input, .ez-fselect { font-size:16px; }
+    .ez-chips button, .ez-city-chips button { min-height:44px; }
+  }
 `;
 
