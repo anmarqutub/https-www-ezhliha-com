@@ -1475,6 +1475,9 @@ const css = `
   .ez-nav-btn { background:var(--brand); color:#fff; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; }
   .ez-nav-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; background:var(--brand); color:#fff; border:none; padding:0 16px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(100,0,0,.14); transition:background .2s, transform .2s; white-space:nowrap; }
   .ez-nav-cta:hover { background:var(--brand-dark); transform:translateY(-1px); }
+  .ez-nav-ico { position:relative; width:38px; height:38px; border-radius:50%; border:1px solid rgba(100,0,0,.16); color:var(--brand); display:inline-flex; align-items:center; justify-content:center; background:#fff; text-decoration:none; }
+  .ez-nav-ico:hover { border-color:var(--brand); }
+  .ez-nav-ico i { position:absolute; top:-4px; inset-inline-start:-4px; min-width:17px; height:17px; border-radius:999px; background:var(--brand); color:#fff; font-size:10px; font-style:normal; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 
   /* MEGA MENU */
   .ez-mega-wrap { position:relative; }
