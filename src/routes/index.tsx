@@ -978,42 +978,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
 
-      {/* ── ADS / BANNERS ── */}
-      {false && banners.length > 0 && currentBanner && (
-        <section className="ez-ad-sec" aria-label="إعلان">
-          <div className="ez-ad">
-            <div className="ez-ad-media">
-              <SmartImg src={currentBanner.image_url} alt={currentBanner.title ?? "إعلان"} loading="lazy" />
-            </div>
-            <div className="ez-ad-body">
-              <div className="ez-ad-tags">
-                <span className="ez-ad-tag">{txt("ad.tag", "إعلان")}</span>
-                <span className="ez-ad-partner">🔖 {txt("ad.partner", "عرض شريك إزهليها")}</span>
-              </div>
-              <h2 className="ez-ad-title">{currentBanner.title || txt("ad.title", "مساحة إعلانية لشركائنا")}</h2>
-              <p className="ez-ad-desc">{txt("ad.desc", "مساحة إعلانية تتغير صورتها ونصها ورابطها حسب حملة العميل، من دون ما تزاحم رحلة التصفح.")}</p>
-              {currentBanner.link_url && (
-                <a className="ez-ad-cta" href={currentBanner.link_url} target="_blank" rel="noopener noreferrer">
-                  {txt("ad.cta", "شوف تفاصيل العرض")} ←
-                </a>
-              )}
-              {banners.length > 1 && (
-                <div className="ez-ad-dots">
-                  {banners.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={i === bannerIdx ? "active" : ""}
-                      onClick={() => setBannerIdx(i)}
-                      aria-label={`إعلان ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
 
 
 
