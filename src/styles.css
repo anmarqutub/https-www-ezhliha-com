@@ -158,3 +158,87 @@
     font-family: "Thmanyah Serif Display", "Alexandria", "Noto Sans Arabic", Tajawal, sans-serif;
   }
 }
+
+/* =====================================================
+   Azhleha Responsive Type & Icon System
+   مقاسات متجاوبة موحّدة للكمبيوتر والجوال عبر clamp()
+===================================================== */
+
+:root {
+  /* الألوان */
+  --az-wine: #660000;
+  --az-wine-dark: #4e0708;
+  --az-ivory: #e6e4d7;
+  --az-paper: #f8f7f0;
+  --az-text: #4d3530;
+  --az-muted: #7f675d;
+  --az-gold: #b58a56;
+  --az-line: rgba(102, 0, 0, 0.16);
+
+  /* العناوين */
+  --font-hero: clamp(2rem, 5.6vw, 4rem);
+  --font-section: clamp(1.5rem, 4.2vw, 2.4rem);
+  --font-section-sm: clamp(1.3rem, 3vw, 1.9rem);
+  --font-card-title: clamp(1rem, 1.45vw, 1.25rem);
+  --font-heading-sm: clamp(0.95rem, 1.15vw, 1.1rem);
+
+  /* النصوص (لا تقل عن 14px) */
+  --font-body-lg: clamp(0.95rem, 1.1vw, 1.1rem);
+  --font-body-md: clamp(0.875rem, 0.95vw, 1rem);
+  --font-body-sm: clamp(0.8125rem, 0.85vw, 0.9rem);
+  --font-label: clamp(0.78rem, 0.75vw, 0.85rem);
+  --font-caption: clamp(0.72rem, 0.62vw, 0.78rem);
+
+  /* الأرقام */
+  --font-stat: clamp(3rem, 11vw, 6.5rem);
+
+  /* الأيقونات */
+  --icon-xs: clamp(0.85rem, 1vw, 1rem);
+  --icon-sm: clamp(1rem, 1.2vw, 1.2rem);
+  --icon-md: clamp(1.3rem, 1.8vw, 1.75rem);
+  --icon-lg: clamp(1.7rem, 2.8vw, 2.4rem);
+  --icon-xl: clamp(2.2rem, 4vw, 3.4rem);
+
+  /* المسافات */
+  --space-xs: clamp(0.4rem, 0.7vw, 0.65rem);
+  --space-sm: clamp(0.7rem, 1vw, 1rem);
+  --space-md: clamp(1rem, 1.8vw, 1.6rem);
+  --space-lg: clamp(1.5rem, 3vw, 3rem);
+  --space-xl: clamp(2.5rem, 5vw, 6rem);
+
+  /* الأزرار */
+  --button-height: clamp(2.75rem, 4vw, 3.25rem);
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+* { box-sizing: border-box; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* ربط أقسام الموقع الحالية بالمقاسات المتجاوبة */
+.hl-hero-title { font-size: var(--font-hero) !important; }
+.hl-hero-desc, .ez-hero-desc { font-size: var(--font-body-lg) !important; line-height: 1.95; }
+.hl-h2, .ez-h2 { font-size: var(--font-section) !important; }
+.hl-ad-title, .ez-ad-title { font-size: var(--font-section-sm) !important; }
+.hl-sub, .ez-muted, .hl-jcard p, .hl-steps p, .ez-step-card p, .ez-card-desc { font-size: var(--font-body-sm) !important; }
+.hl-cat-name, .hl-jcard h3, .hl-steps h3, .ez-step-card h3, .ez-cat-label { font-size: var(--font-card-title) !important; }
+.hl-eyebrow, .hl-ad-eyebrow, .hl-ad-gold, .ez-fchip, .ez-console-field label { font-size: var(--font-label) !important; }
+.hl-tc-num { font-size: var(--font-stat) !important; }
+.hl-tc-label { font-size: var(--font-section-sm) !important; }
+.hl-tc-note, .hl-tc-meta, .hl-tc-chip { font-size: var(--font-body-md) !important; }
+
+/* أزرار قابلة للمس بارتفاع كافٍ */
+.hl-btn, .ez-console-btn, .ez-nav-cta, .ez-btn, .ez-btn-ghost {
+  min-height: var(--button-height);
+  font-size: var(--font-label);
+}
+.hl-btn svg, .ez-console-btn svg { width: var(--icon-sm); height: var(--icon-sm); flex: 0 0 auto; }
+.hl-cat-ico svg { width: var(--icon-sm); height: var(--icon-sm); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
