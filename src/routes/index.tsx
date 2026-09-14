@@ -976,19 +976,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       </section>
       )}
 
-      {/* ── PLATFORM STATS ── */}
-      {view === "home" && (
-      <section className="ez-stats" aria-label="أرقام إزهليها">
-        <div className="ez-stat ez-stat--solo">
-          <span className="ez-stat-icon"><Building2 size={16} /></span>
-          <div>
-            <strong>
-              أكثر من <CountUp value={statNumber("stat.providers.value", providers.length)} /> {txt("stat.providers", "مقدم خدمة")}
-            </strong>
-          </div>
-        </div>
-      </section>
-      )}
 
 
       {/* ── ADS / BANNERS ── */}
@@ -1134,27 +1121,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       )}
 
 
-      {/* ── SHOWCASE ── */}
-      {view === "home" && !loading && showcase.length > 0 && (
-        <section className="ez-sec ez-sec-alt">
-          <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("showcase.eyebrow", "اختيارات إزهليها")}</div>
-          <h2 className="ez-h2">{txt("showcase.title", "خيارات تستاهل تبدأ منها")}</h2>
-          <div className="ez-grid">
-            {showcase.map((p) => (
-              <ProviderCard
-                key={p.id}
-                provider={p}
-                city={cities.find((c) => c.id === p.city_id)}
-                sub={subcategories.find((s) => s.id === p.subcategory_id)}
-                images={imgsByProvider.get(p.id) ?? []}
-                tags={tagsByProvider.get(p.id) ?? []}
-                contactLabel={txt("provider.whatsapp.label", "للمزيد من التفاصيل")}
-                featured={p.is_featured}
-              />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ── RESULTS ── */}
       {view === "providers" && (
@@ -1251,7 +1217,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── FAQ ── */}
-      {(view === "home" || view === "faq") && (
+      {view === "faq" && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
         <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
