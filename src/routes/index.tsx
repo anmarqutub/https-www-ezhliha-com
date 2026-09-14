@@ -990,6 +990,44 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       </section>
       )}
 
+      {/* ── LUXURY LANDING (home) ── */}
+      {view === "home" && (
+        <HomeLanding
+          txt={txt}
+          categories={categories}
+          cityCount={cities.length}
+          providerCount={providers.length}
+          favCount={favIds.size}
+          heroImage={heroBride.url}
+          banner={currentBanner ?? null}
+          showcase={showcase}
+          renderProviderCard={(id) => {
+            const p = providers.find((x) => x.id === id);
+            if (!p) return null;
+            return (
+              <ProviderCard
+                key={p.id}
+                provider={p}
+                city={cityById.get(p.city_id)}
+                sub={subById.get(p.subcategory_id)}
+                images={imgsByProvider.get(p.id) ?? []}
+                tags={tagsByProvider.get(p.id) ?? []}
+                contactLabel={contactLabel}
+                featured={p.is_featured}
+                isFav={favIds.has(p.id)}
+                onToggleFav={user ? toggleFav : undefined}
+                onOpen={saveBrowseState}
+              />
+            );
+          }}
+          onExploreCategory={(categoryId) => {
+            setSearch("");
+            setQuickSearch("");
+            goProviders({ categoryId });
+          }}
+        />
+      )}
+
 
 
 
