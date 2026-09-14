@@ -55,6 +55,7 @@ export default function HomeLanding({
   heroImage,
   banner,
   showcase,
+  filterSlot,
   renderProviderCard,
   onExploreCategory,
 }: LandingProps) {
