@@ -744,6 +744,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     <div dir="rtl" className="ez-root">
       <style>{css}</style>
 
+      {view === "home" && (
+        <HomeTopStrip text={txt("hl.topbar", "أزهليها، دليلكِ لكل متطلبات مناسبتكِ")} />
+      )}
+
       <header className="ez-nav">
         <button
           type="button"
