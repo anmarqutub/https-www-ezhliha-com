@@ -115,6 +115,8 @@ export default function HomeLanding({
         </div>
       </section>
 
+      {filterSlot}
+
       {/* ── 4. QUICK CATEGORIES ── */}
       {quickCats.length > 0 && (
         <section className="hl-sec">
