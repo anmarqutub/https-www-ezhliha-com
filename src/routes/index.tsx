@@ -941,7 +941,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
             </select>
           </div>
-          <button type="button" className="ez-console-btn" onClick={scrollToResults}>
+          <button
+            type="button"
+            className="ez-console-btn"
+            onClick={() => {
+              if (view === "home") {
+                goProviders({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub });
+              } else {
+                scrollToResults();
+              }
+            }}
+          >
             <Search size={16} /> {txt("console.cta", "ابحث الآن")}
           </button>
         </div>
