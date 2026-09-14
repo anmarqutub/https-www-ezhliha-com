@@ -962,6 +962,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           heroImage={heroBride.url}
           banner={currentBanner ?? null}
           showcase={showcase}
+          filterSlot={searchConsole}
           renderProviderCard={(id) => {
             const p = providers.find((x) => x.id === id);
             if (!p) return null;
