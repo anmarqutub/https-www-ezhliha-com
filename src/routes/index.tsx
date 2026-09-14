@@ -979,7 +979,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
       {/* ── ADS / BANNERS ── */}
-      {view === "home" && banners.length > 0 && currentBanner && (
+      {false && banners.length > 0 && currentBanner && (
         <section className="ez-ad-sec" aria-label="إعلان">
           <div className="ez-ad">
             <div className="ez-ad-media">
