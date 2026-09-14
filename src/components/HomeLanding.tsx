@@ -477,17 +477,8 @@ const landingCss = `
     .hl-steps h3 { font-size:16px; }
     .hl-steps p { font-size:14px; }
 
-    /* trust counter on mobile: number first, then chips in a tidy 2-column grid */
-    .hl-tc-in { grid-template-columns:1fr; gap:12px; padding:clamp(28px,7vw,44px) 14px; }
-    .hl-tc-core { order:-1; padding:20px 16px; border-radius:18px; }
-    .hl-tc-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; overflow:visible; }
-    .hl-tc-cards .hl-tc-chip { margin-inline:0 !important; font-size:13px; padding:10px 11px; gap:8px; border-radius:12px; box-shadow:0 6px 16px rgba(53,24,19,.05); }
-    .hl-tc-chip em { width:26px; height:26px; }
-    .hl-tc-num { font-size:clamp(3rem,17vw,4.6rem); }
-    .hl-tc-label { font-size:16px; }
-    .hl-tc-note, .hl-tc-meta { font-size:13px; }
-    .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
-    .hl-tc-btn { width:100%; min-height:44px; }
+    /* (قواعد قسم +500 للجوال موجودة بنهاية الملف بعد القواعد الأساسية) */
+
 
   }
   /* على الشاشات الضيقة جدًا: نفس ترتيب العناصر لكن عمود واحد لتبقى القراءة مريحة */
@@ -522,4 +513,21 @@ const landingCss = `
   .hl-tc-chip em { width:32px; height:32px; flex:0 0 auto; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.14); color:#660000; display:flex; align-items:center; justify-content:center; }
   @keyframes hl-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
   @media (prefers-reduced-motion:reduce) { .hl-tc.is-on .hl-tc-chip { animation:none; } }
+
+  /* قسم +500 على الجوال: الرقم أولاً ثم التصنيفات في شبكة عمودين */
+  @media (max-width:900px) {
+    .hl-tc-in { grid-template-columns:1fr; gap:12px; padding:clamp(28px,7vw,44px) 14px; }
+    .hl-tc-core { order:-1; padding:20px 16px; border-radius:18px; }
+    .hl-tc-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; overflow:visible; justify-items:stretch; }
+    .hl-tc-cards-a .hl-tc-chip:nth-child(2), .hl-tc-cards-b .hl-tc-chip:nth-child(2) { margin-inline:0; }
+    .hl-tc-cards .hl-tc-chip { font-size:13px; padding:10px 11px; gap:8px; border-radius:12px; box-shadow:0 6px 16px rgba(53,24,19,.05); }
+    .hl-tc-chip em { width:26px; height:26px; }
+    .hl-tc-num { font-size:clamp(3rem,17vw,4.6rem); }
+    .hl-tc-label { font-size:16px; }
+    .hl-tc-note, .hl-tc-meta { font-size:13px; }
+    .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
+    .hl-tc-btn { width:100%; min-height:44px; }
+    .hl-tc.is-on .hl-tc-chip { animation:none; }
+  }
+
 `;
