@@ -1914,7 +1914,7 @@ const css = `
     .ez-subquick-pill { flex:0 0 auto; min-height:40px; font-size:13px; }
 
     /* sponsored/ad banner keeps the desktop horizontal split */
-    .ez-ad { grid-template-columns:1.1fr .9fr; }
+    .ez-ad { grid-template-columns:1fr; }
     .ez-ad-body { padding:14px 12px; }
     .ez-ad-media { min-height:0; }
     .ez-ad-media img { height:100%; min-height:150px; object-fit:cover; object-position:center; }
