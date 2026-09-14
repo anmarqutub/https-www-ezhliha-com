@@ -433,4 +433,26 @@ const landingCss = `
     .hl-trust-grid { grid-template-columns:1fr; }
     .hl-trust-item { border-inline-end:0; }
   }
+
+  /* trust counter */
+  .hl-tc { background:#e6e4d7; background-image:radial-gradient(rgba(100,0,0,.045) 1px, transparent 1px); background-size:5px 5px; border-top:1px solid rgba(160,120,60,.22); }
+  .hl-tc-in { max-width:1240px; margin:0 auto; padding:74px 32px; display:grid; grid-template-columns:1fr auto 1fr; gap:34px; align-items:center; }
+  .hl-tc-core { text-align:center; display:grid; justify-items:center; gap:6px; }
+  .hl-tc-pre { font-size:13px; color:rgba(42,33,28,.6); letter-spacing:.08em; }
+  .hl-tc-num { font-size:clamp(3.4rem,7vw,6rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; }
+  .hl-tc-label { font-size:17px; color:#2a211c; }
+  .hl-tc-note { margin:6px 0 0; font-size:13.5px; color:rgba(42,33,28,.66); }
+  .hl-tc-meta { margin:2px 0 0; display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(42,33,28,.6); }
+  .hl-tc-dot { width:4px; height:4px; border-radius:50%; background:rgba(160,120,60,.7); }
+  .hl-tc-btn { margin-top:16px; opacity:0; transform:translateY(8px); transition:opacity .6s ease 1.9s, transform .6s ease 1.9s; }
+  .hl-tc.is-on .hl-tc-btn { opacity:1; transform:none; }
+  .hl-tc-cards { display:grid; gap:14px; justify-items:stretch; }
+  .hl-tc-cards-b { justify-items:stretch; }
+  .hl-tc-chip { display:flex; align-items:center; gap:10px; background:#f8f7f0; border:1px solid rgba(160,120,60,.3); border-radius:10px; padding:13px 16px; font-size:13px; color:#2a211c; box-shadow:0 10px 26px rgba(53,24,19,.06); opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease; }
+  .hl-tc.is-on .hl-tc-chip { opacity:1; transform:none; animation:hl-float 6s ease-in-out infinite; }
+  .hl-tc-cards-a .hl-tc-chip:nth-child(2) { margin-inline-start:26px; }
+  .hl-tc-cards-b .hl-tc-chip:nth-child(2) { margin-inline-end:26px; }
+  .hl-tc-chip em { width:32px; height:32px; flex:0 0 auto; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.14); color:#660000; display:flex; align-items:center; justify-content:center; }
+  @keyframes hl-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+  @media (prefers-reduced-motion:reduce) { .hl-tc.is-on .hl-tc-chip { animation:none; } }
 `;
