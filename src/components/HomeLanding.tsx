@@ -49,7 +49,6 @@ export type LandingProps = {
 export default function HomeLanding({
   txt,
   categories,
-  cityCount,
   providerCount,
   favCount,
   heroImage,
