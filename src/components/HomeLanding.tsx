@@ -230,14 +230,6 @@ export default function HomeLanding({
         </ol>
       </section>
 
-      {/* ── 9. TRUST (animated) ── */}
-      <TrustCounter
-        txt={txt}
-        target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        cityCount={cityCount}
-        favCount={favCount}
-        onExplore={() => onExploreCategory(null)}
-      />
     </>
   );
 }
