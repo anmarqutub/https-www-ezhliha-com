@@ -169,14 +169,14 @@ export default function HomeLanding({
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
-            <article key={j.title} className="hl-jcard">
+            <Link key={j.title} to="/providers" search={dirSearch(j.slug)} className="hl-jcard hl-jcard-link">
               <h3>{j.title}</h3>
               <p>{j.desc}</p>
-              <button type="button" className="hl-link" onClick={() => onExploreCategory(null)}>
+              <span className="hl-link">
                 {j.cta}
                 <ArrowLeft size={14} />
-              </button>
-            </article>
+              </span>
+            </Link>
           ))}
         </div>
       </section>
