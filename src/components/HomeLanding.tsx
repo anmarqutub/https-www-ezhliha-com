@@ -107,7 +107,7 @@ export default function HomeLanding({
               <span className="hl-eyebrow-line" />
               {txt("hl.hero.eyebrow", "دليل أزهليها")}
             </span>
-            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ في مكان واحد")}</h1>
+            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ، في مكان واحد.")}</h1>
             <p className="hl-hero-desc">
               {txt("hl.hero.desc", "اكتشفي مزوّدي الخدمات، قارني بين الخيارات، واحفظي ما يناسبكِ.")}
             </p>
@@ -116,14 +116,14 @@ export default function HomeLanding({
                 {txt("hl.hero.cta", "استكشفي الدليل")}
               </Link>
               <Link to="/favorites" className="hl-link">
-                {txt("hl.hero.cta2", "شاهدي المفضلة")}
+                {txt("hl.hero.cta2", "احفظي اختياراتكِ")}
                 <ArrowLeft size={15} />
               </Link>
             </div>
           </div>
           <div className="hl-hero-media">
             <span className="hl-hero-frame" aria-hidden="true" />
-            <img src={heroImage} alt={txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ في مكان واحد")} loading="eager" decoding="async" />
+            <img src={heroImage} alt={txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ، في مكان واحد.")} loading="eager" decoding="async" />
           </div>
         </div>
       </section>
@@ -141,8 +141,8 @@ export default function HomeLanding({
       {quickCats.length > 0 && (
         <section className="hl-sec">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.cats.title", "ماذا تحتاجين اليوم؟")}</h2>
-            <p className="hl-sub">{txt("hl.cats.desc", "اختاري نوع الخدمة للعثور على الخيارات المناسبة لكِ.")}</p>
+            <h2 className="hl-h2">{txt("hl.cats.title", "اكتشفي الخدمات المناسبة لكِ")}</h2>
+            <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة للعثور على مزوّدي الخدمات المتاحين في مدينتكِ.")}</p>
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
@@ -192,7 +192,7 @@ export default function HomeLanding({
         <section className="hl-sec hl-sec-alt">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.picks.title", "خيارات قد تناسبكِ")}</h2>
-            <p className="hl-sub">{txt("hl.picks.desc", "استعرضي مزوّدي الخدمات واختاري الأنسب لمناسبتكِ.")}</p>
+            <p className="hl-sub">{txt("hl.picks.desc", "استعرضي مزوّدي الخدمات واختاري الأنسب لكِ.")}</p>
           </div>
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
@@ -278,15 +278,15 @@ function TrustCounter({
           </span>
           <span className="hl-tc-pre">{txt("hl.tc.pre", "دليل أزهليها")}</span>
           <strong className="hl-tc-num">+{val}</strong>
-          <span className="hl-tc-label">{txt("hl.tc.label", "مزوّد خدمة لمناسبتكِ")}</span>
+          <span className="hl-tc-label">{txt("hl.tc.label", "مزوّد خدمة")}</span>
           <p className="hl-tc-note">
             {txt(
               "hl.tc.note",
-              "من القاعات والتصوير إلى الورد والجمال والضيافة، اكتشفي خيارات متنوعة في مكان واحد.",
+              "اكتشفي خيارات متنوعة للمناسبات، من القاعات والتصوير إلى الورد والضيافة.",
             )}
           </p>
           <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
-            {txt("hl.hero.cta", "استكشفي الدليل")}
+            {txt("hl.tc.cta", "شاهدي المزوّدين")}
           </Link>
         </div>
       </div>

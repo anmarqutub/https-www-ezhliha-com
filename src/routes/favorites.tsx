@@ -66,7 +66,7 @@ function FavoritesPage() {
         <Link to="/" className="fav-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="fav-nav-menu">
           <Link to="/" className="fav-link">الرئيسية</Link>
-          <Link to="/providers" search={{}} className="fav-link">مقدمي الخدمات</Link>
+          <Link to="/providers" search={{}} className="fav-link">مزوّدو الخدمات</Link>
           <Link to="/categories" className="fav-link">التصنيفات</Link>
           <Link to="/faq" className="fav-link">الأسئلة الشائعة</Link>
         </nav>
@@ -78,10 +78,10 @@ function FavoritesPage() {
         </div>
       </header>
       <main className="fav-main">
-        <h1>♥ قائمة المفضلة</h1>
+        <h1>♥ اختياراتكِ المحفوظة</h1>
         {loading ? <p className="fav-empty">جارٍ التحميل...</p> :
           providers.length === 0 ? (
-            <p className="fav-empty">لا يوجد مقدمو خدمة في المفضلة بعد. <Link to="/">تصفّح الموقع</Link></p>
+            <p className="fav-empty">لم تحفظي أي مزوّد بعد. <Link to="/">استكشفي الدليل</Link></p>
           ) : (
             <div className="fav-grid">
               {providers.map((p) => {
@@ -100,8 +100,8 @@ function FavoritesPage() {
                       </div>
                     </Link>
                     <div className="fav-foot">
-                      {wa && <a className="fav-wa" href={wa} target="_blank" rel="noopener noreferrer">للمزيد من التفاصيل</a>}
-                      <button className="fav-remove" onClick={() => removeFav(p.id)}>إزالة</button>
+                      {wa && <a className="fav-wa" href={wa} target="_blank" rel="noopener noreferrer">تواصلي مع المزوّد</a>}
+                      <button className="fav-remove" onClick={() => removeFav(p.id)}>إزالة من المفضلة</button>
                     </div>
                   </article>
                 );
