@@ -443,8 +443,8 @@ function ProviderPage() {
             <div className="pv-price-bar">
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
-                <strong>اطلب تسعيرة مرتبة من {provider.name}</strong>
-                <p className="pv-quote-sub">أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
+                <strong>اطلبي عرضكِ من {provider.name}</strong>
+                <p className="pv-quote-sub">أرسلي تفاصيل مناسبتكِ، وسيتواصل معكِ مقدّم الخدمة لمناقشة السعر والتفاصيل.</p>
               </div>
 
               <div className="pv-price-cta">
@@ -457,7 +457,7 @@ function ProviderPage() {
                 {provider.whatsapp && (
                   <button type="button" className="pv-btn-quote pv-btn-quote--wide" onClick={() => setQuoteOpen(true)}>
                     <SendIcon />
-                    <span>{siteTexts["provider.quote.cta"] || "اطلب تسعيرة"}</span>
+                    <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضكِ"}</span>
                   </button>
                 )}
               </div>
@@ -467,8 +467,8 @@ function ProviderPage() {
 
         {(() => {
           const items: Array<[string, string]> = [
-            ["s-about", "نبذة"],
-            ["s-packages", "الباقات"],
+            ["s-about", "نبذة عن الخدمة"],
+            ["s-packages", "الباقات والأسعار"],
             ["s-services", "الخدمات"],
             ["s-media", "صور وفيديو"],
             ["s-reviews", "التقييمات"],
@@ -700,7 +700,7 @@ function ProviderPage() {
                 ) : (
                   <div className="pv-rev-form">
                     <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
-                    <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّل دخولك وقيّم</Link>
+                    <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّلي الدخول لتقييم المزوّد</Link>
                   </div>
                 )}
               </div>
@@ -746,7 +746,7 @@ function ProviderPage() {
               <div className="pv-contact-row">
                 <div>
                   <small>واتساب</small>
-                  <strong dir="ltr">{provider.whatsapp || "رقم واتساب غير مضاف"}</strong>
+                  <strong dir="ltr">{provider.whatsapp || "لم يُضف رقم واتساب"}</strong>
                 </div>
                 {waUrl ? (
                   <a className="pv-contact-act" href={waUrl} target="_blank" rel="noopener noreferrer">{contactLabel || "مراسلة"}</a>
@@ -854,7 +854,7 @@ function ProviderPage() {
               <span className="pv-quote-tag">طلب مخصص</span>
               <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
-            <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
+            <h3 className="pv-quote-title">أرسلي تفاصيل طلبكِ إلى {provider.name}</h3>
             <p className="pv-quote-sub">اكتبي أهم التفاصيل ليصلكِ عرض أقرب لما تحتاجينه.</p>
 
             <div className="pv-quote-grid">

@@ -90,9 +90,9 @@ export default function HomeLanding({
   };
 
   const steps = [
-    { t: txt("hl.step.1", "اختاري نوع الخدمة والمدينة"), d: txt("hl.step.1.d", "حدّدي ما تحتاجينه ومكان مناسبتكِ.") },
-    { t: txt("hl.step.2", "قارني واحفظي خياراتكِ"), d: txt("hl.step.2.d", "تفاصيل وأسعار وأعمال في مكان واحد.") },
-    { t: txt("hl.step.3", "تواصلي مع مقدّم الخدمة"), d: txt("hl.step.3.d", "تواصل مباشر بدون وسطاء أو تعقيد.") },
+    { t: txt("hl.step.1", "حددي الخدمة"), d: txt("hl.step.1.d", "اختاري الفئة والمدينة للعثور على الخيارات المتاحة.") },
+    { t: txt("hl.step.2", "قارني الخيارات"), d: txt("hl.step.2.d", "استعرضي الأعمال والأسعار والتفاصيل قبل اختياركِ.") },
+    { t: txt("hl.step.3", "تواصلي مباشرةً"), d: txt("hl.step.3.d", "أرسلي طلبكِ إلى مقدّم الخدمة وتناقشي معه في التفاصيل.") },
   ];
 
   return (
@@ -105,25 +105,25 @@ export default function HomeLanding({
           <div className="hl-hero-copy">
             <span className="hl-eyebrow">
               <span className="hl-eyebrow-line" />
-              {txt("hl.hero.eyebrow", "دليل مناسبات أزهليها")}
+              {txt("hl.hero.eyebrow", "دليل أزهليها")}
             </span>
-            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل تفاصيل مناسبتكِ بين يديكِ")}</h1>
+            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ في مكان واحد")}</h1>
             <p className="hl-hero-desc">
-              {txt("hl.hero.desc", "اكتشفي الدليل، احفظي خياراتكِ، ورتّبي يومكِ كما تحلمين.")}
+              {txt("hl.hero.desc", "اكتشفي مزوّدي الخدمات، قارني بين الخيارات، واحفظي ما يناسبكِ.")}
             </p>
             <div className="hl-hero-actions">
               <Link to="/providers" search={dirSearch()} className="hl-btn">
                 {txt("hl.hero.cta", "استكشفي الدليل")}
               </Link>
               <Link to="/favorites" className="hl-link">
-                {txt("hl.hero.cta2", "عرض مفضلتي")}
+                {txt("hl.hero.cta2", "شاهدي المفضلة")}
                 <ArrowLeft size={15} />
               </Link>
             </div>
           </div>
           <div className="hl-hero-media">
             <span className="hl-hero-frame" aria-hidden="true" />
-            <img src={heroImage} alt={txt("hl.hero.title", "كل تفاصيل مناسبتكِ بين يديكِ")} loading="eager" decoding="async" />
+            <img src={heroImage} alt={txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ في مكان واحد")} loading="eager" decoding="async" />
           </div>
         </div>
       </section>
@@ -142,7 +142,7 @@ export default function HomeLanding({
         <section className="hl-sec">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.cats.title", "ماذا تحتاجين اليوم؟")}</h2>
-            <p className="hl-sub">{txt("hl.cats.desc", "اختاري نوع الخدمة، ونعرض لكِ الخيارات المناسبة.")}</p>
+            <p className="hl-sub">{txt("hl.cats.desc", "اختاري نوع الخدمة للعثور على الخيارات المناسبة لكِ.")}</p>
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
@@ -163,8 +163,8 @@ export default function HomeLanding({
       {/* ── 5. JOURNEY ── */}
       <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
-          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ تفاصيل مناسبتكِ")}</h2>
-          <p className="hl-sub">{txt("hl.journey.desc", "خطوات واضحة تقرّبكِ من يومكِ.")}</p>
+          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ التفاصيل")}</h2>
+          <p className="hl-sub">{txt("hl.journey.desc", "خطوات بسيطة تقرّبكِ من اختياركِ المناسب.")}</p>
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
@@ -191,13 +191,13 @@ export default function HomeLanding({
       {showcase.length > 0 && (
         <section className="hl-sec hl-sec-alt">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.picks.title", "خيارات قد تعجبكِ")}</h2>
-            <p className="hl-sub">{txt("hl.picks.desc", "أسماء مختارة من دليل أزهليها.")}</p>
+            <h2 className="hl-h2">{txt("hl.picks.title", "خيارات قد تناسبكِ")}</h2>
+            <p className="hl-sub">{txt("hl.picks.desc", "استعرضي مزوّدي الخدمات واختاري الأنسب لمناسبتكِ.")}</p>
           </div>
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
             <Link to="/providers" search={dirSearch()} className="hl-btn hl-btn-ghost">
-              {txt("hl.picks.cta", "عرض كل المزودين")}
+              {txt("hl.picks.cta", "استكشفي الدليل")}
             </Link>
           </div>
         </section>
@@ -206,7 +206,7 @@ export default function HomeLanding({
       {/* ── 8. HOW IT WORKS ── */}
       <section className="hl-sec">
         <div className="hl-sec-head">
-          <h2 className="hl-h2">{txt("hl.how.title", "رتّبي فرحتكِ بثلاث خطوات")}</h2>
+          <h2 className="hl-h2">{txt("hl.how.title", "اختاري بسهولة")}</h2>
         </div>
         <ol className="hl-steps">
           {steps.map((s, i) => (
@@ -310,9 +310,9 @@ function AdCard({
           <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
           <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
         </div>
-        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزود خدمة مميز")}</h3>
-        <p className="hl-ad-desc">{txt("hl.ad.desc", "باقة مختارة بعناية لمناسبتكِ، بتفاصيل هادئة وخدمة راقية.")}</p>
-        <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري لمشتركات أزهليها")}</span>
+        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزوّد خدمة مميز")}</h3>
+        <p className="hl-ad-desc">{txt("hl.ad.desc", "اكتشفي هذا المزوّد وتعرّفي على خدماته وعروضه للمشتركات.")}</p>
+        <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري للمشتركات")}</span>
         <span className="hl-btn">{txt("hl.ad.cta", "اكتشفي العرض")}</span>
       </div>
       <div className="hl-ad-media">

@@ -157,7 +157,7 @@ function ServiceDetailPage() {
 
         <aside className="sv-aside">
           <div className="sv-quote-card">
-            <span className="sv-quote-eyebrow">للمناسبة اللي في بالك</span>
+            <span className="sv-quote-eyebrow">لمناسبتكِ القادمة</span>
             <strong>اطلب تسعيرة مرتبة من {providerName}</strong>
             <p>أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
             {providerWa && (
@@ -177,7 +177,7 @@ function ServiceDetailPage() {
               <span className="sv-quote-tag">طلب مخصص</span>
               <button type="button" className="sv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
-            <h3 className="sv-quote-title">خلّينا نجهّز طلبك لـ {providerName}</h3>
+            <h3 className="sv-quote-title">أرسلي تفاصيل طلبكِ إلى {providerName}</h3>
             <p className="sv-quote-sub">الخدمة المطلوبة: {service.name}</p>
 
             <div className="sv-quote-grid">

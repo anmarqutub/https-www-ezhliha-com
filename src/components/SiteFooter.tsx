@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
 export const CONTACT_WA_NUMBER = "+966573444242";
-export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
+export const CONTACT_WA_MESSAGE = "مرحبًا أزهليها، لدي استفسار.";
 
 function wa(number: string, message: string) {
   const digits = number.replace(/\D/g, "");
@@ -37,23 +37,23 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
       <div className="ez-footer-grid">
         <div className="ez-footer-brand">
           <img src={logoUrl} alt="إزهليها" />
-          <p>{txt("footer.tagline", "كل ما تحتاجينه لمناسبتكِ في مكان واحد، من أول البحث إلى طلب العرض 🤍")}</p>
+          <p>{txt("footer.tagline", "أزهليها تساعدكِ على اكتشاف مزوّدي خدمات المناسبات واختيار ما يناسبكِ بسهولة.")}</p>
         </div>
 
         <div className="ez-footer-col">
-          <h3>{txt("footer.explore", "استكشف")}</h3>
+          <h3>{txt("footer.explore", "استكشفي")}</h3>
           <div className="ez-footer-links">
             <Link to="/">{txt("nav.home", "الرئيسية")}</Link>
-            <Link to="/providers" search={{}}>{txt("footer.all", "كل مقدمي الخدمة")}</Link>
+            <Link to="/providers" search={{}}>{txt("footer.all", "الدليل")}</Link>
 
-            <Link to="/categories">{txt("nav.categories", "التصنيفات")}</Link>
+            <Link to="/categories">{txt("nav.categories", "الفئات")}</Link>
             <Link to="/cities">{txt("nav.cities", "المدن")}</Link>
             <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>
           </div>
         </div>
 
         <div className="ez-footer-col">
-          <h3>{txt("footer.contact.title", "تواصل معنا")}</h3>
+          <h3>{txt("footer.contact.title", "يسعدنا تواصلكِ معنا")}</h3>
           <div className="ez-footer-links">
             <a
               className="ez-footer-wa"
@@ -62,18 +62,29 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               rel="noopener noreferrer"
             >
               <WhatsAppIcon size={16} />
-              <span>{txt("footer.contact", "واتساب إزهليها")}</span>
+              <span>{txt("footer.contact", "واتساب أزهليها")}</span>
             </a>
             <Link to="/about">{txt("footer.about", "من نحن")}</Link>
             <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
             <Link to="/faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <a
+              href={wa(
+                txt("contact.wa_number", CONTACT_WA_NUMBER),
+                txt("footer.join.message", "مرحبًا أزهليها، أرغب في الانضمام كمقدّم خدمة."),
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {txt("footer.join", "انضمّي كمقدّم خدمة")}
+            </a>
+
 
           </div>
         </div>
       </div>
       <div className="ez-footer-bar">
         <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
-        <span>{txt("footer.motto", "صُممت لتجعل قرار المناسبة أسهل.")}</span>
+        <span>{txt("footer.motto", "اختيارات أوضح، ووقت أقل.")}</span>
       </div>
     </footer>
   );
