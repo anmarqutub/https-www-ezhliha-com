@@ -236,24 +236,13 @@ export default function HomeLanding({
   );
 }
 
-const trustCats = [
-  { n: "قاعات زفاف", i: <Building2 size={16} /> },
-  { n: "تصوير وفيديو", i: <Camera size={16} /> },
-  { n: "تجميل وعناية", i: <Sparkles size={16} /> },
-  { n: "ورد وتنسيق", i: <Flower2 size={16} /> },
-  { n: "زفات وموسيقى", i: <Music4 size={16} /> },
-  { n: "ضيافة وحلويات", i: <Cake size={16} /> },
-];
-
 function TrustCounter({
   txt,
   target,
-  favCount,
   onExplore,
 }: {
   txt: (k: string, f: string) => string;
   target: number;
-  favCount: number;
   onExplore: () => void;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -270,7 +259,7 @@ function TrustCounter({
           io.disconnect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.25 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -294,38 +283,22 @@ function TrustCounter({
   return (
     <section className={`hl-tc${on ? " is-on" : ""}`} ref={ref}>
       <div className="hl-tc-in">
-        <div className="hl-tc-cards hl-tc-cards-a">
-          {trustCats.slice(0, 3).map((c, i) => (
-            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.5 + i * 0.16}s` }}>
-              <em>{c.i}</em>
-              {c.n}
-            </span>
-          ))}
-        </div>
-
         <div className="hl-tc-core">
-          <span className="hl-tc-pre">{txt("hl.tc.pre", "أكثر من")}</span>
+          <span className="hl-tc-ico" aria-hidden="true">
+            <LayoutGrid />
+          </span>
+          <span className="hl-tc-pre">{txt("hl.tc.pre", "دليل أزهليها")}</span>
           <strong className="hl-tc-num">+{val}</strong>
-          <span className="hl-tc-label">{txt("hl.tc.label", "مزود خدمة لمناسبتكِ")}</span>
+          <span className="hl-tc-label">{txt("hl.tc.label", "مزوّد خدمة لمناسبتكِ")}</span>
           <p className="hl-tc-note">
-            {txt("hl.tc.note", "من القاعات والتصوير إلى الورد، الجمال والضيافة.")}
-          </p>
-          <p className="hl-tc-meta">
-            <Heart size={14} /> {txt("hl.trust.fav", "مفضلة خاصة بكِ")}
-            {favCount > 0 ? ` (${favCount})` : ""}
+            {txt(
+              "hl.tc.note",
+              "من القاعات والتصوير إلى الورد والجمال والضيافة، اكتشفي خيارات متنوعة في مكان واحد.",
+            )}
           </p>
           <button type="button" className="hl-btn hl-tc-btn" onClick={onExplore}>
             {txt("hl.hero.cta", "استكشفي الدليل")}
           </button>
-        </div>
-
-        <div className="hl-tc-cards hl-tc-cards-b">
-          {trustCats.slice(3).map((c, i) => (
-            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.58 + i * 0.16}s` }}>
-              <em>{c.i}</em>
-              {c.n}
-            </span>
-          ))}
         </div>
       </div>
     </section>
