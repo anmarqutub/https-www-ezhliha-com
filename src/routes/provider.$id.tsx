@@ -322,7 +322,7 @@ function ProviderPage() {
         <Link to="/" className="pv-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="pv-topnav">
           <Link to="/">الرئيسية</Link>
-          <Link to="/providers">مقدمي الخدمات</Link>
+          <Link to="/providers" search={{}}>مقدمي الخدمات</Link>
           
           <Link to="/favorites">المفضلة</Link>
           <Link to="/" hash="ez-contact">تواصل معنا</Link>
@@ -359,7 +359,7 @@ function ProviderPage() {
               onClick={() => {
                 pendingFilters.categoryId = subCatId ?? null;
                 pendingFilters.subId = provider.subcategory_id;
-                navigate({ to: "/providers" });
+                navigate({ to: "/providers", search: {} });
               }}
             >
               {subName}

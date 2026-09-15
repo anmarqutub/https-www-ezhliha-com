@@ -1001,7 +1001,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
               <p>{txt("drawer.cta.text", "اختاري التصنيف والخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
-              <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
+              <Link to="/providers" search={{}} className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
                 {txt("drawer.cta.btn", "ابدأ التصفح")}
               </Link>
             </div>

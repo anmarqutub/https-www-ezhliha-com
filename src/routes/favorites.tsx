@@ -66,7 +66,7 @@ function FavoritesPage() {
         <Link to="/" className="fav-brand"><img src={logoUrl} alt="إزهليها" /></Link>
         <nav className="fav-nav-menu">
           <Link to="/" className="fav-link">الرئيسية</Link>
-          <Link to="/providers" className="fav-link">مقدمي الخدمات</Link>
+          <Link to="/providers" search={{}} className="fav-link">مقدمي الخدمات</Link>
           <Link to="/categories" className="fav-link">التصنيفات</Link>
           <Link to="/faq" className="fav-link">الأسئلة الشائعة</Link>
         </nav>
