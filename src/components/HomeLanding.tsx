@@ -64,21 +64,24 @@ export default function HomeLanding({
     {
       title: txt("hl.journey.1.title", "ابدئي باختيار القاعة"),
       desc: txt("hl.journey.1.desc", "قاعات وأماكن مناسبة لعدد ضيوفكِ وميزانيتكِ."),
+      cta: txt("hl.journey.1.cta", "استكشفي القاعات"),
     },
     {
-      title: txt("hl.journey.2.title", "احفظي مصوّراتكِ المفضلات"),
-      desc: txt("hl.journey.2.desc", "قارني الأعمال واحفظي الأسماء اللي عجبتكِ."),
+      title: txt("hl.journey.2.title", "اختاري المصوّرة"),
+      desc: txt("hl.journey.2.desc", "اختاري المصوّرة التي توثّق ذكرياتكِ بأسلوب يناسبكِ."),
+      cta: txt("hl.journey.2.cta", "استكشفي المصوّرات"),
     },
     {
-      title: txt("hl.journey.3.title", "استكشفي تنسيقات الورد"),
-      desc: txt("hl.journey.3.desc", "أفكار تنسيق هادئة وفاخرة تناسب أجواء مناسبتكِ."),
+      title: txt("hl.journey.3.title", "رتّبي تفاصيل مناسبتكِ"),
+      desc: txt("hl.journey.3.desc", "من الورد إلى الديكور، اختاري التفاصيل التي تكمّل مناسبتكِ."),
+      cta: txt("hl.journey.3.cta", "استكشفي الخدمات"),
     },
   ];
 
   const steps = [
-    { t: txt("hl.step.1", "اختاري الفئة أو المدينة"), d: txt("hl.step.1.d", "حددي وش تحتاجين ووين مناسبتكِ.") },
+    { t: txt("hl.step.1", "اختاري نوع الخدمة والمدينة"), d: txt("hl.step.1.d", "حدّدي ما تحتاجينه ومكان مناسبتكِ.") },
     { t: txt("hl.step.2", "قارني واحفظي خياراتكِ"), d: txt("hl.step.2.d", "تفاصيل وأسعار وأعمال في مكان واحد.") },
-    { t: txt("hl.step.3", "تواصلي مع مزود الخدمة"), d: txt("hl.step.3.d", "تواصل مباشر بدون وسطاء ولا تعقيد.") },
+    { t: txt("hl.step.3", "تواصلي مع مقدّم الخدمة"), d: txt("hl.step.3.d", "تواصل مباشر بدون وسطاء أو تعقيد.") },
   ];
 
   return (
