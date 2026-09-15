@@ -834,8 +834,8 @@ function ProviderPage() {
                   <div className="pv-sug-body">
                     <h3>{s.name}</h3>
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
-                    <small>السعر التقريبي</small>
-                    <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
+                    <small>الأسعار</small>
+                    <strong>{priceRangeText(s.price_from, null, s.price)}</strong>
                     <span className="pv-sug-more">اكتشف المزيد <i><ArrowLeft size={14} /></i></span>
                   </div>
                 </Link>
