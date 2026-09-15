@@ -121,7 +121,7 @@ export default function HomeLanding({
       <TrustCounter
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        favCount={favCount}
+        
         onExplore={() => onExploreCategory(null)}
       />
 
