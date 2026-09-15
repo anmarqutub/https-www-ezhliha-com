@@ -55,6 +55,8 @@ export default function HomeLanding({
   banner,
   showcase,
   filterSlot,
+  selectedCityId,
+  categorySlugOf,
   renderProviderCard,
   onExploreCategory,
 }: LandingProps) {
