@@ -392,6 +392,11 @@ const landingCss = `
   /* journey */
   .hl-journey { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
   .hl-jcard { background:#fff; border:1px solid rgba(100,0,0,.1); border-radius:10px; padding:26px 24px; display:grid; gap:10px; justify-items:start; }
+  .hl-jcard-link, .hl-cat, .hl-ad-link { text-decoration:none; color:inherit; cursor:pointer; }
+  .hl-jcard-link { transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+  .hl-jcard-link:hover { border-color:rgba(100,0,0,.34); transform:translateY(-2px); box-shadow:0 14px 30px rgba(53,24,19,.07); }
+  .hl-ad-link { transition:border-color .25s ease, box-shadow .25s ease; }
+  .hl-ad-link:hover { border-color:rgba(160,120,60,.5); box-shadow:0 16px 34px rgba(53,24,19,.08); }
   .hl-jcard h3 { margin:0; font-size:16px; color:#640000; font-weight:600; }
   .hl-jcard p { margin:0; font-size:13px; color:rgba(42,33,28,.68); line-height:1.9; }
 
