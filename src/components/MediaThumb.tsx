@@ -75,7 +75,7 @@ export function MediaThumb({
   const local =
     thumbnailUrl || (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : isDirectImage(url) ? url : null);
 
-  const { data: remote } = useQuery({
+  const { data: remote, isFetching: isPending } = useQuery({
     queryKey: ["video-poster", url],
     queryFn: () => getVideoPoster({ data: { url } }),
     enabled: !local && !direct && /^https:\/\//i.test(url),
