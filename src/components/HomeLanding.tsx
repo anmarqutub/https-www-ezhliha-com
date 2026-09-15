@@ -131,8 +131,8 @@ export default function HomeLanding({
       {quickCats.length > 0 && (
         <section className="hl-sec">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين اليوم؟")}</h2>
-            <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة وبنعرض لكِ الأنسب.")}</p>
+            <h2 className="hl-h2">{txt("hl.cats.title", "ماذا تحتاجين اليوم؟")}</h2>
+            <p className="hl-sub">{txt("hl.cats.desc", "اختاري نوع الخدمة، ونعرض لكِ الخيارات المناسبة.")}</p>
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
@@ -148,8 +148,8 @@ export default function HomeLanding({
       {/* ── 5. JOURNEY ── */}
       <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
-          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ التفاصيل الحلوة")}</h2>
-          <p className="hl-sub">{txt("hl.journey.desc", "خطوات صغيرة تقرّبكِ من يومكِ.")}</p>
+          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ تفاصيل مناسبتكِ")}</h2>
+          <p className="hl-sub">{txt("hl.journey.desc", "خطوات واضحة تقرّبكِ من يومكِ.")}</p>
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
@@ -157,7 +157,7 @@ export default function HomeLanding({
               <h3>{j.title}</h3>
               <p>{j.desc}</p>
               <button type="button" className="hl-link" onClick={() => onExploreCategory(null)}>
-                {txt("hl.journey.cta", "استكشفي")}
+                {j.cta}
                 <ArrowLeft size={14} />
               </button>
             </article>
