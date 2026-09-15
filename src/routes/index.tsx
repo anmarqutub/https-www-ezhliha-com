@@ -1910,7 +1910,12 @@ const css = `
   .ez-city-name { font-size:15px; font-weight:600; color:var(--ink); }
   .ez-city-count { font-size:12.5px; color:var(--muted); }
   .ez-about-page { max-width:760px; margin-top:18px; display:grid; gap:14px; }
-  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); }
+  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); margin:0; }
+  .ez-about-page h3 { margin:22px 0 2px; font-size:18px; color:var(--brand); }
+  .ez-about-q { margin:0; padding-inline-start:18px; display:grid; gap:6px; color:var(--muted); font-size:15px; line-height:1.9; }
+  .ez-about-img { margin:8px 0; border-radius:16px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; }
+  .ez-about-img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ez-about-sign { font-size:17px; color:var(--brand); font-weight:600; }
 
   @media (max-width: 1024px) {
     .ez-burger { display:inline-flex; }
