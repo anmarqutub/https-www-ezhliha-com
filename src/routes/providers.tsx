@@ -4,11 +4,16 @@ import { HomePage } from "./index";
 const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
 
 export const Route = createFileRoute("/providers")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    category: str(search.category),
-    city: str(search.city),
-    sub: str(search.sub),
-  }),
+  validateSearch: (search: Record<string, unknown>): ProvidersSearch => {
+    const out: ProvidersSearch = {};
+    const category = str(search.category);
+    const city = str(search.city);
+    const sub = str(search.sub);
+    if (category) out.category = category;
+    if (city) out.city = city;
+    if (sub) out.sub = sub;
+    return out;
+  },
   component: () => <HomePage view="providers" />,
   head: () => ({
     meta: [
