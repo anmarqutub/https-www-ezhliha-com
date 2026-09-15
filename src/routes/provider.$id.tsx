@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle, pendingFilters } from "./index";
 import { MediaThumb } from "@/components/MediaThumb";
+import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
