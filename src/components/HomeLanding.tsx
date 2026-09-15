@@ -49,7 +49,6 @@ export default function HomeLanding({
   txt,
   categories,
   providerCount,
-  favCount,
   heroImage,
   banner,
   showcase,
