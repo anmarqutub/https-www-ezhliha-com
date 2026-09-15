@@ -1163,7 +1163,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <p>أنتِ تختارين وتستمتعين بالتفاصيل الجميلة. أما عناء البحث، فاتركيه علينا.</p>
           <p className="ez-about-sign">أزهليها. ❤️</p>
           <div>
-            <button type="button" className="ez-btn ez-btn-brand" onClick={() => goProviders({ categoryId: null })}>
+            <button type="button" className="ez-btn-primary" onClick={() => goProviders({ categoryId: null })}>
               استكشفي الدليل
             </button>
           </div>
