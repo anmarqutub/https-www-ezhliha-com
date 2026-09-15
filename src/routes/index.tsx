@@ -1226,19 +1226,25 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {view === "faq" && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
-        <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
-        <p className="ez-muted">{txt("faq.desc", "إجابات سريعة قبل ما تبدأ البحث أو ترسل طلبك.")}</p>
+        <h2 className="ez-h2">{txt("faq.title", "الأسئلة الشائعة")}</h2>
+        <p className="ez-muted">{txt("faq.desc", "إجابات واضحة قبل أن تبدئي البحث أو ترسلي طلبكِ.")}</p>
         <div className="ez-faq">
           {faqs.map((f, i) => (
             <div key={i} className={`ez-faq-item ${openFaq === i ? "open" : ""}`}>
-              <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+              <button type="button" aria-expanded={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                 <span>{f.q}</span>
-                <i>+</i>
+                <i aria-hidden="true"><ChevronDown size={17} /></i>
               </button>
               {openFaq === i && <p>{f.a}</p>}
             </div>
           ))}
         </div>
+        <p className="ez-faq-foot">
+          {txt("faq.foot", "لم تجدي إجابتكِ؟")}{" "}
+          <a href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">
+            {txt("faq.foot.cta", "تواصلي معنا")}
+          </a>
+        </p>
       </section>
       )}
 
