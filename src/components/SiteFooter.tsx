@@ -67,6 +67,17 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
             <Link to="/about">{txt("footer.about", "من نحن")}</Link>
             <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
             <Link to="/faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <a
+              href={wa(
+                txt("contact.wa_number", CONTACT_WA_NUMBER),
+                txt("footer.join.message", "مرحبًا أزهليها، أرغب في الانضمام كمقدّم خدمة."),
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {txt("footer.join", "انضمّي كمقدّم خدمة")}
+            </a>
+
 
           </div>
         </div>
