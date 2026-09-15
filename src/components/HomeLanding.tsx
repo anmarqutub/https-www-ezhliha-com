@@ -63,18 +63,28 @@ export default function HomeLanding({
       title: txt("hl.journey.1.title", "ابدئي باختيار القاعة"),
       desc: txt("hl.journey.1.desc", "قاعات وأماكن مناسبة لعدد ضيوفكِ وميزانيتكِ."),
       cta: txt("hl.journey.1.cta", "استكشفي القاعات"),
+      slug: "halls",
     },
     {
       title: txt("hl.journey.2.title", "اختاري المصوّرة"),
       desc: txt("hl.journey.2.desc", "اختاري المصوّرة التي توثّق ذكرياتكِ بأسلوب يناسبكِ."),
       cta: txt("hl.journey.2.cta", "استكشفي المصوّرات"),
+      slug: "photography",
     },
     {
       title: txt("hl.journey.3.title", "رتّبي تفاصيل مناسبتكِ"),
       desc: txt("hl.journey.3.desc", "من الورد إلى الديكور، اختاري التفاصيل التي تكمّل مناسبتكِ."),
       cta: txt("hl.journey.3.cta", "استكشفي الخدمات"),
+      slug: "decor",
     },
   ];
+
+  const dirSearch = (category?: string) => {
+    const s: { category?: string; city?: string } = {};
+    if (category) s.category = category;
+    if (selectedCityId) s.city = selectedCityId;
+    return s;
+  };
 
   const steps = [
     { t: txt("hl.step.1", "اختاري نوع الخدمة والمدينة"), d: txt("hl.step.1.d", "حدّدي ما تحتاجينه ومكان مناسبتكِ.") },
