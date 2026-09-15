@@ -98,7 +98,7 @@ type SiteText = { key: string; value: string };
 
 export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
-export const CONTACT_WA_MESSAGE = "اهلا ازهليها ، عندي استفسار 😎🤍";
+export const CONTACT_WA_MESSAGE = "مرحبًا أزهليها، لدي استفسار.";
 
 const REF_IMAGES = [catCatering, catHalls, catPhoto, catLook];
 
@@ -696,8 +696,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   type NavItem = { label: string; to?: string; href?: string; active?: boolean };
   const navItems: NavItem[] = [
     { label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
-    { label: txt("nav.providers", "مقدمي الخدمات"), to: "/providers", active: view === "providers" },
-    { label: txt("nav.categories", "التصنيفات"), to: "/categories", active: view === "categories" },
+    { label: txt("nav.providers", "الدليل"), to: "/providers", active: view === "providers" },
+    { label: txt("nav.categories", "الفئات"), to: "/categories", active: view === "categories" },
     ...(user ? [{ label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
     { label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
     { label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
@@ -717,7 +717,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         }}
       >
         <LayoutGrid size={15} />
-        {txt("categories.all", "مشاهدة الكل")}
+        {txt("categories.all", "كل الفئات")}
       </button>
 
       {categories.map((c, i) => {
@@ -818,7 +818,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {/* Search console */}
       <div className="ez-console">
         <div className="ez-console-field">
-          <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "التصنيف")}</label>
+          <label><Shapes size={14} className="ez-fi" /> {txt("console.category", "الفئة")}</label>
           <select
             value={selectedCategory ?? ""}
             onChange={(e) => {
@@ -827,7 +827,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               setSelectedSub("all");
             }}
           >
-            <option value="">{txt("console.category.all", "كل التصنيفات")}</option>
+            <option value="">{txt("console.category.all", "كل الفئات")}</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>{c.name_ar}</option>
             ))}
@@ -859,7 +859,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             }
           }}
         >
-          <Search size={16} /> {txt("console.cta", "ابحث الآن")}
+          <Search size={16} /> {txt("console.cta", "ابحثي الآن")}
         </button>
       </div>
 
@@ -886,7 +886,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             </button>
           )}
           <button type="button" className="ez-fchip ez-fchip-clear" onClick={resetAll}>
-            {txt("console.reset", "مسح الفلاتر")}
+            {txt("console.reset", "إعادة ضبط")}
           </button>
           <span className="ez-fchips-count">{results.length} نتيجة</span>
         </div>
@@ -925,7 +925,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               aria-expanded={megaOpen}
             >
               <LayoutGrid size={15} />
-              {txt("nav.allCats", "جميع الأقسام")}
+              {txt("nav.allCats", "جميع الفئات")}
               <ChevronDown size={14} />
             </button>
             {megaOpen && categories.length > 0 && (
@@ -946,15 +946,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         <div className="ez-nav-actions">
           {!user && (
             <>
-              <Link to="/login" className="ez-nav-link">{txt("nav.login", "دخول")}</Link>
-              <Link to="/signup" className="ez-nav-btn">{txt("nav.signup", "تسجيل")}</Link>
+              <Link to="/login" className="ez-nav-link">{txt("nav.login", "تسجيل الدخول")}</Link>
+              <Link to="/signup" className="ez-nav-btn">{txt("nav.signup", "إنشاء حساب")}</Link>
             </>
           )}
           {user && (
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "ابحث عن مقدم خدمة")}
+                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "استكشفي الدليل")}
               </button>
               <Link to="/favorites" className="ez-nav-ico" aria-label={txt("nav.favorites", "المفضلة")}>
                 <Heart size={17} />
@@ -994,15 +994,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             </nav>
             {categories.length > 0 && (
               <div className="ez-drawer-cats">
-                <p className="ez-drawer-cats-title">{txt("nav.allCats", "جميع الأقسام")}</p>
+                <p className="ez-drawer-cats-title">{txt("nav.allCats", "جميع الفئات")}</p>
                 {renderMega(() => setMenuOpen(false))}
               </div>
             )}
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
-              <p>{txt("drawer.cta.text", "اختاري التصنيف والخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
+              <p>{txt("drawer.cta.text", "اختاري الفئة ونوع الخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
               <Link to="/providers" search={{}} className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
-                {txt("drawer.cta.btn", "ابدأ التصفح")}
+                {txt("drawer.cta.btn", "استكشفي الدليل")}
               </Link>
             </div>
           </aside>
@@ -1076,16 +1076,16 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       <section className="ez-sec" id="ez-categories">
         <div className="ez-cats-head">
           <div>
-            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "التصنيفات")}</div>
-            <h2 className="ez-h2">{txt("categories.title", "تصفّحي حسب الفئات")}</h2>
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("categories.eyebrow", "الفئات")}</div>
+            <h2 className="ez-h2">{txt("categories.title", "اختاري الفئة المناسبة لكِ")}</h2>
           </div>
         </div>
 
         {loading ? (
-          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+          <p className="ez-empty">{txt("home.loading", "لحظة، نجهّز لكِ الخيارات...")}</p>
         ) : categories.length === 0 ? (
           <p className="ez-empty">
-            {txt("home.categories.empty", "ما فيه تصنيفات لحد الحين.")} {isAdmin && <Link to="/admin">افتح لوحة الأدمن وأضِف تصنيفات.</Link>}
+            {txt("home.categories.empty", "لا توجد فئات حاليًا.")} {isAdmin && <Link to="/admin">افتحي لوحة التحكم وأضيفي فئات.</Link>}
           </p>
         ) : (
           <div className="ez-cat-grid" id="ez-cat-rail">
@@ -1099,7 +1099,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               }}
             >
               <span className="ez-cat-thumb ez-cat-thumb-all"><LayoutGrid size={26} /></span>
-              <span className="ez-cat-label">{txt("categories.all", "مشاهدة الكل")}</span>
+              <span className="ez-cat-label">{txt("categories.all", "كل الفئات")}</span>
             </button>
             {categories.map((c, i) => {
               const img = c.image_url || fallbackCategoryImage(c.name_ar, i);
@@ -1135,12 +1135,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {view === "cities" && (
       <section className="ez-sec" id="ez-cities">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("cities.eyebrow", "المدن")}</div>
-        <h2 className="ez-h2">{txt("cities.title", "اختر مدينتك")}</h2>
-        <p className="ez-muted">{txt("cities.desc", "اضغط على المدينة وبنعرض لك مقدمي الخدمات المتوفرين فيها.")}</p>
+        <h2 className="ez-h2">{txt("cities.title", "اختاري مدينتكِ")}</h2>
+        <p className="ez-muted">{txt("cities.desc", "اختاري المدينة لعرض مزوّدي الخدمات المتوفرين فيها.")}</p>
         {loading ? (
-          <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+          <p className="ez-empty">{txt("home.loading", "لحظة، نجهّز لكِ الخيارات...")}</p>
         ) : cities.length === 0 ? (
-          <p className="ez-empty">{txt("cities.empty", "ما فيه مدن مضافة لحد الحين.")}</p>
+          <p className="ez-empty">{txt("cities.empty", "لا توجد مدن حاليًا.")}</p>
         ) : (
           <div className="ez-city-grid">
             {cities.map((c) => (
@@ -1149,8 +1149,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 <span className="ez-city-name">{c.name_ar}</span>
                 <span className="ez-city-count">
                   {(providersCountByCity.get(c.id) ?? 0) > 0
-                    ? `${providersCountByCity.get(c.id)} ${txt("home.category.count_suffix", "مقدم خدمة")}`
-                    : txt("home.category.coming_soon", "قريباً")}
+                    ? `${providersCountByCity.get(c.id)} ${txt("home.category.count_suffix", "مزوّد خدمة")}`
+                    : txt("home.category.coming_soon", "قريبًا")}
                 </span>
               </button>
             ))}
@@ -1204,9 +1204,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </p>
 
           <h3>إلى أين وصلنا؟</h3>
-          <p>ومع الوقت، تحولت أزهليها من فكرة إلى منصة تضم أكثر من 500 مزوّد خدمة. وكل ذلك لسبب واحد:</p>
-          <p>أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأسرع.</p>
-          <p>أنتِ تختارين وتستمتعين بالتفاصيل الجميلة. أما عناء البحث، فاتركيه علينا.</p>
+          <p>اليوم تضم أزهليها أكثر من 500 مزوّد خدمة، ونعمل على توسيع الدليل ليشمل مدنًا وخدمات أكثر.</p>
+          <p>هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.</p>
+          <p>اختصري وقت البحث، وابدئي باختياركِ. اتركي مهمة البحث لنا.</p>
           <p className="ez-about-sign">أزهليها. ❤️</p>
           <div>
             <button type="button" className="ez-btn-primary" onClick={() => goProviders({ categoryId: null })}>
@@ -1224,9 +1224,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       <section className="ez-sec" id="ez-results">
         <div className="ez-results-head">
           <div>
-            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("results.eyebrow", "مقدمي الخدمات")}</div>
+            <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("results.eyebrow", "دليل مزوّدي الخدمات")}</div>
             <h2 className="ez-h2">
-              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "كل مقدمي الخدمات")}
+              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "اكتشفي مزوّدي الخدمات")}
               <span className="ez-count">({results.length})</span>
             </h2>
           </div>
@@ -1235,14 +1235,14 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <span className="ez-search-icon"><Search size={15} /></span>
               <input
                 type="text"
-                placeholder={txt("home.search.placeholder", "ابحثي عن مزوّد خدمة أو تصنيف...")}
+                placeholder={txt("home.search.placeholder", "ابحثي عن مزوّد خدمة أو فئة...")}
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
               />
               {quickSearch && <button className="ez-search-clear" onClick={() => setQuickSearch("")} aria-label="مسح"><X size={14} /></button>}
             </div>
             {filtersActive && (
-              <button type="button" className="ez-btn-ghost" onClick={resetAll}>{txt("results.reset", "مسح الفلاتر")}</button>
+              <button type="button" className="ez-btn-ghost" onClick={resetAll}>{txt("results.reset", "إعادة ضبط")}</button>
             )}
           </div>
         </div>
@@ -1251,14 +1251,14 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
           <div className="ez-results-main">
             {loading ? (
-              <p className="ez-empty">{txt("home.loading", "لحظات.. نجهّز لك كل شي ✨")}</p>
+              <p className="ez-empty">{txt("home.loading", "لحظة، نجهّز لكِ الخيارات...")}</p>
             ) : results.length === 0 ? (
-              <p className="ez-empty">{txt("home.no_results", "ما لقينا شي مطابق.. جرّب كلمة ثانية أو تصفّح التصنيفات 🌷")}</p>
+              <p className="ez-empty">{txt("home.no_results", "لم نجد خيارات مطابقة لبحثكِ. جرّبي تغيير المدينة أو نوع الخدمة.")}</p>
             ) : (
               <>
                 {featured.length > 0 && (
                   <>
-                    <h3 className="ez-h3">{txt("home.featured.title", "⭐ نخبة مختارة لك")}</h3>
+                    <h3 className="ez-h3">{txt("home.featured.title", "خيارات مختارة لكِ")}</h3>
                     <div className="ez-grid">
                       {featured.map((p, i) => (
                         <ProviderCard
@@ -1281,7 +1281,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 )}
                 {regular.length > 0 && (
                   <>
-                    {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل المقدمين")}</h3>}
+                    {featured.length > 0 && <h3 className="ez-h3">{txt("home.all_providers.title", "كل مزوّدي الخدمات")}</h3>}
                     <div className="ez-grid">
                       {visibleRegular.map((p, i) => (
                         <ProviderCard
@@ -1352,10 +1352,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {txt("home.about.p1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}
+              {txt("home.about.p2", "يمكنكِ مشاهدة الأعمال، ومعرفة التفاصيل، ومقارنة الخيارات، والتواصل مباشرةً مع مقدّم الخدمة.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p3", "هدفنا أن نكون الدليل الموثوق لكل من يخطط لمناسبة مميزة. شكرًا لثقتكِ بنا 💐")}
+              {txt("home.about.p3", "هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.")}
             </p>
           </div>
         </div>
@@ -1536,8 +1536,8 @@ function AccountMenu({ email, onSignOut, texts }: { email: string; onSignOut: ()
               <div className="ez-acct-email">{email}</div>
             </div>
           </div>
-          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.favorites", "♥ المفضلة")}</Link>
-          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>{t("account.signout", "↩ تسجيل الخروج")}</button>
+          <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.favorites", "المفضلة")}</Link>
+          <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>{t("account.signout", "تسجيل الخروج")}</button>
         </div>
       )}
     </div>
@@ -1556,16 +1556,16 @@ function AuthGate() {
     <div dir="rtl" style={{ minHeight: "100vh", background: "#e6e4d7", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "Thmanyah Serif Display, Tajawal, system-ui, sans-serif" }}>
       <div style={{ background: "#fff", padding: "40px 32px", borderRadius: 20, maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 8px 32px rgba(100,0,0,0.12)" }}>
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
-        <h1 style={{ color: "#640000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
+        <h1 style={{ color: "#640000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للمشتركات")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          {t("auth_gate.description", "للدخول إلى دليل مزوّدي الخدمات يلزم تسجيل الدخول. ويحتاج التسجيل كود الشراء الذي وصلكِ بعد طلبكِ من متجر سلة 🤍")}
+          {t("auth_gate.description", "للدخول إلى دليل مزوّدي الخدمات، سجّلي الدخول. يحتاج التسجيل كود الشراء الذي وصلكِ بعد طلبكِ من متجر سلة.")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#640000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
             {t("auth_gate.login", "تسجيل الدخول")}
           </Link>
           <Link to="/signup" style={{ background: "#fff", color: "#640000", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700, border: "2px solid #640000" }}>
-            {t("auth_gate.signup", "إنشاء حساب جديد")}
+            {t("auth_gate.signup", "إنشاء حساب")}
           </Link>
         </div>
       </div>
