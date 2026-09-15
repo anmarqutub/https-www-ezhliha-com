@@ -957,7 +957,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             )}
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
-              <p>{txt("drawer.cta.text", "حدد التصنيف والخدمة والمدينة، ونطلع لك الخيارات اللي تناسبك.")}</p>
+              <p>{txt("drawer.cta.text", "اختاري التصنيف والخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
               <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
                 {txt("drawer.cta.btn", "ابدأ التصفح")}
               </Link>
@@ -1190,7 +1190,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <span className="ez-search-icon"><Search size={15} /></span>
               <input
                 type="text"
-                placeholder={txt("home.search.placeholder", "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...")}
+                placeholder={txt("home.search.placeholder", "ابحثي عن مزوّد خدمة أو تصنيف...")}
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
               />
@@ -1304,13 +1304,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
             <h2 className="ez-about-title">{txt("home.about.title", "من نحن")}</h2>
             <p className="ez-about-text">
-              {txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}
+              {txt("home.about.p1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.")}
             </p>
             <p className="ez-about-text">
               {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}
+              {txt("home.about.p3", "هدفنا أن نكون الدليل الموثوق لكل من يخطط لمناسبة مميزة. شكرًا لثقتكِ بنا 💐")}
             </p>
           </div>
         </div>
@@ -1513,7 +1513,7 @@ function AuthGate() {
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
         <h1 style={{ color: "#640000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          {t("auth_gate.description", "عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍")}
+          {t("auth_gate.description", "للدخول إلى دليل مزوّدي الخدمات يلزم تسجيل الدخول. ويحتاج التسجيل كود الشراء الذي وصلكِ بعد طلبكِ من متجر سلة 🤍")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#640000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>

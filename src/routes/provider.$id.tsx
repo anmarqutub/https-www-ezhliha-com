@@ -442,7 +442,7 @@ function ProviderPage() {
           <aside className="pv-aside">
             <div className="pv-price-bar">
               <div className="pv-price-out">
-                <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
+                <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
                 <strong>اطلب تسعيرة مرتبة من {provider.name}</strong>
                 <p className="pv-quote-sub">أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
               </div>
@@ -566,7 +566,7 @@ function ProviderPage() {
               ))}
             </div>
           ) : (
-            <div className="pv-empty">سيتم إضافة الخدمات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
+            <div className="pv-empty">سيتم إضافة الخدمات قريبًا — يمكنكِ إرسال طلب عرض وستصلكِ التفاصيل مباشرةً.</div>
           )}
         </section>
 
@@ -574,8 +574,8 @@ function ProviderPage() {
         <section className="pv-sec" id="s-services">
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
-              <span className="pv-eyebrow">وش تقدر تطلب؟</span>
-              <h2>خذ اللي يناسب مناسبتك</h2>
+              <span className="pv-eyebrow">ماذا يمكنكِ طلبه؟</span>
+              <h2>اختاري ما يناسب مناسبتكِ</h2>
             </div>
             {services.length > 0 ? (
               <div className="pv-srv-grid">
@@ -650,7 +650,7 @@ function ProviderPage() {
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
               <span className="pv-eyebrow">تقييمات العملاء</span>
-              <h2>وش قالوا العملاء؟</h2>
+              <h2>ماذا قال العملاء؟</h2>
               <p className="pv-sec-note">
                 {reviews.length === 0
                   ? "ما فيه تقييمات منشورة للحين. أول تقييم بيظهر هنا بعد ما يرسله عميل مسجل."
@@ -694,12 +694,12 @@ function ProviderPage() {
                       ))}
                     </div>
                     <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
-                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
                     <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسل التقييم"}</button>
                   </form>
                 ) : (
                   <div className="pv-rev-form">
-                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
                     <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّل دخولك وقيّم</Link>
                   </div>
                 )}
@@ -713,10 +713,10 @@ function ProviderPage() {
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
               <span className="pv-eyebrow">التواصل والفروع</span>
-              <h2>تواصل بالطريقة اللي تناسبك</h2>
+              <h2>تواصلي بالطريقة التي تناسبكِ</h2>
             </div>
             <div className="pv-sec-body">
-              <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه بمكان واحد، عشان ما تضيع بين أكثر من صفحة.</p>
+              <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه في مكان واحد، لتصلي إليه بسهولة.</p>
             </div>
           </div>
 
@@ -855,7 +855,7 @@ function ProviderPage() {
               <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
             <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
-            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبيه.</p>
+            <p className="pv-quote-sub">اكتبي أهم التفاصيل ليصلكِ عرض أقرب لما تحتاجينه.</p>
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
