@@ -41,8 +41,10 @@ export type LandingProps = {
   banner: Banner | null;
   showcase: Array<{ id: string }>;
   filterSlot?: ReactNode;
+  selectedCityId?: string;
+  categorySlugOf?: (nameAr: string) => string | null;
   renderProviderCard: (id: string) => ReactNode;
-  onExploreCategory: (categoryId: string | null) => void;
+  onExploreCategory?: (categoryId: string | null) => void;
 };
 
 export default function HomeLanding({
@@ -53,8 +55,9 @@ export default function HomeLanding({
   banner,
   showcase,
   filterSlot,
+  selectedCityId,
+  categorySlugOf,
   renderProviderCard,
-  onExploreCategory,
 }: LandingProps) {
   const quickCats = categories.slice(0, 8);
 
@@ -63,18 +66,28 @@ export default function HomeLanding({
       title: txt("hl.journey.1.title", "ابدئي باختيار القاعة"),
       desc: txt("hl.journey.1.desc", "قاعات وأماكن مناسبة لعدد ضيوفكِ وميزانيتكِ."),
       cta: txt("hl.journey.1.cta", "استكشفي القاعات"),
+      slug: "halls",
     },
     {
       title: txt("hl.journey.2.title", "اختاري المصوّرة"),
       desc: txt("hl.journey.2.desc", "اختاري المصوّرة التي توثّق ذكرياتكِ بأسلوب يناسبكِ."),
       cta: txt("hl.journey.2.cta", "استكشفي المصوّرات"),
+      slug: "photography",
     },
     {
       title: txt("hl.journey.3.title", "رتّبي تفاصيل مناسبتكِ"),
       desc: txt("hl.journey.3.desc", "من الورد إلى الديكور، اختاري التفاصيل التي تكمّل مناسبتكِ."),
       cta: txt("hl.journey.3.cta", "استكشفي الخدمات"),
+      slug: "decor",
     },
   ];
+
+  const dirSearch = (category?: string) => {
+    const s: { category?: string; city?: string } = {};
+    if (category) s.category = category;
+    if (selectedCityId) s.city = selectedCityId;
+    return s;
+  };
 
   const steps = [
     { t: txt("hl.step.1", "اختاري نوع الخدمة والمدينة"), d: txt("hl.step.1.d", "حدّدي ما تحتاجينه ومكان مناسبتكِ.") },
@@ -99,9 +112,9 @@ export default function HomeLanding({
               {txt("hl.hero.desc", "اكتشفي الدليل، احفظي خياراتكِ، ورتّبي يومكِ كما تحلمين.")}
             </p>
             <div className="hl-hero-actions">
-              <button type="button" className="hl-btn" onClick={() => onExploreCategory(null)}>
+              <Link to="/providers" search={dirSearch()} className="hl-btn">
                 {txt("hl.hero.cta", "استكشفي الدليل")}
-              </button>
+              </Link>
               <Link to="/favorites" className="hl-link">
                 {txt("hl.hero.cta2", "عرض مفضلتي")}
                 <ArrowLeft size={15} />
@@ -121,8 +134,7 @@ export default function HomeLanding({
       <TrustCounter
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        
-        onExplore={() => onExploreCategory(null)}
+        exploreSearch={dirSearch()}
       />
 
       {/* ── 4. QUICK CATEGORIES ── */}
@@ -134,10 +146,15 @@ export default function HomeLanding({
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
-              <button key={c.id} type="button" className="hl-cat" onClick={() => onExploreCategory(c.id)}>
+              <Link
+                key={c.id}
+                to="/providers"
+                search={dirSearch(categorySlugOf?.(c.name_ar) ?? c.id)}
+                className="hl-cat"
+              >
                 <span className="hl-cat-ico">{catIcon(c.name_ar)}</span>
                 <span className="hl-cat-name">{c.name_ar}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
@@ -151,14 +168,14 @@ export default function HomeLanding({
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
-            <article key={j.title} className="hl-jcard">
+            <Link key={j.title} to="/providers" search={dirSearch(j.slug)} className="hl-jcard hl-jcard-link">
               <h3>{j.title}</h3>
               <p>{j.desc}</p>
-              <button type="button" className="hl-link" onClick={() => onExploreCategory(null)}>
+              <span className="hl-link">
                 {j.cta}
                 <ArrowLeft size={14} />
-              </button>
-            </article>
+              </span>
+            </Link>
           ))}
         </div>
       </section>
@@ -166,33 +183,7 @@ export default function HomeLanding({
       {/* ── 6. SPONSORED ── */}
       {banner && (
         <section className="hl-sec">
-          <article className="hl-ad">
-            <div className="hl-ad-body">
-              <div className="hl-ad-tags">
-                <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
-                <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
-              </div>
-              <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزود خدمة مميز")}</h3>
-              <p className="hl-ad-desc">
-                {txt("hl.ad.desc", "باقة مختارة بعناية لمناسبتكِ، بتفاصيل هادئة وخدمة راقية.")}
-              </p>
-              <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري لمشتركات أزهليها")}</span>
-              <div>
-                {banner.link_url ? (
-                  <a className="hl-btn" href={banner.link_url} target="_blank" rel="noopener noreferrer">
-                    {txt("hl.ad.cta", "اكتشفي العرض")}
-                  </a>
-                ) : (
-                  <button type="button" className="hl-btn" onClick={() => onExploreCategory(null)}>
-                    {txt("hl.ad.cta", "اكتشفي العرض")}
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="hl-ad-media">
-              <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
-            </div>
-          </article>
+          <AdCard banner={banner} txt={txt} fallbackSearch={dirSearch()} />
         </section>
       )}
 
@@ -205,9 +196,9 @@ export default function HomeLanding({
           </div>
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
-            <button type="button" className="hl-btn hl-btn-ghost" onClick={() => onExploreCategory(null)}>
+            <Link to="/providers" search={dirSearch()} className="hl-btn hl-btn-ghost">
               {txt("hl.picks.cta", "عرض كل المزودين")}
-            </button>
+            </Link>
           </div>
         </section>
       )}
@@ -237,11 +228,11 @@ export default function HomeLanding({
 function TrustCounter({
   txt,
   target,
-  onExplore,
+  exploreSearch,
 }: {
   txt: (k: string, f: string) => string;
   target: number;
-  onExplore: () => void;
+  exploreSearch: { category?: string; city?: string };
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [on, setOn] = useState(false);
@@ -294,12 +285,59 @@ function TrustCounter({
               "من القاعات والتصوير إلى الورد والجمال والضيافة، اكتشفي خيارات متنوعة في مكان واحد.",
             )}
           </p>
-          <button type="button" className="hl-btn hl-tc-btn" onClick={onExplore}>
+          <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
             {txt("hl.hero.cta", "استكشفي الدليل")}
-          </button>
+          </Link>
         </div>
       </div>
     </section>
+  );
+}
+
+function AdCard({
+  banner,
+  txt,
+  fallbackSearch,
+}: {
+  banner: Banner;
+  txt: (k: string, f: string) => string;
+  fallbackSearch: { category?: string; city?: string };
+}) {
+  const body = (
+    <>
+      <div className="hl-ad-body">
+        <div className="hl-ad-tags">
+          <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
+          <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
+        </div>
+        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزود خدمة مميز")}</h3>
+        <p className="hl-ad-desc">{txt("hl.ad.desc", "باقة مختارة بعناية لمناسبتكِ، بتفاصيل هادئة وخدمة راقية.")}</p>
+        <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري لمشتركات أزهليها")}</span>
+        <span className="hl-btn">{txt("hl.ad.cta", "اكتشفي العرض")}</span>
+      </div>
+      <div className="hl-ad-media">
+        <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
+      </div>
+    </>
+  );
+
+  const link = banner.link_url?.trim();
+  if (link) {
+    const external = /^https?:\/\//i.test(link);
+    return (
+      <a
+        className="hl-ad hl-ad-link"
+        href={link}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        {body}
+      </a>
+    );
+  }
+  return (
+    <Link to="/providers" search={fallbackSearch} className="hl-ad hl-ad-link">
+      {body}
+    </Link>
   );
 }
 
@@ -354,6 +392,11 @@ const landingCss = `
   /* journey */
   .hl-journey { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
   .hl-jcard { background:#fff; border:1px solid rgba(100,0,0,.1); border-radius:10px; padding:26px 24px; display:grid; gap:10px; justify-items:start; }
+  .hl-jcard-link, .hl-cat, .hl-ad-link { text-decoration:none; color:inherit; cursor:pointer; }
+  .hl-jcard-link { transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+  .hl-jcard-link:hover { border-color:rgba(100,0,0,.34); transform:translateY(-2px); box-shadow:0 14px 30px rgba(53,24,19,.07); }
+  .hl-ad-link { transition:border-color .25s ease, box-shadow .25s ease; }
+  .hl-ad-link:hover { border-color:rgba(160,120,60,.5); box-shadow:0 16px 34px rgba(53,24,19,.08); }
   .hl-jcard h3 { margin:0; font-size:16px; color:#640000; font-weight:600; }
   .hl-jcard p { margin:0; font-size:13px; color:rgba(42,33,28,.68); line-height:1.9; }
 

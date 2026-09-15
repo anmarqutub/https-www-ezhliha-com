@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
@@ -27,6 +27,7 @@ import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import HomeLanding, { HomeTopStrip } from "@/components/HomeLanding";
+import { categorySlug, resolveCategoryParam } from "@/lib/category-slug";
 import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catHalls from "@/assets/cats/halls.jpg";
@@ -489,11 +490,45 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
 
+  // تطبيق الفلاتر القادمة من الرابط ‎/providers?category=halls&city=...
+  const urlSearch = useRouterState({ select: (s) => s.location.search as { category?: string; city?: string; sub?: string } });
+  const urlApplied = useRef(false);
+  useEffect(() => {
+    if (view !== "providers" || urlApplied.current) return;
+    if (categories.length === 0) return;
+    const { category, city, sub } = urlSearch ?? {};
+    if (!category && !city && !sub) {
+      urlApplied.current = true;
+      return;
+    }
+    if (category) {
+      const id = resolveCategoryParam(categories, category);
+      setSelectedCategory(id);
+      setSelectedSub("all");
+    }
+    if (city && cities.some((c) => c.id === city)) setSelectedCity(city);
+    if (sub && subcategories.some((s) => s.id === sub)) setSelectedSub(sub);
+    urlApplied.current = true;
+  }, [view, urlSearch, categories, cities, subcategories]);
+
+  // بناء رابط الدليل مع الفلاتر (قابل للمشاركة)
+  const providersSearch = (opts: { categoryId?: string | null; cityId?: string; subId?: string }) => {
+    const out: { category?: string; city?: string; sub?: string } = {};
+    const catId = opts.categoryId;
+    if (catId) {
+      const cat = categories.find((c) => c.id === catId);
+      out.category = (cat && categorySlug(cat.name_ar)) || catId;
+    }
+    if (opts.cityId) out.city = opts.cityId;
+    if (opts.subId && opts.subId !== "all") out.sub = opts.subId;
+    return out;
+  };
+
   const scrollToResults = () => {
     if (view !== "providers") {
       pendingFilters.categoryId = selectedCategory;
       pendingFilters.cityId = selectedCity;
-      navigate({ to: "/providers" });
+      navigate({ to: "/providers", search: providersSearch({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub }) });
       return;
     }
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -513,7 +548,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
     }
-    if (view !== "providers") navigate({ to: "/providers" });
+    if (view !== "providers")
+      navigate({
+        to: "/providers",
+        search: providersSearch({
+          categoryId: patch.categoryId !== undefined ? patch.categoryId : selectedCategory,
+          cityId: patch.cityId !== undefined ? patch.cityId : selectedCity,
+          subId: patch.subId,
+        }),
+      });
     else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
 
@@ -958,7 +1001,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
               <p>{txt("drawer.cta.text", "اختاري التصنيف والخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
-              <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
+              <Link to="/providers" search={{}} className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
                 {txt("drawer.cta.btn", "ابدأ التصفح")}
               </Link>
             </div>
@@ -992,6 +1035,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           banner={currentBanner ?? null}
           showcase={showcase}
           filterSlot={searchConsole}
+          selectedCityId={selectedCity || undefined}
+          categorySlugOf={categorySlug}
           renderProviderCard={(id) => {
             const p = providers.find((x) => x.id === id);
             if (!p) return null;
