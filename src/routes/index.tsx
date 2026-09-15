@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
@@ -27,6 +27,7 @@ import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import HomeLanding, { HomeTopStrip } from "@/components/HomeLanding";
+import { categorySlug, resolveCategoryParam } from "@/lib/category-slug";
 import { SocialImg } from "@/components/SocialImg";
 import defaultProviderUrl from "@/assets/default-provider.jpg";
 import catHalls from "@/assets/cats/halls.jpg";
