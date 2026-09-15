@@ -233,7 +233,7 @@ function TrustCounter({
 }: {
   txt: (k: string, f: string) => string;
   target: number;
-  onExplore: () => void;
+  exploreSearch: { category?: string; city?: string };
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [on, setOn] = useState(false);
@@ -286,12 +286,59 @@ function TrustCounter({
               "من القاعات والتصوير إلى الورد والجمال والضيافة، اكتشفي خيارات متنوعة في مكان واحد.",
             )}
           </p>
-          <button type="button" className="hl-btn hl-tc-btn" onClick={onExplore}>
+          <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
             {txt("hl.hero.cta", "استكشفي الدليل")}
-          </button>
+          </Link>
         </div>
       </div>
     </section>
+  );
+}
+
+function AdCard({
+  banner,
+  txt,
+  fallbackSearch,
+}: {
+  banner: Banner;
+  txt: (k: string, f: string) => string;
+  fallbackSearch: { category?: string; city?: string };
+}) {
+  const body = (
+    <>
+      <div className="hl-ad-body">
+        <div className="hl-ad-tags">
+          <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
+          <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
+        </div>
+        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزود خدمة مميز")}</h3>
+        <p className="hl-ad-desc">{txt("hl.ad.desc", "باقة مختارة بعناية لمناسبتكِ، بتفاصيل هادئة وخدمة راقية.")}</p>
+        <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري لمشتركات أزهليها")}</span>
+        <span className="hl-btn">{txt("hl.ad.cta", "اكتشفي العرض")}</span>
+      </div>
+      <div className="hl-ad-media">
+        <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
+      </div>
+    </>
+  );
+
+  const link = banner.link_url?.trim();
+  if (link) {
+    const external = /^https?:\/\//i.test(link);
+    return (
+      <a
+        className="hl-ad hl-ad-link"
+        href={link}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        {body}
+      </a>
+    );
+  }
+  return (
+    <Link to="/providers" search={fallbackSearch} className="hl-ad hl-ad-link">
+      {body}
+    </Link>
   );
 }
 
