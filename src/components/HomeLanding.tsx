@@ -184,33 +184,7 @@ export default function HomeLanding({
       {/* ── 6. SPONSORED ── */}
       {banner && (
         <section className="hl-sec">
-          <article className="hl-ad">
-            <div className="hl-ad-body">
-              <div className="hl-ad-tags">
-                <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
-                <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
-              </div>
-              <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزود خدمة مميز")}</h3>
-              <p className="hl-ad-desc">
-                {txt("hl.ad.desc", "باقة مختارة بعناية لمناسبتكِ، بتفاصيل هادئة وخدمة راقية.")}
-              </p>
-              <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري لمشتركات أزهليها")}</span>
-              <div>
-                {banner.link_url ? (
-                  <a className="hl-btn" href={banner.link_url} target="_blank" rel="noopener noreferrer">
-                    {txt("hl.ad.cta", "اكتشفي العرض")}
-                  </a>
-                ) : (
-                  <button type="button" className="hl-btn" onClick={() => onExploreCategory(null)}>
-                    {txt("hl.ad.cta", "اكتشفي العرض")}
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="hl-ad-media">
-              <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
-            </div>
-          </article>
+          <AdCard banner={banner} txt={txt} fallbackSearch={dirSearch()} />
         </section>
       )}
 
@@ -223,9 +197,9 @@ export default function HomeLanding({
           </div>
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
-            <button type="button" className="hl-btn hl-btn-ghost" onClick={() => onExploreCategory(null)}>
+            <Link to="/providers" search={dirSearch()} className="hl-btn hl-btn-ghost">
               {txt("hl.picks.cta", "عرض كل المزودين")}
-            </button>
+            </Link>
           </div>
         </section>
       )}
