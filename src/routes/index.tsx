@@ -490,6 +490,27 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
 
+  // تطبيق الفلاتر القادمة من الرابط ‎/providers?category=halls&city=...
+  const urlSearch = useRouterState({ select: (s) => s.location.search as { category?: string; city?: string; sub?: string } });
+  const urlApplied = useRef(false);
+  useEffect(() => {
+    if (view !== "providers" || urlApplied.current) return;
+    if (categories.length === 0) return;
+    const { category, city, sub } = urlSearch ?? {};
+    if (!category && !city && !sub) {
+      urlApplied.current = true;
+      return;
+    }
+    if (category) {
+      const id = resolveCategoryParam(categories, category);
+      setSelectedCategory(id);
+      setSelectedSub("all");
+    }
+    if (city && cities.some((c) => c.id === city)) setSelectedCity(city);
+    if (sub && subcategories.some((s) => s.id === sub)) setSelectedSub(sub);
+    urlApplied.current = true;
+  }, [view, urlSearch, categories, cities, subcategories]);
+
   // بناء رابط الدليل مع الفلاتر (قابل للمشاركة)
   const providersSearch = (opts: { categoryId?: string | null; cityId?: string; subId?: string }) => {
     const out: { category?: string; city?: string; sub?: string } = {};
