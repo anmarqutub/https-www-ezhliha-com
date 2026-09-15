@@ -409,9 +409,9 @@ function ProviderPage() {
                     {[cityName, subName].filter(Boolean).join(" · ")}
                   </span>
                 )}
-                {(provider.price_from || provider.price) && (
-                  <span className="pv-meta-price">
-                    {provider.price_from ? `يبدأ من ${Number(provider.price_from).toLocaleString("ar-SA")} ر.س` : provider.price}
+                {(provider.price_from || provider.price_to || provider.price) && (
+                  <span className="pv-meta-price" title={PRICE_NOTE}>
+                    {priceRangeText(provider.price_from, provider.price_to, provider.price)}
                   </span>
                 )}
                 {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
