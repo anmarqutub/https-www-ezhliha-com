@@ -538,7 +538,7 @@ function ProviderPage() {
                   <span className="pv-pkg-tag">{i === 0 ? "الأكثر طلباً" : "باقة"}</span>
                   <div className="pv-pkg-top">
                     <h3>{pkg.name}</h3>
-                    <strong className="pv-pkg-price">{pkg.price || "حسب تفاصيل المناسبة"}</strong>
+                    <strong className="pv-pkg-price">{pkg.price || "السعر عند التواصل"}</strong>
                   </div>
                   {pkg.description && (
                     <ul className="pv-pkg-list">
