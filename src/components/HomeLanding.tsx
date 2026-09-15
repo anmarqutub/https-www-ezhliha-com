@@ -8,12 +8,11 @@ import {
   Flower2,
   Gem,
   Heart,
-  
+  LayoutGrid,
   Music4,
   Shirt,
   Sparkles,
   Star,
-  Users,
 } from "lucide-react";
 
 type Cat = { id: string; name_ar: string };
