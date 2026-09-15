@@ -1817,8 +1817,9 @@ const css = `
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
   .ez-card-tag { display:inline-block; max-width:100%; border:1px solid #000; background:color-mix(in oklab, var(--surface) 70%, transparent); color:#000; font-size:11px; font-weight:500; line-height:1.6; padding:4px 9px; border-radius:2px; white-space:normal; overflow-wrap:anywhere; text-align:start; }
-  .ez-card-price { border-top:1px dashed var(--line); margin-top:7px; padding-top:7px; display:flex; align-items:baseline; gap:6px; }
+  .ez-card-price { border-top:1px dashed var(--line); margin-top:7px; padding-top:7px; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 6px; }
   .ez-card-price small { color:var(--muted); font-size:10.5px; }
+  .ez-card-price em { flex:1 0 100%; font-style:normal; color:var(--muted); font-size:10.5px; line-height:1.6; }
 
 
   .ez-card-price strong { color:var(--brand); font-size:13px; font-weight:600; }
