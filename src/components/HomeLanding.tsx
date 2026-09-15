@@ -41,6 +41,8 @@ export type LandingProps = {
   banner: Banner | null;
   showcase: Array<{ id: string }>;
   filterSlot?: ReactNode;
+  selectedCityId?: string;
+  categorySlugOf?: (nameAr: string) => string | null;
   renderProviderCard: (id: string) => ReactNode;
   onExploreCategory: (categoryId: string | null) => void;
 };
