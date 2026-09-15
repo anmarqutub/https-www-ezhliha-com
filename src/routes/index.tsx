@@ -1401,14 +1401,9 @@ const ProviderCard = memo(function ProviderCard({
           {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
           {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
-            <small>السعر التقريبي</small>
-            <strong>
-              {provider.price_from
-                ? `يبدأ من ${provider.price_from} ر.س`
-                : provider.price
-                  ? provider.price
-                  : "السعر حسب التفاصيل"}
-            </strong>
+            <small>الأسعار</small>
+            <strong>{priceRangeText(provider.price_from, provider.price_to, provider.price)}</strong>
+            <em>{PRICE_NOTE}</em>
           </div>
         </div>
       </Link>
