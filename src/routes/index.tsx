@@ -1035,6 +1035,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           banner={currentBanner ?? null}
           showcase={showcase}
           filterSlot={searchConsole}
+          selectedCityId={selectedCity || undefined}
+          categorySlugOf={categorySlug}
           renderProviderCard={(id) => {
             const p = providers.find((x) => x.id === id);
             if (!p) return null;
