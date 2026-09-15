@@ -113,9 +113,9 @@ export default function HomeLanding({
               {txt("hl.hero.desc", "اكتشفي الدليل، احفظي خياراتكِ، ورتّبي يومكِ كما تحلمين.")}
             </p>
             <div className="hl-hero-actions">
-              <button type="button" className="hl-btn" onClick={() => onExploreCategory(null)}>
+              <Link to="/providers" search={dirSearch()} className="hl-btn">
                 {txt("hl.hero.cta", "استكشفي الدليل")}
-              </button>
+              </Link>
               <Link to="/favorites" className="hl-link">
                 {txt("hl.hero.cta2", "عرض مفضلتي")}
                 <ArrowLeft size={15} />
@@ -135,8 +135,7 @@ export default function HomeLanding({
       <TrustCounter
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        
-        onExplore={() => onExploreCategory(null)}
+        exploreSearch={dirSearch()}
       />
 
       {/* ── 4. QUICK CATEGORIES ── */}
@@ -148,10 +147,15 @@ export default function HomeLanding({
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
-              <button key={c.id} type="button" className="hl-cat" onClick={() => onExploreCategory(c.id)}>
+              <Link
+                key={c.id}
+                to="/providers"
+                search={dirSearch(categorySlugOf?.(c.name_ar) ?? c.id)}
+                className="hl-cat"
+              >
                 <span className="hl-cat-ico">{catIcon(c.name_ar)}</span>
                 <span className="hl-cat-name">{c.name_ar}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
