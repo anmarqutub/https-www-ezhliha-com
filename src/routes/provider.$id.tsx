@@ -426,7 +426,7 @@ function ProviderPage() {
                   className={`pv-sq-act ${isFav ? "on" : ""}`}
                   disabled={favLoading}
                   onClick={toggleFav}
-                  aria-label={isFav ? "إزالة من المفضلة" : "أضف للمفضلة"}
+                  aria-label={isFav ? "إزالة من المفضلة" : "احفظي المزوّد"}
                 ><Heart size={17} fill={isFav ? "currentColor" : "none"} /></button>
               </div>
             </div>
@@ -695,7 +695,7 @@ function ProviderPage() {
                     </div>
                     <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
                     <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
-                    <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسل التقييم"}</button>
+                    <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسلي التقييم"}</button>
                   </form>
                 ) : (
                   <div className="pv-rev-form">
@@ -884,7 +884,7 @@ function ProviderPage() {
 
             <div className="pv-quote-actions">
               <button type="button" className="pv-quote-cancel" onClick={() => setQuoteOpen(false)}>إلغاء</button>
-              <button type="submit" className="pv-btn-quote"><SendIcon /><span>أرسل الطلب لمقدم الخدمة</span></button>
+              <button type="submit" className="pv-btn-quote"><SendIcon /><span>أرسلي الطلب إلى مقدّم الخدمة</span></button>
             </div>
           </form>
         </div>
