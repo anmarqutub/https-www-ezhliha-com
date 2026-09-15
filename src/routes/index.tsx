@@ -23,6 +23,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
+import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import HomeLanding, { HomeTopStrip } from "@/components/HomeLanding";
@@ -615,10 +616,38 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
   const faqs = [
-    { q: txt("faq.q1", "كيف أتواصل مع مقدم الخدمة؟"), a: txt("faq.a1", "افتح ملف مقدم الخدمة وبتلقى الواتساب والجوال وحسابات التواصل والفروع كلها في مكان واحد.") },
-    { q: txt("faq.q2", "هل الأسعار نهائية؟"), a: txt("faq.a2", "الأسعار تقريبية للاسترشاد، والسعر النهائي يتحدد مع مقدم الخدمة حسب تفاصيل مناسبتك.") },
-    { q: txt("faq.q3", "وين ألقى الخدمات اللي حفظتها؟"), a: txt("faq.a3", "من صفحة «المفضلة» في حسابك، وتبقى اختياراتك محفوظة دائماً.") },
-    { q: txt("faq.q4", "كيف أضيف مقدم خدمة للموقع؟"), a: txt("faq.a4", "تواصل معنا عبر الواتساب ونرتب لك إضافة ملفك بكل تفاصيله.") },
+    {
+      q: txt("faq.q1", "ما هي أزهليها؟"),
+      a: txt("faq.a1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتستعرضي الخيارات المتاحة في مدينتكِ."),
+    },
+    {
+      q: txt("faq.q2", "هل أزهليها مخصصة لحفلات الزفاف فقط؟"),
+      a: txt("faq.a2", "لا، تناسب أزهليها مختلف المناسبات، مثل حفلات الزفاف والتخرّج وأعياد الميلاد واستقبال المولود وغيرها، حسب الخدمات المتاحة في مدينتكِ."),
+    },
+    {
+      q: txt("faq.q3", "كيف أبحث عن الخدمة التي أحتاجها؟"),
+      a: txt("faq.a3", "اختاري نوع الخدمة والمدينة، وستظهر لكِ الخيارات المتاحة لتستعرضيها وتقارني بينها وتختاري الأنسب لكِ."),
+    },
+    {
+      q: txt("faq.q4", "كيف أطلب عرضًا من مقدّم الخدمة؟"),
+      a: txt("faq.a4", "اختاري مقدّم الخدمة المناسب لكِ، ثم اضغطي على «اطلبي عرضكِ»، وأرسلي تفاصيل مناسبتكِ ليتمكن من التواصل معكِ عبر واتساب."),
+    },
+    {
+      q: txt("faq.q5", "هل إرسال طلب العرض يعني تأكيد الحجز؟"),
+      a: txt("faq.a5", "لا، إرسال طلب العرض لا يعني تأكيد الحجز. يتم إرسال تفاصيل احتياجكِ إلى مقدّم الخدمة، ثم تتفقين معه مباشرةً على السعر والتفاصيل وموعد الحجز."),
+    },
+    {
+      q: txt("faq.q6", "هل تضمن أزهليها جودة الخدمات أو أسعار مزوّدي الخدمة؟"),
+      a: txt("faq.a6", "توفر لكِ أزهليها معلومات عن مزوّدي الخدمة لمساعدتكِ على اختيار الأنسب. أما السعر النهائي والتوفر وجودة الخدمة، فيتم تأكيدها مباشرةً مع مقدّم الخدمة."),
+    },
+    {
+      q: txt("faq.q7", "هل تتوفر أزهليها في جميع المدن؟"),
+      a: txt("faq.a7", "بدأت أزهليها في جدة، ونعمل قريبًا على التوسع لتشمل مدن المملكة كافة."),
+    },
+    {
+      q: txt("faq.q8", "هل يمكنني الانضمام كمقدّم خدمة؟"),
+      a: txt("faq.a8", "نعم، إذا كنتِ تقدّمين خدمة للمناسبات، يمكنكِ الانضمام إلى أزهليها وعرض خدمتكِ أمام العملاء الباحثين عنها."),
+    },
   ];
 
   type NavItem = { label: string; to?: string; href?: string; active?: boolean };
@@ -928,7 +957,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             )}
             <div className="ez-drawer-cta">
               <span className="ez-drawer-cta-ico">✨</span>
-              <p>{txt("drawer.cta.text", "حدد التصنيف والخدمة والمدينة، ونطلع لك الخيارات اللي تناسبك.")}</p>
+              <p>{txt("drawer.cta.text", "اختاري التصنيف والخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
               <Link to="/providers" className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
                 {txt("drawer.cta.btn", "ابدأ التصفح")}
               </Link>
@@ -1089,11 +1118,56 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {view === "about" && (
       <section className="ez-sec" id="ez-about">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("footer.about", "من نحن")}</div>
-        <h2 className="ez-h2">{txt("home.about.title", "من نحن")}</h2>
+        <h2 className="ez-h2">{txt("home.about.title", "بدأت أزهليها من حاجة بسيطة")}</h2>
         <div className="ez-about-page">
-          <p>{txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}</p>
-          <p>{txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}</p>
-          <p>{txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}</p>
+          <h3>البداية</h3>
+          <p>في كل مناسبة لحظة جميلة ننتظرها منذ وقت طويل.</p>
+          <p>
+            لحظة نرى فيها المكان كما تخيلناه، ونرتدي الإطلالة التي اخترناها، ونشاهد التفاصيل التي تخيلناها تتحول إلى
+            حقيقة أمامنا.
+          </p>
+          <figure className="ez-about-img">
+            <img src={catHalls} alt="قاعة مناسبات مهيأة بإضاءة هادئة" loading="lazy" decoding="async" />
+          </figure>
+
+          <h3>المشكلة التي أردنا حلها</h3>
+          <p>لكن الوصول إلى هذه اللحظة لا يكون دائمًا سهلًا. تبدأ الرحلة بسؤال بسيط:</p>
+          <ul className="ez-about-q">
+            <li>من تعرف مصوّرة مناسبة؟</li>
+            <li>أين أجد القاعة؟</li>
+            <li>وماذا عن الضيافة والديكور؟</li>
+          </ul>
+          <p>
+            ثم يبدأ البحث بين إنستغرام وواتساب ومجموعات العائلة والصديقات. نسأل أكثر من شخص، ونقارن بين خيارات كثيرة،
+            ونحاول الوصول إلى الخدمة المناسبة لذوقنا وميزانيتنا.
+          </p>
+          <p>من هنا بدأت فكرة أزهليها. تساءلنا: لماذا لا يوجد مكان واحد يجمع كل ما تحتاجينه لمناسبتكِ؟</p>
+
+          <h3>ما الذي نقدمه؟</h3>
+          <p>لذلك بدأنا ببناء المكان الذي كنا نتمنى وجوده منذ البداية.</p>
+          <p>
+            أزهليها ليست مجرد دليل يعرض أسماء مزوّدي الخدمات، بل مساحة تساعدكِ على الاختيار بثقة ووضوح. يمكنكِ مشاهدة
+            أعمال المزوّدين، والتعرّف على تفاصيل خدماتهم، والمقارنة بين الخيارات، والتواصل مباشرةً مع من يناسب ذوقكِ
+            وميزانيتكِ.
+          </p>
+          <figure className="ez-about-img">
+            <img src={catDecor} alt="تنسيق ورد وديكور لمناسبة" loading="lazy" decoding="async" />
+          </figure>
+          <p>
+            ولا نريد أن نعرض لكِ الخيارات نفسها التي تجدينها في كل مكان. نبحث عن مزوّدين مميزين قد لا يكون من السهل
+            الوصول إليهم، لأننا نؤمن بأن الخيار الأفضل لكِ ليس بالضرورة الأكثر شهرة.
+          </p>
+
+          <h3>إلى أين وصلنا؟</h3>
+          <p>ومع الوقت، تحولت أزهليها من فكرة إلى منصة تضم أكثر من 500 مزوّد خدمة. وكل ذلك لسبب واحد:</p>
+          <p>أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأسرع.</p>
+          <p>أنتِ تختارين وتستمتعين بالتفاصيل الجميلة. أما عناء البحث، فاتركيه علينا.</p>
+          <p className="ez-about-sign">أزهليها. ❤️</p>
+          <div>
+            <button type="button" className="ez-btn-primary" onClick={() => goProviders({ categoryId: null })}>
+              استكشفي الدليل
+            </button>
+          </div>
         </div>
       </section>
       )}
@@ -1116,7 +1190,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <span className="ez-search-icon"><Search size={15} /></span>
               <input
                 type="text"
-                placeholder={txt("home.search.placeholder", "ابحث عن مقدم خدمة، تصنيف، أو أي شي تبيه...")}
+                placeholder={txt("home.search.placeholder", "ابحثي عن مزوّد خدمة أو تصنيف...")}
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
               />
@@ -1198,19 +1272,25 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {view === "faq" && (
       <section className="ez-sec" id="ez-faq">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("faq.eyebrow", "الأسئلة الشائعة")}</div>
-        <h2 className="ez-h2">{txt("faq.title", "كل اللي ممكن تحتاج تعرفه")}</h2>
-        <p className="ez-muted">{txt("faq.desc", "إجابات سريعة قبل ما تبدأ البحث أو ترسل طلبك.")}</p>
+        <h2 className="ez-h2">{txt("faq.title", "الأسئلة الشائعة")}</h2>
+        <p className="ez-muted">{txt("faq.desc", "إجابات واضحة قبل أن تبدئي البحث أو ترسلي طلبكِ.")}</p>
         <div className="ez-faq">
           {faqs.map((f, i) => (
             <div key={i} className={`ez-faq-item ${openFaq === i ? "open" : ""}`}>
-              <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+              <button type="button" aria-expanded={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                 <span>{f.q}</span>
-                <i>+</i>
+                <i aria-hidden="true"><ChevronDown size={17} /></i>
               </button>
               {openFaq === i && <p>{f.a}</p>}
             </div>
           ))}
         </div>
+        <p className="ez-faq-foot">
+          {txt("faq.foot", "لم تجدي إجابتكِ؟")}{" "}
+          <a href={waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#"} target="_blank" rel="noopener noreferrer">
+            {txt("faq.foot.cta", "تواصلي معنا")}
+          </a>
+        </p>
       </section>
       )}
 
@@ -1224,13 +1304,13 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
             <h2 className="ez-about-title">{txt("home.about.title", "من نحن")}</h2>
             <p className="ez-about-text">
-              {txt("home.about.p1", "إزهليها منصتك الأولى لتجهيز مناسباتك في المملكة العربية السعودية. نجمع لك في مكان واحد نخبة من أفخم مقدمي الخدمات وكل اللي تحتاجه عشان يومك يطلع على الأصول 🤍")}
+              {txt("home.about.p1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.")}
             </p>
             <p className="ez-about-text">
               {txt("home.about.p2", "مهمتنا نوفّر عليك عناء البحث، ونعطيك تجربة سهلة وسريعة تختار منها الأنسب لك من ناحية الجودة والسعر والموقع، مع تواصل مباشر وحفظ مفضّلتك بضغطة.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p3", "هدفنا نكون الدليل الموثوق لكل شخص أو عائلة تبي مناسبة مميزة. شكراً لثقتك فينا 💐")}
+              {txt("home.about.p3", "هدفنا أن نكون الدليل الموثوق لكل من يخطط لمناسبة مميزة. شكرًا لثقتكِ بنا 💐")}
             </p>
           </div>
         </div>
@@ -1322,14 +1402,9 @@ const ProviderCard = memo(function ProviderCard({
           {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
           {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
-            <small>السعر التقريبي</small>
-            <strong>
-              {provider.price_from
-                ? `يبدأ من ${provider.price_from} ر.س`
-                : provider.price
-                  ? provider.price
-                  : "السعر حسب التفاصيل"}
-            </strong>
+            <small>الأسعار</small>
+            <strong>{priceRangeText(provider.price_from, provider.price_to, provider.price)}</strong>
+            <em>{PRICE_NOTE}</em>
           </div>
         </div>
       </Link>
@@ -1438,7 +1513,7 @@ function AuthGate() {
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
         <h1 style={{ color: "#640000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للأعضاء بس")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          {t("auth_gate.description", "عشان تدخل على دليل مقدمين الخدمات لازم تسجّل دخولك. للتسجيل تحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة 🤍")}
+          {t("auth_gate.description", "للدخول إلى دليل مزوّدي الخدمات يلزم تسجيل الدخول. ويحتاج التسجيل كود الشراء الذي وصلكِ بعد طلبكِ من متجر سلة 🤍")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#640000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>
@@ -1742,8 +1817,9 @@ const css = `
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
   .ez-card-tag { display:inline-block; max-width:100%; border:1px solid #000; background:color-mix(in oklab, var(--surface) 70%, transparent); color:#000; font-size:11px; font-weight:500; line-height:1.6; padding:4px 9px; border-radius:2px; white-space:normal; overflow-wrap:anywhere; text-align:start; }
-  .ez-card-price { border-top:1px dashed var(--line); margin-top:7px; padding-top:7px; display:flex; align-items:baseline; gap:6px; }
+  .ez-card-price { border-top:1px dashed var(--line); margin-top:7px; padding-top:7px; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 6px; }
   .ez-card-price small { color:var(--muted); font-size:10.5px; }
+  .ez-card-price em { flex:1 0 100%; font-style:normal; color:var(--muted); font-size:10.5px; line-height:1.6; }
 
 
   .ez-card-price strong { color:var(--brand); font-size:13px; font-weight:600; }
@@ -1756,11 +1832,13 @@ const css = `
   /* FAQ */
   .ez-faq { margin-top:26px; border-top:1px solid var(--line); }
   .ez-faq-item { border-bottom:1px solid var(--line); }
-  .ez-faq-item button { width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:16px 4px; font-family:inherit; font-size:16px; font-weight:600; color:var(--ink); cursor:pointer; text-align:start; }
-  .ez-faq-item i { font-style:normal; color:var(--brand); font-size:16px; width:28px; height:28px; border-radius:50%; background:var(--bg); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; transition:transform .2s var(--ease-out); }
-  .ez-faq-item p { color:var(--muted); font-size:15px; line-height:1.9; margin:0 4px 16px; max-width:760px; }
+  .ez-faq-item button { width:100%; min-height:52px; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:16px 4px; font-family:inherit; font-size:16px; font-weight:600; color:var(--ink); cursor:pointer; text-align:start; }
+  .ez-faq-item i { font-style:normal; color:var(--brand); width:30px; height:30px; border-radius:50%; background:var(--bg); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; transition:transform .2s var(--ease-out); }
+  .ez-faq-item p { color:var(--muted); font-size:15px; line-height:1.95; margin:0 4px 18px; max-width:760px; }
   .ez-faq-item.open button { color:var(--brand); }
-  .ez-faq-item.open i { transform:rotate(45deg); }
+  .ez-faq-item.open i { transform:rotate(180deg); }
+  .ez-faq-foot { margin:22px 0 0; font-size:15px; color:var(--muted); }
+  .ez-faq-foot a { color:var(--brand); border-bottom:1px solid rgba(100,0,0,.3); }
 
   /* FOOTER */
   .ez-footer { background:var(--brand); color:#fff; padding:0; }
@@ -1829,7 +1907,12 @@ const css = `
   .ez-city-name { font-size:15px; font-weight:600; color:var(--ink); }
   .ez-city-count { font-size:12.5px; color:var(--muted); }
   .ez-about-page { max-width:760px; margin-top:18px; display:grid; gap:14px; }
-  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); }
+  .ez-about-page p { font-size:15px; line-height:2; color:var(--ink); margin:0; }
+  .ez-about-page h3 { margin:22px 0 2px; font-size:18px; color:var(--brand); }
+  .ez-about-q { margin:0; padding-inline-start:18px; display:grid; gap:6px; color:var(--muted); font-size:15px; line-height:1.9; }
+  .ez-about-img { margin:8px 0; border-radius:16px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; }
+  .ez-about-img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ez-about-sign { font-size:17px; color:var(--brand); font-weight:600; }
 
   @media (max-width: 1024px) {
     .ez-burger { display:inline-flex; }

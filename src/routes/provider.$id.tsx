@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
 import { waLink, cleanHandle, pendingFilters } from "./index";
 import { MediaThumb } from "@/components/MediaThumb";
+import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
@@ -409,9 +410,9 @@ function ProviderPage() {
                     {[cityName, subName].filter(Boolean).join(" · ")}
                   </span>
                 )}
-                {(provider.price_from || provider.price) && (
-                  <span className="pv-meta-price">
-                    {provider.price_from ? `يبدأ من ${Number(provider.price_from).toLocaleString("ar-SA")} ر.س` : provider.price}
+                {(provider.price_from || provider.price_to || provider.price) && (
+                  <span className="pv-meta-price" title={PRICE_NOTE}>
+                    {priceRangeText(provider.price_from, provider.price_to, provider.price)}
                   </span>
                 )}
                 {avgRating && <span className="pv-crumb-rate"><Star size={13} fill="currentColor" strokeWidth={0} /> {avgRating} ({reviews.length})</span>}
@@ -441,7 +442,7 @@ function ProviderPage() {
           <aside className="pv-aside">
             <div className="pv-price-bar">
               <div className="pv-price-out">
-                <span className="pv-quote-eyebrow">للمناسبة اللي في بالك</span>
+                <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
                 <strong>اطلب تسعيرة مرتبة من {provider.name}</strong>
                 <p className="pv-quote-sub">أرسل التفاصيل، ويوصلك السعر المناسب بعد مراجعة الخدمة والموعد.</p>
               </div>
@@ -537,7 +538,7 @@ function ProviderPage() {
                   <span className="pv-pkg-tag">{i === 0 ? "الأكثر طلباً" : "باقة"}</span>
                   <div className="pv-pkg-top">
                     <h3>{pkg.name}</h3>
-                    <strong className="pv-pkg-price">{pkg.price || "حسب تفاصيل المناسبة"}</strong>
+                    <strong className="pv-pkg-price">{pkg.price || "السعر عند التواصل"}</strong>
                   </div>
                   {pkg.description && (
                     <ul className="pv-pkg-list">
@@ -565,7 +566,7 @@ function ProviderPage() {
               ))}
             </div>
           ) : (
-            <div className="pv-empty">سيتم إضافة الخدمات قريباً — تقدر ترسل طلب تسعيرة وتوصلك التفاصيل مباشرة.</div>
+            <div className="pv-empty">سيتم إضافة الخدمات قريبًا — يمكنكِ إرسال طلب عرض وستصلكِ التفاصيل مباشرةً.</div>
           )}
         </section>
 
@@ -573,8 +574,8 @@ function ProviderPage() {
         <section className="pv-sec" id="s-services">
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
-              <span className="pv-eyebrow">وش تقدر تطلب؟</span>
-              <h2>خذ اللي يناسب مناسبتك</h2>
+              <span className="pv-eyebrow">ماذا يمكنكِ طلبه؟</span>
+              <h2>اختاري ما يناسب مناسبتكِ</h2>
             </div>
             {services.length > 0 ? (
               <div className="pv-srv-grid">
@@ -649,7 +650,7 @@ function ProviderPage() {
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
               <span className="pv-eyebrow">تقييمات العملاء</span>
-              <h2>وش قالوا العملاء؟</h2>
+              <h2>ماذا قال العملاء؟</h2>
               <p className="pv-sec-note">
                 {reviews.length === 0
                   ? "ما فيه تقييمات منشورة للحين. أول تقييم بيظهر هنا بعد ما يرسله عميل مسجل."
@@ -693,12 +694,12 @@ function ProviderPage() {
                       ))}
                     </div>
                     <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
-                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
                     <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسل التقييم"}</button>
                   </form>
                 ) : (
                   <div className="pv-rev-form">
-                    <p className="pv-rev-hint">ينشر التقييم باسم حسابك، وتقدر تعدله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
                     <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّل دخولك وقيّم</Link>
                   </div>
                 )}
@@ -712,10 +713,10 @@ function ProviderPage() {
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
               <span className="pv-eyebrow">التواصل والفروع</span>
-              <h2>تواصل بالطريقة اللي تناسبك</h2>
+              <h2>تواصلي بالطريقة التي تناسبكِ</h2>
             </div>
             <div className="pv-sec-body">
-              <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه بمكان واحد، عشان ما تضيع بين أكثر من صفحة.</p>
+              <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه في مكان واحد، لتصلي إليه بسهولة.</p>
             </div>
           </div>
 
@@ -833,8 +834,8 @@ function ProviderPage() {
                   <div className="pv-sug-body">
                     <h3>{s.name}</h3>
                     {s.city_name && <span className="pv-sug-city">{s.city_name}</span>}
-                    <small>السعر التقريبي</small>
-                    <strong>{s.price_from ? `يبدأ من ${s.price_from} ر.س` : (s.price || "السعر حسب التفاصيل")}</strong>
+                    <small>الأسعار</small>
+                    <strong>{priceRangeText(s.price_from, null, s.price)}</strong>
                     <span className="pv-sug-more">اكتشف المزيد <i><ArrowLeft size={14} /></i></span>
                   </div>
                 </Link>
@@ -854,7 +855,7 @@ function ProviderPage() {
               <button type="button" className="pv-quote-close" onClick={() => setQuoteOpen(false)} aria-label="إغلاق">×</button>
             </div>
             <h3 className="pv-quote-title">خلّينا نجهّز طلبك لـ {provider.name}</h3>
-            <p className="pv-quote-sub">عطينا أهم التفاصيل عشان يجيك عرض أقرب للي تبيه.</p>
+            <p className="pv-quote-sub">اكتبي أهم التفاصيل ليصلكِ عرض أقرب لما تحتاجينه.</p>
 
             <div className="pv-quote-grid">
               <label className="pv-quote-field">

@@ -75,7 +75,7 @@ export function MediaThumb({
   const local =
     thumbnailUrl || (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : isDirectImage(url) ? url : null);
 
-  const { data: remote } = useQuery({
+  const { data: remote, isFetching: isPending } = useQuery({
     queryKey: ["video-poster", url],
     queryFn: () => getVideoPoster({ data: { url } }),
     enabled: !local && !direct && /^https:\/\//i.test(url),
@@ -89,8 +89,7 @@ export function MediaThumb({
   const chain = raws.flatMap((u) => (needsProxy(u) ? [proxied(u), u] : [u, proxied(u)]));
   const [step, setStep] = useState(0);
   const poster = chain[step] ?? null;
-
-
+  const loading = !poster && !direct && isPending;
 
   return (
     <figure className="mt-card" style={{ aspectRatio: ratio }}>
@@ -98,7 +97,7 @@ export function MediaThumb({
         type="button"
         className="mt-tile"
         onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
-        aria-label={isVideo ? "عرض المقطع في المصدر" : "عرض الصورة في المصدر"}
+        aria-label={isVideo ? `مشاهدة المقطع على ${sourceLabel(url)}` : "عرض الصورة في المصدر"}
       >
         {poster ? (
           <img
@@ -111,10 +110,21 @@ export function MediaThumb({
           />
         ) : direct ? (
           <video src={`${url}#t=0.1`} muted playsInline preload="metadata" aria-hidden="true" />
+        ) : loading ? (
+          <span className="mt-skel" aria-hidden="true" />
         ) : (
-          <span className="mt-empty">{sourceLabel(url)}</span>
+          <span className="mt-fb">
+            <span className="mt-fb-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+            <b>شاهدي قصص مزوّدي الخدمات</b>
+            <small>إلهام حقيقي من أعمال مختارة.</small>
+            <em>{isVideo ? `شاهدي الفيديو على ${sourceLabel(url)}` : `افتحي المصدر على ${sourceLabel(url)}`}</em>
+          </span>
         )}
-        {isVideo && (
+        {isVideo && (poster || direct) && (
           <span className="mt-play" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
               <path d="M8 5v14l11-7z" />
@@ -123,11 +133,18 @@ export function MediaThumb({
         )}
       </button>
       <style>{`
-        .mt-card { margin:0; width:100%; border-radius:12px; overflow:hidden; border:1px solid #E8E0CE; background:#F6F0E4; }
+        .mt-card { margin:0; width:100%; max-width:100%; border-radius:12px; overflow:hidden; border:1px solid #E8E0CE; background:#F6F0E4; }
         .mt-tile { position:relative; display:block; width:100%; height:100%; padding:0; border:0; background:#F1E9DA; cursor:pointer; }
         .mt-tile img, .mt-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-        .mt-empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#8A7A70; font-size:13px; }
+        .mt-skel { position:absolute; inset:0; background:linear-gradient(100deg,#F1E9DA 30%,#EFE4CF 50%,#F1E9DA 70%); background-size:200% 100%; animation:mt-sh 1.2s linear infinite; }
+        @keyframes mt-sh { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+        .mt-fb { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; padding:14px; color:#3a2b25; }
+        .mt-fb-ico { width:40px; height:40px; border-radius:50%; background:#fff; color:#640000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.12); }
+        .mt-fb b { font-size:14px; font-weight:600; }
+        .mt-fb small { font-size:12.5px; color:#8A7A70; }
+        .mt-fb em { margin-top:4px; font-style:normal; font-size:12.5px; font-weight:600; color:#fff; background:#640000; border-radius:999px; padding:9px 14px; min-height:36px; display:inline-flex; align-items:center; }
         .mt-play { position:absolute; inset:0; margin:auto; width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.94); color:#640000; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(0,0,0,0.22); }
+        @media (prefers-reduced-motion:reduce) { .mt-skel { animation:none; } }
       `}</style>
     </figure>
   );

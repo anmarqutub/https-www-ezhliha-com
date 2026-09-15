@@ -8,12 +8,11 @@ import {
   Flower2,
   Gem,
   Heart,
-  
+  LayoutGrid,
   Music4,
   Shirt,
   Sparkles,
   Star,
-  Users,
 } from "lucide-react";
 
 type Cat = { id: string; name_ar: string };
@@ -50,7 +49,6 @@ export default function HomeLanding({
   txt,
   categories,
   providerCount,
-  favCount,
   heroImage,
   banner,
   showcase,
@@ -64,21 +62,24 @@ export default function HomeLanding({
     {
       title: txt("hl.journey.1.title", "ابدئي باختيار القاعة"),
       desc: txt("hl.journey.1.desc", "قاعات وأماكن مناسبة لعدد ضيوفكِ وميزانيتكِ."),
+      cta: txt("hl.journey.1.cta", "استكشفي القاعات"),
     },
     {
-      title: txt("hl.journey.2.title", "احفظي مصوّراتكِ المفضلات"),
-      desc: txt("hl.journey.2.desc", "قارني الأعمال واحفظي الأسماء اللي عجبتكِ."),
+      title: txt("hl.journey.2.title", "اختاري المصوّرة"),
+      desc: txt("hl.journey.2.desc", "اختاري المصوّرة التي توثّق ذكرياتكِ بأسلوب يناسبكِ."),
+      cta: txt("hl.journey.2.cta", "استكشفي المصوّرات"),
     },
     {
-      title: txt("hl.journey.3.title", "استكشفي تنسيقات الورد"),
-      desc: txt("hl.journey.3.desc", "أفكار تنسيق هادئة وفاخرة تناسب أجواء مناسبتكِ."),
+      title: txt("hl.journey.3.title", "رتّبي تفاصيل مناسبتكِ"),
+      desc: txt("hl.journey.3.desc", "من الورد إلى الديكور، اختاري التفاصيل التي تكمّل مناسبتكِ."),
+      cta: txt("hl.journey.3.cta", "استكشفي الخدمات"),
     },
   ];
 
   const steps = [
-    { t: txt("hl.step.1", "اختاري الفئة أو المدينة"), d: txt("hl.step.1.d", "حددي وش تحتاجين ووين مناسبتكِ.") },
+    { t: txt("hl.step.1", "اختاري نوع الخدمة والمدينة"), d: txt("hl.step.1.d", "حدّدي ما تحتاجينه ومكان مناسبتكِ.") },
     { t: txt("hl.step.2", "قارني واحفظي خياراتكِ"), d: txt("hl.step.2.d", "تفاصيل وأسعار وأعمال في مكان واحد.") },
-    { t: txt("hl.step.3", "تواصلي مع مزود الخدمة"), d: txt("hl.step.3.d", "تواصل مباشر بدون وسطاء ولا تعقيد.") },
+    { t: txt("hl.step.3", "تواصلي مع مقدّم الخدمة"), d: txt("hl.step.3.d", "تواصل مباشر بدون وسطاء أو تعقيد.") },
   ];
 
   return (
@@ -120,7 +121,7 @@ export default function HomeLanding({
       <TrustCounter
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        favCount={favCount}
+        
         onExplore={() => onExploreCategory(null)}
       />
 
@@ -128,8 +129,8 @@ export default function HomeLanding({
       {quickCats.length > 0 && (
         <section className="hl-sec">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين اليوم؟")}</h2>
-            <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة وبنعرض لكِ الأنسب.")}</p>
+            <h2 className="hl-h2">{txt("hl.cats.title", "ماذا تحتاجين اليوم؟")}</h2>
+            <p className="hl-sub">{txt("hl.cats.desc", "اختاري نوع الخدمة، ونعرض لكِ الخيارات المناسبة.")}</p>
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
@@ -145,8 +146,8 @@ export default function HomeLanding({
       {/* ── 5. JOURNEY ── */}
       <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
-          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ التفاصيل الحلوة")}</h2>
-          <p className="hl-sub">{txt("hl.journey.desc", "خطوات صغيرة تقرّبكِ من يومكِ.")}</p>
+          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ تفاصيل مناسبتكِ")}</h2>
+          <p className="hl-sub">{txt("hl.journey.desc", "خطوات واضحة تقرّبكِ من يومكِ.")}</p>
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
@@ -154,7 +155,7 @@ export default function HomeLanding({
               <h3>{j.title}</h3>
               <p>{j.desc}</p>
               <button type="button" className="hl-link" onClick={() => onExploreCategory(null)}>
-                {txt("hl.journey.cta", "استكشفي")}
+                {j.cta}
                 <ArrowLeft size={14} />
               </button>
             </article>
@@ -233,24 +234,13 @@ export default function HomeLanding({
   );
 }
 
-const trustCats = [
-  { n: "قاعات زفاف", i: <Building2 size={16} /> },
-  { n: "تصوير وفيديو", i: <Camera size={16} /> },
-  { n: "تجميل وعناية", i: <Sparkles size={16} /> },
-  { n: "ورد وتنسيق", i: <Flower2 size={16} /> },
-  { n: "زفات وموسيقى", i: <Music4 size={16} /> },
-  { n: "ضيافة وحلويات", i: <Cake size={16} /> },
-];
-
 function TrustCounter({
   txt,
   target,
-  favCount,
   onExplore,
 }: {
   txt: (k: string, f: string) => string;
   target: number;
-  favCount: number;
   onExplore: () => void;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -267,7 +257,7 @@ function TrustCounter({
           io.disconnect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.25 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -291,38 +281,22 @@ function TrustCounter({
   return (
     <section className={`hl-tc${on ? " is-on" : ""}`} ref={ref}>
       <div className="hl-tc-in">
-        <div className="hl-tc-cards hl-tc-cards-a">
-          {trustCats.slice(0, 3).map((c, i) => (
-            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.5 + i * 0.16}s` }}>
-              <em>{c.i}</em>
-              {c.n}
-            </span>
-          ))}
-        </div>
-
         <div className="hl-tc-core">
-          <span className="hl-tc-pre">{txt("hl.tc.pre", "أكثر من")}</span>
+          <span className="hl-tc-ico" aria-hidden="true">
+            <LayoutGrid />
+          </span>
+          <span className="hl-tc-pre">{txt("hl.tc.pre", "دليل أزهليها")}</span>
           <strong className="hl-tc-num">+{val}</strong>
-          <span className="hl-tc-label">{txt("hl.tc.label", "مزود خدمة لمناسبتكِ")}</span>
+          <span className="hl-tc-label">{txt("hl.tc.label", "مزوّد خدمة لمناسبتكِ")}</span>
           <p className="hl-tc-note">
-            {txt("hl.tc.note", "من القاعات والتصوير إلى الورد، الجمال والضيافة.")}
-          </p>
-          <p className="hl-tc-meta">
-            <Heart size={14} /> {txt("hl.trust.fav", "مفضلة خاصة بكِ")}
-            {favCount > 0 ? ` (${favCount})` : ""}
+            {txt(
+              "hl.tc.note",
+              "من القاعات والتصوير إلى الورد والجمال والضيافة، اكتشفي خيارات متنوعة في مكان واحد.",
+            )}
           </p>
           <button type="button" className="hl-btn hl-tc-btn" onClick={onExplore}>
             {txt("hl.hero.cta", "استكشفي الدليل")}
           </button>
-        </div>
-
-        <div className="hl-tc-cards hl-tc-cards-b">
-          {trustCats.slice(3).map((c, i) => (
-            <span key={c.n} className="hl-tc-chip" style={{ transitionDelay: `${0.58 + i * 0.16}s` }}>
-              <em>{c.i}</em>
-              {c.n}
-            </span>
-          ))}
         </div>
       </div>
     </section>
@@ -492,42 +466,30 @@ const landingCss = `
     .hl-journey > * { flex:0 0 84%; }
   }
 
-  /* trust counter */
+  /* trust counter: بطاقة مركزية واحدة بسيطة */
   .hl-tc { background:#e6e4d7; background-image:radial-gradient(rgba(100,0,0,.045) 1px, transparent 1px); background-size:5px 5px; border-top:1px solid rgba(160,120,60,.22); border-bottom:1px solid rgba(160,120,60,.22); }
-  .hl-tc-in { max-width:1240px; margin:0 auto; padding:clamp(34px,5vw,58px) clamp(16px,3vw,32px); display:grid; grid-template-columns:1fr auto 1fr; gap:clamp(16px,2.6vw,34px); align-items:center; }
-  .hl-tc-core { text-align:center; display:grid; justify-items:center; gap:6px; background:rgba(255,255,255,.55); border:1px solid rgba(160,120,60,.28); border-radius:22px; padding:clamp(22px,3vw,34px) clamp(20px,3vw,40px); box-shadow:0 18px 44px rgba(53,24,19,.07); }
-  .hl-tc-pre { font-size:13px; color:rgba(42,33,28,.6); letter-spacing:.08em; }
-  .hl-tc-num { font-size:clamp(3rem,6vw,5.2rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; }
-  .hl-tc-label { font-size:17px; color:#2a211c; }
-  .hl-tc-note { margin:6px 0 0; font-size:13.5px; color:rgba(42,33,28,.66); }
-  .hl-tc-meta { margin:2px 0 0; display:flex; align-items:center; gap:8px; font-size:12.5px; color:rgba(42,33,28,.6); }
-  .hl-tc-dot { width:4px; height:4px; border-radius:50%; background:rgba(160,120,60,.7); }
-  .hl-tc-btn { margin-top:16px; opacity:0; transform:translateY(8px); transition:opacity .6s ease 1.9s, transform .6s ease 1.9s; }
+  .hl-tc-in { max-width:760px; margin:0 auto; padding:clamp(30px,5vw,58px) clamp(14px,3vw,32px); }
+  .hl-tc-core { text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; background:rgba(255,255,255,.6); border:1px solid rgba(160,120,60,.28); border-radius:20px; padding:clamp(22px,3vw,36px) clamp(16px,3vw,40px); box-shadow:0 18px 44px rgba(53,24,19,.07); }
+  .hl-tc-ico { width:44px; height:44px; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.16); color:#660000; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+  .hl-tc-ico svg { width:22px; height:22px; }
+  .hl-tc-pre { font-size:13px; color:rgba(42,33,28,.62); letter-spacing:.08em; }
+  .hl-tc-num { font-size:clamp(4.5rem,18vw,9rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; max-width:100%; }
+  .hl-tc-label { font-size:18px; color:#2a211c; }
+  .hl-tc-note { margin:6px 0 0; font-size:14px; line-height:1.85; color:rgba(42,33,28,.68); max-width:44ch; }
+  .hl-tc-btn { margin-top:18px; min-height:44px; opacity:0; transform:translateY(8px); transition:opacity .6s ease 1.6s, transform .6s ease 1.6s; }
   .hl-tc.is-on .hl-tc-btn { opacity:1; transform:none; }
-  .hl-tc-cards { display:grid; gap:14px; justify-items:stretch; }
-  .hl-tc-cards-b { justify-items:stretch; }
-  .hl-tc-chip { display:flex; align-items:center; gap:10px; background:#f8f7f0; border:1px solid rgba(160,120,60,.3); border-radius:10px; padding:13px 16px; font-size:13px; color:#2a211c; box-shadow:0 10px 26px rgba(53,24,19,.06); opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease; }
-  .hl-tc.is-on .hl-tc-chip { opacity:1; transform:none; animation:hl-float 6s ease-in-out infinite; }
-  .hl-tc-cards-a .hl-tc-chip:nth-child(2) { margin-inline-start:26px; }
-  .hl-tc-cards-b .hl-tc-chip:nth-child(2) { margin-inline-end:26px; }
-  .hl-tc-chip em { width:32px; height:32px; flex:0 0 auto; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.14); color:#660000; display:flex; align-items:center; justify-content:center; }
-  @keyframes hl-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
-  @media (prefers-reduced-motion:reduce) { .hl-tc.is-on .hl-tc-chip { animation:none; } }
 
-  /* قسم +500 على الجوال: الرقم أولاً ثم التصنيفات في شبكة عمودين */
-  @media (max-width:900px) {
-    .hl-tc-in { grid-template-columns:1fr; gap:12px; padding:clamp(28px,7vw,44px) 14px; }
-    .hl-tc-core { order:-1; padding:20px 16px; border-radius:18px; }
-    .hl-tc-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; overflow:visible; justify-items:stretch; }
-    .hl-tc-cards-a .hl-tc-chip:nth-child(2), .hl-tc-cards-b .hl-tc-chip:nth-child(2) { margin-inline:0; }
-    .hl-tc-cards .hl-tc-chip { font-size:13px; padding:10px 11px; gap:8px; border-radius:12px; box-shadow:0 6px 16px rgba(53,24,19,.05); }
-    .hl-tc-chip em { width:26px; height:26px; }
-    .hl-tc-num { font-size:clamp(3rem,17vw,4.6rem); }
+  @media (max-width:760px) {
+    .hl-tc-in { padding:clamp(26px,7vw,40px) 14px; }
+    .hl-tc-core { padding:22px 16px; border-radius:18px; }
+    .hl-tc-ico { width:34px; height:34px; }
+    .hl-tc-ico svg { width:18px; height:18px; }
+    .hl-tc-num { font-size:clamp(4rem,17vw,6rem); }
     .hl-tc-label { font-size:16px; }
-    .hl-tc-note, .hl-tc-meta { font-size:13px; }
-    .hl-tc-meta { justify-content:center; flex-wrap:wrap; }
-    .hl-tc-btn { width:100%; min-height:44px; }
-    .hl-tc.is-on .hl-tc-chip { animation:none; }
+    .hl-tc-note { font-size:14px; }
+    .hl-tc-btn { width:100%; }
   }
-
+  @media (prefers-reduced-motion:reduce) {
+    .hl-tc-btn { transition:none; opacity:1; transform:none; }
+  }
 `;

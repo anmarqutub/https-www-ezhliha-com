@@ -37,7 +37,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
       <div className="ez-footer-grid">
         <div className="ez-footer-brand">
           <img src={logoUrl} alt="إزهليها" />
-          <p>{txt("footer.tagline", "كل اللي تحتاجه لمناسبتك بمكان واحد، من أول البحث لين طلب العرض 🤍")}</p>
+          <p>{txt("footer.tagline", "كل ما تحتاجينه لمناسبتكِ في مكان واحد، من أول البحث إلى طلب العرض 🤍")}</p>
         </div>
 
         <div className="ez-footer-col">
