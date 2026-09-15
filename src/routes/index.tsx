@@ -1229,6 +1229,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "اكتشفي مزوّدي الخدمات")}
               <span className="ez-count">({results.length})</span>
             </h2>
+            <p className="ez-muted">{txt("results.desc", "اختاري المدينة والفئة للعثور على الخيارات المناسبة لكِ.")}</p>
           </div>
           <div className="ez-results-tools">
             <div className="ez-search">
