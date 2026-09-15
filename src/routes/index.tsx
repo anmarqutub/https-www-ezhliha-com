@@ -490,11 +490,24 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
 
+  // بناء رابط الدليل مع الفلاتر (قابل للمشاركة)
+  const providersSearch = (opts: { categoryId?: string | null; cityId?: string; subId?: string }) => {
+    const out: { category?: string; city?: string; sub?: string } = {};
+    const catId = opts.categoryId;
+    if (catId) {
+      const cat = categories.find((c) => c.id === catId);
+      out.category = (cat && categorySlug(cat.name_ar)) || catId;
+    }
+    if (opts.cityId) out.city = opts.cityId;
+    if (opts.subId && opts.subId !== "all") out.sub = opts.subId;
+    return out;
+  };
+
   const scrollToResults = () => {
     if (view !== "providers") {
       pendingFilters.categoryId = selectedCategory;
       pendingFilters.cityId = selectedCity;
-      navigate({ to: "/providers" });
+      navigate({ to: "/providers", search: providersSearch({ categoryId: selectedCategory, cityId: selectedCity, subId: selectedSub }) });
       return;
     }
     document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -514,7 +527,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       pendingFilters.cityId = patch.cityId;
       setSelectedCity(patch.cityId);
     }
-    if (view !== "providers") navigate({ to: "/providers" });
+    if (view !== "providers")
+      navigate({
+        to: "/providers",
+        search: providersSearch({
+          categoryId: patch.categoryId !== undefined ? patch.categoryId : selectedCategory,
+          cityId: patch.cityId !== undefined ? patch.cityId : selectedCity,
+          subId: patch.subId,
+        }),
+      });
     else setTimeout(() => document.getElementById("ez-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
 
