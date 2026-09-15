@@ -44,7 +44,7 @@ export type LandingProps = {
   selectedCityId?: string;
   categorySlugOf?: (nameAr: string) => string | null;
   renderProviderCard: (id: string) => ReactNode;
-  onExploreCategory: (categoryId: string | null) => void;
+  onExploreCategory?: (categoryId: string | null) => void;
 };
 
 export default function HomeLanding({
@@ -58,7 +58,6 @@ export default function HomeLanding({
   selectedCityId,
   categorySlugOf,
   renderProviderCard,
-  onExploreCategory,
 }: LandingProps) {
   const quickCats = categories.slice(0, 8);
 
