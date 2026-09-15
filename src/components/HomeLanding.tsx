@@ -229,7 +229,7 @@ export default function HomeLanding({
 function TrustCounter({
   txt,
   target,
-  onExplore,
+  exploreSearch,
 }: {
   txt: (k: string, f: string) => string;
   target: number;
