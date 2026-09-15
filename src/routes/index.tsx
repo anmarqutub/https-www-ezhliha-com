@@ -23,6 +23,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import SiteFooter from "@/components/SiteFooter";
+import { priceRangeText, PRICE_NOTE } from "@/lib/price";
 import logoUrl from "@/assets/logo.jpg";
 import { SmartImg } from "@/components/SmartImg";
 import HomeLanding, { HomeTopStrip } from "@/components/HomeLanding";
