@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "./index";
 
+export type ProvidersSearch = { category?: string; city?: string; sub?: string };
+
 const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
 
 export const Route = createFileRoute("/providers")({
