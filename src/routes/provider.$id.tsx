@@ -465,44 +465,8 @@ function ProviderPage() {
           </aside>
         </div>
 
-        {(() => {
-          const items: Array<[string, string]> = [
-            ["s-about", "نبذة عن الخدمة"],
-            ["s-packages", "الباقات والأسعار"],
-            ["s-services", "الخدمات"],
-            ["s-media", "صور وفيديو"],
-            ["s-reviews", "التقييمات"],
-            ["s-contact", "التواصل والفروع"],
-          ];
-
-          const goTo = (id: string) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const top = document.querySelector(".pv-top") as HTMLElement | null;
-            const nav = document.querySelector(".pv-secnav") as HTMLElement | null;
-            const offset = (top?.offsetHeight ?? 0) + (nav?.offsetHeight ?? 0) + 8;
-            const y = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-          };
-
-          return (
-
-            <nav className="pv-secnav">
-              <div className="pv-secnav-in">
-                {items.map(([id, label]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => goTo(id)}
-                  >{label}</button>
-                ))}
-              </div>
-            </nav>
-          );
-        })()}
-
-
         {/* نبذة */}
+        {provider.description && (
         <section className="pv-sec" id="s-about">
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
@@ -510,15 +474,12 @@ function ProviderPage() {
               <h2>{siteTexts["provider.about.title"] || `خدمة مرتبة على حسب مناسبتك`}</h2>
             </div>
             <div className="pv-sec-body">
-              <p>{provider.description || "الوصف التفصيلي بيضاف بعد ما توصلنا بيانات مقدم الخدمة."}</p>
-              <div className="pv-chips">
-                {subName && <span>{subName}</span>}
-                {cityName && <span>خدمة في {cityName}</span>}
-                <span>قابل للتخصيص</span>
-              </div>
+              <p>{provider.description}</p>
             </div>
           </div>
         </section>
+        )}
+
 
         {/* الخدمات (الباقات) */}
         <section className="pv-sec pv-sec--alt" id="s-packages">
