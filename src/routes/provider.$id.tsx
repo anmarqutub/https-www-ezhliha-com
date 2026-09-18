@@ -650,45 +650,49 @@ function ProviderPage() {
                 <span className="pv-card-ico"><PhoneIcon /></span>
               </div>
 
-              <div className="pv-contact-row">
-                <div>
-                  <small>رقم الاتصال</small>
-                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "ما فيه رقم مضاف"}</strong>
-                </div>
-                {callUrl ? (
+              {callUrl && (
+                <div className="pv-contact-row">
+                  <div>
+                    <small>رقم الاتصال</small>
+                    <strong dir="ltr">{callUrl.replace("tel:", "")}</strong>
+                  </div>
                   <button type="button" className="pv-contact-act" onClick={() => {
                     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
                     if (isMobile) window.location.href = callUrl; else setCallOpen(true);
                   }}>اتصال</button>
-                ) : <span className="pv-pending">بانتظار البيانات</span>}
-              </div>
-
-              <div className="pv-contact-row">
-                <div>
-                  <small>واتساب</small>
-                  <strong dir="ltr">{provider.whatsapp || "لم يُضف رقم واتساب"}</strong>
                 </div>
-                {waUrl ? (
-                  <a className="pv-contact-act" href={waUrl} target="_blank" rel="noopener noreferrer">{contactLabel || "مراسلة"}</a>
-                ) : <span className="pv-pending">بانتظار البيانات</span>}
-              </div>
+              )}
 
-              <div className="pv-soc-title">حسابات التواصل</div>
-              <div className="pv-soc-mini">
-                {ig && (
-                  <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" aria-label="إنستغرام" title="إنستغرام"><SocialGlyph platform="ig" /></a>
-                )}
-                {sc && (
-                  <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" aria-label="سناب شات" title="سناب شات"><SocialGlyph platform="sc" /></a>
-                )}
-                {tk && (
-                  <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" aria-label="تيك توك" title="تيك توك"><SocialGlyph platform="tk" /></a>
-                )}
-                {tw && (
-                  <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" aria-label="إكس" title="إكس"><SocialGlyph platform="tw" /></a>
-                )}
-                {!ig && !sc && !tk && !tw && <span className="pv-pending">بانتظار البيانات</span>}
-              </div>
+              {waUrl && (
+                <div className="pv-contact-row">
+                  <div>
+                    <small>واتساب</small>
+                    <strong dir="ltr">{provider.whatsapp}</strong>
+                  </div>
+                  <a className="pv-contact-act" href={waUrl} target="_blank" rel="noopener noreferrer">{contactLabel || "مراسلة"}</a>
+                </div>
+              )}
+
+              {(ig || sc || tk || tw) && (
+                <>
+                  <div className="pv-soc-title">حسابات التواصل</div>
+                  <div className="pv-soc-mini">
+                    {ig && (
+                      <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" aria-label="إنستغرام" title="إنستغرام"><SocialGlyph platform="ig" /></a>
+                    )}
+                    {sc && (
+                      <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" aria-label="سناب شات" title="سناب شات"><SocialGlyph platform="sc" /></a>
+                    )}
+                    {tk && (
+                      <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" aria-label="تيك توك" title="تيك توك"><SocialGlyph platform="tk" /></a>
+                    )}
+                    {tw && (
+                      <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" aria-label="إكس" title="إكس"><SocialGlyph platform="tw" /></a>
+                    )}
+                  </div>
+                </>
+              )}
+
 
 
 
