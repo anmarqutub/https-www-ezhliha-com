@@ -1,7 +1,7 @@
 /** صياغة عربية بيضاء لعرض الأسعار كنطاق بدل رقم واحد */
 
 function fmt(n: number) {
-  return Number(n).toLocaleString("ar-SA", { maximumFractionDigits: 0 });
+  return Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
 export function priceRangeText(

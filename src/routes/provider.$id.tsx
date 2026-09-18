@@ -677,7 +677,7 @@ function ProviderPage() {
                           )}
                         </div>
                         {r.comment && <p>{r.comment}</p>}
-                        <small>{new Date(r.created_at).toLocaleDateString("ar-SA")}</small>
+                        <small>{new Date(r.created_at).toLocaleDateString("ar-SA-u-nu-latn")}</small>
                       </div>
                     ))}
                   </div>

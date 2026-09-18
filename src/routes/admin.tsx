@@ -2800,7 +2800,7 @@ function Modal({ title, onClose, onSave, children, wide }: {
 
 function fmt(iso: string) {
   try {
-    return new Date(iso).toLocaleString("ar-SA", { dateStyle: "medium", timeStyle: "short" });
+    return new Date(iso).toLocaleString("ar-SA-u-nu-latn", { dateStyle: "medium", timeStyle: "short" });
   } catch { return iso; }
 }
 
@@ -3195,7 +3195,7 @@ function CodesTab() {
                 </td>
                 <td style={cellStyle}>{c.email || "—"}</td>
                 <td style={cellStyle}>{c.note || "—"}</td>
-                <td style={cellStyle}>{new Date(c.created_at).toLocaleDateString("ar-SA")}</td>
+                <td style={cellStyle}>{new Date(c.created_at).toLocaleDateString("ar-SA-u-nu-latn")}</td>
                 <td style={cellStyle}>
                   <button onClick={() => onDelete(c.id)} style={{ background: "#fee", color: "#c00", border: "1px solid #fcc", padding: "4px 10px", borderRadius: 6, cursor: "pointer", fontSize: 12 }}>
                     حذف
@@ -3279,7 +3279,7 @@ function SallaOrdersTab() {
   function exportCSV() {
     const header = ["التاريخ", "اسم العميلة", "الجوال", "رقم طلب سلة", "الإيميل", "الكود", "الحالة"];
     const rows = filtered.map((o: any) => [
-      new Date(o.created_at).toLocaleString("ar-SA"),
+      new Date(o.created_at).toLocaleString("ar-SA-u-nu-latn"),
       o.customer_name || "",
       o.customer_phone || "",
       o.salla_order_id || "",
@@ -3360,7 +3360,7 @@ function SallaOrdersTab() {
             {q.isLoading && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>جاري التحميل...</td></tr>}
             {filtered.map((o: any) => (
               <tr key={o.id} style={{ borderTop: "1px solid #eee" }}>
-                <td style={{ ...cellStyle, fontSize: 12, whiteSpace: "nowrap" }}>{new Date(o.created_at).toLocaleDateString("ar-SA")}</td>
+                <td style={{ ...cellStyle, fontSize: 12, whiteSpace: "nowrap" }}>{new Date(o.created_at).toLocaleDateString("ar-SA-u-nu-latn")}</td>
                 <td style={cellStyle}>{o.customer_name || "—"}</td>
                 <td style={{ ...cellStyle, direction: "ltr", textAlign: "right" }}>{o.customer_phone || "—"}</td>
                 <td style={cellStyle}>{o.salla_order_id || "—"}</td>
