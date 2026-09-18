@@ -1150,9 +1150,6 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           </div>
         )}
 
-        {!loading && categories.length > 0 && (
-          <div className="ez-mega-inline">{renderMega()}</div>
-        )}
       </section>
       )}
 
