@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getVideoPoster } from "@/lib/media.functions";
+import defaultCover from "@/assets/default-provider.jpg";
 
 export type MediaItem = { url: string; thumbnail_url?: string | null };
 
@@ -113,18 +114,12 @@ export function MediaThumb({
         ) : loading ? (
           <span className="mt-skel" aria-hidden="true" />
         ) : (
-          <span className="mt-fb">
-            <span className="mt-fb-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-            <b>شاهدي قصص مزوّدي الخدمات</b>
-            <small>إلهام حقيقي من أعمال مختارة.</small>
-            <em>{isVideo ? `شاهدي الفيديو على ${sourceLabel(url)}` : `افتحي المصدر على ${sourceLabel(url)}`}</em>
+          <span className="mt-cover">
+            <img src={defaultCover} alt="" loading="lazy" decoding="async" />
+            <em>{isVideo ? `شاهدي المقطع على ${sourceLabel(url)}` : `افتحي المصدر على ${sourceLabel(url)}`}</em>
           </span>
         )}
-        {isVideo && (poster || direct) && (
+        {isVideo && (
           <span className="mt-play" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
               <path d="M8 5v14l11-7z" />
@@ -138,6 +133,9 @@ export function MediaThumb({
         .mt-tile img, .mt-tile video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
         .mt-skel { position:absolute; inset:0; background:linear-gradient(100deg,#F1E9DA 30%,#EFE4CF 50%,#F1E9DA 70%); background-size:200% 100%; animation:mt-sh 1.2s linear infinite; }
         @keyframes mt-sh { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+        .mt-cover { position:absolute; inset:0; display:block; }
+        .mt-cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.92; }
+        .mt-cover em { position:absolute; inset-inline:10px; bottom:10px; font-style:normal; font-size:12px; font-weight:600; color:#fff; background:rgba(100,0,0,.88); border-radius:999px; padding:8px 12px; text-align:center; }
         .mt-fb { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; padding:14px; color:#3a2b25; }
         .mt-fb-ico { width:40px; height:40px; border-radius:50%; background:#fff; color:#640000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.12); }
         .mt-fb b { font-size:14px; font-weight:600; }
