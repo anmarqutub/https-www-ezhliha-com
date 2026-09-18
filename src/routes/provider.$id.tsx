@@ -570,47 +570,6 @@ function ProviderPage() {
           )}
         </section>
 
-        {/* الخدمات */}
-        <section className="pv-sec" id="s-services">
-          <div className="pv-sec-grid">
-            <div className="pv-sec-head">
-              <span className="pv-eyebrow">وش تقدرين تطلبين؟</span>
-              <h2>اختاري ما يناسب مناسبتكِ</h2>
-            </div>
-            {services.length > 0 ? (
-              <div className="pv-srv-grid">
-                {services.map((sv) => {
-                  const nImg = (sv.images ?? []).length + (sv.image_url ? 1 : 0);
-                  const nVid = (sv.videos ?? []).length;
-                  return (
-                    <article className="pv-srv" key={sv.id}>
-                      <span className="pv-srv-ico"><SparkIcon /></span>
-                      <h3>{sv.name}</h3>
-                      {sv.price && <strong>{sv.price}</strong>}
-                      {sv.description && <p>{sv.description}</p>}
-                      <span className="pv-srv-meta">
-                        {nImg > 0 && <em>{nImg} صورة</em>}
-                        {nVid > 0 && <em>{nVid} مقطع</em>}
-                      </span>
-                      <OfferMedia
-                        images={[
-                          ...(sv.image_url ? [{ url: sv.image_url } as MediaItem] : []),
-                          ...(sv.images ?? []),
-                        ]}
-                        videos={sv.videos ?? []}
-                      />
-
-                    </article>
-
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="pv-empty">سيتم إضافة الخدمات قريباً.</div>
-            )}
-
-          </div>
-        </section>
 
         {/* صور وفيديو */}
         {(() => {
