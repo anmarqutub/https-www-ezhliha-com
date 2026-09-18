@@ -58,7 +58,7 @@ function SignupPage() {
 
   const emailError = serverErrors.email ?? (email.length > 0 && !emailValid ? "صيغة البريد غير صحيحة" : undefined);
   const phoneError = serverErrors.phone ?? (phone.length > 0 && !phoneValid ? "رقم الجوال غير صحيح" : undefined);
-  const passwordError = serverErrors.password ?? (password.length > 0 && !passwordValid ? "كلمة المرور يجب أن تكون ٦ أحرف على الأقل" : undefined);
+  const passwordError = serverErrors.password ?? (password.length > 0 && !passwordValid ? "كلمة المرور لازم ٦ أحرف على الأقل" : undefined);
   const nameError = serverErrors.full_name ?? undefined;
   const codeError = serverErrors.code ?? undefined;
   const cityError = serverErrors.city ?? undefined;
@@ -71,7 +71,7 @@ function SignupPage() {
     if (!nameValid) errs.full_name = "الاسم مطلوب";
     if (!codeValid) errs.code = "كود الشراء مطلوب";
     if (!emailValid) errs.email = "البريد الإلكتروني غير صالح";
-    if (!passwordValid) errs.password = "كلمة المرور يجب أن تكون ٦ أحرف على الأقل";
+    if (!passwordValid) errs.password = "كلمة المرور لازم ٦ أحرف على الأقل";
     if (!phoneValid) errs.phone = "رقم الجوال غير صحيح";
     if (!cityValid) errs.city = "المدينة مطلوبة";
     if (Object.keys(errs).length) { setServerErrors(errs); return; }
@@ -85,7 +85,7 @@ function SignupPage() {
       if (sErr) throw new Error(sErr.message);
       navigate({ to: "/" });
     } catch (err: any) {
-      const raw = err?.message || "حدث خطأ";
+      const raw = err?.message || "صار خطأ";
       try {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.field && parsed.message) {
@@ -102,15 +102,15 @@ function SignupPage() {
   }
 
   return (
-    <AuthShell title="إنشاء حساب جديد" sub="تحتاج كود الشراء من متجر سلة للتسجيل">
+    <AuthShell title="إنشاء حساب جديد" sub="تحتاجين كود الشراء من متجر سلة عشان تسجلين">
       <form onSubmit={onSubmit} className="auth-form" noValidate>
-        <Field label="كود الشراء" hint="الكود المُرسل لك بعد شرائك من سلة" error={codeError}>
+        <Field label="كود الشراء" hint="الكود اللي وصلك بعد طلبك من سلة" error={codeError}>
           <input required value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setServerErrors((s) => ({ ...s, code: "" })); }} placeholder="مثال: A1B2C3D4" style={{ letterSpacing: 2, fontWeight: 700 }} />
         </Field>
-        <Field label="الاسم الكامل" hint="كما تود أن يظهر في حسابك" error={nameError}>
+        <Field label="الاسم الكامل" hint="زي ما تبغين يظهر في حسابك" error={nameError}>
           <input required value={fullName} onChange={(e) => { setFullName(e.target.value); setServerErrors((s) => ({ ...s, full_name: "" })); }} placeholder="مثال: نورة عبدالله" />
         </Field>
-        <Field label="البريد الإلكتروني" hint="سيُستخدم لتسجيل الدخول واستعادة الحساب" error={emailError}>
+        <Field label="البريد الإلكتروني" hint="نستخدمه لتسجيل الدخول واستعادة حسابك" error={emailError}>
           <input required type="email" value={email} onChange={(e) => { setEmail(e.target.value); setServerErrors((s) => ({ ...s, email: "" })); }} placeholder="name@email.com" />
         </Field>
         <Field label="كلمة المرور" hint="٦ أحرف على الأقل" error={passwordError}>
@@ -132,7 +132,7 @@ function SignupPage() {
             value={city}
             onChange={(e) => { setCity(e.target.value); setServerErrors((s) => ({ ...s, city: "" })); }}
           >
-            <option value="">اختر المدينة</option>
+            <option value="">اختاري مدينتك</option>
             {cities?.map((c) => (
               <option key={c.id} value={c.name_ar}>{c.name_ar}</option>
             ))}
@@ -141,7 +141,7 @@ function SignupPage() {
         {formError && <div className="auth-error">{formError}</div>}
         <button className="auth-btn" disabled={submitting || !formValid}>{submitting ? "..." : "إنشاء الحساب"}</button>
         <div className="auth-switch">
-          لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
+          عندك حساب؟ <Link to="/login">تسجيل الدخول</Link>
         </div>
       </form>
     </AuthShell>

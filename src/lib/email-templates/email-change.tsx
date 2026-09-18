@@ -25,7 +25,7 @@ export const EmailChangeEmail = ({ siteName, oldEmail, newEmail, confirmationUrl
         <div style={{ textAlign: 'center' as const }}>
           <Button style={button} href={confirmationUrl}>تأكيد التغيير</Button>
         </div>
-        <Text style={footer}>إذا لم تطلبي هذا التغيير، يرجى تأمين حسابك فوراً.</Text>
+        <Text style={footer}>إذا ما طلبتي التغيير، أمّني حسابك فوراً.</Text>
       </Container>
     </Body>
   </Html>

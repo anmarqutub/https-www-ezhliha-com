@@ -18,13 +18,13 @@ export const SignupEmail = ({ siteName, siteUrl, recipient, confirmationUrl }: S
         <Heading style={h1}>أهلاً بكِ في {siteName} 🌷</Heading>
         <Text style={text}>
           شكراً لتسجيلك في <Link href={siteUrl} style={link}>{siteName}</Link>.
-          الرجاء تأكيد بريدك الإلكتروني ({recipient}) بالضغط على الزر بالأسفل:
+          أكدي بريدك الإلكتروني ({recipient}) بالضغط على الزر بالأسفل:
         </Text>
         <div style={{ textAlign: 'center' as const }}>
           <Button style={button} href={confirmationUrl}>تأكيد البريد الإلكتروني</Button>
         </div>
         <Text style={footer}>
-          إذا لم تقومي بإنشاء حساب، تجاهلي هذه الرسالة.
+          إذا ما أنشأتي حساب، تجاهلي الرسالة.
         </Text>
       </Container>
     </Body>

@@ -50,7 +50,7 @@ function LoginPage() {
           <Link to="/forgot-password">نسيت كلمة المرور؟</Link>
         </div>
         <div className="auth-switch">
-          ليس لديك حساب؟ <Link to="/signup">سجّل الآن</Link>
+          ما عندك حساب؟ <Link to="/signup">سجّلي الآن</Link>
         </div>
       </form>
     </AuthShell>

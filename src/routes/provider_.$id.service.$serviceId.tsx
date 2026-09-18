@@ -95,7 +95,7 @@ function ServiceDetailPage() {
     const lines = [
       "مرحبا .. جايتك من موقع ازهليها",
       "",
-      `ابي استفسر عن الاسعار لديكم في: ${providerName}`,
+      `ابغى أستفسر عن الأسعار عندكم في: ${providerName}`,
       `• الخدمة: ${service?.name ?? ""}`,
       "",
       `• تاريخ المناسبة: ${fmtDate(qDate)}`,
@@ -108,7 +108,7 @@ function ServiceDetailPage() {
     setQuoteOpen(false);
   };
 
-  if (loading) return <div className="sv-wrap"><p className="sv-muted">جارٍ التحميل…</p></div>;
+  if (loading) return <div className="sv-wrap"><p className="sv-muted">لحظة…</p></div>;
   if (!service) return <div className="sv-wrap"><p className="sv-muted">لم يتم العثور على الخدمة.</p></div>;
 
   const images = (service.images ?? []).filter((m) => m?.url);
@@ -151,7 +151,7 @@ function ServiceDetailPage() {
           )}
 
           {images.length === 0 && videos.length === 0 && (
-            <p className="sv-muted">لم تُضف صور أو مقاطع لهذه الخدمة بعد.</p>
+            <p className="sv-muted">ما فيه صور أو مقاطع لهذي الخدمة للحين.</p>
           )}
         </div>
 

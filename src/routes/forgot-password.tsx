@@ -30,7 +30,7 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <AuthShell title="نسيت كلمة المرور" sub="سنرسل لكِ رابط إعادة تعيين كلمة المرور عبر البريد">
+    <AuthShell title="نسيت كلمة المرور" sub="نرسل لك رابط إعادة تعيين كلمة المرور على بريدك">
       {sent ? (
         <div className="auth-form" style={{ textAlign: "center", gap: 12 }}>
           <div style={{ fontSize: 40 }}>📧</div>

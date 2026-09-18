@@ -253,7 +253,7 @@ function ProviderPage() {
     reload();
   };
 
-  if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>لحظة...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
   const refImages = pickRefImages(subName);
@@ -299,7 +299,7 @@ function ProviderPage() {
     const lines = [
       "مرحبا .. جايتك من موقع ازهليها",
       "",
-      `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
+      `ابغى أستفسر عن الأسعار عندكم في: ${provider.name}`,
       "",
       `• تاريخ المناسبة: ${fmtDate(qDate)}`,
       `• المدينة: ${qCity || cityName || "-"}`,
@@ -332,7 +332,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>ابحث عن مقدم خدمة</span>
+            <span>ابحثي عن مزود خدمة</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -444,7 +444,7 @@ function ProviderPage() {
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
                 <strong>اطلبي عرضك من {provider.name}</strong>
-                <p className="pv-quote-sub">أرسلي تفاصيل مناسبتكِ، وسيتواصل معكِ مقدّم الخدمة لمناقشة السعر والتفاصيل.</p>
+                <p className="pv-quote-sub">أرسلي تفاصيل مناسبتك، ويتواصل معك مزود الخدمة على السعر والتفاصيل.</p>
               </div>
 
               <div className="pv-price-cta">
@@ -521,7 +521,7 @@ function ProviderPage() {
                       setQuoteOpen(true);
                     }}
                   >
-                    {selectedPkg === pkg.id ? "تم اختيار هذه الباقة" : "اختر هذه الباقة"}
+                    {selectedPkg === pkg.id ? "اخترتي هذي الباقة" : "اختاري هذي الباقة"}
                   </button>
                 </article>
               ))}
@@ -549,7 +549,7 @@ function ProviderPage() {
                   <h2>صور وفيديوهات {provider.name}</h2>
                 </div>
                 <div className="pv-sec-body">
-                  <p className="pv-sec-note">اضغط على الصورة، وينفتح لك المصدر الأصلي عند إضافة الرابط الرسمي.</p>
+                  <p className="pv-sec-note">اضغطي على الصورة ويفتح لك المصدر الأصلي.</p>
                 </div>
               </div>
               {tiles.length > 0 ? (
@@ -557,7 +557,7 @@ function ProviderPage() {
                   {tiles.map((t) => <MediaCard key={t.key} url={t.url} poster={t.poster} isVideo={t.isVideo} />)}
                 </div>
               ) : (
-                <div className="pv-empty">سيتم رفع الصور والمقاطع قريباً.</div>
+                <div className="pv-empty">الصور والمقاطع تنزل قريباً.</div>
               )}
             </section>
           );
@@ -653,7 +653,7 @@ function ProviderPage() {
               <div className="pv-contact-row">
                 <div>
                   <small>رقم الاتصال</small>
-                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "الرقم غير مضاف"}</strong>
+                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "ما فيه رقم مضاف"}</strong>
                 </div>
                 {callUrl ? (
                   <button type="button" className="pv-contact-act" onClick={() => {
@@ -703,7 +703,7 @@ function ProviderPage() {
               <div className="pv-card-top">
                 <div>
                   <h3 className="pv-card-title">الفروع ومناطق الخدمة</h3>
-                  <span className="pv-card-sub">اختر الفرع الأقرب لك قبل التواصل.</span>
+                  <span className="pv-card-sub">اختاري الفرع الأقرب لك قبل التواصل.</span>
                 </div>
                 <span className="pv-card-ico"><PinIcon /></span>
               </div>

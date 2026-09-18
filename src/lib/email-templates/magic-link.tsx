@@ -18,7 +18,7 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
         <div style={{ textAlign: 'center' as const }}>
           <Button style={button} href={confirmationUrl}>الدخول الآن</Button>
         </div>
-        <Text style={footer}>إذا لم تطلبي الرابط، يمكنك تجاهل هذه الرسالة.</Text>
+        <Text style={footer}>إذا ما طلبتي الرابط، تجاهلي الرسالة.</Text>
       </Container>
     </Body>
   </Html>

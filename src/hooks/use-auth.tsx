@@ -173,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           kickedRef.current = true;
           stopHeartbeat();
           stopPolling();
-          toast.error("تم تعليق حسابك. يرجى التواصل مع الإدارة.");
+          toast.error("حسابك معلّق حالياً، تواصلي معنا عشان نساعدك.");
           await supabase.auth.signOut();
         }
       } catch {
