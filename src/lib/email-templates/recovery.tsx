@@ -23,7 +23,7 @@ export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps)
         </div>
         <Text style={hint}>الرابط صالح لمدة محدودة لأسباب أمنية.</Text>
         <Text style={footer}>
-          إذا لم تطلبي إعادة التعيين، يمكنك تجاهل هذه الرسالة بأمان — لن يتم تغيير كلمة المرور.
+          إذا ما طلبتي إعادة التعيين، تجاهلي الرسالة — كلمة المرور ما تتغير.
         </Text>
       </Container>
     </Body>

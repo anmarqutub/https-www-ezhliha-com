@@ -15,7 +15,7 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
         <Heading style={h1}>تأكيد الهوية</Heading>
         <Text style={text}>استخدمي الرمز التالي لتأكيد هويتك:</Text>
         <Text style={codeStyle}>{token}</Text>
-        <Text style={footer}>الرمز صالح لفترة قصيرة. إذا لم تطلبي هذا الرمز يمكنك تجاهل الرسالة.</Text>
+        <Text style={footer}>الرمز صالح لفترة قصيرة. إذا ما طلبتيه، تجاهلي الرسالة.</Text>
       </Container>
     </Body>
   </Html>

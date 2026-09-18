@@ -253,7 +253,7 @@ function ProviderPage() {
     reload();
   };
 
-  if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>جارٍ التحميل...</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>لحظة...</div>;
   if (!provider) return <div style={{ padding: 40, textAlign: "center", fontFamily: "Thmanyah Serif Display, Tajawal, sans-serif" }}>مقدم الخدمة غير موجود.</div>;
 
   const refImages = pickRefImages(subName);
@@ -299,7 +299,7 @@ function ProviderPage() {
     const lines = [
       "مرحبا .. جايتك من موقع ازهليها",
       "",
-      `ابي استفسر عن الاسعار لديكم في: ${provider.name}`,
+      `ابغى أستفسر عن الأسعار عندكم في: ${provider.name}`,
       "",
       `• تاريخ المناسبة: ${fmtDate(qDate)}`,
       `• المدينة: ${qCity || cityName || "-"}`,
@@ -444,7 +444,7 @@ function ProviderPage() {
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
                 <strong>اطلبي عرضك من {provider.name}</strong>
-                <p className="pv-quote-sub">أرسلي تفاصيل مناسبتكِ، وسيتواصل معكِ مقدّم الخدمة لمناقشة السعر والتفاصيل.</p>
+                <p className="pv-quote-sub">أرسلي تفاصيل مناسبتك، ويتواصل معك مزود الخدمة على السعر والتفاصيل.</p>
               </div>
 
               <div className="pv-price-cta">
@@ -557,7 +557,7 @@ function ProviderPage() {
                   {tiles.map((t) => <MediaCard key={t.key} url={t.url} poster={t.poster} isVideo={t.isVideo} />)}
                 </div>
               ) : (
-                <div className="pv-empty">سيتم رفع الصور والمقاطع قريباً.</div>
+                <div className="pv-empty">الصور والمقاطع تنزل قريباً.</div>
               )}
             </section>
           );
@@ -703,7 +703,7 @@ function ProviderPage() {
               <div className="pv-card-top">
                 <div>
                   <h3 className="pv-card-title">الفروع ومناطق الخدمة</h3>
-                  <span className="pv-card-sub">اختر الفرع الأقرب لك قبل التواصل.</span>
+                  <span className="pv-card-sub">اختاري الفرع الأقرب لك قبل التواصل.</span>
                 </div>
                 <span className="pv-card-ico"><PinIcon /></span>
               </div>

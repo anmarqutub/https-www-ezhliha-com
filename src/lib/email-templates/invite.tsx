@@ -22,7 +22,7 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
         <div style={{ textAlign: 'center' as const }}>
           <Button style={button} href={confirmationUrl}>قبول الدعوة</Button>
         </div>
-        <Text style={footer}>إذا لم تكوني تتوقعين هذه الدعوة، يمكنك تجاهل الرسالة.</Text>
+        <Text style={footer}>إذا ما كنتي تتوقعين الدعوة، تجاهلي الرسالة.</Text>
       </Container>
     </Body>
   </Html>
