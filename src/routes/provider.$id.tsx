@@ -473,7 +473,7 @@ function ProviderPage() {
             packages.length > 0 || services.length > 0 ? { id: "s-packages", label: "الخدمات والباقات" } : null,
             hasMedia ? { id: "s-media", label: "صور وفيديو" } : null,
             hasContact ? { id: "s-contact", label: "التواصل والفروع" } : null,
-            reviews.length > 0 ? { id: "s-reviews", label: "التقييمات" } : null,
+            { id: "s-reviews", label: "التقييمات" },
           ].filter(Boolean) as { id: string; label: string }[];
           if (links.length < 2) return null;
           return (
