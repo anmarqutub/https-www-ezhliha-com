@@ -91,18 +91,19 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
 }
 
 const footerCss = `
-  .ez-footer { background:#640000; color:#fff; padding:0; font-family:"Thmanyah Serif Display", "Noto Sans Arabic", Tajawal, system-ui, sans-serif; font-size:13.5px; line-height:1.75; }
+  .ez-footer { background:#640000; color:#fff; padding:0; font-family:"Thmanyah Serif Display", "Noto Sans Arabic", Tajawal, system-ui, sans-serif; font-size:12.5px; line-height:1.6; }
   .ez-footer h3 { font-family:"Thmanyah Serif Display","Alexandria","Noto Sans Arabic",Tajawal,sans-serif; }
-  .ez-footer-grid { max-width:1240px; margin:0 auto; padding:52px 32px 44px; display:grid; grid-template-columns:1.2fr .8fr .9fr; gap:36px; }
+  .ez-footer-grid { max-width:1240px; margin:0 auto; padding:28px 28px 22px; display:grid; grid-template-columns:1.2fr .8fr .9fr; gap:22px; }
   .ez-footer-brand { max-width:400px; }
-  .ez-footer-brand img { height:64px; width:auto; object-fit:contain; background:#fff; border-radius:8px; padding:6px 10px; }
-  .ez-footer-brand p { color:#fff; font-size:13.5px; line-height:1.95; margin:16px 0 0; }
-  .ez-footer-col h3 { font-size:14px; font-weight:500; margin:0; color:#fff; }
-  .ez-footer-links { margin-top:18px; display:grid; gap:12px; justify-items:start; font-size:13.5px; color:#fff; }
-  .ez-footer-links > * { display:inline-flex; align-items:center; gap:8px; text-align:start; }
-  .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:#fff; text-decoration:none; font-family:inherit; font-size:13.5px; }
+  .ez-footer-brand img { height:46px; width:auto; object-fit:contain; background:#fff; border-radius:8px; padding:4px 8px; }
+  .ez-footer-brand p { color:#fff; font-size:12.5px; line-height:1.7; margin:10px 0 0; }
+  .ez-footer-col h3 { font-size:13px; font-weight:500; margin:0; color:#fff; }
+  .ez-footer-links { margin-top:10px; display:grid; gap:8px; justify-items:start; font-size:12.5px; color:#fff; }
+  .ez-footer-links > * { display:inline-flex; align-items:center; gap:6px; text-align:start; }
+  .ez-footer-links a, .ez-footer-links button { background:none; border:0; padding:0; cursor:pointer; color:#fff; text-decoration:none; font-family:inherit; font-size:12.5px; }
   .ez-footer-links a:hover, .ez-footer-links button:hover { color:#fff; }
-  .ez-footer-wa { display:inline-flex; align-items:center; gap:8px; }
-  .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); max-width:1240px; margin:0 auto; padding:18px 32px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:12px; color:#fff; }
-  @media (max-width: 860px) { .ez-footer-grid { grid-template-columns:1fr; padding:36px 20px 28px; } .ez-footer-bar { padding:16px 20px; } }
+  .ez-footer-wa { display:inline-flex; align-items:center; gap:6px; }
+  .ez-footer-bar { border-top:1px solid rgba(255,255,255,.14); max-width:1240px; margin:0 auto; padding:12px 28px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:11.5px; color:#fff; }
+  @media (max-width: 860px) { .ez-footer-grid { grid-template-columns:1fr; padding:22px 16px 18px; gap:16px; } .ez-footer-bar { padding:10px 16px; } }
+
 `;
