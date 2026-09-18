@@ -6,9 +6,9 @@ export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
       { title: "الأسئلة الشائعة — إزهليها" },
-      { name: "description", content: "إجابات واضحة عن البحث والأسعار والمفضلة والتواصل مع مقدّم الخدمة." },
+      { name: "description", content: "أجوبة واضحة عن البحث والأسعار والمفضلة والتواصل مع مزود الخدمة." },
       { property: "og:title", content: "الأسئلة الشائعة — إزهليها" },
-      { property: "og:description", content: "إجابات واضحة قبل أن تبدئي البحث أو ترسلي طلبكِ." },
+      { property: "og:description", content: "أجوبة واضحة قبل ما تبدين البحث أو ترسلين طلبك." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

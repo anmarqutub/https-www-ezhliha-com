@@ -53,14 +53,14 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "إزهليها — دليلك لأحلى المناسبات" },
       {
         property: "og:description",
-        content: "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة.",
+        content: "شوفي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "إزهليها — دليلك لأحلى المناسبات" },
       {
         name: "twitter:description",
-        content: "ابحث عن الضيافة والقاعات والتصوير والتجميل، قارن براحتك، وتواصل مباشرة.",
+        content: "شوفي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
       },
     ],
   }),

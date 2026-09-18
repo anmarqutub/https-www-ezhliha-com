@@ -42,7 +42,7 @@ function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
     if (password.length < 6) {
-      setError("كلمة المرور يجب ألا تقل عن 6 أحرف");
+      setError("كلمة المرور لازم ٦ أحرف على الأقل");
       return;
     }
     if (password !== confirm) {
@@ -61,21 +61,21 @@ function ResetPasswordPage() {
   }
 
   return (
-    <AuthShell title="إعادة تعيين كلمة المرور" sub="اختر كلمة مرور جديدة لحسابك">
+    <AuthShell title="إعادة تعيين كلمة المرور" sub="اختاري كلمة مرور جديدة لحسابك">
       {done ? (
         <div className="auth-form" style={{ textAlign: "center", gap: 12 }}>
           <div style={{ fontSize: 40 }}>✅</div>
-          <p style={{ margin: 0 }}>تم تحديث كلمة المرور بنجاح. سيتم تحويلك لتسجيل الدخول...</p>
+          <p style={{ margin: 0 }}>تم تحديث كلمة المرور بنجاح. نحولك الآن لتسجيل الدخول...</p>
         </div>
       ) : invalid ? (
         <div className="auth-form" style={{ textAlign: "center", gap: 12 }}>
-          <p style={{ margin: 0 }}>الرابط غير صالح أو منتهي الصلاحية.</p>
+          <p style={{ margin: 0 }}>الرابط غير صالح أو انتهت صلاحيته.</p>
           <a className="auth-btn" href="/forgot-password" style={{ textDecoration: "none", textAlign: "center" }}>
             طلب رابط جديد
           </a>
         </div>
       ) : !ready ? (
-        <p className="auth-form" style={{ textAlign: "center" }}>جارٍ التحقق من الرابط...</p>
+        <p className="auth-form" style={{ textAlign: "center" }}>لحظة، نتحقق من الرابط...</p>
       ) : (
         <form onSubmit={onSubmit} className="auth-form">
           <label className="auth-field">

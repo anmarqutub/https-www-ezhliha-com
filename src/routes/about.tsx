@@ -6,7 +6,7 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "من نحن — إزهليها" },
-      { name: "description", content: "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث." },
+      { name: "description", content: "أزهليها تجمع لك مزودي خدمات المناسبات في مكان واحد، عشان تختصرين وقت البحث." },
       { property: "og:title", content: "من نحن — إزهليها" },
       { property: "og:description", content: "مزوّدو خدمات المناسبات في مكان واحد." },
       { property: "og:type", content: "website" },

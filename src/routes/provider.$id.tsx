@@ -332,7 +332,7 @@ function ProviderPage() {
         <div className="pv-top-side">
           <Link to="/" className="pv-top-cta">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
-            <span>ابحث عن مقدم خدمة</span>
+            <span>ابحثي عن مزود خدمة</span>
           </Link>
           {user && <button className="pv-top-out" onClick={() => signOut()}>خروج</button>}
         </div>
@@ -521,7 +521,7 @@ function ProviderPage() {
                       setQuoteOpen(true);
                     }}
                   >
-                    {selectedPkg === pkg.id ? "تم اختيار هذه الباقة" : "اختر هذه الباقة"}
+                    {selectedPkg === pkg.id ? "اخترتي هذي الباقة" : "اختاري هذي الباقة"}
                   </button>
                 </article>
               ))}
@@ -549,7 +549,7 @@ function ProviderPage() {
                   <h2>صور وفيديوهات {provider.name}</h2>
                 </div>
                 <div className="pv-sec-body">
-                  <p className="pv-sec-note">اضغط على الصورة، وينفتح لك المصدر الأصلي عند إضافة الرابط الرسمي.</p>
+                  <p className="pv-sec-note">اضغطي على الصورة ويفتح لك المصدر الأصلي.</p>
                 </div>
               </div>
               {tiles.length > 0 ? (
@@ -653,7 +653,7 @@ function ProviderPage() {
               <div className="pv-contact-row">
                 <div>
                   <small>رقم الاتصال</small>
-                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "الرقم غير مضاف"}</strong>
+                  <strong dir="ltr">{callUrl ? callUrl.replace("tel:", "") : "ما فيه رقم مضاف"}</strong>
                 </div>
                 {callUrl ? (
                   <button type="button" className="pv-contact-act" onClick={() => {

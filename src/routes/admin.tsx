@@ -2463,7 +2463,7 @@ function BannersTab() {
 type SiteTextRow = { key: string; value: string; label: string | null; updated_at: string };
 
 const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
-  { key: "nav.cta", label: "زر البحث في الهيدر", value: "ابحث عن مقدم خدمة", updated_at: "" },
+  { key: "nav.cta", label: "زر البحث في الهيدر", value: "ابحثي عن مزود خدمة", updated_at: "" },
   { key: "home.hero.title", label: "عنوان صورة الواجهة", value: "إزهليها", updated_at: "" },
   { key: "home.hero.image", label: "رابط صورة الواجهة (اتركه فارغاً للخلفية العنابية)", value: "", updated_at: "" },
   { key: "home.hero.fallback", label: "نص البنر الافتراضي", value: "دليلك الأول لتجهيز مناسباتك.. من أفخم مقدمي الخدمات في المملكة 🤍", updated_at: "" },
