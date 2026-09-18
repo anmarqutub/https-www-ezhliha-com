@@ -472,8 +472,8 @@ function ProviderPage() {
             provider.description ? { id: "s-about", label: "نبذة عن الخدمة" } : null,
             packages.length > 0 || services.length > 0 ? { id: "s-packages", label: "الخدمات والباقات" } : null,
             hasMedia ? { id: "s-media", label: "صور وفيديو" } : null,
-            reviews.length > 0 ? { id: "s-reviews", label: "التقييمات" } : null,
             hasContact ? { id: "s-contact", label: "التواصل والفروع" } : null,
+            reviews.length > 0 ? { id: "s-reviews", label: "التقييمات" } : null,
           ].filter(Boolean) as { id: string; label: string }[];
           if (links.length < 2) return null;
           return (
