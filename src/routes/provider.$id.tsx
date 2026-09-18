@@ -1005,6 +1005,11 @@ function SendIcon() {
 }
 
 const css = `
+  .pv-soc-mini { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .pv-soc-mini a { width:32px; height:32px; border-radius:50%; border:1px solid #EFE7D8; background:#FBF7EE; color:#640000; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+  .pv-soc-mini a:hover { background:#640000; color:#fff; }
+  .pv-soc-mini svg { width:15px; height:15px; }
+
   .pv-btn-quote { background:#640000; color:#fff; border:none; min-height:40px; padding:0 20px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 24px rgba(100,0,0,.18); }
   .pv-btn-quote svg { width:16px; height:16px; }
   .pv-btn-quote:hover { background:#4d0000; }
