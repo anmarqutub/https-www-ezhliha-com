@@ -165,8 +165,9 @@ export default function HomeLanding({
       {/* ── 5. JOURNEY ── */}
       <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
-          <h2 className="hl-h2">{txt("hl.journey.title", "نكمّل معكِ التفاصيل")}</h2>
-          <p className="hl-sub">{txt("hl.journey.desc", "خطوات بسيطة تقرّبكِ من اختياركِ المناسب.")}</p>
+          <h2 className="hl-h2">{txt("hl.journey.title", "نكمل معك التفاصيل")}</h2>
+          <p className="hl-sub">{txt("hl.journey.desc", "خطوات بسيطة تقربك من الخيار المناسب.")}</p>
+
         </div>
         <div className="hl-journey">
           {journey.map((j) => (
