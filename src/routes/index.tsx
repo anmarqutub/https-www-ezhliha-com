@@ -330,17 +330,29 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     selectedSub !== "all" ? subcategories.filter((s) => s.parent_id === selectedSub) : [];
 
 
+  // كل التصنيفات الفرعية لكل مزود (الأساسي + الإضافية)
+  const providerSubIds = useMemo(() => {
+    const m = new Map<string, Set<string>>();
+    providers.forEach((p) => m.set(p.id, new Set(p.subcategory_id ? [p.subcategory_id] : [])));
+    extraSubs.forEach((e) => {
+      const s = m.get(e.provider_id);
+      if (s) s.add(e.subcategory_id);
+    });
+    return m;
+  }, [providers, extraSubs]);
+
+  const subsOf = (p: Provider) => Array.from(providerSubIds.get(p.id) ?? new Set([p.subcategory_id]));
+
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
     providers.forEach((p) => {
       if (!matchesCity(p)) return;
-      const cat = subToCat.get(p.subcategory_id);
-      if (!cat) return;
-      m.set(cat, (m.get(cat) ?? 0) + 1);
+      const cats = new Set(subsOf(p).map((sid) => subToCat.get(sid)).filter(Boolean) as string[]);
+      cats.forEach((cat) => m.set(cat, (m.get(cat) ?? 0) + 1));
     });
     return m;
-  }, [providers, subcategories, selectedCity, providerCityIds]);
+  }, [providers, subcategories, selectedCity, providerCityIds, providerSubIds]);
 
   const providersCountByCity = useMemo(() => {
     const m = new Map<string, number>();
@@ -355,6 +367,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     const ps = subcategories.find((s) => s.id === providerSubId);
     return !!ps && ps.parent_id === selSub;
   };
+
+  const providerMatchesSub = (p: Provider, selSub: string) =>
+    subsOf(p).some((sid) => subMatches(sid, selSub));
+
 
   const q = quickSearch.trim().toLowerCase();
 
