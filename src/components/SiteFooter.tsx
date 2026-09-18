@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
-export const CONTACT_WA_NUMBER = "+966573444242";
+export const CONTACT_WA_NUMBER = "+966506036094";
 export const CONTACT_WA_MESSAGE = "هلا أزهليها، عندي استفسار.";
 
 function wa(number: string, message: string) {
