@@ -98,7 +98,7 @@ type SiteText = { key: string; value: string };
 
 export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
 export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
-export const CONTACT_WA_MESSAGE = "مرحبًا أزهليها، لدي استفسار.";
+export const CONTACT_WA_MESSAGE = "هلا أزهليها، عندي استفسار.";
 
 const REF_IMAGES = [catCatering, catHalls, catPhoto, catLook];
 
@@ -955,7 +955,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "استكشفي الدليل")}
+                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "شوفي الدليل")}
               </button>
               <Link to="/favorites" className="ez-nav-ico" aria-label={txt("nav.favorites", "المفضلة")}>
                 <Heart size={17} />
@@ -1003,7 +1003,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <span className="ez-drawer-cta-ico">✨</span>
               <p>{txt("drawer.cta.text", "اختاري الفئة ونوع الخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
               <Link to="/providers" search={{}} className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
-                {txt("drawer.cta.btn", "استكشفي الدليل")}
+                {txt("drawer.cta.btn", "شوفي الدليل")}
               </Link>
             </div>
           </aside>
@@ -1226,10 +1226,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <div>
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("results.eyebrow", "دليل مزوّدي الخدمات")}</div>
             <h2 className="ez-h2">
-              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "اكتشفي مزوّدي الخدمات")}
+              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "شوفي مزودي الخدمات")}
               <span className="ez-count">({results.length})</span>
             </h2>
-            <p className="ez-muted">{txt("results.desc", "اختاري المدينة والفئة للعثور على الخيارات المناسبة لكِ.")}</p>
+            <p className="ez-muted">{txt("results.desc", "اختاري المدينة والفئة وتطلع لك الخيارات المناسبة.")}</p>
           </div>
           <div className="ez-results-tools">
             <div className="ez-search">
@@ -1353,7 +1353,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {txt("home.about.p1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p2", "يمكنكِ مشاهدة الأعمال، ومعرفة التفاصيل، ومقارنة الخيارات، والتواصل مباشرةً مع مقدّم الخدمة.")}
+              {txt("home.about.p2", "تشوفين أعمالهم، وتعرفين التفاصيل، وتقارنين الخيارات، وتتواصلين مع مقدم الخدمة مباشرة.")}
             </p>
             <p className="ez-about-text">
               {txt("home.about.p3", "هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.")}
@@ -1559,7 +1559,7 @@ function AuthGate() {
         <img src={logoUrl} alt="إزهليها" style={{ height: 90, display: "block", margin: "0 auto 16px auto" }} />
         <h1 style={{ color: "#640000", fontSize: 28, marginBottom: 10 }}>{t("auth_gate.title", "محتوى للمشتركات")}</h1>
         <p style={{ color: "#555", fontSize: 15, marginBottom: 24, lineHeight: 1.8 }}>
-          {t("auth_gate.description", "للدخول إلى دليل مزوّدي الخدمات، سجّلي الدخول. يحتاج التسجيل كود الشراء الذي وصلكِ بعد طلبكِ من متجر سلة.")}
+          {t("auth_gate.description", "عشان تدخلين دليل مزودي الخدمات، سجلي الدخول. التسجيل يحتاج كود الشراء اللي وصلك بعد طلبك من متجر سلة.")}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Link to="/login" style={{ background: "#640000", color: "#fff", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700 }}>

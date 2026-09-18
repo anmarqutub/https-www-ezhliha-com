@@ -426,7 +426,7 @@ function ProviderPage() {
                   className={`pv-sq-act ${isFav ? "on" : ""}`}
                   disabled={favLoading}
                   onClick={toggleFav}
-                  aria-label={isFav ? "إزالة من المفضلة" : "احفظي المزوّد"}
+                  aria-label={isFav ? "إزالة من المفضلة" : "حفظ المزود"}
                 ><Heart size={17} fill={isFav ? "currentColor" : "none"} /></button>
               </div>
             </div>
@@ -443,7 +443,7 @@ function ProviderPage() {
             <div className="pv-price-bar">
               <div className="pv-price-out">
                 <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
-                <strong>اطلبي عرضكِ من {provider.name}</strong>
+                <strong>اطلبي عرضك من {provider.name}</strong>
                 <p className="pv-quote-sub">أرسلي تفاصيل مناسبتكِ، وسيتواصل معكِ مقدّم الخدمة لمناقشة السعر والتفاصيل.</p>
               </div>
 
@@ -457,7 +457,7 @@ function ProviderPage() {
                 {provider.whatsapp && (
                   <button type="button" className="pv-btn-quote pv-btn-quote--wide" onClick={() => setQuoteOpen(true)}>
                     <SendIcon />
-                    <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضكِ"}</span>
+                    <span>{siteTexts["provider.quote.cta"] || "اطلبي عرضك"}</span>
                   </button>
                 )}
               </div>
@@ -510,7 +510,7 @@ function ProviderPage() {
               <h2>{siteTexts["provider.about.title"] || `خدمة مرتبة على حسب مناسبتك`}</h2>
             </div>
             <div className="pv-sec-body">
-              <p>{provider.description || "يضاف وصف تفصيلي للخدمة بعد استلام بيانات مقدم الخدمة."}</p>
+              <p>{provider.description || "الوصف التفصيلي بيضاف بعد ما توصلنا بيانات مقدم الخدمة."}</p>
               <div className="pv-chips">
                 {subName && <span>{subName}</span>}
                 {cityName && <span>خدمة في {cityName}</span>}
@@ -860,24 +860,24 @@ function ProviderPage() {
             <div className="pv-quote-grid">
               <label className="pv-quote-field">
                 <span>تاريخ المناسبة <b className="pv-req">*</b></span>
-                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("الرجاء اختيار تاريخ المناسبة")} />
+                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("اختاري تاريخ المناسبة")} />
               </label>
               <label className="pv-quote-field">
                 <span>المدينة <b className="pv-req">*</b></span>
-                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("الرجاء اختيار المدينة")}>
+                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("اختاري المدينة")}>
                   <option value="">المدن</option>
                   {allCities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
                 </select>
               </label>
               <label className="pv-quote-field">
                 <span>عدد الضيوف <b className="pv-req">*</b></span>
-                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("الرجاء إدخال عدد الضيوف")} />
+                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("اكتبي عدد الضيوف")} />
               </label>
             </div>
 
             <label className="pv-quote-field">
               <span>ما التفاصيل المهمة لك؟ <b className="pv-req">*</b></span>
-              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("الرجاء كتابة تفاصيل طلبك")} />
+              <textarea rows={4} required placeholder="نوع المناسبة، الستايل اللي تحبينه، أو أي طلب خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("اكتبي تفاصيل طلبك")} />
             </label>
 
 

@@ -109,23 +109,23 @@ export default function HomeLanding({
               <span className="hl-eyebrow-line" />
               {txt("hl.hero.eyebrow", "دليل أزهليها")}
             </span>
-            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ، في مكان واحد.")}</h1>
+            <h1 className="hl-hero-title">{txt("hl.hero.title", "كل اللي تحتاجينه لمناسبتك في مكان واحد.")}</h1>
             <p className="hl-hero-desc">
-              {txt("hl.hero.desc", "اكتشفي مزوّدي الخدمات، قارني بين الخيارات، واحفظي ما يناسبكِ.")}
+              {txt("hl.hero.desc", "شوفي مزودي الخدمات، قارني بين الخيارات، واحفظي اللي يناسبك.")}
             </p>
             <div className="hl-hero-actions">
               <Link to="/providers" search={dirSearch()} className="hl-btn">
-                {txt("hl.hero.cta", "استكشفي الدليل")}
+                {txt("hl.hero.cta", "شوفي الدليل")}
               </Link>
               <Link to="/favorites" className="hl-link">
-                {txt("hl.hero.cta2", "احفظي اختياراتكِ")}
+                {txt("hl.hero.cta2", "احفظي خياراتك")}
                 <ArrowLeft size={15} />
               </Link>
             </div>
           </div>
           <div className="hl-hero-media">
             <span className="hl-hero-frame" aria-hidden="true" />
-            <img src={heroImage} alt={txt("hl.hero.title", "كل ما تحتاجينه لمناسبتكِ، في مكان واحد.")} loading="eager" decoding="async" />
+            <img src={heroImage} alt={txt("hl.hero.title", "كل اللي تحتاجينه لمناسبتك في مكان واحد.")} loading="eager" decoding="async" />
           </div>
         </div>
       </section>
@@ -143,8 +143,8 @@ export default function HomeLanding({
       {quickCats.length > 0 && (
         <section className="hl-sec">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.cats.title", "اكتشفي الخدمات المناسبة لكِ")}</h2>
-            <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة للعثور على مزوّدي الخدمات المتاحين في مدينتكِ.")}</p>
+            <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين لمناسبتك؟")}</h2>
+            <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة وتطلع لك مزودي الخدمات الموجودين في مدينتك.")}</p>
           </div>
           <div className="hl-cat-grid">
             {quickCats.map((c) => (
@@ -194,13 +194,13 @@ export default function HomeLanding({
       {showcase.length > 0 && (
         <section className="hl-sec hl-sec-alt">
           <div className="hl-sec-head">
-            <h2 className="hl-h2">{txt("hl.picks.title", "خيارات قد تناسبكِ")}</h2>
-            <p className="hl-sub">{txt("hl.picks.desc", "استعرضي مزوّدي الخدمات واختاري الأنسب لكِ.")}</p>
+            <h2 className="hl-h2">{txt("hl.picks.title", "خيارات تناسبك")}</h2>
+            <p className="hl-sub">{txt("hl.picks.desc", "تصفحي مزودي الخدمات واختاري الأنسب لك.")}</p>
           </div>
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
             <Link to="/providers" search={dirSearch()} className="hl-btn hl-btn-ghost">
-              {txt("hl.picks.cta", "استكشفي الدليل")}
+              {txt("hl.picks.cta", "شوفي الدليل")}
             </Link>
           </div>
         </section>
@@ -285,7 +285,7 @@ function TrustCounter({
           <p className="hl-tc-note">
             {txt(
               "hl.tc.note",
-              "اكتشفي خيارات متنوعة للمناسبات، من القاعات والتصوير إلى الورد والضيافة.",
+              "عندك خيارات كثيرة لمناسبتك، من القاعات والتصوير إلى الورد والضيافة.",
             )}
           </p>
           <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
@@ -314,9 +314,9 @@ function AdCard({
           <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
         </div>
         <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزوّد خدمة مميز")}</h3>
-        <p className="hl-ad-desc">{txt("hl.ad.desc", "اكتشفي هذا المزوّد وتعرّفي على خدماته وعروضه للمشتركات.")}</p>
+        <p className="hl-ad-desc">{txt("hl.ad.desc", "شوفي هذا المزود وتعرفي على خدماته وعروضه للمشتركات.")}</p>
         <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري للمشتركات")}</span>
-        <span className="hl-btn">{txt("hl.ad.cta", "اكتشفي العرض")}</span>
+        <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
       </div>
       <div className="hl-ad-media">
         <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />

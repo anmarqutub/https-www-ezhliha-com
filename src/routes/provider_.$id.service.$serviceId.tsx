@@ -183,24 +183,24 @@ function ServiceDetailPage() {
             <div className="sv-quote-grid">
               <label className="sv-field">
                 <span>تاريخ المناسبة <b>*</b></span>
-                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("الرجاء اختيار تاريخ المناسبة")} />
+                <input type="date" required value={qDate} onChange={(e) => setQDate(e.target.value)} {...arValidity("اختاري تاريخ المناسبة")} />
               </label>
               <label className="sv-field">
                 <span>المدينة <b>*</b></span>
-                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("الرجاء اختيار المدينة")}>
+                <select required value={qCity} onChange={(e) => setQCity(e.target.value)} {...arValidity("اختاري المدينة")}>
                   <option value="">المدن</option>
                   {cities.map((c) => <option key={c.id} value={c.name_ar}>{c.name_ar}</option>)}
                 </select>
               </label>
               <label className="sv-field">
                 <span>عدد الضيوف <b>*</b></span>
-                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("الرجاء إدخال عدد الضيوف")} />
+                <input type="number" min={1} required placeholder="مثال: 80" value={qGuests} onChange={(e) => setQGuests(e.target.value)} {...arValidity("اكتبي عدد الضيوف")} />
               </label>
             </div>
 
             <label className="sv-field">
               <span>ما التفاصيل المهمة لك؟ <b>*</b></span>
-              <textarea rows={4} required placeholder="نوع المناسبة، الأسلوب المفضل، أو أي احتياج خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("الرجاء كتابة تفاصيل طلبك")} />
+              <textarea rows={4} required placeholder="نوع المناسبة، الستايل اللي تحبينه، أو أي طلب خاص..." value={qNotes} onChange={(e) => setQNotes(e.target.value)} {...arValidity("اكتبي تفاصيل طلبك")} />
             </label>
 
             <div className="sv-quote-actions">
