@@ -1311,9 +1311,11 @@ const css3 = `
   .pv-srv-meta b { margin-inline-start:auto; color:#640000; font-weight:600; }
 
 
-  .pv-media-grid { max-width:1440px; margin:30px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
-  .pv-media-card { margin:0; display:flex; flex-direction:column; gap:8px; }
-  .pv-media-tile { position:relative; width:100%; height:260px; border:0; padding:0; border-radius:8px; overflow:hidden; background:#EFE7D8 center/cover no-repeat; cursor:pointer; }
+  .pv-media-grid { max-width:1440px; margin:22px auto 0; display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; padding-bottom:8px; scrollbar-width:thin; }
+  .pv-media-grid::-webkit-scrollbar { height:6px; }
+  .pv-media-grid::-webkit-scrollbar-thumb { background:#d9cdbb; border-radius:99px; }
+  .pv-media-card { margin:0; display:flex; flex-direction:column; gap:6px; flex:0 0 auto; width:132px; scroll-snap-align:start; }
+  .pv-media-tile { position:relative; width:100%; height:176px; border:0; padding:0; border-radius:8px; overflow:hidden; background:#EFE7D8 center/cover no-repeat; cursor:pointer; }
   .pv-media-tile--empty { background:linear-gradient(135deg,#640000,#3d0000); }
   .pv-media-fallback { position:absolute; inset:auto 0 12px 0; color:#fff; font-size:12.5px; font-weight:600; }
 
