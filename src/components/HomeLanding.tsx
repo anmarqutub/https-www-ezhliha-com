@@ -63,24 +63,25 @@ export default function HomeLanding({
 
   const journey = [
     {
-      title: txt("hl.journey.1.title", "ابدئي باختيار القاعة"),
-      desc: txt("hl.journey.1.desc", "قاعات وأماكن مناسبة لعدد ضيوفكِ وميزانيتكِ."),
-      cta: txt("hl.journey.1.cta", "استكشفي القاعات"),
+      title: txt("hl.journey.1.title", "ابدئي بالقاعة"),
+      desc: txt("hl.journey.1.desc", "قاعات وأماكن تناسب عدد ضيوفك وميزانيتك."),
+      cta: txt("hl.journey.1.cta", "شوفي القاعات"),
       slug: "halls",
     },
     {
-      title: txt("hl.journey.2.title", "اختاري المصوّرة"),
-      desc: txt("hl.journey.2.desc", "اختاري المصوّرة التي توثّق ذكرياتكِ بأسلوب يناسبكِ."),
-      cta: txt("hl.journey.2.cta", "استكشفي المصوّرات"),
+      title: txt("hl.journey.2.title", "اختاري المصورة"),
+      desc: txt("hl.journey.2.desc", "مصورات يوثقون ذكرياتك بأسلوب يعجبك."),
+      cta: txt("hl.journey.2.cta", "شوفي المصورات"),
       slug: "photography",
     },
     {
-      title: txt("hl.journey.3.title", "رتّبي تفاصيل مناسبتكِ"),
-      desc: txt("hl.journey.3.desc", "من الورد إلى الديكور، اختاري التفاصيل التي تكمّل مناسبتكِ."),
-      cta: txt("hl.journey.3.cta", "استكشفي الخدمات"),
+      title: txt("hl.journey.3.title", "رتبي تفاصيل مناسبتك"),
+      desc: txt("hl.journey.3.desc", "من الورد للديكور، اختاري التفاصيل اللي تكمل مناسبتك."),
+      cta: txt("hl.journey.3.cta", "شوفي الخدمات"),
       slug: "decor",
     },
   ];
+
 
   const dirSearch = (category?: string) => {
     const s: { category?: string; city?: string } = {};
