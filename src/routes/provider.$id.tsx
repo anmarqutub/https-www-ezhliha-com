@@ -674,12 +674,22 @@ function ProviderPage() {
               </div>
 
               <div className="pv-soc-title">حسابات التواصل</div>
-              <div className="pv-soc-grid">
-                <SocialTile platform="ig" label="إنستغرام" handle={ig} href={ig ? `https://instagram.com/${ig}` : null} />
-                <SocialTile platform="sc" label="سناب شات" handle={sc} href={sc ? `https://snapchat.com/add/${sc}` : null} />
-                <SocialTile platform="tk" label="تيك توك" handle={tk} href={tk ? `https://tiktok.com/@${tk}` : null} />
-                <SocialTile platform="tw" label="إكس" handle={tw} href={tw ? `https://x.com/${tw}` : null} />
+              <div className="pv-soc-mini">
+                {ig && (
+                  <a href={`https://instagram.com/${ig}`} target="_blank" rel="noopener noreferrer" aria-label="إنستغرام" title="إنستغرام"><SocialGlyph platform="ig" /></a>
+                )}
+                {sc && (
+                  <a href={`https://snapchat.com/add/${sc}`} target="_blank" rel="noopener noreferrer" aria-label="سناب شات" title="سناب شات"><SocialGlyph platform="sc" /></a>
+                )}
+                {tk && (
+                  <a href={`https://tiktok.com/@${tk}`} target="_blank" rel="noopener noreferrer" aria-label="تيك توك" title="تيك توك"><SocialGlyph platform="tk" /></a>
+                )}
+                {tw && (
+                  <a href={`https://x.com/${tw}`} target="_blank" rel="noopener noreferrer" aria-label="إكس" title="إكس"><SocialGlyph platform="tw" /></a>
+                )}
+                {!ig && !sc && !tk && !tw && <span className="pv-pending">بانتظار البيانات</span>}
               </div>
+
 
 
               <div className="pv-share-row">
