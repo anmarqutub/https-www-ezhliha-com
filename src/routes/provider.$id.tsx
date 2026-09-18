@@ -470,8 +470,7 @@ function ProviderPage() {
           const hasContact = !!callUrl || !!waUrl || !!ig || !!sc || !!tk || !!tw || branches.length > 0;
           const links = [
             provider.description ? { id: "s-about", label: "نبذة عن الخدمة" } : null,
-            packages.length > 0 ? { id: "s-packages", label: "الباقات والأسعار" } : null,
-            services.length > 0 ? { id: "s-services", label: "الخدمات" } : null,
+            packages.length > 0 || services.length > 0 ? { id: "s-packages", label: "الخدمات والباقات" } : null,
             hasMedia ? { id: "s-media", label: "صور وفيديو" } : null,
             reviews.length > 0 ? { id: "s-reviews", label: "التقييمات" } : null,
             hasContact ? { id: "s-contact", label: "التواصل والفروع" } : null,
