@@ -421,9 +421,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
   const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
-    const sub = subcategories.find((s) => s.id === p.subcategory_id);
+    const subs = subsOf(p)
+      .map((sid) => subcategories.find((s) => s.id === sid))
+      .filter(Boolean) as Subcategory[];
+    const sub = subs.find((s) => s.id === p.subcategory_id) ?? subs[0];
     if (!sub) return false;
-    if (selectedCategory && sub.category_id !== selectedCategory) return false;
+    if (selectedCategory && !subs.some((s) => s.category_id === selectedCategory)) return false;
     if (!matchesPrice(p)) return false;
     if (isVenueCategory && !matchesCapacity(p)) return false;
     if (favOnly && !favIds.has(p.id)) return false;
@@ -432,19 +435,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       if (!p.name.toLowerCase().includes(s) && !(p.description ?? "").toLowerCase().includes(s)) return false;
     }
     if (q) {
-      const cat = categories.find((c) => c.id === sub.category_id);
+      const catNames = subs.map((s) => categories.find((c) => c.id === s.category_id)?.name_ar ?? "");
       const hit =
         p.name.toLowerCase().includes(q) ||
         (p.description ?? "").toLowerCase().includes(q) ||
-        (sub.name_ar ?? "").toLowerCase().includes(q) ||
-        (cat?.name_ar ?? "").toLowerCase().includes(q);
+        subs.some((s) => (s.name_ar ?? "").toLowerCase().includes(q)) ||
+        catNames.some((n) => n.toLowerCase().includes(q));
       if (!hit) return false;
     }
     return true;
   });
 
   const results = baseResults.filter(
-    (p) => selectedSub === "all" || subMatches(p.subcategory_id, selectedSub)
+    (p) => selectedSub === "all" || providerMatchesSub(p, selectedSub)
   );
 
   // قائمة أنواع الخدمة الظاهرة في الشريط الجانبي مع عدد النتائج لكل نوع
@@ -453,8 +456,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     : subcategories.filter((s) => !s.parent_id)
   ).map((s) => ({
     ...s,
-    count: baseResults.filter((p) => subMatches(p.subcategory_id, s.id)).length,
+    count: baseResults.filter((p) => providerMatchesSub(p, s.id)).length,
   }));
+
 
   const filtersActive = !!(
     q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" ||
