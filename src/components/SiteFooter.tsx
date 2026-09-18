@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
 export const CONTACT_WA_NUMBER = "+966573444242";
-export const CONTACT_WA_MESSAGE = "مرحبًا أزهليها، لدي استفسار.";
+export const CONTACT_WA_MESSAGE = "هلا أزهليها، عندي استفسار.";
 
 function wa(number: string, message: string) {
   const digits = number.replace(/\D/g, "");
@@ -37,11 +37,11 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
       <div className="ez-footer-grid">
         <div className="ez-footer-brand">
           <img src={logoUrl} alt="إزهليها" />
-          <p>{txt("footer.tagline", "أزهليها تساعدكِ على اكتشاف مزوّدي خدمات المناسبات واختيار ما يناسبكِ بسهولة.")}</p>
+          <p>{txt("footer.tagline", "أزهليها تساعدك تلقين مزودي خدمات المناسبات وتختارين اللي يناسبك بسهولة.")}</p>
         </div>
 
         <div className="ez-footer-col">
-          <h3>{txt("footer.explore", "استكشفي")}</h3>
+          <h3>{txt("footer.explore", "شوفي")}</h3>
           <div className="ez-footer-links">
             <Link to="/">{txt("nav.home", "الرئيسية")}</Link>
             <Link to="/providers" search={{}}>{txt("footer.all", "الدليل")}</Link>
@@ -70,7 +70,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
             <a
               href={wa(
                 txt("contact.wa_number", CONTACT_WA_NUMBER),
-                txt("footer.join.message", "مرحبًا أزهليها، أرغب في الانضمام كمقدّم خدمة."),
+                txt("footer.join.message", "هلا أزهليها، أبغى أنضم كمقدمة خدمة."),
               )}
               target="_blank"
               rel="noopener noreferrer"
