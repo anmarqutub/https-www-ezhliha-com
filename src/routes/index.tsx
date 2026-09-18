@@ -1381,14 +1381,15 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <button type="button" className="ez-about-close" onClick={() => setAboutOpen(false)} aria-label="إغلاق">×</button>
             <h2 className="ez-about-title">{txt("home.about.title", "من نحن")}</h2>
             <p className="ez-about-text">
-              {txt("home.about.p1", "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.")}
+              {txt("home.about.p1", "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p2", "تشوفين أعمالهم، وتعرفين التفاصيل، وتقارنين الخيارات، وتتواصلين مع مقدم الخدمة مباشرة.")}
+              {txt("home.about.p2", "تشوفين أعمالهم، تعرفين تفاصيلهم، تقارنين بين الخيارات، وتتواصلين مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p3", "هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.")}
+              {txt("home.about.p3", "أنتِ عليكِ تختارين وتتحمسين للتفاصيل الحلوة، أما دوخة البحث؟ خليها علينا… وأزهليها. ❤️")}
             </p>
+
           </div>
         </div>
       )}
