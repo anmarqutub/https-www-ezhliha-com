@@ -289,7 +289,7 @@ function TrustCounter({
             )}
           </p>
           <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
-            {txt("hl.tc.cta", "شاهدي المزوّدين")}
+            {txt("hl.tc.cta", "شوفي المزوّدين")}
           </Link>
         </div>
       </div>
