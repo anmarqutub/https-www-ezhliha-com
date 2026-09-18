@@ -116,7 +116,7 @@ export function MediaThumb({
         ) : (
           <span className="mt-cover">
             <img src={defaultCover} alt="" loading="lazy" decoding="async" />
-            <em>{isVideo ? `شاهدي المقطع على ${sourceLabel(url)}` : `افتحي المصدر على ${sourceLabel(url)}`}</em>
+            <em>{isVideo ? `شوفي المقطع على ${sourceLabel(url)}` : `افتحي المصدر على ${sourceLabel(url)}`}</em>
           </span>
         )}
         {isVideo && (

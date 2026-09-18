@@ -442,7 +442,7 @@ function ProviderPage() {
           <aside className="pv-aside">
             <div className="pv-price-bar">
               <div className="pv-price-out">
-                <span className="pv-quote-eyebrow">للمناسبة التي تخططين لها</span>
+                <span className="pv-quote-eyebrow">للمناسبة اللي تخططين لها</span>
                 <strong>اطلبي عرضك من {provider.name}</strong>
                 <p className="pv-quote-sub">أرسلي تفاصيل مناسبتك، ويتواصل معك مزود الخدمة على السعر والتفاصيل.</p>
               </div>
@@ -633,7 +633,7 @@ function ProviderPage() {
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
               <span className="pv-eyebrow">التواصل والفروع</span>
-              <h2>تواصلي بالطريقة التي تناسبكِ</h2>
+              <h2>تواصلي بالطريقة اللي تناسبك</h2>
             </div>
             <div className="pv-sec-body">
               <p className="pv-sec-note">أرقام {provider.name} وحساباته وفروعه في مكان واحد، لتصلي إليه بسهولة.</p>

@@ -686,7 +686,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const faqs = [
     {
       q: txt("faq.q1", "وش هي أزهليها؟"),
-      a: txt("faq.a1", "أزهليها منصة تجمع لك مزودي خدمات المناسبات في مكان واحد، عشان تختصرين وقت البحث وتشوفين الخيارات الموجودة في مدينتك."),
+      a: txt("faq.a1", "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات وتشوفين الخيارات الموجودة في مدينتك."),
     },
     {
       q: txt("faq.q2", "أزهليها للأعراس بس؟"),
@@ -710,7 +710,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     },
     {
       q: txt("faq.q7", "أزهليها موجودة في كل المدن؟"),
-      a: txt("faq.a7", "بدينا في جدة، وقريب نتوسع لباقي مدن المملكة."),
+      a: txt("faq.a7", "بدأنا في جدة، وقريب نتوسع لباقي مدن المملكة."),
     },
     {
       q: txt("faq.q8", "أقدر أنضم كمقدمة خدمة؟"),
@@ -1189,7 +1189,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       {view === "about" && (
       <section className="ez-sec" id="ez-about">
         <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("footer.about", "من نحن")}</div>
-        <h2 className="ez-h2">{txt("home.about.title", "أزهليها بدت من حاجة بسيطة")}</h2>
+        <h2 className="ez-h2">{txt("home.about.title", "أزهليها بدأت من حاجة بسيطة")}</h2>
         <div className="ez-about-page">
           <h3>البداية</h3>
           <p>في كل مناسبة فيه لحظة جميلة ننتظرها من زمان.</p>

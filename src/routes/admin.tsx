@@ -2487,7 +2487,7 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = [
   { key: "home.loading", label: "رسالة التحميل", value: "لحظة، نجهّز لكِ الخيارات...", updated_at: "" },
   { key: "home.no_results", label: "رسالة لا توجد نتائج", value: "لم نجد خيارات مطابقة لبحثكِ. جرّبي تغيير المدينة أو نوع الخدمة.", updated_at: "" },
   { key: "home.about.title", label: "عنوان من نحن", value: "من نحن", updated_at: "" },
-  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "أزهليها منصة تجمع لكِ مزوّدي خدمات المناسبات في مكان واحد، لتختصري وقت البحث وتختاري الأنسب لكِ.", updated_at: "" },
+  { key: "home.about.p1", label: "من نحن — الفقرة الأولى", value: "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات.", updated_at: "" },
   { key: "home.about.p2", label: "من نحن — الفقرة الثانية", value: "تشوفين أعمالهم، وتعرفين التفاصيل، وتقارنين الخيارات، وتتواصلين مع مقدم الخدمة مباشرة.", updated_at: "" },
   { key: "home.about.p3", label: "من نحن — الفقرة الثالثة", value: "هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.", updated_at: "" },
   { key: "footer.about", label: "زر من نحن (الفوتر)", value: "من نحن", updated_at: "" },
