@@ -566,7 +566,7 @@ function ProviderPage() {
               ))}
             </div>
           ) : (
-            <div className="pv-empty">سيتم إضافة الخدمات قريبًا — يمكنكِ إرسال طلب عرض وستصلكِ التفاصيل مباشرةً.</div>
+            <div className="pv-empty">الخدمات بتضاف قريب — أرسلي طلب عرض وبتوصلك التفاصيل مباشرة.</div>
           )}
         </section>
 
@@ -574,7 +574,7 @@ function ProviderPage() {
         <section className="pv-sec" id="s-services">
           <div className="pv-sec-grid">
             <div className="pv-sec-head">
-              <span className="pv-eyebrow">ماذا يمكنكِ طلبه؟</span>
+              <span className="pv-eyebrow">وش تقدرين تطلبين؟</span>
               <h2>اختاري ما يناسب مناسبتكِ</h2>
             </div>
             {services.length > 0 ? (
@@ -694,12 +694,12 @@ function ProviderPage() {
                       ))}
                     </div>
                     <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
-                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">التقييم ينشر باسم حسابك، وتقدرين تعدلينه بإرسال تقييم جديد.</p>
                     <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسلي التقييم"}</button>
                   </form>
                 ) : (
                   <div className="pv-rev-form">
-                    <p className="pv-rev-hint">يُنشر التقييم باسم حسابكِ، ويمكنكِ تعديله بإرسال تقييم جديد.</p>
+                    <p className="pv-rev-hint">التقييم ينشر باسم حسابك، وتقدرين تعدلينه بإرسال تقييم جديد.</p>
                     <Link to="/login" className="pv-btn-quote" style={{ textDecoration: "none" }}>سجّلي الدخول لتقييم المزوّد</Link>
                   </div>
                 )}
