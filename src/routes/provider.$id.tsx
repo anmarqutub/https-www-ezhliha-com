@@ -1157,7 +1157,7 @@ const css = `
   .pv-reviews h2 { font-size:20px; font-weight:600; margin-bottom:16px; }
   .pv-review-form { background:#e6e4d7; padding:14px; border-radius:12px; margin-bottom:18px; display:flex; flex-direction:column; gap:10px; }
   .pv-stars-input { display:flex; gap:4px; }
-  .pv-stars-input button { background:none; border:none; font-size:28px; color:#ccc; cursor:pointer; padding:0 2px; }
+  .pv-stars-input button { background:none; border:none; font-size:20px; color:#ccc; cursor:pointer; padding:0 2px; }
   .pv-stars-input button.on { color:#f0b400; }
   .pv-review-form textarea { width:100%; border:1px solid #000000; border-radius:8px; padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
   .pv-btn-primary { background:#640000; color:#fff; border:none; height:40px; padding:0 20px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; font-family:inherit; font-weight:500; align-self:flex-start; }
@@ -1301,27 +1301,27 @@ const css3 = `
   .pv-chips span { background:#FBF7EE; border:1px solid #000; border-radius:8px; padding:7px 14px; font-size:13px; font-weight:500; color:#000; }
 
   .pv-pkg-head { max-width:1440px; margin:0 auto; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
-  .pv-pkg-titles h2 { font-size:24px; font-weight:600; color:#241C1A; margin:0; }
+  .pv-pkg-titles h2 { font-size:19px; font-weight:600; color:#241C1A; margin:0; }
   .pv-pkg-navs { display:flex; gap:8px; }
-  .pv-pkg-arrow { width:36px; height:36px; border-radius:999px; border:1px solid #000000; background:#FFFDF8; color:#640000; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:background .18s ease, border-color .18s ease; }
+  .pv-pkg-arrow { width:30px; height:30px; border-radius:999px; border:1px solid #000000; background:#FFFDF8; color:#640000; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:background .18s ease, border-color .18s ease; }
   .pv-pkg-arrow:hover { background:#F7EFE2; border-color:#D9A24A; }
-  .pv-pkg-rail { max-width:1440px; margin:26px auto 0; display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 36px) / 3); gap:18px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px; }
+  .pv-pkg-rail { max-width:1440px; margin:16px auto 0; display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 28px) / 3); gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px; }
   .pv-pkg-rail::-webkit-scrollbar { display:none; }
-  .pv-pkg { scroll-snap-align:start; position:relative; background:#FFFDF8; border:1px solid #E9E1D0; border-radius:12px; padding:22px; display:flex; flex-direction:column; gap:10px; box-shadow:0 6px 18px rgba(100,0,0,.04); transition:border-color .18s ease, background .18s ease, box-shadow .18s ease; }
+  .pv-pkg { scroll-snap-align:start; position:relative; background:#FFFDF8; border:1px solid #E9E1D0; border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:7px; box-shadow:0 6px 18px rgba(100,0,0,.04); transition:border-color .18s ease, background .18s ease, box-shadow .18s ease; }
   .pv-pkg.is-selected { border-color:#640000; background:#FFFBF2; box-shadow:0 10px 26px rgba(100,0,0,.09); }
-  .pv-pkg-tag { align-self:flex-start; font-size:11px; font-weight:600; color:#8A6A2A; background:#F6EEDD; border:1px solid #EADFC6; border-radius:6px; padding:3px 10px; }
+  .pv-pkg-tag { align-self:flex-start; font-size:10px; font-weight:600; color:#8A6A2A; background:#F6EEDD; border:1px solid #EADFC6; border-radius:6px; padding:3px 10px; }
   .pv-pkg-badge { position:absolute; top:-12px; right:18px; background:#640000; color:#fff; border-radius:6px; padding:5px 12px; font-size:11.5px; font-weight:600; }
-  .pv-pkg-img { width:100%; height:150px; object-fit:cover; border-radius:8px; }
-  .pv-pkg h3 { font-size:20px; font-weight:600; color:#241C1A; margin:0; }
-  .pv-pkg-price { color:#640000; font-size:15.5px; font-weight:600; }
-  .pv-pkg-list { list-style:none; margin:6px 0 0; padding:14px 0 0; border-top:1px solid #EFE7D8; display:flex; flex-direction:column; gap:9px; }
-  .pv-pkg-list li { display:flex; align-items:flex-start; gap:8px; font-size:14px; color:#3E3330; line-height:1.7; }
+  .pv-pkg-img { width:100%; height:112px; object-fit:cover; border-radius:8px; }
+  .pv-pkg h3 { font-size:16px; font-weight:600; color:#241C1A; margin:0; }
+  .pv-pkg-price { color:#640000; font-size:14px; font-weight:600; }
+  .pv-pkg-list { list-style:none; margin:4px 0 0; padding:10px 0 0; border-top:1px solid #EFE7D8; display:flex; flex-direction:column; gap:7px; }
+  .pv-pkg-list li { display:flex; align-items:flex-start; gap:7px; font-size:12.5px; color:#3E3330; line-height:1.7; }
   .pv-pkg-list svg { flex:none; margin-top:3px; color:#640000; }
-  .pv-pkg-pick { margin:auto 0 0; padding-top:14px; background:none; border:0; border-top:1px solid #EFE7D8; color:#640000; font-size:13px; font-weight:600; text-align:start; cursor:pointer; font-family:inherit; }
+  .pv-pkg-pick { margin:auto 0 0; padding-top:10px; background:none; border:0; border-top:1px solid #EFE7D8; color:#640000; font-size:12px; font-weight:600; text-align:start; cursor:pointer; font-family:inherit; }
   .pv-pkg-pick:hover { text-decoration:underline; }
-  .pv-pkg-foot { margin:auto 0 0; padding-top:14px; border-top:1px solid #EFE7D8; color:#8A7A73; font-size:12.5px; line-height:1.7; }
+  .pv-pkg-foot { margin:auto 0 0; padding-top:10px; border-top:1px solid #EFE7D8; color:#8A7A73; font-size:11.5px; line-height:1.7; }
   @media (max-width:900px) { .pv-pkg-rail { grid-auto-columns:calc((100% - 14px) / 2); gap:14px; } }
-  @media (max-width:640px) { .pv-pkg-rail { grid-auto-columns:88%; gap:12px; } .pv-pkg { padding:18px; } }
+  @media (max-width:640px) { .pv-pkg-rail { grid-auto-columns:88%; gap:12px; } .pv-pkg { padding:12px; } }
 
   .pv-srv-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
   .pv-srv { display:flex; flex-direction:column; padding:20px; background:#FFFDF8; border:1px solid #000000; border-radius:12px; text-decoration:none; transition:background .18s ease, box-shadow .18s ease; }
@@ -1353,19 +1353,19 @@ const css3 = `
   .pv-sec--dark .pv-video-list { max-width:1440px; margin:16px auto 0; }
 
 
-  .pv-rev-cols, .pv-contact-cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .pv-rev-cols, .pv-contact-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   .pv-contact-cols { max-width:1440px; margin:30px auto 0; }
   .pv-card { background:#FFFDF8; border:1px solid #000000; border-radius:12px; padding:22px; }
   .pv-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:16px; }
   .pv-card-title { font-size:17px; font-weight:600; color:#241C1A; margin:0 0 4px; }
   .pv-card-sub { color:#8A7A73; font-size:12.5px; }
   .pv-card-ico { color:#640000; }
-  .pv-rev-empty { text-align:center; padding:18px 6px; }
-  .pv-rev-empty h3 { font-size:16px; font-weight:600; color:#241C1A; margin:6px 0; }
-  .pv-rev-empty p { color:#8A7A73; font-size:13px; margin:0; }
-  .pv-rev-form { display:flex; flex-direction:column; gap:10px; }
-  .pv-rev-form textarea { width:100%; border:1px solid #000000; border-radius:10px; padding:12px; font-family:inherit; font-size:14px; background:#fff; resize:vertical; }
-  .pv-rev-hint { color:#8A7A73; font-size:12px; margin:0; line-height:1.7; }
+  .pv-rev-empty { text-align:center; padding:12px 6px; }
+  .pv-rev-empty h3 { font-size:14px; font-weight:600; color:#241C1A; margin:6px 0; }
+  .pv-rev-empty p { color:#8A7A73; font-size:12px; margin:0; }
+  .pv-rev-form { display:flex; flex-direction:column; gap:8px; }
+  .pv-rev-form textarea { width:100%; min-height:86px; border:1px solid #000000; border-radius:10px; padding:10px; font-family:inherit; font-size:13px; background:#fff; resize:vertical; }
+  .pv-rev-hint { color:#8A7A73; font-size:11px; margin:0; line-height:1.7; }
   .pv-rev-form .pv-btn-quote { border-radius:8px; text-align:center; }
 
   .pv-contact-row { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid #EFE7D8; background:#FBF7EE; border-radius:10px; padding:12px 14px; margin-bottom:10px; }
