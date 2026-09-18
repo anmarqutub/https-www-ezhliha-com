@@ -97,7 +97,7 @@ type Banner = { id: string; title: string | null; image_url: string; link_url: s
 type SiteText = { key: string; value: string };
 
 export const WA_MESSAGE = "هلا والله .. جيتك من موقع إزهليها 🤍";
-export const CONTACT_WA_NUMBER = "+966573444242"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
+export const CONTACT_WA_NUMBER = "+966506036094"; // رقم تواصل معنا (قابل للتغيير لاحقاً)
 export const CONTACT_WA_MESSAGE = "هلا أزهليها، عندي استفسار.";
 
 const REF_IMAGES = [catCatering, catHalls, catPhoto, catLook];
