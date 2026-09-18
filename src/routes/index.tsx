@@ -153,6 +153,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [branchCities, setBranchCities] = useState<{ provider_id: string; city_id: string | null }[]>([]);
   const [serviceTags, setServiceTags] = useState<{ provider_id: string; name: string }[]>([]);
+  const [extraSubs, setExtraSubs] = useState<{ provider_id: string; subcategory_id: string }[]>([]);
+
   const [siteTexts, setSiteTexts] = useState<Record<string, string>>({});
   const [bannerIdx, setBannerIdx] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -172,7 +174,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   useEffect(() => {
     (async () => {
-      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes, svcRes] = await Promise.all([
+      const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes, svcRes, extraRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
         supabase.from("subcategories").select("*").eq("active", true).order("sort_order"),
@@ -187,6 +189,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         supabase.from("site_texts").select("key,value"),
         supabase.from("branches").select("provider_id,city_id"),
         supabase.from("services").select("provider_id,name").order("sort_order"),
+        supabase.from("provider_subcategories").select("provider_id,subcategory_id"),
       ]);
       setCities((cRes.data ?? []) as City[]);
       setSelectedCity("");
@@ -197,6 +200,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       setBanners((bRes.data ?? []) as Banner[]);
       setBranchCities((brRes.data ?? []) as { provider_id: string; city_id: string | null }[]);
       setServiceTags((svcRes.data ?? []) as { provider_id: string; name: string }[]);
+      setExtraSubs((extraRes.data ?? []) as { provider_id: string; subcategory_id: string }[]);
+
 
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
@@ -325,17 +330,29 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     selectedSub !== "all" ? subcategories.filter((s) => s.parent_id === selectedSub) : [];
 
 
+  // كل التصنيفات الفرعية لكل مزود (الأساسي + الإضافية)
+  const providerSubIds = useMemo(() => {
+    const m = new Map<string, Set<string>>();
+    providers.forEach((p) => m.set(p.id, new Set(p.subcategory_id ? [p.subcategory_id] : [])));
+    extraSubs.forEach((e) => {
+      const s = m.get(e.provider_id);
+      if (s) s.add(e.subcategory_id);
+    });
+    return m;
+  }, [providers, extraSubs]);
+
+  const subsOf = (p: Provider) => Array.from(providerSubIds.get(p.id) ?? new Set([p.subcategory_id]));
+
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
     providers.forEach((p) => {
       if (!matchesCity(p)) return;
-      const cat = subToCat.get(p.subcategory_id);
-      if (!cat) return;
-      m.set(cat, (m.get(cat) ?? 0) + 1);
+      const cats = new Set(subsOf(p).map((sid) => subToCat.get(sid)).filter(Boolean) as string[]);
+      cats.forEach((cat) => m.set(cat, (m.get(cat) ?? 0) + 1));
     });
     return m;
-  }, [providers, subcategories, selectedCity, providerCityIds]);
+  }, [providers, subcategories, selectedCity, providerCityIds, providerSubIds]);
 
   const providersCountByCity = useMemo(() => {
     const m = new Map<string, number>();
@@ -350,6 +367,10 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     const ps = subcategories.find((s) => s.id === providerSubId);
     return !!ps && ps.parent_id === selSub;
   };
+
+  const providerMatchesSub = (p: Provider, selSub: string) =>
+    subsOf(p).some((sid) => subMatches(sid, selSub));
+
 
   const q = quickSearch.trim().toLowerCase();
 
@@ -400,9 +421,12 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   // كل الفلاتر ما عدا «نوع الخدمة» — تستخدم لحساب الأعداد في القائمة الجانبية
   const baseResults = providers.filter((p) => {
     if (!matchesCity(p)) return false;
-    const sub = subcategories.find((s) => s.id === p.subcategory_id);
+    const subs = subsOf(p)
+      .map((sid) => subcategories.find((s) => s.id === sid))
+      .filter(Boolean) as Subcategory[];
+    const sub = subs.find((s) => s.id === p.subcategory_id) ?? subs[0];
     if (!sub) return false;
-    if (selectedCategory && sub.category_id !== selectedCategory) return false;
+    if (selectedCategory && !subs.some((s) => s.category_id === selectedCategory)) return false;
     if (!matchesPrice(p)) return false;
     if (isVenueCategory && !matchesCapacity(p)) return false;
     if (favOnly && !favIds.has(p.id)) return false;
@@ -411,19 +435,19 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
       if (!p.name.toLowerCase().includes(s) && !(p.description ?? "").toLowerCase().includes(s)) return false;
     }
     if (q) {
-      const cat = categories.find((c) => c.id === sub.category_id);
+      const catNames = subs.map((s) => categories.find((c) => c.id === s.category_id)?.name_ar ?? "");
       const hit =
         p.name.toLowerCase().includes(q) ||
         (p.description ?? "").toLowerCase().includes(q) ||
-        (sub.name_ar ?? "").toLowerCase().includes(q) ||
-        (cat?.name_ar ?? "").toLowerCase().includes(q);
+        subs.some((s) => (s.name_ar ?? "").toLowerCase().includes(q)) ||
+        catNames.some((n) => n.toLowerCase().includes(q));
       if (!hit) return false;
     }
     return true;
   });
 
   const results = baseResults.filter(
-    (p) => selectedSub === "all" || subMatches(p.subcategory_id, selectedSub)
+    (p) => selectedSub === "all" || providerMatchesSub(p, selectedSub)
   );
 
   // قائمة أنواع الخدمة الظاهرة في الشريط الجانبي مع عدد النتائج لكل نوع
@@ -432,8 +456,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
     : subcategories.filter((s) => !s.parent_id)
   ).map((s) => ({
     ...s,
-    count: baseResults.filter((p) => subMatches(p.subcategory_id, s.id)).length,
+    count: baseResults.filter((p) => providerMatchesSub(p, s.id)).length,
   }));
+
 
   const filtersActive = !!(
     q || selectedCategory || selectedCity || selectedSub !== "all" || search.trim() || priceRange !== "all" ||

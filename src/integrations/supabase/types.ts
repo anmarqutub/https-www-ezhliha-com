@@ -465,6 +465,42 @@ export type Database = {
           },
         ]
       }
+      provider_subcategories: {
+        Row: {
+          created_at: string
+          id: string
+          provider_id: string
+          subcategory_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          provider_id: string
+          subcategory_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          provider_id?: string
+          subcategory_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_subcategories_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_subcategories_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       providers: {
         Row: {
           active: boolean
