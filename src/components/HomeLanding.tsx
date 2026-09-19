@@ -40,6 +40,9 @@ export type LandingProps = {
   favCount: number;
   heroImage: string;
   banner: Banner | null;
+  bannerCount?: number;
+  bannerIndex?: number;
+  onBannerSelect?: (i: number) => void;
   showcase: Array<{ id: string }>;
   filterSlot?: ReactNode;
   selectedCityId?: string;
