@@ -470,7 +470,7 @@ function ProviderPage() {
           const hasContact = !!callUrl || !!waUrl || !!ig || !!sc || !!tk || !!tw || branches.length > 0;
           const links = [
             provider.description ? { id: "s-about", label: "نبذة عن الخدمة" } : null,
-            packages.length > 0 || services.length > 0 ? { id: "s-packages", label: "الخدمات والباقات" } : null,
+            packages.length > 0 || services.length > 0 ? { id: "s-packages", label: "الباقات والأسعار" } : null,
             hasMedia ? { id: "s-media", label: "صور وفيديو" } : null,
             hasContact ? { id: "s-contact", label: "التواصل والفروع" } : null,
             { id: "s-reviews", label: "التقييمات" },
@@ -635,7 +635,7 @@ function ProviderPage() {
                         <button type="button" key={n} className={n <= myRating ? "on" : ""} onClick={() => setMyRating(n)} aria-label={`${n} نجوم`}>★</button>
                       ))}
                     </div>
-                    <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={4} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
+                    <textarea placeholder="اكتب تجربتك بوضوح ومن دون بيانات شخصية..." rows={2} value={myComment} onChange={(e) => setMyComment(e.target.value)} />
                     <p className="pv-rev-hint">التقييم ينشر باسم حسابك، وتقدرين تعدلينه بإرسال تقييم جديد.</p>
                     <button type="submit" className="pv-btn-quote" disabled={submitting}>{submitting ? "..." : "أرسلي التقييم"}</button>
                   </form>
@@ -1157,7 +1157,7 @@ const css = `
   .pv-reviews h2 { font-size:20px; font-weight:600; margin-bottom:16px; }
   .pv-review-form { background:#e6e4d7; padding:14px; border-radius:12px; margin-bottom:18px; display:flex; flex-direction:column; gap:10px; }
   .pv-stars-input { display:flex; gap:4px; }
-  .pv-stars-input button { background:none; border:none; font-size:20px; color:#ccc; cursor:pointer; padding:0 2px; }
+  .pv-stars-input button { background:none; border:none; font-size:15px; color:#ccc; cursor:pointer; padding:0 1px; }
   .pv-stars-input button.on { color:#f0b400; }
   .pv-review-form textarea { width:100%; border:1px solid #000000; border-radius:8px; padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
   .pv-btn-primary { background:#640000; color:#fff; border:none; height:40px; padding:0 20px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; font-family:inherit; font-weight:500; align-self:flex-start; }
@@ -1354,18 +1354,19 @@ const css3 = `
 
 
   .pv-rev-cols, .pv-contact-cols { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .pv-rev-cols { max-width:1440px; margin:0 auto; align-items:start; }
   .pv-contact-cols { max-width:1440px; margin:12px auto 0; }
   .pv-card { background:#FFFDF8; border:1px solid #000000; border-radius:10px; padding:10px; }
   .pv-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:7px; }
   .pv-card-title { font-size:13px; font-weight:600; color:#241C1A; margin:0 0 2px; }
   .pv-card-sub { color:#8A7A73; font-size:10.5px; line-height:1.5; }
   .pv-card-ico { color:#640000; }
-  .pv-rev-empty { text-align:center; padding:12px 6px; }
-  .pv-rev-empty h3 { font-size:14px; font-weight:600; color:#241C1A; margin:6px 0; }
-  .pv-rev-empty p { color:#8A7A73; font-size:12px; margin:0; }
-  .pv-rev-form { display:flex; flex-direction:column; gap:8px; }
-  .pv-rev-form textarea { width:100%; min-height:66px; border:1px solid #000000; border-radius:10px; padding:10px; font-family:inherit; font-size:13px; background:#fff; resize:vertical; }
-  .pv-rev-hint { color:#8A7A73; font-size:11px; margin:0; line-height:1.7; }
+  .pv-rev-empty { text-align:center; padding:6px 4px; }
+  .pv-rev-empty h3 { font-size:12.5px; font-weight:600; color:#241C1A; margin:4px 0 2px; }
+  .pv-rev-empty p { color:#8A7A73; font-size:10.5px; margin:0; }
+  .pv-rev-form { display:flex; flex-direction:column; gap:6px; }
+  .pv-rev-form textarea { width:100%; min-height:48px; border:1px solid #000000; border-radius:8px; padding:7px 9px; font-family:inherit; font-size:12px; background:#fff; resize:vertical; }
+  .pv-rev-hint { color:#8A7A73; font-size:10px; margin:0; line-height:1.5; }
   .pv-rev-form .pv-btn-quote { border-radius:8px; text-align:center; }
 
   .pv-contact-row { display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid #EFE7D8; background:#FBF7EE; border-radius:8px; padding:5px 8px; margin-bottom:5px; }
