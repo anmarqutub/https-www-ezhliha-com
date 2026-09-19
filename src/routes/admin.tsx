@@ -1708,6 +1708,30 @@ function ProvidersTab() {
     reload();
   };
 
+  const toggleActive = async (r: ProvRow) => {
+    await supabase.from("providers").update({ active: !r.active }).eq("id", r.id);
+    logActivity("update", "provider", r.id, { name: r.name, active: !r.active });
+    reload();
+  };
+
+  const quickRating = async (r: ProvRow, value: number) => {
+    const rating = value === r.rating ? null : value;
+    await supabase.from("providers").update({ rating }).eq("id", r.id);
+    logActivity("update", "provider", r.id, { name: r.name, rating });
+    reload();
+  };
+
+  const quickLogo = async (r: ProvRow, file: File) => {
+    const ext = file.name.split(".").pop();
+    const path = `${r.id}/logo_url-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    await supabase.from("providers").update({ logo_url: pub.publicUrl }).eq("id", r.id);
+    logActivity("upload_image", "provider", r.id, { field: "logo_url", name: r.name });
+    reload();
+  };
+
   const handleUpload = async (files: FileList | null) => {
     if (!files || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الصور"); return; }
     setUploading(true);
@@ -1953,8 +1977,8 @@ function ProvidersTab() {
             <table className="adm-table">
               <thead><tr>
                 <th style={{ width: 48 }}>#</th>
-                <th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
-                <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
+                <th>الصورة</th><th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
+                <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>التقييم</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
               </tr></thead>
               <tbody>
                 {pageRows.map((r, idx) => {
@@ -1962,20 +1986,45 @@ function ProvidersTab() {
                   return (
                     <tr key={r.id}>
                       <td style={{ color: "#8A7A7A", fontSize: 13 }}>{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
-                      <td><strong>{r.name}</strong></td>
+                      <td>
+                        <label style={{ cursor: "pointer", display: "block", width: 44, height: 44 }} title="تغيير صورة المقدمة">
+                          {r.logo_url
+                            ? <img src={r.logo_url} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 10, border: "1px solid #E8DADA" }} />
+                            : <span style={{ display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: 10, border: "1px dashed #D9C6C6", color: "#B09A9A", fontSize: 18 }}>＋</span>}
+                          <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void quickLogo(r, f); e.target.value = ""; }} />
+                        </label>
+                      </td>
+                      <td>
+                        <strong>{r.name}</strong>
+                        <div><a href={`/provider/${r.id}`} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#640000" }}>عرض في الموقع ↗</a></div>
+                      </td>
                       <td>{cities.find((c) => c.id === r.city_id)?.name_ar ?? "—"}</td>
                       <td>{sub?.name_ar ?? "—"}</td>
                       <td>{r.price_from ? `${r.price_from}${r.price_to ? `–${r.price_to}` : ""} ر.س` : "—"}</td>
                       <td style={{ direction: "ltr", fontSize: 12 }}>{r.whatsapp ?? "—"}</td>
                       <td style={{ direction: "ltr", fontSize: 12 }}>{r.contact_phone ?? "—"}</td>
                       <td>{packages.filter((p) => p.provider_id === r.id).length}</td>
+                      <td style={{ whiteSpace: "nowrap" }} title="اضغطي على النجمة لتغيير التقييم">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button
+                            key={n}
+                            onClick={() => quickRating(r, n)}
+                            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 14, color: (r.rating ?? 0) >= n ? "#E0A500" : "#D8CFCF" }}
+                          >★</button>
+                        ))}
+                        <span style={{ fontSize: 11, color: "#8A7A7A", marginInlineStart: 4 }}>{r.rating ?? "—"}</span>
+                      </td>
                       <td>
                         <button onClick={() => toggleFeatured(r)} className={`adm-pill ${r.is_featured ? "on" : ""}`}>
                           {r.is_featured ? "★ مميز" : "عادي"}
                         </button>
                       </td>
                       <td>{r.sort_order}</td>
-                      <td><span className={`adm-badge ${r.active ? "adm-badge-on" : ""}`}>{r.active ? "مفعّل" : "متوقف"}</span></td>
+                      <td>
+                        <button onClick={() => toggleActive(r)} className={`adm-badge ${r.active ? "adm-badge-on" : ""}`} style={{ cursor: "pointer", border: "none" }}>
+                          {r.active ? "مفعّل" : "متوقف"}
+                        </button>
+                      </td>
                       <td>
                         <button className="adm-btn-sm" onClick={() => setEditing(r)}>تعديل</button>
                         <button className="adm-btn-sm adm-btn-danger" onClick={() => del(r.id)}>حذف</button>
@@ -1984,7 +2033,7 @@ function ProvidersTab() {
                   );
                 })}
                 {pageRows.length === 0 && (
-                  <tr><td colSpan={12} className="adm-empty">لا توجد نتائج</td></tr>
+                  <tr><td colSpan={14} className="adm-empty">لا توجد نتائج</td></tr>
                 )}
               </tbody>
             </table>

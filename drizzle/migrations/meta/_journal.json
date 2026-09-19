@@ -8,6 +8,13 @@
       "when": 1789769876169,
       "tag": "0000_provider_extra_subcategories",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789785430627,
+      "tag": "0001_enable_realtime_site_sync",
+      "breakpoints": true
     }
   ]
 }
