@@ -525,6 +525,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   const activeCategory = categories.find((c) => c.id === selectedCategory);
   const currentBanner = banners[bannerIdx];
+  // نبذة مختصرة تحت اسم المزود في الإعلان (من بيانات المزود نفسه)
+  const bannerNote = useMemo(() => {
+    const id = currentBanner?.link_url?.match(/provider\/([0-9a-f-]{36})/i)?.[1];
+    const p = id ? providers.find((x) => x.id === id) : undefined;
+    if (!p) return "";
+    const d = (p.description ?? "").replace(/\s+/g, " ").trim();
+    if (d) return d.length > 150 ? `${d.slice(0, 150)}…` : d;
+    const sub = subcategories.find((s) => s.id === p.subcategory_id)?.name_ar;
+    const city = cities.find((c) => c.id === p.city_id)?.name_ar;
+    return [sub, city].filter(Boolean).join(" · ");
+  }, [currentBanner, providers, subcategories, cities]);
 
   // تطبيق الفلاتر القادمة من الرابط ‎/providers?category=halls&city=...
   const urlSearch = useRouterState({ select: (s) => s.location.search as { category?: string; city?: string; sub?: string } });
