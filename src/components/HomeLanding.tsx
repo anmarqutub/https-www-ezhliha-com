@@ -230,10 +230,10 @@ export default function HomeLanding({
             </Link>
           </div>
         </section>
-  ));
+      )}
 
-  add("how", 8, (
-      <section className="hl-sec" key="how">
+      {/* ── 8. HOW IT WORKS ── */}
+      <section className="hl-sec">
         <div className="hl-sec-head">
           <h2 className="hl-h2">{txt("hl.how.title", "اختاري بسهولة")}</h2>
         </div>
@@ -249,11 +249,9 @@ export default function HomeLanding({
           ))}
         </ol>
       </section>
-  ));
 
-  const ordered = [...blocks].sort((a, b) => secOrder(a.id, a.def) - secOrder(b.id, b.def));
-
-  return <>{ordered.map((b) => b.node)}</>;
+    </>
+  );
 }
 
 function TrustCounter({
