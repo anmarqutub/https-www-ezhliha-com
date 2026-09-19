@@ -41,19 +41,19 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
         </div>
 
         <div className="ez-footer-col">
-          <h3>{txt("footer.explore", "شوفي")}</h3>
+          <h3>{txt("footer.explore", "تنقّلي بسرعة")}</h3>
           <div className="ez-footer-links">
             <Link to="/">{txt("nav.home", "الرئيسية")}</Link>
-            <Link to="/providers" search={{}}>{txt("footer.all", "الدليل")}</Link>
+            <Link to="/providers" search={{}}>{txt("footer.all", "دليل مقدمات الخدمة")}</Link>
 
-            <Link to="/categories">{txt("nav.categories", "الفئات")}</Link>
-            <Link to="/cities">{txt("nav.cities", "المدن")}</Link>
-            <Link to="/favorites">{txt("nav.favorites", "المفضلة")}</Link>
+            <Link to="/categories">{txt("nav.categories", "تصنيفات الخدمات")}</Link>
+            <Link to="/cities">{txt("nav.cities", "المدن والمناطق")}</Link>
+            <Link to="/favorites">{txt("nav.favorites", "مفضلتي")}</Link>
           </div>
         </div>
 
         <div className="ez-footer-col">
-          <h3>{txt("footer.contact.title", "يسعدنا تواصلكِ معنا")}</h3>
+          <h3>{txt("footer.contact.title", "يسعدنا تواصلك معنا")}</h3>
           <div className="ez-footer-links">
             <a
               className="ez-footer-wa"
@@ -64,9 +64,9 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               <WhatsAppIcon size={16} />
               <span>{txt("footer.contact", "واتساب أزهليها")}</span>
             </a>
-            <Link to="/about">{txt("footer.about", "من نحن")}</Link>
-            <span>✉️ {txt("footer.email", "admin@ezhliha.com")}</span>
-            <Link to="/faq">💡 {txt("nav.faq", "الأسئلة الشائعة")}</Link>
+            <Link to="/about">{txt("footer.about", "من نحن؟")}</Link>
+            <a href={`mailto:${txt("footer.email", "admin@ezhliha.com")}`}>{txt("footer.email", "admin@ezhliha.com")}</a>
+            <Link to="/faq">{txt("nav.faq", "أسئلة متكرّرة")}</Link>
             <a
               href={wa(
                 txt("contact.wa_number", CONTACT_WA_NUMBER),
@@ -75,7 +75,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
               target="_blank"
               rel="noopener noreferrer"
             >
-              {txt("footer.join", "انضمّي كمقدّم خدمة")}
+              {txt("footer.join", "انضمّي كمقدمة خدمة")}
             </a>
 
 
@@ -84,7 +84,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
       </div>
       <div className="ez-footer-bar">
         <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
-        <span>{txt("footer.motto", "اختيارات أوضح، ووقت أقل.")}</span>
+        <span>{txt("footer.motto", "خليها علينا… وأزهليها.")}</span>
       </div>
     </footer>
   );
