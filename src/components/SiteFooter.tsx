@@ -67,16 +67,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
             <Link to="/about">{txt("footer.about", "من نحن؟")}</Link>
             <a href={`mailto:${txt("footer.email", "admin@ezhliha.com")}`}>{txt("footer.email", "admin@ezhliha.com")}</a>
             <Link to="/faq">{txt("nav.faq", "أسئلة متكرّرة")}</Link>
-            <a
-              href={wa(
-                txt("contact.wa_number", CONTACT_WA_NUMBER),
-                txt("footer.join.message", "هلا أزهليها، أبغى أنضم كمقدمة خدمة."),
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {txt("footer.join", "انضمّي كمقدمة خدمة")}
-            </a>
+            <Link to="/join">{txt("footer.join", "انضمّي كمقدمة خدمة")}</Link>
 
 
           </div>
