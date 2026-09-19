@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole, createAdminUser, sendUserPasswordReset } from "@/lib/admin.functions";
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
+import { generateDesignSuggestion, type DesignSuggestion } from "@/lib/design-ai.functions";
 
 import { supabase } from "@/integrations/supabase/client";
 import { ImportProvidersDialog } from "@/components/ImportProvidersDialog";
