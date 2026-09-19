@@ -2033,7 +2033,7 @@ function ProvidersTab() {
                   );
                 })}
                 {pageRows.length === 0 && (
-                  <tr><td colSpan={12} className="adm-empty">لا توجد نتائج</td></tr>
+                  <tr><td colSpan={14} className="adm-empty">لا توجد نتائج</td></tr>
                 )}
               </tbody>
             </table>
