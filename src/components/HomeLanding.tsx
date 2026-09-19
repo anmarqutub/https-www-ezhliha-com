@@ -74,19 +74,19 @@ export default function HomeLanding({
     {
       title: txt("hl.journey.1.title", "ابدئي بالقاعة"),
       desc: txt("hl.journey.1.desc", "قاعات وأماكن تناسب عدد ضيوفك وميزانيتك."),
-      cta: txt("hl.journey.1.cta", "شوفي القاعات"),
+      cta: txt("hl.journey.1.cta", "تصفحي القاعات"),
       slug: "halls",
     },
     {
       title: txt("hl.journey.2.title", "اختاري المصورة"),
       desc: txt("hl.journey.2.desc", "مصورات يوثقون ذكرياتك بأسلوب يعجبك."),
-      cta: txt("hl.journey.2.cta", "شوفي المصورات"),
+      cta: txt("hl.journey.2.cta", "تصفحي المصورات"),
       slug: "photography",
     },
     {
       title: txt("hl.journey.3.title", "رتبي تفاصيل مناسبتك"),
       desc: txt("hl.journey.3.desc", "من الورد للديكور، اختاري التفاصيل اللي تكمل مناسبتك."),
-      cta: txt("hl.journey.3.cta", "شوفي الخدمات"),
+      cta: txt("hl.journey.3.cta", "تصفحي الخدمات"),
       slug: "decor",
     },
   ];
@@ -101,7 +101,7 @@ export default function HomeLanding({
 
   const steps = [
     { t: txt("hl.step.1", "حددي الخدمة"), d: txt("hl.step.1.d", "اختاري الفئة والمدينة وتطلع لك الخيارات الموجودة.") },
-    { t: txt("hl.step.2", "قارني الخيارات"), d: txt("hl.step.2.d", "شوفي الأعمال والأسعار والتفاصيل قبل ما تختارين.") },
+    { t: txt("hl.step.2", "قارني الخيارات"), d: txt("hl.step.2.d", "تصفحي الأعمال والأسعار والتفاصيل قبل ما تختارين.") },
     { t: txt("hl.step.3", "تواصلي مباشرة"), d: txt("hl.step.3.d", "أرسلي طلبك لمقدم الخدمة واتفقي معه على التفاصيل.") },
   ];
 
@@ -120,11 +120,11 @@ export default function HomeLanding({
             </span>
             <h1 className="hl-hero-title">{txt("hl.hero.title", "كل اللي تحتاجينه لمناسبتك في مكان واحد.")}</h1>
             <p className="hl-hero-desc">
-              {txt("hl.hero.desc", "شوفي مزودي الخدمات، قارني بين الخيارات، واحفظي اللي يناسبك.")}
+              {txt("hl.hero.desc", "تصفحي مزودي الخدمات، قارني بين الخيارات، واحفظي اللي يناسبك.")}
             </p>
             <div className="hl-hero-actions">
               <Link to="/providers" search={dirSearch()} className="hl-btn">
-                {txt("hl.hero.cta", "شوفي الدليل")}
+                {txt("hl.hero.cta", "تصفحي الدليل")}
               </Link>
               <Link to="/favorites" className="hl-link">
                 {txt("hl.hero.cta2", "احفظي خياراتك")}
@@ -217,7 +217,7 @@ export default function HomeLanding({
           <div className="hl-picks">{showcase.slice(0, 4).map((p) => renderProviderCard(p.id))}</div>
           <div className="hl-sec-foot">
             <Link to="/providers" search={dirSearch()} className="hl-btn hl-btn-ghost">
-              {txt("hl.picks.cta", "شوفي الدليل")}
+              {txt("hl.picks.cta", "تصفحي الدليل")}
             </Link>
           </div>
         </section>
@@ -306,7 +306,7 @@ function TrustCounter({
             )}
           </p>
           <Link to="/providers" search={exploreSearch} className="hl-btn hl-tc-btn">
-            {txt("hl.tc.cta", "شوفي المزوّدين")}
+            {txt("hl.tc.cta", "تصفحي المزوّدين")}
           </Link>
         </div>
       </div>
@@ -360,11 +360,11 @@ function AdCard({
           <TitleLink>{title}</TitleLink>
         </h3>
         {meta && <p className="hl-ad-meta">{meta}</p>}
-        <p className="hl-ad-desc">{txt("hl.ad.desc", "شوفي هذا المزود وتعرفي على خدماته وعروضه للمشتركات.")}</p>
+        <p className="hl-ad-desc">{txt("hl.ad.desc", "تصفحي هذا المزود وتعرفي على خدماته وعروضه للمشتركات.")}</p>
         <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري للمشتركات")}</span>
         <div className="hl-ad-actions">
           <TitleLink>
-            <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
+            <span className="hl-btn">{txt("hl.ad.cta", "تصفحي العرض")}</span>
           </TitleLink>
           <a className="hl-ad-wa" href={waHref} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon size={15} />
