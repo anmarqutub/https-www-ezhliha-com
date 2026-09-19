@@ -106,20 +106,12 @@ export default function HomeLanding({
   ];
 
 
-  // ترتيب وإظهار الأقسام يُدار من لوحة التحكم (مفاتيح sec.*)
-  const secOn = (id: string) => txt(`sec.${id}.visible`, "1") !== "0";
-  const secOrder = (id: string, def: number) => {
-    const raw = txt(`sec.${id}.order`, String(def));
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : def;
-  };
-  const blocks: Array<{ id: string; def: number; node: ReactNode }> = [];
-  const add = (id: string, def: number, node: ReactNode) => {
-    if (secOn(id)) blocks.push({ id, def, node });
-  };
+  return (
+    <>
+      <style>{landingCss}</style>
 
-  add("hero", 1, (
-      <section className="hl-hero" key="hero">
+      {/* ── 3. HERO ── */}
+      <section className="hl-hero">
         <div className="hl-hero-in">
           <div className="hl-hero-copy">
             <span className="hl-eyebrow">
@@ -146,21 +138,19 @@ export default function HomeLanding({
           </div>
         </div>
       </section>
-  ));
 
-  add("filter", 2, <div key="filter">{filterSlot}</div>);
+      {filterSlot}
 
-  add("trust", 3, (
+      {/* ── TRUST (animated) ── */}
       <TrustCounter
-        key="trust"
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
         exploreSearch={dirSearch()}
       />
-  ));
 
-  if (quickCats.length > 0) add("cats", 4, (
-        <section className="hl-sec" key="cats">
+      {/* ── 4. QUICK CATEGORIES ── */}
+      {quickCats.length > 0 && (
+        <section className="hl-sec">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين لمناسبتك؟")}</h2>
             <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة وتطلع لك مزودي الخدمات الموجودين في مدينتك.")}</p>
@@ -179,10 +169,10 @@ export default function HomeLanding({
             ))}
           </div>
         </section>
-  ));
+      )}
 
-  add("journey", 5, (
-      <section className="hl-sec hl-sec-alt" key="journey">
+      {/* ── 5. JOURNEY ── */}
+      <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
           <h2 className="hl-h2">{txt("hl.journey.title", "نكمل معك التفاصيل")}</h2>
           <p className="hl-sub">{txt("hl.journey.desc", "خطوات بسيطة تقربك من الخيار المناسب.")}</p>
@@ -201,10 +191,10 @@ export default function HomeLanding({
           ))}
         </div>
       </section>
-  ));
 
-  if (banner) add("ad", 6, (
-        <section className="hl-sec" key="ad">
+      {/* ── 6. SPONSORED ── */}
+      {banner && (
+        <section className="hl-sec">
           <AdCard
             banner={banner}
             txt={txt}
@@ -215,10 +205,11 @@ export default function HomeLanding({
             onSelect={onBannerSelect}
           />
         </section>
-  ));
+      )}
 
-  if (showcase.length > 0) add("picks", 7, (
-        <section className="hl-sec hl-sec-alt" key="picks">
+      {/* ── 7. PICKED PROVIDERS ── */}
+      {showcase.length > 0 && (
+        <section className="hl-sec hl-sec-alt">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.picks.title", "خيارات تناسبك")}</h2>
             <p className="hl-sub">{txt("hl.picks.desc", "تصفحي مزودي الخدمات واختاري الأنسب لك.")}</p>
