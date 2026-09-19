@@ -53,14 +53,14 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "إزهليها — دليلك لأحلى المناسبات" },
       {
         property: "og:description",
-        content: "شوفي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
+        content: "تصفحي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "إزهليها — دليلك لأحلى المناسبات" },
       {
         name: "twitter:description",
-        content: "شوفي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
+        content: "تصفحي الضيافة والقاعات والتصوير والتجميل، قارني براحتك، وتواصلي مباشرة.",
       },
     ],
   }),
@@ -708,7 +708,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const faqs = [
     {
       q: txt("faq.q1", "وش هي أزهليها؟"),
-      a: txt("faq.a1", "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات وتشوفين الخيارات الموجودة في مدينتك."),
+      a: txt("faq.a1", "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات وتتصفحين الخيارات الموجودة في مدينتك."),
     },
     {
       q: txt("faq.q2", "أزهليها للأعراس بس؟"),
@@ -1002,7 +1002,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             <>
               {isAdmin && <Link to="/admin" className="ez-nav-link">{txt("nav.admin", "لوحة الأدمن")}</Link>}
               <button type="button" className="ez-nav-cta" onClick={scrollToResults}>
-                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "شوفي الدليل")}
+                <Search size={16} strokeWidth={2} /> {txt("nav.cta", "تصفحي الدليل")}
               </button>
               <Link to="/favorites" className="ez-nav-ico" aria-label={txt("nav.favorites", "المفضلة")}>
                 <Heart size={17} />
@@ -1050,7 +1050,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <span className="ez-drawer-cta-ico">✨</span>
               <p>{txt("drawer.cta.text", "اختاري الفئة ونوع الخدمة والمدينة، وستظهر لكِ الخيارات المناسبة.")}</p>
               <Link to="/providers" search={{}} className="ez-drawer-cta-btn" onClick={() => setMenuOpen(false)}>
-                {txt("drawer.cta.btn", "شوفي الدليل")}
+                {txt("drawer.cta.btn", "تصفحي الدليل")}
               </Link>
             </div>
           </aside>
@@ -1218,7 +1218,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <h3>البداية</h3>
           <p>في كل مناسبة فيه لحظة جميلة ننتظرها من زمان.</p>
           <p>
-            لحظة تشوفين فيها المكان مثل ما تخيلتيه، وتلبسين الإطلالة اللي اخترتيها، وتشوفين كل التفاصيل اللي كنتِ
+            لحظة تتصفحين فيها المكان مثل ما تخيلتيه، وتلبسين الإطلالة اللي اخترتيها، وتتصفحين كل التفاصيل اللي كنتِ
             تتخيلينها صارت قدامك حقيقة.
           </p>
           <figure className="ez-about-img">
@@ -1244,14 +1244,14 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <h3>وش نقدم لك؟</h3>
           <p>بدأنا نبني المكان اللي كنا نتمنى يكون موجود من البداية.</p>
           <p>
-            مو مجرد دليل يحط لك أسماء مزودين خدمة، لكن مكان يسهّل عليكِ الاختيار. تشوفين أعمالهم، تعرفين تفاصيلهم،
+            مو مجرد دليل يحط لك أسماء مزودين خدمة، لكن مكان يسهّل عليكِ الاختيار. تتصفحين أعمالهم، تعرفين تفاصيلهم،
             تقارنين بين الخيارات، وتتواصلين مباشرة مع اللي يناسب ذوقك وميزانيتك.
           </p>
           <figure className="ez-about-img">
             <img src={catDecor} alt="تنسيق ورد وديكور لمناسبة" loading="lazy" decoding="async" />
           </figure>
           <p>
-            والأهم، ما نبغى نعرض لك نفس الخيارات اللي تشوفينها في كل مكان. نبحث ونكتشف مزودين يمكن ما كان سهل توصلين
+            والأهم، ما نبغى نعرض لك نفس الخيارات اللي تتصفحينها في كل مكان. نبحث ونكتشف مزودين يمكن ما كان سهل توصلين
             لهم؛ لأننا نؤمن إن أفضل خيار لك مو بالضرورة يكون الأكثر شهرة.
           </p>
 
@@ -1264,7 +1264,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
           <div>
             <button type="button" className="ez-btn-primary" onClick={() => goProviders({ categoryId: null })}>
-              شوفي الدليل
+              تصفحي الدليل
             </button>
           </div>
 
@@ -1281,7 +1281,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           <div>
             <div className="ez-eyebrow"><span className="ez-eyebrow-line" />{txt("results.eyebrow", "دليل مزوّدي الخدمات")}</div>
             <h2 className="ez-h2">
-              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "شوفي مزودي الخدمات")}
+              {filtersActive ? (activeCategory?.name_ar ?? txt("results.title.filtered", "نتائج البحث")) : txt("results.title", "تصفحي مزودي الخدمات")}
               <span className="ez-count">({results.length})</span>
             </h2>
             <p className="ez-muted">{txt("results.desc", "اختاري المدينة والفئة وتطلع لك الخيارات المناسبة.")}</p>
@@ -1410,7 +1410,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               {txt("home.about.p1", "أزهليها مكان واحد يجمع لك كل اللي تحتاجينه لمناسبتك، عشان ما تضيعين بين الخيارات.")}
             </p>
             <p className="ez-about-text">
-              {txt("home.about.p2", "تشوفين أعمالهم، تعرفين تفاصيلهم، تقارنين بين الخيارات، وتتواصلين مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
+              {txt("home.about.p2", "تتصفحين أعمالهم، تعرفين تفاصيلهم، تقارنين بين الخيارات، وتتواصلين مباشرة مع اللي يناسب ذوقك وميزانيتك.")}
             </p>
             <p className="ez-about-text">
               {txt("home.about.p3", "أنتِ عليكِ تختارين وتتحمسين للتفاصيل الحلوة، أما دوخة البحث؟ خليها علينا… وأزهليها. ❤️")}

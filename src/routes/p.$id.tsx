@@ -108,7 +108,7 @@ function PublicProviderPage() {
           </p>
         )}
         {p.description && <p className="pp-desc">{p.description}</p>}
-        <Link to="/provider/$id" params={{ id }} className="pp-btn">شوفي الملف كامل</Link>
+        <Link to="/provider/$id" params={{ id }} className="pp-btn">تصفحي الملف كامل</Link>
         <a className="pp-btn pp-btn-ghost" href={waShare} target="_blank" rel="noopener noreferrer">
           شاركيها بالواتساب
         </a>

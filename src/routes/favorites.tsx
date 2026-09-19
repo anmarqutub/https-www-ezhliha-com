@@ -81,7 +81,7 @@ function FavoritesPage() {
         <h1>♥ اختياراتكِ المحفوظة</h1>
         {loading ? <p className="fav-empty">لحظة...</p> :
           providers.length === 0 ? (
-            <p className="fav-empty">ما حفظتي أي مزود للحين. <Link to="/">شوفي الدليل</Link></p>
+            <p className="fav-empty">ما حفظتي أي مزود للحين. <Link to="/">تصفحي الدليل</Link></p>
           ) : (
             <div className="fav-grid">
               {providers.map((p) => {
