@@ -146,19 +146,21 @@ export default function HomeLanding({
           </div>
         </div>
       </section>
+  ));
 
-      {filterSlot}
+  add("filter", 2, <div key="filter">{filterSlot}</div>);
 
-      {/* ── TRUST (animated) ── */}
+  add("trust", 3, (
       <TrustCounter
+        key="trust"
         txt={txt}
         target={Math.max(500, Math.floor(providerCount / 50) * 50)}
         exploreSearch={dirSearch()}
       />
+  ));
 
-      {/* ── 4. QUICK CATEGORIES ── */}
-      {quickCats.length > 0 && (
-        <section className="hl-sec">
+  if (quickCats.length > 0) add("cats", 4, (
+        <section className="hl-sec" key="cats">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين لمناسبتك؟")}</h2>
             <p className="hl-sub">{txt("hl.cats.desc", "اختاري الفئة وتطلع لك مزودي الخدمات الموجودين في مدينتك.")}</p>
