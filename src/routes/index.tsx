@@ -205,8 +205,27 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
       setSiteTexts(Object.fromEntries(((txtRes.data ?? []) as SiteText[]).map((x) => [x.key, x.value])));
       setLoading(false);
-    })();
+    }
   }, []);
+
+  useEffect(() => { void loadAll(true); }, [loadAll]);
+
+  // تزامن لحظي مع لوحة التحكم
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const bump = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => { void loadAll(false); }, 600);
+    };
+    const ch = supabase
+      .channel("ez-site-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "providers" }, bump)
+      .on("postgres_changes", { event: "*", schema: "public", table: "provider_images" }, bump)
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_texts" }, bump)
+      .on("postgres_changes", { event: "*", schema: "public", table: "banners" }, bump)
+      .subscribe();
+    return () => { if (timer) clearTimeout(timer); void supabase.removeChannel(ch); };
+  }, [loadAll]);
 
   // المفضلة الخاصة بالمستخدم
   useEffect(() => {
