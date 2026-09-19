@@ -3594,6 +3594,99 @@ const HOME_SECTIONS: Array<{ key: string; label: string; desc: string }> = [
   { key: "how", label: "كيف يعمل الموقع", desc: "الخطوات المرقّمة أسفل الصفحة" },
 ];
 
+function DesignAssistant() {
+  const run = useServerFn(generateDesignSuggestion);
+  const [brief, setBrief] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [out, setOut] = useState<DesignSuggestion | null>(null);
+
+  const go = async () => {
+    if (brief.trim().length < 5) { setErr("اكتبي وصف أوضح للصفحة اللي تبغينها."); return; }
+    setBusy(true); setErr(""); setOut(null);
+    try {
+      const r = await run({ data: { brief: brief.trim() } });
+      setOut(r);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "صار خطأ غير متوقع.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const box: React.CSSProperties = { border: "1px solid #F0E5E5", borderRadius: 12, padding: "10px 12px", background: "#fff", marginBottom: 8 };
+
+  return (
+    <div className="adm-card">
+      <h2 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 6px" }}>مساعدة التصميم بالذكاء الاصطناعي</h2>
+      <p style={{ color: "#7A6A6A", fontSize: 13, margin: "0 0 10px" }}>
+        اكتبي وصف الصفحة اللي تبغينها، وتطلع لك اقتراحات جاهزة لترتيب الأقسام والألوان والخطوط.
+      </p>
+      <textarea
+        value={brief}
+        onChange={(e) => setBrief(e.target.value)}
+        rows={4}
+        placeholder="مثال: صفحة هبوط لخدمات القاعات، تبدأ بصورة كبيرة وبحث سريع، وبعدها باقات الأسعار وتقييمات العميلات..."
+        style={{ width: "100%", border: "1px solid #E7DCDC", borderRadius: 12, padding: "12px 14px", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+      />
+      <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
+        <button
+          onClick={go}
+          disabled={busy}
+          style={{ background: "#640000", color: "#fff", border: "none", borderRadius: 10, padding: "11px 20px", fontWeight: 800, fontSize: 14, cursor: busy ? "not-allowed" : "pointer", opacity: busy ? 0.7 : 1 }}
+        >
+          {busy ? "جارٍ توليد الاقتراح..." : "اقترحي لي تصميم"}
+        </button>
+        {out && <button onClick={() => { setOut(null); setBrief(""); }} style={{ background: "transparent", border: "1px solid #E7DCDC", borderRadius: 10, padding: "10px 16px", fontSize: 13, cursor: "pointer" }}>مسح</button>}
+      </div>
+      {err && <p style={{ color: "#B23A3A", fontSize: 13, marginTop: 10 }}>{err}</p>}
+      {out && (
+        <div style={{ marginTop: 16 }}>
+          <p style={{ fontSize: 14, lineHeight: 1.8, background: "#FBF7F3", border: "1px solid #F0E5E5", borderRadius: 12, padding: "12px 14px" }}>{out.summary}</p>
+
+          <h3 style={{ fontSize: 14, fontWeight: 800, margin: "16px 0 8px" }}>ترتيب الأقسام</h3>
+          {out.sections.map((s, i) => (
+            <div key={i} style={box}>
+              <strong style={{ fontSize: 14 }}>{i + 1}. {s.name}</strong>
+              <div style={{ fontSize: 12.5, color: "#7A6A6A", marginTop: 4 }}>{s.purpose}</div>
+              <div style={{ fontSize: 12.5, color: "#5A4A4A", marginTop: 4 }}>{s.content}</div>
+            </div>
+          ))}
+
+          <h3 style={{ fontSize: 14, fontWeight: 800, margin: "16px 0 8px" }}>لوحة الألوان</h3>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {out.colors.map((c, i) => (
+              <div key={i} style={{ ...box, marginBottom: 0, minWidth: 140, flex: "1 1 140px" }}>
+                <span style={{ display: "block", height: 30, borderRadius: 8, background: c.hex, border: "1px solid #EADFDF" }} />
+                <strong style={{ fontSize: 13, display: "block", marginTop: 6 }}>{c.name}</strong>
+                <span style={{ fontSize: 12, color: "#9A8A8A", direction: "ltr", display: "block" }}>{c.hex}</span>
+                <div style={{ fontSize: 12, color: "#7A6A6A", marginTop: 3 }}>{c.usage}</div>
+              </div>
+            ))}
+          </div>
+
+          <h3 style={{ fontSize: 14, fontWeight: 800, margin: "16px 0 8px" }}>الخطوط</h3>
+          {out.fonts.map((f, i) => (
+            <div key={i} style={box}>
+              <strong style={{ fontSize: 13 }}>{f.role}: {f.family}</strong>
+              <div style={{ fontSize: 12.5, color: "#7A6A6A", marginTop: 3 }}>{f.note}</div>
+            </div>
+          ))}
+
+          {out.notes.length > 0 && (
+            <>
+              <h3 style={{ fontSize: 14, fontWeight: 800, margin: "16px 0 8px" }}>ملاحظات تنفيذية</h3>
+              <ul style={{ margin: 0, paddingInlineStart: 18, fontSize: 13, color: "#5A4A4A", lineHeight: 1.9 }}>
+                {out.notes.map((n, i) => <li key={i}>{n}</li>)}
+              </ul>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DesignTab() {
   const [vals, setVals] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
