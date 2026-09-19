@@ -24,6 +24,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProviderIdRouteImport } from './routes/provider.$id'
+import { Route as PIdRouteImport } from './routes/p.$id'
 import { Route as ApiPublicPosterRouteImport } from './routes/api/public/poster'
 import { Route as ApiPublicImgRouteImport } from './routes/api/public/img'
 import { Route as ProviderIdServiceServiceIdRouteImport } from './routes/provider_.$id.service.$serviceId'
@@ -106,6 +107,11 @@ const ProviderIdRoute = ProviderIdRouteImport.update({
   path: '/provider/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PIdRoute = PIdRouteImport.update({
+  id: '/p/$id',
+  path: '/p/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPosterRoute = ApiPublicPosterRouteImport.update({
   id: '/api/public/poster',
   path: '/api/public/poster',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/poster': typeof ApiPublicPosterRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/poster': typeof ApiPublicPosterRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/poster': typeof ApiPublicPosterRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
     | '/api/public/poster'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
     | '/api/public/poster'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
     | '/api/public/poster'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   ProvidersRoute: typeof ProvidersRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  PIdRoute: typeof PIdRoute
   ProviderIdRoute: typeof ProviderIdRoute
   ApiPublicImgRoute: typeof ApiPublicImgRoute
   ApiPublicPosterRoute: typeof ApiPublicPosterRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProviderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/$id': {
+      id: '/p/$id'
+      path: '/p/$id'
+      fullPath: '/p/$id'
+      preLoaderRoute: typeof PIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/poster': {
       id: '/api/public/poster'
       path: '/api/public/poster'
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProvidersRoute: ProvidersRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  PIdRoute: PIdRoute,
   ProviderIdRoute: ProviderIdRoute,
   ApiPublicImgRoute: ApiPublicImgRoute,
   ApiPublicPosterRoute: ApiPublicPosterRoute,
