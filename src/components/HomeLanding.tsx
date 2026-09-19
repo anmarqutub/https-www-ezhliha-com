@@ -193,7 +193,14 @@ export default function HomeLanding({
       {/* ── 6. SPONSORED ── */}
       {banner && (
         <section className="hl-sec">
-          <AdCard banner={banner} txt={txt} fallbackSearch={dirSearch()} />
+          <AdCard
+            banner={banner}
+            txt={txt}
+            fallbackSearch={dirSearch()}
+            count={bannerCount}
+            index={bannerIndex}
+            onSelect={onBannerSelect}
+          />
         </section>
       )}
 
