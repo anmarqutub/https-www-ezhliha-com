@@ -199,6 +199,7 @@ export default function HomeLanding({
             banner={banner}
             txt={txt}
             fallbackSearch={dirSearch()}
+            note={bannerNote}
             count={bannerCount}
             index={bannerIndex}
             onSelect={onBannerSelect}
