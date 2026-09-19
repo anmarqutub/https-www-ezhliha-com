@@ -1497,13 +1497,6 @@ const ProviderCard = memo(function ProviderCard({
               ))}
             </div>
           )}
-          {cats.length > 0 && (
-            <div className="ez-card-cats">
-              {cats.map((c) => (
-                <span className="ez-card-cat" key={c}>{c}</span>
-              ))}
-            </div>
-          )}
           {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
           {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
