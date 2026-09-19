@@ -14,6 +14,7 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
+import { CONTACT_WA_NUMBER, WhatsAppIcon } from "@/components/SiteFooter";
 
 type Cat = { id: string; name_ar: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
@@ -39,6 +40,9 @@ export type LandingProps = {
   favCount: number;
   heroImage: string;
   banner: Banner | null;
+  bannerCount?: number;
+  bannerIndex?: number;
+  onBannerSelect?: (i: number) => void;
   showcase: Array<{ id: string }>;
   filterSlot?: ReactNode;
   selectedCityId?: string;
@@ -53,6 +57,9 @@ export default function HomeLanding({
   providerCount,
   heroImage,
   banner,
+  bannerCount = 1,
+  bannerIndex = 0,
+  onBannerSelect,
   showcase,
   filterSlot,
   selectedCityId,
@@ -186,7 +193,14 @@ export default function HomeLanding({
       {/* ── 6. SPONSORED ── */}
       {banner && (
         <section className="hl-sec">
-          <AdCard banner={banner} txt={txt} fallbackSearch={dirSearch()} />
+          <AdCard
+            banner={banner}
+            txt={txt}
+            fallbackSearch={dirSearch()}
+            count={bannerCount}
+            index={bannerIndex}
+            onSelect={onBannerSelect}
+          />
         </section>
       )}
 
@@ -301,46 +315,79 @@ function AdCard({
   banner,
   txt,
   fallbackSearch,
+  count = 1,
+  index = 0,
+  onSelect,
 }: {
   banner: Banner;
   txt: (k: string, f: string) => string;
   fallbackSearch: { category?: string; city?: string };
+  count?: number;
+  index?: number;
+  onSelect?: (i: number) => void;
 }) {
-  const body = (
-    <>
+  const link = banner.link_url?.trim();
+  const external = !!link && /^https?:\/\//i.test(link);
+  const title = banner.title || txt("hl.ad.name", "مزوّد خدمة مميز");
+  const meta = txt("hl.ad.meta", "");
+  const waMsg = `${txt("hl.ad.wa", "السلام عليكم، جيتك من موقع إزهليها وأبغى أستفسر عن")} ${title}`;
+  const waHref = `https://wa.me/${txt("contact.wa_number", CONTACT_WA_NUMBER).replace(/\D/g, "")}?text=${encodeURIComponent(waMsg)}`;
+
+  const TitleLink = ({ children }: { children: ReactNode }) =>
+    link ? (
+      <a className="hl-ad-link" href={link} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+        {children}
+      </a>
+    ) : (
+      <Link to="/providers" search={fallbackSearch} className="hl-ad-link">
+        {children}
+      </Link>
+    );
+
+  return (
+    <div className="hl-ad">
       <div className="hl-ad-body">
         <div className="hl-ad-tags">
           <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
           <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
         </div>
-        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزوّد خدمة مميز")}</h3>
+        <h3 className="hl-ad-title">
+          <TitleLink>{title}</TitleLink>
+        </h3>
+        {meta && <p className="hl-ad-meta">{meta}</p>}
         <p className="hl-ad-desc">{txt("hl.ad.desc", "شوفي هذا المزود وتعرفي على خدماته وعروضه للمشتركات.")}</p>
         <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري للمشتركات")}</span>
-        <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
+        <div className="hl-ad-actions">
+          <TitleLink>
+            <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
+          </TitleLink>
+          <a className="hl-ad-wa" href={waHref} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon size={15} />
+            {txt("hl.ad.wa.cta", "تواصلي واتساب")}
+          </a>
+        </div>
+        {count > 1 && (
+          <div className="hl-ad-dots" role="tablist" aria-label={txt("ad.tag", "إعلان")}>
+            {Array.from({ length: count }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`hl-ad-dot${i === index ? " is-on" : ""}`}
+                aria-label={`${txt("ad.tag", "إعلان")} ${i + 1}`}
+                aria-selected={i === index}
+                role="tab"
+                onClick={() => onSelect?.(i)}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      <div className="hl-ad-media">
-        <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
-      </div>
-    </>
-  );
-
-  const link = banner.link_url?.trim();
-  if (link) {
-    const external = /^https?:\/\//i.test(link);
-    return (
-      <a
-        className="hl-ad hl-ad-link"
-        href={link}
-        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      >
-        {body}
-      </a>
-    );
-  }
-  return (
-    <Link to="/providers" search={fallbackSearch} className="hl-ad hl-ad-link">
-      {body}
-    </Link>
+      <TitleLink>
+        <span className="hl-ad-media">
+          <img src={banner.image_url} alt={title} loading="lazy" decoding="async" />
+        </span>
+      </TitleLink>
+    </div>
   );
 }
 
@@ -404,15 +451,24 @@ const landingCss = `
   .hl-jcard p { margin:0; font-size:13px; color:rgba(42,33,28,.68); line-height:1.9; }
 
   /* ad */
-  .hl-ad { display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; background:#f8f7f0; border:1px solid rgba(160,120,60,.28); border-radius:12px; padding:34px; }
-  .hl-ad-body { display:grid; gap:12px; justify-items:start; }
-  .hl-ad-tags { display:flex; align-items:center; gap:12px; }
+  .hl-ad { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.8fr); gap:26px; align-items:center; background:#f8f7f0; border:1px solid rgba(160,120,60,.28); border-radius:12px; padding:22px; }
+  .hl-ad-body { display:grid; gap:9px; justify-items:start; min-width:0; }
+  .hl-ad-tags { display:flex; align-items:center; gap:10px; }
   .hl-ad-badge { font-size:11px; letter-spacing:.06em; color:#640000; border:1px solid rgba(100,0,0,.3); border-radius:999px; padding:3px 11px; background:#fff; }
   .hl-ad-eyebrow { font-size:12px; color:rgba(42,33,28,.6); }
-  .hl-ad-title { margin:0; font-size:22px; color:#2a211c; font-weight:600; }
-  .hl-ad-desc { margin:0; font-size:13.5px; line-height:1.9; color:rgba(42,33,28,.7); max-width:420px; }
+  .hl-ad-title { margin:0; font-size:20px; color:#2a211c; font-weight:600; }
+  .hl-ad-title .hl-ad-link:hover { color:#640000; }
+  .hl-ad-meta { margin:0; font-size:12.5px; color:rgba(42,33,28,.6); }
+  .hl-ad-desc { margin:0; font-size:13px; line-height:1.85; color:rgba(42,33,28,.7); max-width:420px; }
   .hl-ad-gold { font-size:12px; color:#8a6a2f; border:1px solid rgba(160,120,60,.45); background:rgba(206,175,110,.12); border-radius:999px; padding:5px 13px; }
-  .hl-ad-media img { display:block; width:100%; height:280px; object-fit:cover; border-radius:10px; }
+  .hl-ad-actions { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin-top:2px; }
+  .hl-ad-wa { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:#166534; background:#fff; border:1px solid rgba(22,101,52,.32); border-radius:999px; padding:8px 14px; text-decoration:none; }
+  .hl-ad-wa:hover { background:rgba(22,101,52,.07); }
+  .hl-ad-dots { display:flex; gap:6px; margin-top:4px; }
+  .hl-ad-dot { width:7px; height:7px; padding:0; border-radius:50%; border:0; cursor:pointer; background:rgba(100,0,0,.24); }
+  .hl-ad-dot.is-on { background:#640000; width:18px; border-radius:999px; }
+  .hl-ad-media { display:block; }
+  .hl-ad-media img { display:block; width:100%; aspect-ratio:4/3; height:auto; max-height:210px; object-fit:cover; border-radius:10px; }
 
   /* picks */
   .hl-picks { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
@@ -486,11 +542,12 @@ const landingCss = `
     .hl-jcard p { font-size:14px; line-height:1.7; }
 
     /* sponsored banner stays horizontal, image cropped smartly */
-    .hl-ad { grid-template-columns:1.1fr .9fr; gap:12px; padding:14px; border-radius:10px; }
-    .hl-ad-title { font-size:clamp(1rem,4.6vw,1.3rem); }
-    .hl-ad-desc { font-size:14px; line-height:1.7; max-width:none; }
+    .hl-ad { grid-template-columns:1fr; gap:12px; padding:14px; border-radius:10px; }
+    .hl-ad-title { font-size:clamp(1rem,4.6vw,1.25rem); }
+    .hl-ad-desc { font-size:13.5px; line-height:1.75; max-width:none; }
     .hl-ad-gold { font-size:12px; }
-    .hl-ad-media img { height:clamp(150px,38vw,200px); object-fit:cover; object-position:center; }
+    .hl-ad-media { order:-1; }
+    .hl-ad-media img { aspect-ratio:16/10; max-height:clamp(150px,40vw,200px); object-position:center; }
 
     .hl-steps li { padding-top:14px; gap:12px; }
     .hl-step-num { width:34px; height:34px; }
@@ -506,7 +563,7 @@ const landingCss = `
     .hl-hero-in { grid-template-columns:1fr; gap:18px; }
     .hl-hero-media img { max-height:clamp(200px,58vw,280px); }
     .hl-ad { grid-template-columns:1fr; gap:14px; }
-    .hl-ad-media img { height:clamp(170px,46vw,220px); }
+    .hl-ad-media img { aspect-ratio:16/10; max-height:clamp(160px,44vw,205px); }
     .hl-cat-grid > * { flex:0 0 46%; }
     .hl-picks > * { flex:0 0 82%; }
     .hl-journey > * { flex:0 0 84%; }
