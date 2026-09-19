@@ -2747,9 +2747,31 @@ function SiteTextsTab() {
 
       </div>
       <div className="adm-card">
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="ابحثي عن عبارة أو مفتاح..."
+            style={{ flex: "1 1 240px", border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit" }}
+          />
+          <select
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            style={{ border: "1px solid #E8DADA", borderRadius: 8, padding: 10, fontFamily: "inherit" }}
+          >
+            {["الكل", ...Array.from(new Set(rows.map((r) => r.group ?? "نصوص أخرى")))].map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </div>
         {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {rows.map((r) => (
+            {rows.filter((r) => {
+              if (group !== "الكل" && (r.group ?? "نصوص أخرى") !== group) return false;
+              const s = q.trim().toLowerCase();
+              if (!s) return true;
+              return r.key.toLowerCase().includes(s) || (r.label ?? "").toLowerCase().includes(s) || (r.value ?? "").toLowerCase().includes(s);
+            }).map((r) => (
               <div key={r.key} style={{ border: "1px solid #F0E5E5", borderRadius: 12, padding: 14, background: "#fff" }}>
                 <div style={{ marginBottom: 8 }}>
                   <strong>{r.label ?? r.key}</strong>
