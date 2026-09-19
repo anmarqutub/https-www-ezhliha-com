@@ -179,10 +179,10 @@ export default function HomeLanding({
             ))}
           </div>
         </section>
-      )}
+  ));
 
-      {/* ── 5. JOURNEY ── */}
-      <section className="hl-sec hl-sec-alt">
+  add("journey", 5, (
+      <section className="hl-sec hl-sec-alt" key="journey">
         <div className="hl-sec-head">
           <h2 className="hl-h2">{txt("hl.journey.title", "نكمل معك التفاصيل")}</h2>
           <p className="hl-sub">{txt("hl.journey.desc", "خطوات بسيطة تقربك من الخيار المناسب.")}</p>
