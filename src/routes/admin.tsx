@@ -3736,6 +3736,7 @@ function DesignTab() {
           {saving ? "جارٍ الحفظ..." : dirty ? "حفظ التغييرات" : "حفظ"}
         </button>
       </div>
+      <DesignAssistant />
       <div className="adm-card">
         <p style={{ color: "#7A6A6A", fontSize: 13, margin: "0 0 14px" }}>
           عناصر الصفحة الرئيسية — أطفئي أي قسم ما تبغين يظهر للزوار.
