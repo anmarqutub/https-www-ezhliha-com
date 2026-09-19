@@ -334,7 +334,7 @@ function AdCard({
   const link = banner.link_url?.trim();
   const external = !!link && /^https?:\/\//i.test(link);
   const title = banner.title || txt("hl.ad.name", "مزوّد خدمة مميز");
-  const meta = txt("hl.ad.meta", "");
+  const meta = txt("hl.ad.meta", "") || note;
   const waMsg = `${txt("hl.ad.wa", "السلام عليكم، جيتك من موقع إزهليها وأبغى أستفسر عن")} ${title}`;
   const waHref = `https://wa.me/${txt("contact.wa_number", CONTACT_WA_NUMBER).replace(/\D/g, "")}?text=${encodeURIComponent(waMsg)}`;
 
