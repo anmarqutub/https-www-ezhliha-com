@@ -40,6 +40,7 @@ export type LandingProps = {
   favCount: number;
   heroImage: string;
   banner: Banner | null;
+  bannerNote?: string;
   bannerCount?: number;
   bannerIndex?: number;
   onBannerSelect?: (i: number) => void;
