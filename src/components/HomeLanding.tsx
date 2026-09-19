@@ -529,11 +529,12 @@ const landingCss = `
     .hl-jcard p { font-size:14px; line-height:1.7; }
 
     /* sponsored banner stays horizontal, image cropped smartly */
-    .hl-ad { grid-template-columns:1.1fr .9fr; gap:12px; padding:14px; border-radius:10px; }
-    .hl-ad-title { font-size:clamp(1rem,4.6vw,1.3rem); }
-    .hl-ad-desc { font-size:14px; line-height:1.7; max-width:none; }
+    .hl-ad { grid-template-columns:1fr; gap:12px; padding:14px; border-radius:10px; }
+    .hl-ad-title { font-size:clamp(1rem,4.6vw,1.25rem); }
+    .hl-ad-desc { font-size:13.5px; line-height:1.75; max-width:none; }
     .hl-ad-gold { font-size:12px; }
-    .hl-ad-media img { height:clamp(150px,38vw,200px); object-fit:cover; object-position:center; }
+    .hl-ad-media { order:-1; }
+    .hl-ad-media img { aspect-ratio:16/10; max-height:clamp(150px,40vw,200px); object-position:center; }
 
     .hl-steps li { padding-top:14px; gap:12px; }
     .hl-step-num { width:34px; height:34px; }
