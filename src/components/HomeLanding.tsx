@@ -106,12 +106,20 @@ export default function HomeLanding({
   ];
 
 
-  return (
-    <>
-      <style>{landingCss}</style>
+  // ترتيب وإظهار الأقسام يُدار من لوحة التحكم (مفاتيح sec.*)
+  const secOn = (id: string) => txt(`sec.${id}.visible`, "1") !== "0";
+  const secOrder = (id: string, def: number) => {
+    const raw = txt(`sec.${id}.order`, String(def));
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : def;
+  };
+  const blocks: Array<{ id: string; def: number; node: ReactNode }> = [];
+  const add = (id: string, def: number, node: ReactNode) => {
+    if (secOn(id)) blocks.push({ id, def, node });
+  };
 
-      {/* ── 3. HERO ── */}
-      <section className="hl-hero">
+  add("hero", 1, (
+      <section className="hl-hero" key="hero">
         <div className="hl-hero-in">
           <div className="hl-hero-copy">
             <span className="hl-eyebrow">
