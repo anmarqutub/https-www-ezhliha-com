@@ -1977,8 +1977,8 @@ function ProvidersTab() {
             <table className="adm-table">
               <thead><tr>
                 <th style={{ width: 48 }}>#</th>
-                <th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
-                <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
+                <th>الصورة</th><th>الاسم</th><th>المدينة</th><th>التصنيف</th><th>السعر</th>
+                <th>واتساب</th><th>اتصال</th><th>الباقات</th><th>التقييم</th><th>مميز</th><th>الترتيب</th><th>الحالة</th><th></th>
               </tr></thead>
               <tbody>
                 {pageRows.map((r, idx) => {
