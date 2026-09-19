@@ -343,6 +343,17 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
   const subsOf = (p: Provider) => Array.from(providerSubIds.get(p.id) ?? new Set([p.subcategory_id]));
 
+  const catNamesOf = (p: Provider) => {
+    const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
+    const names = new Set<string>();
+    subsOf(p).forEach((sid) => {
+      const cid = sid ? subToCat.get(sid) : undefined;
+      const nm = cid ? categories.find((c) => c.id === cid)?.name_ar : undefined;
+      if (nm) names.add(nm);
+    });
+    return Array.from(names).slice(0, 3);
+  };
+
   const providersCountByCat = useMemo(() => {
     const m = new Map<string, number>();
     const subToCat = new Map(subcategories.map((s) => [s.id, s.category_id]));
@@ -1072,6 +1083,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                 provider={p}
                 city={cityById.get(p.city_id)}
                 sub={subById.get(p.subcategory_id)}
+                cats={catNamesOf(p)}
                 images={imgsByProvider.get(p.id) ?? []}
                 tags={tagsByProvider.get(p.id) ?? []}
                 contactLabel={contactLabel}
@@ -1295,6 +1307,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           provider={p}
                           city={cityById.get(p.city_id)}
                           sub={subById.get(p.subcategory_id)}
+                          cats={catNamesOf(p)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={contactLabel}
@@ -1318,6 +1331,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                           provider={p}
                           city={cityById.get(p.city_id)}
                           sub={subById.get(p.subcategory_id)}
+                          cats={catNamesOf(p)}
                           images={imgsByProvider.get(p.id) ?? []}
                           tags={tagsByProvider.get(p.id) ?? []}
                           contactLabel={contactLabel}
@@ -1418,6 +1432,7 @@ const ProviderCard = memo(function ProviderCard({
   isFav,
   onToggleFav,
   tags = [],
+  cats = [],
   eager = false,
   onOpen,
 }: {
@@ -1430,6 +1445,7 @@ const ProviderCard = memo(function ProviderCard({
   isFav?: boolean;
   onToggleFav?: (providerId: string) => void;
   tags?: string[];
+  cats?: string[];
   eager?: boolean;
   onOpen?: () => void;
 }) {
@@ -1474,6 +1490,20 @@ const ProviderCard = memo(function ProviderCard({
           <div className="ez-card-head">
             <h3>{provider.name}</h3>
           </div>
+          {cats.length > 0 && (
+            <div className="ez-card-cats">
+              {cats.map((c) => (
+                <span className="ez-card-cat" key={c}>{c}</span>
+              ))}
+            </div>
+          )}
+          {cats.length > 0 && (
+            <div className="ez-card-cats">
+              {cats.map((c) => (
+                <span className="ez-card-cat" key={c}>{c}</span>
+              ))}
+            </div>
+          )}
           {city && <span className="ez-card-meta"><MapPin size={12} /> {city.name_ar}</span>}
           {capacity && <span className="ez-card-meta"><Users size={12} /> {capacity}</span>}
           <div className="ez-card-price">
@@ -1888,6 +1918,8 @@ const css = `
   .ez-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:0; }
   .ez-card-head h3 { font-size:15px; font-weight:600; color:var(--ink); margin:0; line-height:1.5; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-rating { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--brand); white-space:nowrap; }
+  .ez-card-cats { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:5px; }
+  .ez-card-cat { font-size:9.5px; font-weight:600; color:#640000; background:#F7EFE2; border:1px solid #EADFC6; border-radius:999px; padding:2px 7px; line-height:1.5; }
   .ez-card-meta { display:flex; align-items:center; gap:4px; font-size:11.5px; color:var(--muted); margin-bottom:0; }
   .ez-card-desc { font-size:13px; color:var(--muted); line-height:1.8; margin:0 0 12px; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ez-card-tags { display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px; margin:0 0 12px; }
