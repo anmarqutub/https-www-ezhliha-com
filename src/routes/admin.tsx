@@ -2670,18 +2670,46 @@ const FONT_OPTIONS = [
   "Noto Kufi Arabic", "Changa", "El Messiri", "Rakkas",
 ];
 
+// مجموعة تلقائية للنصوص القديمة حسب بداية المفتاح
+function guessGroup(key: string): string {
+  if (key.startsWith("nav.") || key.startsWith("mega.")) return "الهيدر والقوائم";
+  if (key.startsWith("footer.")) return "الفوتر والتواصل";
+  if (key.startsWith("provider.")) return "صفحة مقدمة الخدمة";
+  if (key.startsWith("ad.")) return "إعلان الصفحة الرئيسية";
+  if (key.startsWith("stat.")) return "الأرقام والإحصائيات";
+  if (key.startsWith("auth_gate.") || key.startsWith("account.")) return "الحساب والدخول";
+  if (key.startsWith("site.")) return "إعدادات عامة";
+  return "الصفحة الرئيسية";
+}
+
+const SITE_TEXT_DEFAULTS: SiteTextRow[] = (() => {
+  const base = SITE_TEXT_BASE.map((r) => ({ ...r, group: r.group ?? guessGroup(r.key) }));
+  const baseKeys = new Set(base.map((r) => r.key));
+  const extra = SITE_TEXT_EXTRA.filter((r) => !baseKeys.has(r.key));
+  const all = [...base, ...extra];
+  const groups = Array.from(new Set(all.map((r) => r.group!)));
+  return groups.flatMap((g) => all.filter((r) => r.group === g));
+})();
+
 function SiteTextsTab() {
   const [rows, setRows] = useState<SiteTextRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [q, setQ] = useState("");
+  const [group, setGroup] = useState("الكل");
 
   const reload = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase.from("site_texts").select("*").order("key");
-    const byKey = new Map((data ?? []).map((r) => [r.key, r as SiteTextRow]));
-    const merged = SITE_TEXT_DEFAULTS.map((d) => byKey.get(d.key) ?? d);
-    const extras = ((data ?? []) as SiteTextRow[]).filter((r) => !SITE_TEXT_DEFAULTS.some((d) => d.key === r.key));
+    const byKey = new Map(((data ?? []) as SiteTextRow[]).map((r) => [r.key, r]));
+    const merged = SITE_TEXT_DEFAULTS.map((d) => {
+      const saved = byKey.get(d.key);
+      return saved ? { ...saved, label: saved.label ?? d.label, group: d.group } : d;
+    });
+    const extras = ((data ?? []) as SiteTextRow[])
+      .filter((r) => !SITE_TEXT_DEFAULTS.some((d) => d.key === r.key))
+      .map((r) => ({ ...r, group: "نصوص أخرى" }));
     setRows([...merged, ...extras]);
     setDirty(false);
     setLoading(false);
