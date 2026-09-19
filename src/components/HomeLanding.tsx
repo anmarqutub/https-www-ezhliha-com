@@ -215,11 +215,10 @@ export default function HomeLanding({
             onSelect={onBannerSelect}
           />
         </section>
-      )}
+  ));
 
-      {/* ── 7. PICKED PROVIDERS ── */}
-      {showcase.length > 0 && (
-        <section className="hl-sec hl-sec-alt">
+  if (showcase.length > 0) add("picks", 7, (
+        <section className="hl-sec hl-sec-alt" key="picks">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.picks.title", "خيارات تناسبك")}</h2>
             <p className="hl-sub">{txt("hl.picks.desc", "تصفحي مزودي الخدمات واختاري الأنسب لك.")}</p>
