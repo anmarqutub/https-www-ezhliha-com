@@ -275,7 +275,8 @@ function ProviderPage() {
   const avgRating = reviews.length > 0 ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1) : null;
   const contactLabel = siteTexts["provider.whatsapp.label"] || "للمزيد من التفاصيل";
   const shareProvider = async () => {
-    const url = window.location.href;
+    // رابط عام يفتح لأي أحد ويظهر بصورة معاينة في الواتساب
+    const url = `${window.location.origin}/p/${id}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: provider.name, text: provider.description ?? provider.name, url });
