@@ -58,6 +58,7 @@ export default function HomeLanding({
   providerCount,
   heroImage,
   banner,
+  bannerNote = "",
   bannerCount = 1,
   bannerIndex = 0,
   onBannerSelect,
