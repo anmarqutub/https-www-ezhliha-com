@@ -80,3 +80,6 @@ Disallow: /
 # Allow regular search engines
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://https-www-ezhliha-com.lovable.app/api/public/sitemap
