@@ -438,15 +438,24 @@ const landingCss = `
   .hl-jcard p { margin:0; font-size:13px; color:rgba(42,33,28,.68); line-height:1.9; }
 
   /* ad */
-  .hl-ad { display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; background:#f8f7f0; border:1px solid rgba(160,120,60,.28); border-radius:12px; padding:34px; }
-  .hl-ad-body { display:grid; gap:12px; justify-items:start; }
-  .hl-ad-tags { display:flex; align-items:center; gap:12px; }
+  .hl-ad { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.8fr); gap:26px; align-items:center; background:#f8f7f0; border:1px solid rgba(160,120,60,.28); border-radius:12px; padding:22px; }
+  .hl-ad-body { display:grid; gap:9px; justify-items:start; min-width:0; }
+  .hl-ad-tags { display:flex; align-items:center; gap:10px; }
   .hl-ad-badge { font-size:11px; letter-spacing:.06em; color:#640000; border:1px solid rgba(100,0,0,.3); border-radius:999px; padding:3px 11px; background:#fff; }
   .hl-ad-eyebrow { font-size:12px; color:rgba(42,33,28,.6); }
-  .hl-ad-title { margin:0; font-size:22px; color:#2a211c; font-weight:600; }
-  .hl-ad-desc { margin:0; font-size:13.5px; line-height:1.9; color:rgba(42,33,28,.7); max-width:420px; }
+  .hl-ad-title { margin:0; font-size:20px; color:#2a211c; font-weight:600; }
+  .hl-ad-title .hl-ad-link:hover { color:#640000; }
+  .hl-ad-meta { margin:0; font-size:12.5px; color:rgba(42,33,28,.6); }
+  .hl-ad-desc { margin:0; font-size:13px; line-height:1.85; color:rgba(42,33,28,.7); max-width:420px; }
   .hl-ad-gold { font-size:12px; color:#8a6a2f; border:1px solid rgba(160,120,60,.45); background:rgba(206,175,110,.12); border-radius:999px; padding:5px 13px; }
-  .hl-ad-media img { display:block; width:100%; height:280px; object-fit:cover; border-radius:10px; }
+  .hl-ad-actions { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin-top:2px; }
+  .hl-ad-wa { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:#166534; background:#fff; border:1px solid rgba(22,101,52,.32); border-radius:999px; padding:8px 14px; text-decoration:none; }
+  .hl-ad-wa:hover { background:rgba(22,101,52,.07); }
+  .hl-ad-dots { display:flex; gap:6px; margin-top:4px; }
+  .hl-ad-dot { width:7px; height:7px; padding:0; border-radius:50%; border:0; cursor:pointer; background:rgba(100,0,0,.24); }
+  .hl-ad-dot.is-on { background:#640000; width:18px; border-radius:999px; }
+  .hl-ad-media { display:block; }
+  .hl-ad-media img { display:block; width:100%; aspect-ratio:4/3; height:auto; max-height:210px; object-fit:cover; border-radius:10px; }
 
   /* picks */
   .hl-picks { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
