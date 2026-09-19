@@ -40,6 +40,7 @@ export type LandingProps = {
   favCount: number;
   heroImage: string;
   banner: Banner | null;
+  bannerNote?: string;
   bannerCount?: number;
   bannerIndex?: number;
   onBannerSelect?: (i: number) => void;
@@ -57,6 +58,7 @@ export default function HomeLanding({
   providerCount,
   heroImage,
   banner,
+  bannerNote = "",
   bannerCount = 1,
   bannerIndex = 0,
   onBannerSelect,
@@ -197,6 +199,7 @@ export default function HomeLanding({
             banner={banner}
             txt={txt}
             fallbackSearch={dirSearch()}
+            note={bannerNote}
             count={bannerCount}
             index={bannerIndex}
             onSelect={onBannerSelect}
@@ -315,6 +318,7 @@ function AdCard({
   banner,
   txt,
   fallbackSearch,
+  note = "",
   count = 1,
   index = 0,
   onSelect,
@@ -322,6 +326,7 @@ function AdCard({
   banner: Banner;
   txt: (k: string, f: string) => string;
   fallbackSearch: { category?: string; city?: string };
+  note?: string;
   count?: number;
   index?: number;
   onSelect?: (i: number) => void;
@@ -329,7 +334,7 @@ function AdCard({
   const link = banner.link_url?.trim();
   const external = !!link && /^https?:\/\//i.test(link);
   const title = banner.title || txt("hl.ad.name", "مزوّد خدمة مميز");
-  const meta = txt("hl.ad.meta", "");
+  const meta = txt("hl.ad.meta", "") || note;
   const waMsg = `${txt("hl.ad.wa", "السلام عليكم، جيتك من موقع إزهليها وأبغى أستفسر عن")} ${title}`;
   const waHref = `https://wa.me/${txt("contact.wa_number", CONTACT_WA_NUMBER).replace(/\D/g, "")}?text=${encodeURIComponent(waMsg)}`;
 
