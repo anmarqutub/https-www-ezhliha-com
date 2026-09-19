@@ -1081,6 +1081,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
           favCount={favIds.size}
           heroImage={heroBride.url}
           banner={currentBanner ?? null}
+          bannerNote={bannerNote}
           bannerCount={banners.length}
           bannerIndex={bannerIdx}
           onBannerSelect={setBannerIdx}
