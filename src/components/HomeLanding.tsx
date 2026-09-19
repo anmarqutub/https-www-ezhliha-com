@@ -201,10 +201,10 @@ export default function HomeLanding({
           ))}
         </div>
       </section>
+  ));
 
-      {/* ── 6. SPONSORED ── */}
-      {banner && (
-        <section className="hl-sec">
+  if (banner) add("ad", 6, (
+        <section className="hl-sec" key="ad">
           <AdCard
             banner={banner}
             txt={txt}
