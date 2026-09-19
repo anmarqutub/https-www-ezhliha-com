@@ -318,6 +318,7 @@ function AdCard({
   banner,
   txt,
   fallbackSearch,
+  note = "",
   count = 1,
   index = 0,
   onSelect,
@@ -325,6 +326,7 @@ function AdCard({
   banner: Banner;
   txt: (k: string, f: string) => string;
   fallbackSearch: { category?: string; city?: string };
+  note?: string;
   count?: number;
   index?: number;
   onSelect?: (i: number) => void;
