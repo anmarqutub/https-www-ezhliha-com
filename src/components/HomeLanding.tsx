@@ -514,25 +514,25 @@ const landingCss = `
 
   /* trust counter: بطاقة مركزية واحدة بسيطة */
   .hl-tc { background:#e6e4d7; background-image:radial-gradient(rgba(100,0,0,.045) 1px, transparent 1px); background-size:5px 5px; border-top:1px solid rgba(160,120,60,.22); border-bottom:1px solid rgba(160,120,60,.22); }
-  .hl-tc-in { max-width:760px; margin:0 auto; padding:clamp(30px,5vw,58px) clamp(14px,3vw,32px); }
-  .hl-tc-core { text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; background:rgba(255,255,255,.6); border:1px solid rgba(160,120,60,.28); border-radius:20px; padding:clamp(22px,3vw,36px) clamp(16px,3vw,40px); box-shadow:0 18px 44px rgba(53,24,19,.07); }
-  .hl-tc-ico { width:44px; height:44px; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.16); color:#660000; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
-  .hl-tc-ico svg { width:22px; height:22px; }
-  .hl-tc-pre { font-size:13px; color:rgba(42,33,28,.62); letter-spacing:.08em; }
-  .hl-tc-num { font-size:clamp(4.5rem,18vw,9rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; max-width:100%; }
-  .hl-tc-label { font-size:18px; color:#2a211c; }
-  .hl-tc-note { margin:6px 0 0; font-size:14px; line-height:1.85; color:rgba(42,33,28,.68); max-width:44ch; }
-  .hl-tc-btn { margin-top:18px; min-height:44px; opacity:0; transform:translateY(8px); transition:opacity .6s ease 1.6s, transform .6s ease 1.6s; }
+  .hl-tc-in { max-width:560px; margin:0 auto; padding:clamp(18px,3vw,30px) clamp(12px,3vw,24px); }
+  .hl-tc-core { text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; background:rgba(255,255,255,.6); border:1px solid rgba(160,120,60,.28); border-radius:16px; padding:clamp(14px,2vw,20px) clamp(12px,2vw,24px); box-shadow:0 10px 26px rgba(53,24,19,.06); }
+  .hl-tc-ico { width:32px; height:32px; border-radius:50%; background:#fff; border:1px solid rgba(100,0,0,.16); color:#660000; display:flex; align-items:center; justify-content:center; margin-bottom:2px; }
+  .hl-tc-ico svg { width:16px; height:16px; }
+  .hl-tc-pre { font-size:11.5px; color:rgba(42,33,28,.62); letter-spacing:.08em; }
+  .hl-tc-num { font-size:clamp(2.6rem,10vw,4.2rem); line-height:1; color:#660000; font-weight:700; letter-spacing:-.04em; max-width:100%; }
+  .hl-tc-label { font-size:14px; color:#2a211c; }
+  .hl-tc-note { margin:4px 0 0; font-size:12.5px; line-height:1.7; color:rgba(42,33,28,.68); max-width:40ch; }
+  .hl-tc-btn { margin-top:12px; min-height:38px; padding:8px 18px; font-size:13px; opacity:0; transform:translateY(8px); transition:opacity .6s ease 1.6s, transform .6s ease 1.6s; }
   .hl-tc.is-on .hl-tc-btn { opacity:1; transform:none; }
 
   @media (max-width:760px) {
-    .hl-tc-in { padding:clamp(26px,7vw,40px) 14px; }
-    .hl-tc-core { padding:22px 16px; border-radius:18px; }
-    .hl-tc-ico { width:34px; height:34px; }
-    .hl-tc-ico svg { width:18px; height:18px; }
-    .hl-tc-num { font-size:clamp(4rem,17vw,6rem); }
-    .hl-tc-label { font-size:16px; }
-    .hl-tc-note { font-size:14px; }
+    .hl-tc-in { padding:16px 12px; }
+    .hl-tc-core { padding:14px 12px; border-radius:14px; }
+    .hl-tc-ico { width:28px; height:28px; }
+    .hl-tc-ico svg { width:14px; height:14px; }
+    .hl-tc-num { font-size:clamp(2.4rem,11vw,3.4rem); }
+    .hl-tc-label { font-size:13px; }
+    .hl-tc-note { font-size:12px; }
     .hl-tc-btn { width:100%; }
   }
   @media (prefers-reduced-motion:reduce) {
