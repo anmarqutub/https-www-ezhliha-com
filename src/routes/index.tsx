@@ -1620,6 +1620,9 @@ function AuthGate() {
           <Link to="/signup" style={{ background: "#fff", color: "#640000", padding: "12px 24px", borderRadius: 50, textDecoration: "none", fontWeight: 700, border: "2px solid #640000" }}>
             {t("auth_gate.signup", "إنشاء حساب")}
           </Link>
+          <Link to="/join" style={{ color: "#640000", fontSize: 13, textDecoration: "underline", marginTop: 2 }}>
+            {t("footer.join", "انضمّي كمقدمة خدمة")}
+          </Link>
         </div>
       </div>
     </div>
