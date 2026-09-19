@@ -14,6 +14,7 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
+import { CONTACT_WA_NUMBER, WhatsAppIcon } from "@/components/SiteFooter";
 
 type Cat = { id: string; name_ar: string };
 type Banner = { id: string; title: string | null; image_url: string; link_url: string | null };
