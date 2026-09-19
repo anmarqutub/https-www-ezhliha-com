@@ -2004,13 +2004,27 @@ function ProvidersTab() {
                       <td style={{ direction: "ltr", fontSize: 12 }}>{r.whatsapp ?? "—"}</td>
                       <td style={{ direction: "ltr", fontSize: 12 }}>{r.contact_phone ?? "—"}</td>
                       <td>{packages.filter((p) => p.provider_id === r.id).length}</td>
+                      <td style={{ whiteSpace: "nowrap" }} title="اضغطي على النجمة لتغيير التقييم">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button
+                            key={n}
+                            onClick={() => quickRating(r, n)}
+                            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 14, color: (r.rating ?? 0) >= n ? "#E0A500" : "#D8CFCF" }}
+                          >★</button>
+                        ))}
+                        <span style={{ fontSize: 11, color: "#8A7A7A", marginInlineStart: 4 }}>{r.rating ?? "—"}</span>
+                      </td>
                       <td>
                         <button onClick={() => toggleFeatured(r)} className={`adm-pill ${r.is_featured ? "on" : ""}`}>
                           {r.is_featured ? "★ مميز" : "عادي"}
                         </button>
                       </td>
                       <td>{r.sort_order}</td>
-                      <td><span className={`adm-badge ${r.active ? "adm-badge-on" : ""}`}>{r.active ? "مفعّل" : "متوقف"}</span></td>
+                      <td>
+                        <button onClick={() => toggleActive(r)} className={`adm-badge ${r.active ? "adm-badge-on" : ""}`} style={{ cursor: "pointer", border: "none" }}>
+                          {r.active ? "مفعّل" : "متوقف"}
+                        </button>
+                      </td>
                       <td>
                         <button className="adm-btn-sm" onClick={() => setEditing(r)}>تعديل</button>
                         <button className="adm-btn-sm adm-btn-danger" onClick={() => del(r.id)}>حذف</button>
