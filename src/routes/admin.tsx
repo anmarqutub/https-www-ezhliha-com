@@ -1708,6 +1708,30 @@ function ProvidersTab() {
     reload();
   };
 
+  const toggleActive = async (r: ProvRow) => {
+    await supabase.from("providers").update({ active: !r.active }).eq("id", r.id);
+    logActivity("update", "provider", r.id, { name: r.name, active: !r.active });
+    reload();
+  };
+
+  const quickRating = async (r: ProvRow, value: number) => {
+    const rating = value === r.rating ? null : value;
+    await supabase.from("providers").update({ rating }).eq("id", r.id);
+    logActivity("update", "provider", r.id, { name: r.name, rating });
+    reload();
+  };
+
+  const quickLogo = async (r: ProvRow, file: File) => {
+    const ext = file.name.split(".").pop();
+    const path = `${r.id}/logo_url-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("provider-images").upload(path, file);
+    if (error) { alert("خطأ رفع: " + error.message); return; }
+    const { data: pub } = supabase.storage.from("provider-images").getPublicUrl(path);
+    await supabase.from("providers").update({ logo_url: pub.publicUrl }).eq("id", r.id);
+    logActivity("upload_image", "provider", r.id, { field: "logo_url", name: r.name });
+    reload();
+  };
+
   const handleUpload = async (files: FileList | null) => {
     if (!files || !editing?.id) { alert("احفظي مقدم الخدمة أولاً قبل رفع الصور"); return; }
     setUploading(true);
