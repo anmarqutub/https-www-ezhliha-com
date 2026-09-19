@@ -192,7 +192,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         supabase.from("provider_subcategories").select("provider_id,subcategory_id"),
       ]);
       setCities((cRes.data ?? []) as City[]);
-      setSelectedCity("");
+      if (initial) setSelectedCity("");
       setCategories((catRes.data ?? []) as Category[]);
       setSubcategories((subRes.data ?? []) as Subcategory[]);
       setProviders((pRes.data ?? []) as Provider[]);
