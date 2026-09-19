@@ -56,7 +56,7 @@ function diffFields<T extends Record<string, unknown>>(
 }
 
 
-type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "texts" | "reviews" | "activity";
+type Tab = "stats" | "users" | "codes" | "salla" | "cities" | "categories" | "providers" | "banners" | "texts" | "design" | "reviews" | "activity";
 
 
 function AdminPage() {
@@ -148,6 +148,7 @@ function AdminPage() {
           <SideBtn label="مقدمو الخدمة" active={tab === "providers"} onClick={() => setTab("providers")} />
           <SideBtn label="البنرات" active={tab === "banners"} onClick={() => setTab("banners")} />
           <SideBtn label="عبارات الموقع" active={tab === "texts"} onClick={() => setTab("texts")} />
+          <SideBtn label="تعديلات التصميم" active={tab === "design"} onClick={() => setTab("design")} />
           <SideBtn label="التقييمات" active={tab === "reviews"} onClick={() => setTab("reviews")} />
           <SideBtn label="سجل التعديلات" active={tab === "activity"} onClick={() => setTab("activity")} />
         </aside>
@@ -162,6 +163,7 @@ function AdminPage() {
           {tab === "providers" && <ProvidersTab />}
           {tab === "banners" && <BannersTab />}
           {tab === "texts" && <SiteTextsTab />}
+          {tab === "design" && <DesignTab />}
           {tab === "reviews" && <ReviewsTab />}
           {tab === "activity" && <ActivityLogTab />}
         </main>
@@ -3576,5 +3578,100 @@ function SallaOrdersTab() {
         </table>
       </div>
     </div>
+  );
+}
+
+
+// ── تعديلات التصميم: إظهار/إخفاء أقسام الصفحة الرئيسية ──
+const HOME_SECTIONS: Array<{ key: string; label: string; desc: string }> = [
+  { key: "hero", label: "الواجهة الرئيسية", desc: "العنوان الكبير والوصف والصورة وأزرار البداية" },
+  { key: "search", label: "صندوق البحث والفلاتر", desc: "اختيار المدينة والتصنيف وفلاتر السعر" },
+  { key: "trust", label: "مربع عدد مقدمات الخدمة", desc: "الرقم المتحرك (٥٠٠+) مع زر التصفح" },
+  { key: "cats", label: "بطاقات التصنيفات", desc: "شبكة الفئات السريعة" },
+  { key: "journey", label: "رحلة التجهيز", desc: "ثلاث بطاقات تشرح الخطوات وتودي للدليل" },
+  { key: "ad", label: "بانر الإعلان", desc: "إعلان مقدمة الخدمة المميزة" },
+  { key: "picks", label: "خيارات مختارة", desc: "بطاقات مقدمات خدمة مقترحة" },
+  { key: "how", label: "كيف يعمل الموقع", desc: "الخطوات المرقّمة أسفل الصفحة" },
+];
+
+function DesignTab() {
+  const [vals, setVals] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  const reload = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("site_texts")
+      .select("key,value")
+      .in("key", HOME_SECTIONS.map((s) => `show.${s.key}`));
+    const saved = Object.fromEntries(((data ?? []) as Array<{ key: string; value: string }>).map((r) => [r.key, r.value]));
+    setVals(Object.fromEntries(HOME_SECTIONS.map((s) => [s.key, saved[`show.${s.key}`] !== "0"])));
+    setDirty(false);
+    setLoading(false);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const toggle = (k: string) => { setDirty(true); setVals((p) => ({ ...p, [k]: !p[k] })); };
+
+  const saveAll = async () => {
+    setSaving(true);
+    const payload = HOME_SECTIONS.map((s) => ({
+      key: `show.${s.key}`,
+      label: `إظهار قسم: ${s.label}`,
+      value: vals[s.key] === false ? "0" : "1",
+    }));
+    const { error } = await supabase.from("site_texts").upsert(payload, { onConflict: "key" });
+    setSaving(false);
+    if (error) { alert(error.message); return; }
+    logActivity("update", "site_text", "design", { count: payload.length });
+    await reload();
+    alert("تم حفظ تعديلات التصميم ✅");
+  };
+
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <h1 className="adm-title">تعديلات التصميم</h1>
+        <button
+          disabled={saving || loading}
+          onClick={saveAll}
+          style={{ background: "#640000", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 800, fontSize: 15, cursor: saving ? "not-allowed" : "pointer", opacity: saving || loading ? 0.7 : 1 }}
+        >
+          {saving ? "جارٍ الحفظ..." : dirty ? "حفظ التغييرات" : "حفظ"}
+        </button>
+      </div>
+      <div className="adm-card">
+        <p style={{ color: "#7A6A6A", fontSize: 13, margin: "0 0 14px" }}>
+          عناصر الصفحة الرئيسية — أطفئي أي قسم ما تبغين يظهر للزوار.
+        </p>
+        {loading ? <p className="adm-empty">جارٍ التحميل...</p> : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {HOME_SECTIONS.map((s) => {
+              const isOn = vals[s.key] !== false;
+              return (
+                <div key={s.key} style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid #F0E5E5", borderRadius: 12, padding: "12px 14px", background: "#fff" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <strong style={{ fontSize: 14 }}>{s.label}</strong>
+                    <div style={{ fontSize: 12, color: "#9A8A8A", marginTop: 3 }}>{s.desc}</div>
+                  </div>
+                  <span style={{ fontSize: 12, color: isOn ? "#1F7A4D" : "#9A8A8A", minWidth: 40, textAlign: "center" }}>
+                    {isOn ? "ظاهر" : "مخفي"}
+                  </span>
+                  <button
+                    onClick={() => toggle(s.key)}
+                    aria-label={isOn ? "إخفاء القسم" : "إظهار القسم"}
+                    style={{ width: 46, height: 26, borderRadius: 999, border: "none", cursor: "pointer", background: isOn ? "#640000" : "#DCD3D3", position: "relative", transition: "background .15s" }}
+                  >
+                    <span style={{ position: "absolute", top: 3, insetInlineStart: isOn ? 23 : 3, width: 20, height: 20, borderRadius: "50%", background: "#fff", transition: "inset-inline-start .15s" }} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

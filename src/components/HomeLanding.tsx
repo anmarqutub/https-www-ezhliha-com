@@ -106,11 +106,14 @@ export default function HomeLanding({
   ];
 
 
+  const on = (k: string) => txt(`show.${k}`, "1") !== "0";
+
   return (
     <>
       <style>{landingCss}</style>
 
       {/* ── 3. HERO ── */}
+      {on("hero") && (
       <section className="hl-hero">
         <div className="hl-hero-in">
           <div className="hl-hero-copy">
@@ -138,18 +141,21 @@ export default function HomeLanding({
           </div>
         </div>
       </section>
+      )}
 
-      {filterSlot}
+      {on("search") && filterSlot}
 
       {/* ── TRUST (animated) ── */}
-      <TrustCounter
-        txt={txt}
-        target={Math.max(500, Math.floor(providerCount / 50) * 50)}
-        exploreSearch={dirSearch()}
-      />
+      {on("trust") && (
+        <TrustCounter
+          txt={txt}
+          target={Math.max(500, Math.floor(providerCount / 50) * 50)}
+          exploreSearch={dirSearch()}
+        />
+      )}
 
       {/* ── 4. QUICK CATEGORIES ── */}
-      {quickCats.length > 0 && (
+      {on("cats") && quickCats.length > 0 && (
         <section className="hl-sec">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.cats.title", "وش تحتاجين لمناسبتك؟")}</h2>
@@ -172,6 +178,7 @@ export default function HomeLanding({
       )}
 
       {/* ── 5. JOURNEY ── */}
+      {on("journey") && (
       <section className="hl-sec hl-sec-alt">
         <div className="hl-sec-head">
           <h2 className="hl-h2">{txt("hl.journey.title", "نكمل معك التفاصيل")}</h2>
@@ -191,9 +198,10 @@ export default function HomeLanding({
           ))}
         </div>
       </section>
+      )}
 
       {/* ── 6. SPONSORED ── */}
-      {banner && (
+      {on("ad") && banner && (
         <section className="hl-sec">
           <AdCard
             banner={banner}
@@ -208,7 +216,7 @@ export default function HomeLanding({
       )}
 
       {/* ── 7. PICKED PROVIDERS ── */}
-      {showcase.length > 0 && (
+      {on("picks") && showcase.length > 0 && (
         <section className="hl-sec hl-sec-alt">
           <div className="hl-sec-head">
             <h2 className="hl-h2">{txt("hl.picks.title", "خيارات تناسبك")}</h2>
@@ -224,6 +232,7 @@ export default function HomeLanding({
       )}
 
       {/* ── 8. HOW IT WORKS ── */}
+      {on("how") && (
       <section className="hl-sec">
         <div className="hl-sec-head">
           <h2 className="hl-h2">{txt("hl.how.title", "اختاري بسهولة")}</h2>
@@ -240,6 +249,7 @@ export default function HomeLanding({
           ))}
         </ol>
       </section>
+      )}
 
     </>
   );
