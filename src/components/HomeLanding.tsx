@@ -550,7 +550,7 @@ const landingCss = `
     .hl-hero-in { grid-template-columns:1fr; gap:18px; }
     .hl-hero-media img { max-height:clamp(200px,58vw,280px); }
     .hl-ad { grid-template-columns:1fr; gap:14px; }
-    .hl-ad-media img { height:clamp(170px,46vw,220px); }
+    .hl-ad-media img { aspect-ratio:16/10; max-height:clamp(160px,44vw,205px); }
     .hl-cat-grid > * { flex:0 0 46%; }
     .hl-picks > * { flex:0 0 82%; }
     .hl-journey > * { flex:0 0 84%; }
