@@ -301,46 +301,79 @@ function AdCard({
   banner,
   txt,
   fallbackSearch,
+  count = 1,
+  index = 0,
+  onSelect,
 }: {
   banner: Banner;
   txt: (k: string, f: string) => string;
   fallbackSearch: { category?: string; city?: string };
+  count?: number;
+  index?: number;
+  onSelect?: (i: number) => void;
 }) {
-  const body = (
-    <>
+  const link = banner.link_url?.trim();
+  const external = !!link && /^https?:\/\//i.test(link);
+  const title = banner.title || txt("hl.ad.name", "مزوّد خدمة مميز");
+  const meta = txt("hl.ad.meta", "");
+  const waMsg = `${txt("hl.ad.wa", "السلام عليكم، جيتك من موقع إزهليها وأبغى أستفسر عن")} ${title}`;
+  const waHref = `https://wa.me/${txt("contact.wa_number", CONTACT_WA_NUMBER).replace(/\D/g, "")}?text=${encodeURIComponent(waMsg)}`;
+
+  const TitleLink = ({ children }: { children: ReactNode }) =>
+    link ? (
+      <a className="hl-ad-link" href={link} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+        {children}
+      </a>
+    ) : (
+      <Link to="/providers" search={fallbackSearch} className="hl-ad-link">
+        {children}
+      </Link>
+    );
+
+  return (
+    <div className="hl-ad">
       <div className="hl-ad-body">
         <div className="hl-ad-tags">
           <span className="hl-ad-badge">{txt("ad.tag", "إعلان")}</span>
           <span className="hl-ad-eyebrow">{txt("hl.ad.eyebrow", "تحت الضوء هذا الشهر")}</span>
         </div>
-        <h3 className="hl-ad-title">{banner.title || txt("hl.ad.name", "مزوّد خدمة مميز")}</h3>
+        <h3 className="hl-ad-title">
+          <TitleLink>{title}</TitleLink>
+        </h3>
+        {meta && <p className="hl-ad-meta">{meta}</p>}
         <p className="hl-ad-desc">{txt("hl.ad.desc", "شوفي هذا المزود وتعرفي على خدماته وعروضه للمشتركات.")}</p>
         <span className="hl-ad-gold">{txt("hl.ad.gold", "عرض حصري للمشتركات")}</span>
-        <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
+        <div className="hl-ad-actions">
+          <TitleLink>
+            <span className="hl-btn">{txt("hl.ad.cta", "شوفي العرض")}</span>
+          </TitleLink>
+          <a className="hl-ad-wa" href={waHref} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon size={15} />
+            {txt("hl.ad.wa.cta", "تواصلي واتساب")}
+          </a>
+        </div>
+        {count > 1 && (
+          <div className="hl-ad-dots" role="tablist" aria-label={txt("ad.tag", "إعلان")}>
+            {Array.from({ length: count }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`hl-ad-dot${i === index ? " is-on" : ""}`}
+                aria-label={`${txt("ad.tag", "إعلان")} ${i + 1}`}
+                aria-selected={i === index}
+                role="tab"
+                onClick={() => onSelect?.(i)}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      <div className="hl-ad-media">
-        <img src={banner.image_url} alt={banner.title ?? txt("ad.tag", "إعلان")} loading="lazy" decoding="async" />
-      </div>
-    </>
-  );
-
-  const link = banner.link_url?.trim();
-  if (link) {
-    const external = /^https?:\/\//i.test(link);
-    return (
-      <a
-        className="hl-ad hl-ad-link"
-        href={link}
-        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      >
-        {body}
-      </a>
-    );
-  }
-  return (
-    <Link to="/providers" search={fallbackSearch} className="hl-ad hl-ad-link">
-      {body}
-    </Link>
+      <TitleLink>
+        <span className="hl-ad-media">
+          <img src={banner.image_url} alt={title} loading="lazy" decoding="async" />
+        </span>
+      </TitleLink>
+    </div>
   );
 }
 
