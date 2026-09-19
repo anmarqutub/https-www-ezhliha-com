@@ -172,8 +172,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
 
-  useEffect(() => {
-    (async () => {
+  const loadAll = useCallback(async (initial = false) => {
+    {
       const [cRes, catRes, subRes, pRes, imgRes, bRes, txtRes, brRes, svcRes, extraRes] = await Promise.all([
         supabase.from("cities").select("*").eq("active", true).order("sort_order"),
         supabase.from("categories").select("*").eq("active", true).order("sort_order"),
