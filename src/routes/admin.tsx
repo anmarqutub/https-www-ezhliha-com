@@ -1986,7 +1986,18 @@ function ProvidersTab() {
                   return (
                     <tr key={r.id}>
                       <td style={{ color: "#8A7A7A", fontSize: 13 }}>{(safePage - 1) * PAGE_SIZE + idx + 1}</td>
-                      <td><strong>{r.name}</strong></td>
+                      <td>
+                        <label style={{ cursor: "pointer", display: "block", width: 44, height: 44 }} title="تغيير صورة المقدمة">
+                          {r.logo_url
+                            ? <img src={r.logo_url} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 10, border: "1px solid #E8DADA" }} />
+                            : <span style={{ display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: 10, border: "1px dashed #D9C6C6", color: "#B09A9A", fontSize: 18 }}>＋</span>}
+                          <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void quickLogo(r, f); e.target.value = ""; }} />
+                        </label>
+                      </td>
+                      <td>
+                        <strong>{r.name}</strong>
+                        <div><a href={`/provider/${r.id}`} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#640000" }}>عرض في الموقع ↗</a></div>
+                      </td>
                       <td>{cities.find((c) => c.id === r.city_id)?.name_ar ?? "—"}</td>
                       <td>{sub?.name_ar ?? "—"}</td>
                       <td>{r.price_from ? `${r.price_from}${r.price_to ? `–${r.price_to}` : ""} ر.س` : "—"}</td>
