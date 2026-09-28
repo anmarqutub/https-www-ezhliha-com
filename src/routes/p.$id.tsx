@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getPublicProvider } from "@/lib/public-provider.functions";
 import logoUrl from "@/assets/logo.jpg";
 
-const SITE = "https://https-www-ezhliha-com.lovable.app";
+const SITE = "https://www.ezhliha.com";
 
 export const Route = createFileRoute("/p/$id")({
   loader: async ({ params }) => {

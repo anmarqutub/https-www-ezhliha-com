@@ -515,11 +515,11 @@ function ProviderPage() {
               <button type="button" className="pv-pkg-arrow" aria-label="التالي" onClick={() => scrollPkg(1)}><ChevronLeft size={17} /></button>
             </div>
           </div>
-          {packages.length > 0 ? (
+          {packages.length + services.length > 0 ? (
             <div className="pv-pkg-rail" ref={pkgRef}>
-              {packages.map((pkg, i) => (
+              {[...packages.map((x) => ({ ...x, kind: "pkg" as const })), ...services.map((x) => ({ ...x, kind: "svc" as const }))].map((pkg, i) => (
                 <article className={"pv-pkg" + (selectedPkg === pkg.id ? " is-selected" : "")} key={pkg.id}>
-                  <span className="pv-pkg-tag">{i === 0 ? "الأكثر طلباً" : "باقة"}</span>
+                  <span className="pv-pkg-tag">{pkg.kind === "svc" ? "خدمة" : i === 0 ? "الأكثر طلباً" : "باقة"}</span>
                   <div className="pv-pkg-top">
                     <h3>{pkg.name}</h3>
                     <strong className="pv-pkg-price">{pkg.price || "السعر عند التواصل"}</strong>
