@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const SITE = "https://https-www-ezhliha-com.lovable.app";
+const SITE = "https://www.ezhliha.com";
 const STATIC_PATHS = ["/", "/providers", "/categories", "/cities", "/about", "/faq", "/join"];
 
 export const Route = createFileRoute("/api/public/sitemap")({

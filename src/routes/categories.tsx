@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "./index";
 
-const SITE = "https://https-www-ezhliha-com.lovable.app";
+const SITE = "https://www.ezhliha.com";
 const TITLE = "تصنيفات خدمات المناسبات — إزهليها";
 const DESC =
   "تصنيفات خدمات المناسبات في السعودية: قاعات واستراحات، تنسيق حفلات، ضيافة وبوفيهات، تصوير، إطلالة وتجميل، سبا، دعوات إلكترونية وخدمات إضافية.";
