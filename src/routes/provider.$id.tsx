@@ -436,7 +436,6 @@ function ProviderPage() {
               {provider.logo_url && <SmartImg src={provider.logo_url} alt={`شعار ${provider.name}`} className="pv-provider-logo" loading="lazy" />}
               <h1>{provider.name}</h1>
             </div>
-            {provider.description && <p className="pv-lead">{provider.description}</p>}
 
           </div>
 
