@@ -1,11 +1,11 @@
 // ربط تصنيفات الموقع (بالعربي) بروابط ثابتة قابلة للمشاركة مثل /providers?category=halls
 export const CATEGORY_SLUG_PATTERNS: Array<{ slug: string; re: RegExp }> = [
   { slug: "halls", re: /قاع|استراح|مكان|فيلا|شاليه/ },
-  { slug: "photography", re: /تصوير|فيديو|توثيق|كامي/ },
+  { slug: "photography", re: /تصوير|صور|فيديو|توثيق|كامي/ },
   { slug: "fashion", re: /فست|أزيا|ازيا|عبا|خياط/ },
   { slug: "beauty", re: /تجميل|مكياج|شعر|عناي|سبا|إطلال|اطلال/ },
   { slug: "flowers", re: /ورد|زهور|تنسيق|ديكور|تصميم/ },
-  { slug: "decor", re: /ديكور|تنسيق|ورد|زهور/ },
+  { slug: "decor", re: /تنسيق|ديكور|ورد|زهور/ },
   { slug: "music", re: /زفا|موسيق|فرق|صوت|إضاء|اضاء/ },
   { slug: "hospitality", re: /ضياف|بوفيه|حلو|طعام|مأكول|قهو|تمور/ },
   { slug: "planners", re: /منسق|تنظيم|حفل|تخطيط/ },
