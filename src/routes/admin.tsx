@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole, createAdminUser, sendUserPasswordReset } from "@/lib/admin.functions";
+import { getAdminUsers, claimFirstAdmin, getUserLoginEvents, setUserSuspended, getUserDevices, setDeviceStatus, getPendingDevicesSummary, setUserRole, createAdminUser, sendUserPasswordReset, setUserPassword } from "@/lib/admin.functions";
 import { listCodes, generateCodes, deleteCode, createSallaOrder, listSallaOrders } from "@/lib/codes.functions";
 import { generateDesignSuggestion, type DesignSuggestion } from "@/lib/design-ai.functions";
 
@@ -196,6 +196,7 @@ function UsersTab() {
   const toggleRole = useServerFn(setUserRole);
   const createAdmin = useServerFn(createAdminUser);
   const resetPwd = useServerFn(sendUserPasswordReset);
+  const setPwd = useServerFn(setUserPassword);
 
   async function handleSendReset(u: { id: string; email: string | null }) {
     if (!u.email) { alert("هذا المستخدم لا يملك بريداً إلكترونياً."); return; }
@@ -206,6 +207,20 @@ function UsersTab() {
       alert(`تم إرسال رابط إعادة التعيين إلى:\n${u.email}`);
     } catch (e) {
       alert((e as Error).message);
+    }
+  }
+
+  async function handleSetPassword(u: { id: string; email: string | null }) {
+    const pw = prompt(`كلمة المرور الجديدة لـ ${u.email ?? "المستخدم"} (٦ أحرف على الأقل):`);
+    if (pw == null) return;
+    if (pw.trim().length < 6) { alert("كلمة المرور لازم تكون ٦ أحرف على الأقل"); return; }
+    try {
+      await setPwd({ data: { userId: u.id, password: pw.trim() } });
+      await logActivity("user.password_set", "user", u.id, { email: u.email });
+      alert(`تم تغيير كلمة المرور ✅\nأرسليها للعميلة: ${pw.trim()}`);
+    } catch (e) {
+      const msg = e instanceof Response ? await e.text() : (e as Error).message;
+      alert(msg);
     }
   }
   const [showCreate, setShowCreate] = useState(false);
@@ -562,6 +577,17 @@ function UsersTab() {
                         )}
                         <button
                           type="button"
+                          onClick={() => handleSetPassword(u)}
+                          title="تغيير كلمة المرور مباشرة بدون إرسال إيميل"
+                          style={{
+                            background: "#640000", color: "#fff", border: "1px solid #640000",
+                            borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
+                          }}
+                        >
+                          🔑 تغيير كلمة المرور
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => handleSendReset(u)}
                           title="إرسال رابط إعادة تعيين كلمة المرور للمستخدم"
                           style={{
@@ -569,7 +595,7 @@ function UsersTab() {
                             borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700,
                           }}
                         >
-                          🔑 إعادة تعيين كلمة المرور
+                          ✉️ إرسال رابط
                         </button>
                       </div>
                     </td>

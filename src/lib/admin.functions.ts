@@ -301,3 +301,17 @@ export const sendUserPasswordReset = createServerFn({ method: "POST" })
 
     return { ok: true, email };
   });
+
+// Admin sets a user's password directly — no email sent.
+export const setUserPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    userId: z.string().uuid(),
+    password: z.string().min(6).max(72),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, { password: data.password });
+    if (error) throw new Response(error.message, { status: 400 });
+    return { ok: true };
+  });
