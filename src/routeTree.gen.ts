@@ -30,7 +30,6 @@ import { Route as ApiPublicPosterRouteImport } from './routes/api/public/poster'
 import { Route as ApiPublicSitemapRouteImport } from './routes/api/public/sitemap'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ProviderIdServiceServiceIdRouteImport } from './routes/provider_.$id.service.$serviceId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -138,12 +137,6 @@ const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   path: '/lovable/email/auth/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ProviderIdServiceServiceIdRoute =
   ProviderIdServiceServiceIdRouteImport.update({
     id: '/provider_/$id/service/$serviceId',
@@ -173,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/provider/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRoutesByTo {
@@ -198,7 +190,6 @@ export interface FileRoutesByTo {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/provider/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRoutesById {
@@ -224,7 +215,6 @@ export interface FileRoutesById {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/provider_/$id/service/$serviceId': typeof ProviderIdServiceServiceIdRoute
 }
 export interface FileRouteTypes {
@@ -251,7 +241,6 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/provider/$id/service/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -276,7 +265,6 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/provider/$id/service/$serviceId'
   id:
     | '__root__'
@@ -301,7 +289,6 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/provider_/$id/service/$serviceId'
   fileRoutesById: FileRoutesById
 }
@@ -327,7 +314,6 @@ export interface RootRouteChildren {
   ApiPublicSitemapRoute: typeof ApiPublicSitemapRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
-  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ProviderIdServiceServiceIdRoute: typeof ProviderIdServiceServiceIdRoute
 }
 
@@ -480,13 +466,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/provider_/$id/service/$serviceId': {
       id: '/provider_/$id/service/$serviceId'
       path: '/provider/$id/service/$serviceId'
@@ -519,7 +498,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSitemapRoute: ApiPublicSitemapRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
-  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ProviderIdServiceServiceIdRoute: ProviderIdServiceServiceIdRoute,
 }
 export const routeTree = rootRouteImport
