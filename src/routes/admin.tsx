@@ -3332,6 +3332,21 @@ function ActivityLogTab() {
 
 
 
+const SALLA_MSG = `هلا والله 🌷
+شكراً لاشتراكك في إزهليها، دليلك لمقدمي خدمات المناسبات.
+
+🔑 كود الاشتراك حقك:
+{code}
+
+طريقة التفعيل:
+١. ادخلي على www.ezhliha.com
+٢. اضغطي «إنشاء حساب»
+٣. عبّي بياناتك، وفي خانة «كود الشراء» حطي الكود اللي فوق
+٤. اضغطي تسجيل، وبالعافية عليك 🎉
+
+⚠️ الكود يُستخدم مرة وحدة فقط، لا تشاركينه مع أحد.
+لأي استفسار تواصلي معنا واتساب: 0506036094`;
+
 function CodesTab() {
   const list = useServerFn(listCodes);
   const gen = useServerFn(generateCodes);
@@ -3380,6 +3395,17 @@ function CodesTab() {
     alert("تم نسخ الأكواد غير المستخدمة");
   }
 
+  function exportForSalla() {
+    const unused = codes.filter((c: any) => !c.used_at).map((c: any) => c.code);
+    if (!unused.length) { alert("ما فيه أكواد متاحة، ولّدي أكواد أول"); return; }
+    const blob = new Blob(["\uFEFFcode\n" + unused.join("\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `ezhliha-codes-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   return (
     <div dir="rtl" style={{ fontFamily: "Thmanyah Serif Display, Tajawal, system-ui, sans-serif" }}>
       <h2 style={{ fontSize: 22, fontWeight: 800, color: "#640000", marginBottom: 16 }}>
@@ -3401,7 +3427,26 @@ function CodesTab() {
         <button type="button" onClick={copyAll} style={{ background: "#fff", color: "#640000", border: "2px solid #640000", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
           نسخ غير المستخدمة
         </button>
+        <button type="button" onClick={exportForSalla} style={{ background: "#0a7a3a", color: "#fff", border: "none", padding: "10px 20px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+          تنزيل ملف الأكواد لسلة
+        </button>
       </form>
+
+      <div style={{ background: "#fff", padding: 16, borderRadius: 12, marginBottom: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.05)", lineHeight: 1.9, fontSize: 14 }}>
+        <h3 style={{ color: "#640000", fontWeight: 800, fontSize: 16, margin: "0 0 8px" }}>طريقة الإرسال التلقائي عبر سلة</h3>
+        <ol style={{ margin: 0, paddingInlineStart: 20 }}>
+          <li>اكتبي عدد الأكواد واكتبي بالملاحظة «سلة» ثم اضغطي «توليد».</li>
+          <li>اضغطي «تنزيل ملف الأكواد لسلة» — ينزل ملف فيه الأكواد المتاحة.</li>
+          <li>في سلة: المنتجات ← منتج الاشتراك ← نوع المنتج «بطاقة رقمية» ← رفع الأكواد من الملف.</li>
+          <li>في إعدادات المنتج الصقي الرسالة اللي تحت في خانة «رسالة للعميل بعد الشراء».</li>
+          <li>فعّلي إشعارات الواتساب في سلة (التسويق ← الرسائل / تطبيق واتساب سلة) عشان توصل الرسالة للعميلة على الواتساب.</li>
+        </ol>
+        <p style={{ margin: "10px 0 4px", fontWeight: 700 }}>نص الرسالة:</p>
+        <pre style={{ whiteSpace: "pre-wrap", background: "#f7f5ee", padding: 12, borderRadius: 8, fontFamily: "inherit", margin: 0 }}>{SALLA_MSG}</pre>
+        <button type="button" onClick={() => { navigator.clipboard.writeText(SALLA_MSG); alert("تم نسخ الرسالة"); }} style={{ marginTop: 8, background: "#640000", color: "#fff", border: "none", padding: "8px 18px", borderRadius: 50, fontWeight: 700, cursor: "pointer" }}>
+          نسخ الرسالة
+        </button>
+      </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         {(["all", "unused", "used"] as const).map((f) => (
