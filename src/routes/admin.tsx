@@ -2769,6 +2769,59 @@ const SITE_TEXT_DEFAULTS: SiteTextRow[] = (() => {
   return groups.flatMap((g) => all.filter((r) => r.group === g));
 })();
 
+const NAV_OPTIONS: { id: string; label: string }[] = [
+  { id: "allCats", label: "جميع الفئات" },
+  { id: "home", label: "الرئيسية" },
+  { id: "providers", label: "الدليل" },
+  { id: "categories", label: "الفئات" },
+  { id: "favorites", label: "المفضلة" },
+  { id: "about", label: "من نحن" },
+  { id: "faq", label: "الأسئلة الشائعة" },
+  { id: "contact", label: "تواصل معنا" },
+  { id: "store", label: "المتجر" },
+];
+
+function NavVisibilityCard() {
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    supabase.from("site_texts").select("value").eq("key", "nav.hidden").maybeSingle()
+      .then(({ data }) => setHidden(new Set((data?.value ?? "").split(",").map((s: string) => s.trim()).filter(Boolean))));
+  }, []);
+  const toggle = async (id: string) => {
+    const next = new Set(hidden);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setHidden(next);
+    setSaving(true);
+    const { error } = await supabase.from("site_texts").upsert(
+      { key: "nav.hidden", label: "عناصر القائمة المخفية", value: [...next].join(",") },
+      { onConflict: "key" },
+    );
+    setSaving(false);
+    if (error) alert(error.message);
+    else logActivity("update", "site_text", "nav.hidden", { hidden: [...next] });
+  };
+  return (
+    <div className="adm-card" style={{ marginBottom: 14 }}>
+      <h2 style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800 }}>القائمة العلوية — إظهار وإخفاء {saving ? "…" : ""}</h2>
+      <p style={{ margin: "0 0 12px", fontSize: 13, color: "#6b5e57" }}>اضغطي على أي خيار لإخفائه أو إظهاره. التغيير يُحفظ على طول.</p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        {NAV_OPTIONS.map((o) => {
+          const on = !hidden.has(o.id);
+          return (
+            <button key={o.id} type="button" onClick={() => toggle(o.id)}
+              style={{ padding: "8px 14px", borderRadius: 999, fontWeight: 700, fontSize: 13, cursor: "pointer",
+                border: "1px solid #640000", background: on ? "#640000" : "#fff", color: on ? "#fff" : "#640000",
+                textDecoration: on ? "none" : "line-through" }}>
+              {on ? "👁️" : "🚫"} {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function SiteTextsTab() {
   const [rows, setRows] = useState<SiteTextRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2824,6 +2877,8 @@ function SiteTextsTab() {
         </button>
 
       </div>
+      <NavVisibilityCard />
+
       <div className="adm-card">
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
           <input
