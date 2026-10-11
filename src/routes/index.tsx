@@ -877,7 +877,8 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
   );
 
 
-  if (!authLoading && !user) {
+  const isPublicView = view === "about" || view === "faq";
+  if (!authLoading && !user && !isPublicView) {
     return <AuthGate />;
   }
 
