@@ -761,15 +761,16 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
 
 
   type NavItem = { label: string; to?: string; href?: string; active?: boolean };
-  const navItems: NavItem[] = [
-    { label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
-    { label: txt("nav.providers", "الدليل"), to: "/providers", active: view === "providers" },
-    { label: txt("nav.categories", "الفئات"), to: "/categories", active: view === "categories" },
-    ...(user ? [{ label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
-    { label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
-    { label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
-    { label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
-  ];
+  const navHidden = new Set((txt("nav.hidden", "") || "").split(",").map((x) => x.trim()).filter(Boolean));
+  const navItems: NavItem[] = ([
+    { id: "home", label: txt("nav.home", "الرئيسية"), to: "/", active: view === "home" },
+    { id: "providers", label: txt("nav.providers", "الدليل"), to: "/providers", active: view === "providers" },
+    { id: "categories", label: txt("nav.categories", "الفئات"), to: "/categories", active: view === "categories" },
+    ...(user ? [{ id: "favorites", label: txt("nav.favorites", "المفضلة"), to: "/favorites" } as NavItem] : []),
+    { id: "about", label: txt("footer.about", "من نحن"), to: "/about", active: view === "about" },
+    { id: "faq", label: txt("nav.faq", "الأسئلة الشائعة"), to: "/faq", active: view === "faq" },
+    { id: "contact", label: txt("nav.contact", "تواصل معنا"), href: waLink(CONTACT_WA_NUMBER, CONTACT_WA_MESSAGE) ?? "#" },
+  ] as (NavItem & { id: string })[]).filter((it) => !navHidden.has(it.id));
 
   const renderMega = (onPick?: () => void) => (
     <div className="ez-acc">
@@ -984,7 +985,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
         </Link>
 
         <nav className="ez-nav-menu">
-          <div className="ez-mega-wrap">
+          {!navHidden.has("allCats") && <div className="ez-mega-wrap">
             <button
               type="button"
               className={`ez-nav-link ez-mega-trigger ${megaOpen ? "open" : ""}`}
@@ -998,7 +999,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
             {megaOpen && categories.length > 0 && (
               <div className="ez-mega-pop">{renderMega(() => setMegaOpen(false))}</div>
             )}
-          </div>
+          </div>}
           {navItems.map((it) =>
             it.href ? (
               <a key={it.label} className="ez-nav-link" href={it.href} target="_blank" rel="noopener noreferrer">{it.label}</a>
@@ -1006,7 +1007,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <Link key={it.label} to={it.to!} className={`ez-nav-link ${it.active ? "active" : ""}`}>{it.label}</Link>
             )
           )}
-          {!navItems.some((it) => it.href?.includes("store.ezhliha.com")) && (
+          {!navHidden.has("store") && (
             <a className="ez-nav-link" href="https://store.ezhliha.com" target="_blank" rel="noopener noreferrer">{txt("nav.store", "المتجر")}</a>
           )}
         </nav>
@@ -1058,7 +1059,7 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   </Link>
                 )
               )}
-              {!navItems.some((it) => it.href?.includes("store.ezhliha.com")) && (
+              {!navHidden.has("store") && (
                 <a href="https://store.ezhliha.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
                   🛍️ {txt("nav.store", "المتجر")}
                 </a>
