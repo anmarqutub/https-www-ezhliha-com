@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoUrl from "@/assets/logo.jpg";
 
 export const CONTACT_WA_NUMBER = "+966506036094";
+export const FOOTER_WA_MESSAGE = "مرحبا\nلدي استفسار بخصوص إزهليها";
 export const CONTACT_WA_MESSAGE = "هلا أزهليها، عندي استفسار.";
 
 function wa(number: string, message: string) {
@@ -57,7 +58,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
           <div className="ez-footer-links">
             <a
               className="ez-footer-wa"
-              href={wa(txt("contact.wa_number", CONTACT_WA_NUMBER), txt("contact.wa_message", CONTACT_WA_MESSAGE))}
+              href={wa(txt("contact.wa_number", CONTACT_WA_NUMBER), txt("footer.wa_message", FOOTER_WA_MESSAGE))}
               target="_blank"
               rel="noopener noreferrer"
             >
