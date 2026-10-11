@@ -23,6 +23,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as StoreRouteImport } from './routes/store'
 import { Route as PIdRouteImport } from './routes/p.$id'
 import { Route as ProviderIdRouteImport } from './routes/provider.$id'
 import { Route as ApiPublicImgRouteImport } from './routes/api/public/img'
@@ -102,6 +103,11 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoreRoute = StoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PIdRoute = PIdRouteImport.update({
   id: '/p/$id',
   path: '/p/$id',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
   '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
   '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/providers': typeof ProvidersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
   '/p/$id': typeof PIdRoute
   '/provider/$id': typeof ProviderIdRoute
   '/api/public/img': typeof ApiPublicImgRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/store'
     | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/store'
     | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/reset-password'
     | '/signup'
+    | '/store'
     | '/p/$id'
     | '/provider/$id'
     | '/api/public/img'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   ProvidersRoute: typeof ProvidersRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  StoreRoute: typeof StoreRoute
   PIdRoute: typeof PIdRoute
   ProviderIdRoute: typeof ProviderIdRoute
   ApiPublicImgRoute: typeof ApiPublicImgRoute
@@ -417,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$id': {
       id: '/p/$id'
       path: '/p/$id'
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProvidersRoute: ProvidersRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  StoreRoute: StoreRoute,
   PIdRoute: PIdRoute,
   ProviderIdRoute: ProviderIdRoute,
   ApiPublicImgRoute: ApiPublicImgRoute,
