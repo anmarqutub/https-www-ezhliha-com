@@ -577,6 +577,20 @@ function UsersTab() {
                         )}
                         <button
                           type="button"
+                          onClick={async () => {
+                            const { data } = await supabase.from("user_locations")
+                              .select("lat,lng,accuracy,created_at").eq("user_id", u.id)
+                              .order("created_at", { ascending: false }).limit(1).maybeSingle();
+                            if (!data) { alert("ما فيه موقع مسجّل لهذا المستخدم (ما وافق أو ما دخل بعد)."); return; }
+                            window.open(`https://www.google.com/maps?q=${data.lat},${data.lng}`, "_blank", "noopener");
+                          }}
+                          title="آخر موقع مسجّل على الخريطة"
+                          style={{ background: "#fff", color: "#640000", border: "1px solid #640000", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700 }}
+                        >
+                          📍 الموقع
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => handleSetPassword(u)}
                           title="تغيير كلمة المرور مباشرة بدون إرسال إيميل"
                           style={{
