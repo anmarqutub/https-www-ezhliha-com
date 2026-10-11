@@ -1006,6 +1006,9 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
               <Link key={it.label} to={it.to!} className={`ez-nav-link ${it.active ? "active" : ""}`}>{it.label}</Link>
             )
           )}
+          {!navItems.some((it) => it.href?.includes("store.ezhliha.com")) && (
+            <a className="ez-nav-link" href="https://store.ezhliha.com" target="_blank" rel="noopener noreferrer">{txt("nav.store", "المتجر")}</a>
+          )}
         </nav>
 
 
