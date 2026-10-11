@@ -2723,6 +2723,7 @@ const SITE_TEXT_BASE: SiteTextRow[] = [
   { key: "home.about.p3", label: "من نحن — الفقرة الثالثة", value: "هدفنا بسيط: أن نجعل البحث عن تفاصيل مناسبتكِ أسهل وأوضح.", updated_at: "" },
   { key: "footer.about", label: "زر من نحن (الفوتر)", value: "من نحن", updated_at: "" },
   { key: "footer.contact", label: "زر تواصل معنا (الفوتر)", value: "تواصل معنا", updated_at: "" },
+  { key: "footer.wa_message", label: "رسالة واتساب الفوتر الجاهزة", value: "مرحبا\nلدي استفسار بخصوص إزهليها", updated_at: "" },
   { key: "footer.copy", label: "حقوق الفوتر", value: "Ezhliha © 2026 — Powered by ANQ", updated_at: "" },
   { key: "nav.login", label: "زر الدخول (الهيدر)", value: "تسجيل الدخول", updated_at: "" },
   { key: "nav.signup", label: "زر التسجيل (الهيدر)", value: "إنشاء حساب", updated_at: "" },
