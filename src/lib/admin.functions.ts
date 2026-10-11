@@ -312,6 +312,11 @@ export const setUserPassword = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await ensureAdmin(context.supabase, context.userId);
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, { password: data.password });
-    if (error) throw new Response(error.message, { status: 400 });
-    return { ok: true };
+    if (error) {
+      const weak = /weak|easy to guess|pwned/i.test(error.message);
+      return { ok: false as const, error: weak
+        ? "كلمة المرور ضعيفة ومعروفة (مثل 123456 أو password). اختاري كلمة أقوى فيها حروف وأرقام."
+        : error.message };
+    }
+    return { ok: true as const, error: null };
   });
