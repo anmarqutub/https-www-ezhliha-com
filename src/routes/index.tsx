@@ -1633,6 +1633,7 @@ function AccountMenu({ email, onSignOut, texts }: { email: string; onSignOut: ()
               <div className="ez-acct-email">{email}</div>
             </div>
           </div>
+          <Link to="/account" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.edit", "تعديل بياناتي")}</Link>
           <Link to="/favorites" className="ez-acct-item" onClick={() => setOpen(false)}>{t("account.favorites", "المفضلة")}</Link>
           <button className="ez-acct-item ez-acct-out" onClick={() => { setOpen(false); void onSignOut(); }}>{t("account.signout", "تسجيل الخروج")}</button>
         </div>
