@@ -23,7 +23,7 @@ function ForgotPasswordPage() {
     });
     setSubmitting(false);
     if (error) {
-      setError(error.message);
+      setError(/rate limit|seconds/i.test(error.message) ? "طلبتي رابط قبل شوي، انتظري دقيقة وجربي مرة ثانية." : "ما قدرنا نرسل الرابط، تأكدي من الإيميل وجربي مرة ثانية.");
       return;
     }
     setSent(true);
