@@ -215,7 +215,8 @@ function UsersTab() {
     if (pw == null) return;
     if (pw.trim().length < 6) { alert("كلمة المرور لازم تكون ٦ أحرف على الأقل"); return; }
     try {
-      await setPwd({ data: { userId: u.id, password: pw.trim() } });
+      const res = await setPwd({ data: { userId: u.id, password: pw.trim() } });
+      if (!res.ok) { alert(`❌ ما تغيّرت كلمة المرور\n${res.error}`); return; }
       await logActivity("user.password_set", "user", u.id, { email: u.email });
       alert(`تم تغيير كلمة المرور ✅\nأرسليها للعميلة: ${pw.trim()}`);
     } catch (e) {

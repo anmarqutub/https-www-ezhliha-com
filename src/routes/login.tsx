@@ -28,7 +28,7 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setSubmitting(false);
     if (error) {
-      setError(error.message);
+      setError(/invalid login credentials/i.test(error.message) ? "الإيميل أو كلمة المرور غلط، تأكدي منها وجربي مرة ثانية." : /email not confirmed/i.test(error.message) ? "الإيميل ما تأكد للحين." : error.message);
       return;
     }
   }
