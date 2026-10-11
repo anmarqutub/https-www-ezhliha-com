@@ -74,7 +74,7 @@ export default function SiteFooter({ texts }: { texts?: Record<string, string> }
         </div>
       </div>
       <div className="ez-footer-bar">
-        <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by AQ")}</span>
+        <span>{txt("footer.copy", "Ezhliha © 2026 — Powered by ANQ")}</span>
         <span>{txt("footer.motto", "خليها علينا… وأزهليها.")}</span>
       </div>
     </footer>

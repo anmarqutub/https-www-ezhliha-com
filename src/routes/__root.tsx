@@ -12,6 +12,7 @@ import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
+import LocationConsent from "@/components/LocationConsent";
 import { supabase } from "@/integrations/supabase/client";
 
 const CANONICAL_HOST = "www.ezhliha.com";
@@ -163,6 +164,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
+        <LocationConsent />
       </AuthProvider>
     </QueryClientProvider>
   );
