@@ -1058,6 +1058,11 @@ export function HomePage({ view = "home" }: { view?: EzView }) {
                   </Link>
                 )
               )}
+              {!navItems.some((it) => it.href?.includes("store.ezhliha.com")) && (
+                <a href="https://store.ezhliha.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                  🛍️ {txt("nav.store", "المتجر")}
+                </a>
+              )}
               {user && isAdmin && (
                 <Link to="/admin" onClick={() => setMenuOpen(false)}>{txt("nav.admin", "لوحة الأدمن")}</Link>
               )}
